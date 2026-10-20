@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.5.4 — Cellar Repair — 20 October 2026
+
+First repair pass based on human playtest feedback:
+
+- Reproduced and repaired the Surveyor's workbench obstruction.
+- Fixed adjacent-waypoint route reversals and added body-sized cellar clearance checks.
+- Moved the maintenance station against the wall; grounded its props and conduit.
+- Mounted relay plates, backboard and light supports; replaced domestic cellar tiles with worn concrete.
+- Limited repeated enemy breaths, prevented stacking and added replaceable owner recording slots.
+- Preserved both endings, room memory, saves, character rig and previous releases.
+
+Character art, clearer rain, wider environment/audio work and a stronger post-relay
+climax remain unfinished. Human feedback on the old release is acknowledged; this
+new repair still needs owner retesting. Prior graphics-driver crashes remain unresolved.
+
 ## 0.5.3 — On Record — 20 October 2026
 
 - Connected the disputed 1998 close-out to the optional recording investigation.

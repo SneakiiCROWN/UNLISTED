@@ -23,9 +23,9 @@ def run(label,args):
  text=log.read_text(errors='replace');assert r.returncode==0 and 'SCRIPT ERROR' not in text and 'ERROR:' not in text,(label,r.returncode,str(log))
 run('import',[a.engine,'--headless','--path',staging,'--editor','--import','--quit'])
 exe=runtime/'UNLISTED.exe';run('export',[a.engine,'--headless','--path',staging,'--export-release','Windows Desktop',exe])
-for label,flags in [('systems',['--systems-qa']),('hands',['--hands-qa']),('room',['--impossible-qa']),('story',['--presentation-qa','--story-only']),('polish',['--polish-qa'])]:run(label,[exe,'--max-fps','60','--',*flags])
+for label,flags in [('systems',['--systems-qa']),('hands',['--hands-qa']),('room',['--impossible-qa']),('story',['--presentation-qa','--story-only']),('polish',['--polish-qa']),('service',['--service-room-qa','--evidence='+str(runtime/'QA/service')])]:run(label,[exe,'--max-fps','60','--',*flags])
 # Checks use dedicated fixture files; no normal saves are written by these QA modes.
-receipt={'source_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=source,text=True).strip(),'source_files':manifest,'exe_sha256':hashlib.sha256(exe.read_bytes()).hexdigest(),'checks':['systems','hands','impossible-room','story','polish'],'human_playtest':False}
+receipt={'source_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=source,text=True).strip(),'source_files':manifest,'exe_sha256':hashlib.sha256(exe.read_bytes()).hexdigest(),'checks':['systems','hands','impossible-room','story','polish','service'],'human_playtest':False}
 (runtime/'PRIVATE_BUILD_RECEIPT.json').write_text(json.dumps(receipt,indent=2))
 with zipfile.ZipFile(output,'w',zipfile.ZIP_DEFLATED,6) as z:
  z.write(exe,'UNLISTED.exe')

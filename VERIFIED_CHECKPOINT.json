@@ -1,63 +1,71 @@
 {
-  "runtime_commit": "9de26ece1274726b3fe500d7fb85d69ecee03423",
-  "complete_source_commit": "5e5ed5668b2a4a9d5e60877c5a2cad6c60e2d597",
-  "earlier_accounted_route_commit": "e989023767b01db6e1ea5a1ecc7ae045b6b91b0b",
+  "runtime_commit": "421b70c67a8758c9ee0182236f79480ff4d2cb58",
+  "complete_source_commit": "8e15337d5e7d624d4a81ccf58b936eaa950a34ae",
   "reports": {
+    "west": {
+      "passed": 11,
+      "failed": 0,
+      "duration_seconds": 14.570516
+    },
+    "east": {
+      "passed": 11,
+      "failed": 0,
+      "duration_seconds": 18.297216
+    },
+    "1440": {
+      "passed": 11,
+      "failed": 0,
+      "duration_seconds": 19.046044
+    },
+    "ultrawide": {
+      "passed": 11,
+      "failed": 0,
+      "duration_seconds": 15.835558
+    },
+    "accounted_for": {
+      "passed": 118,
+      "failed": 0,
+      "duration_seconds": 208.722996
+    },
+    "on_record": {
+      "passed": 118,
+      "failed": 0,
+      "duration_seconds": 208.593291
+    },
     "story": {
       "passed": 83,
       "failed": 0
     },
-    "polish": {
-      "passed": 32,
-      "failed": 0
-    },
-    "on_record_route": {
-      "passed": 118,
-      "failed": 0,
-      "duration_seconds": 208.528337
-    },
     "room": {
-      "passed": 43,
-      "failed": 0,
-      "duration_seconds": 53.983214
-    },
-    "room_sequential_repeat": {
       "passed": 44,
       "failed": 0,
-      "duration_seconds": 55.023455
+      "duration_seconds": 55.066186
     },
     "systems": {
       "passed": 33,
       "failed": 0
     },
-    "accounted_route_prior_e989023": {
-      "passed": 116,
-      "failed": 0,
-      "duration_seconds": 207.776488
+    "threat": {
+      "passed": 54,
+      "failed": 0
     },
     "development": {
       "passed": 21,
       "failed": 0
     }
   },
-  "executable_sha256": "579ffef56fee70c2bce2c271d8fcf192aa0ccbdc93b5fbe799e0abf6d796e9e9",
-  "development_sha256": "23f0b5916af0be38873efe8dfd649601869530d2a521c2ad780642eb81e11638",
-  "source_sha256": "990fd02c488f606ca306ed9262106f36319c74285ac3ff92ff386812442acc8d",
-  "human_playtesting": false,
+  "executable_sha256": "2ed03e7e1cb6e5f56b0acbbfe3aec2ba57e1813ae53770cf34c581c4d1857837",
+  "development_sha256": "313443107835ac14384d52957571191b56cc55ef332d4312147ce1d983f2a085",
+  "source_sha256": "149c16f30f0fb2b99e1c54aaec6d710023d49a43d53dbcaeadd9552a95771946",
+  "human_feedback_received": true,
+  "new_candidate_human_playtested": false,
   "final_art_approval": false,
   "audio_listening": false,
   "surveyor_model_changed": false,
-  "known_driver_crash": "Earlier e989023 room run: nvoglv64.dll / 0xc0000005; final sequential results above; root cause not proven.",
-  "development_source_commit": "421b70c67a8758c9ee0182236f79480ff4d2cb58",
-  "development_checks": {
-    "cellar_west": {
-      "passed": 11,
-      "failed": 0
-    },
-    "cellar_east": {
-      "passed": 11,
-      "failed": 0
-    }
-  },
-  "development_scope": "Targeted exported pursuit/geometry/audio checks; full-route repair candidate verification in progress. Existing runtime fields describe published 0.5.3."
+  "known_limitations": [
+    "Surveyor art unfinished; recovered candidate not active",
+    "Broader furnishing/rain/exterior/audio/climax repairs pending",
+    "Prior nvoglv64.dll crash unresolved; final checks run serially"
+  ],
+  "player_data_preserved": true
 }

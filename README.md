@@ -2,15 +2,11 @@
 
 A first-person horror investigation in a rain-soaked house, service yard and woodland, with physical interactions, puzzles and the Surveyor.
 
-**Current prerelease: 0.5.3 On Record · runtime 9de26ec.**
-
-## Development snapshot
-
-The source tip now includes the first human-feedback cellar repair: wall-side workbench, actor-sized pursuit routes, mounted relay plates and restrained replaceable enemy cues. West/east exported pursuit and death/retry checks pass. Full-route verification is running; the downloadable prerelease above remains 0.5.3 until a new tested build is published. See OWNER_RECORDING_CUES.md for optional owner recording slots.
+**Current prerelease: 0.5.4 Cellar Repair · runtime 421b70c.**
 
 ## Download and play
 
-1. [Download the Windows ZIP](https://github.com/SneakiiCROWN/UNLISTED/releases/download/unlisted-v0.5.3-on-record-public-test-20261020/UNLISTED-Windows-On-Record-Test.zip).
+1. [Download the Windows ZIP](https://github.com/SneakiiCROWN/UNLISTED/releases/download/unlisted-v0.5.4-cellar-repair-public-test-20261020/UNLISTED-Windows-Cellar-Repair-Test.zip).
 2. Right-click it, choose **Extract All**, then open the extracted folder.
 3. Double-click **UNLISTED.exe** and keep its supporting files together.
 
@@ -18,17 +14,19 @@ No coding tools are needed. GitHub’s **Code → Download ZIP** contains source
 
 ## What is in this version?
 
-The optional SOURCE / RETURN investigation now earns a different final decision. A disputed 1998 close-out, original recording and physically rereadable paper copy connect Eli's investigation to Simon's missing-person record. The existing ACCOUNTED FOR ending remains; the new ON RECORD outcome keeps the case open. Eli's own attendance answer is still recoverable.
+This update repairs defects reported in the first human playtest. The cellar workbench previously blocked a Surveyor route while an eye-height visibility check incorrectly considered it clear. It now sits along the wall with its props, and cellar navigation checks the actual body clearance. Replanning no longer reverses toward adjacent waypoints.
 
-The impossible lounge, save/retry recovery, first-person hands/work torch, rain, forest and property routes remain. Completed saves remember the achieved ending; legacy completed saves retain the original one. The title-screen watcher no longer intrudes on either ending, and final choices clear the footer at all three tested resolutions.
+The service station has mounted hardware, grounded props and worn concrete surfaces. Relay signs meet the wall/backboard, and the overhead strip has physical supports. Repeated pursuit/attack breaths are limited and no longer stack; optional owner recording slots are documented in OWNER_RECORDING_CUES.md.
+
+Both ACCOUNTED FOR and ON RECORD remain, along with the impossible room, Eli/Simon investigation, rain, property and hands. No character candidate was substituted into this release.
 
 ## Checked, and still unfinished
 
-The final Windows candidate passes 83 story/layout/save checks and 32 physical comparison/receipt/staging checks. The new ending is exercised through a continuous native route with real movement, interaction, Surveyor contact, death/retry, escape, paper reading and completed-save menus. See VERIFIED_CHECKPOINT.json for exact results and provenance. The original ending also completed a full native route on the preceding narrative runtime, before the paper interaction and final text-clearance adjustment. Both outcomes are rechecked in the final UI/save tests.
+The exported repair is checked through both complete normal-input routes, solving the three valves and traversing the previously blocked aisle before actual contact, death/retry, escape and each ending. Separate west/east saved-state scenarios reproduce the obstruction and verify the repair. Resolution views, saved outcomes, hiding/story mode, impossible-room recovery and systems have separate evidence. See VERIFIED_CHECKPOINT.json for final results.
 
-A room test in that earlier candidate crashed in NVIDIA's nvoglv64.dll (0xc0000005) while GPU tests had overlapped. Failed evidence remains preserved locally. The final room checks run sequentially; successful reruns do not establish the root cause or guarantee crash-free behaviour on every driver.
+This is the first repair pass after actual human feedback, not a declaration that the game is polished. The Surveyor still needs a convincing character-art redesign. The newer model study was not accepted. Rain visibility, broader furnishing/placement, exterior composition, environmental audio variety and the abrupt post-relay climax remain unfinished. The existing Modern PSX default is configurable, and current player settings remain intact.
 
-Human playtesting, subjective art approval and audio listening remain pending. Two character-art candidates were rejected after actual scene review; the Surveyor model is unchanged and still needs substantial work. Temporary vocals remain replaceable. Broader story pacing and the complete-game goal remain unfinished. This is an incremental alpha with two outcomes, not a promised hour-long finished game.
+Earlier NVIDIA nvoglv64.dll crashes remain unresolved; final GPU checks run serially. The owner has played the preceding release, but this repair candidate still needs human retesting. Subjective audio/art approval remains pending. Temporary creature vocals remain replaceable.
 
 ## Updating without losing progress
 
