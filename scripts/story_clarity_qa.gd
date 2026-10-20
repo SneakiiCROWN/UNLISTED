@@ -11,6 +11,13 @@ func run(game: Node) -> void:
 	g.isolated=true;g.report_read=false
 	check("unknown 1998 record cannot be closed",not g.finish_attendance("on_record") and not g.ended)
 	g.report_read=true
+	g.events["return"]=true;g.events.threat_resolved=true
+	g.player.position=Vector3(-.7,.04,5.5)
+	await wait(.3);g.recount.request()
+	for i in 120:
+		if g.events.get("recount_complete",false) and not g.recount.active:break
+		await wait(.1)
+	check("real recount precedes ending layout checks",g.events.get("recount_complete",false) and not g.recount.active,"elapsed="+str(g.recount.clock))
 	for size_ in [Vector2i(1920,1080),Vector2i(2560,1440),Vector2i(3440,1440)]:
 		g.events.memory_confirmed=false
 		render_size(size_);p.show_register();await wait(0.3)

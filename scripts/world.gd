@@ -48,6 +48,7 @@ var capture_director: Node
 var memory_receipt: Node3D
 var lounge_contents: Node3D
 var impossible_room: Node3D
+var recount: Node3D
 var hint_until := 0.0
 var tv_light: OmniLight3D
 var security_light: OmniLight3D
@@ -84,6 +85,7 @@ func _ready() -> void:
 	qa_mode = qa_mode or "--service-room-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--exterior-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--capture-qa" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--recount-qa" in OS.get_cmdline_user_args()
 	automated_qa=(qa_mode and not "--visual-probe" in OS.get_cmdline_user_args()) or (dev_mode and "--dev-tools-qa" in OS.get_cmdline_user_args())
 	if automated_qa:
 		get_tree().root.set_flag(Window.FLAG_NO_FOCUS,true)
@@ -117,6 +119,8 @@ func _ready() -> void:
 	capture_director=load("res://scripts/surveyor_capture.gd").new()
 	capture_director.game=self
 	add_child(capture_director)
+	recount=load("res://scenes/departure_recount.tscn").instantiate()
+	recount.game=self;add_child(recount)
 	set_volume(volume)
 	show_menu("UNLISTED", true)
 	if dev_mode:
@@ -629,6 +633,7 @@ func sound(name_: String, pos: Vector3, db := -20.0, looping := false) -> AudioS
 		path = "res://assets/audio/"+name_+".wav"
 	if not resources.has(path): resources[path] = load(path)
 	var audio := AudioStreamPlayer3D.new()
+	audio.set_meta("source_slot",slot)
 	audio.stream = resources[path]
 	audio.set_meta("sample",name_)
 	if slot.begins_with("surveyor_") or slot.begins_with("capture_"):audio.set_meta("voice_slot",slot)
@@ -683,6 +688,7 @@ func new_game() -> void:
 	isolated = false
 	ended = false
 	events.clear()
+	if is_instance_valid(recount):recount.restore_state()
 	physical.restore()
 	horror.reset()
 	threat.reset()
@@ -762,6 +768,8 @@ func open_casebook() -> void:
 	presentation.inspect_document("FIELD NOTES / RECORDS EXAMINED",text_)
 
 func interaction_name(id: String) -> String:
+	if id=="relay_record":return "Read field return"
+	if id=="order" and isolated and recount.active:return "Listen"
 	if id=="source_copy":return "Read source copy"
 	if id in ["audition_source","audition_return","exclude_return"] and stage<3:return "Inspect unpowered transport"
 	if id=="front_gate":return "Close gate" if doors[id].opened else "Open gate"
@@ -787,11 +795,15 @@ func interact(id: String) -> void:
 		doors[id].use()
 		return
 	match id:
+		"relay_record":
+			if isolated:
+				inspect_text("FIELD RETURN / 1998",NOTES.FIELD_RETURN)
+				save_game()
 		"source_copy":
 			if events.get("memory_confirmed",false):inspect_text("SIMON / RETURN CHANNEL",NOTES.SOURCE_COPY)
 		"order":
 			if isolated:
-				presentation.show_register()
+				if recount.request():presentation.show_register()
 			else:
 				stage = maxi(stage,1)
 				inspect_text("NIGHT CALL / 17 BRIAR LANE",NOTES.CALL)
@@ -830,7 +842,7 @@ func interact(id: String) -> void:
 				brass_key = true
 				doors["service"].locked = false
 				doors["shed"].locked = false
-				inspect_text("ARCHIVE / 23:17:08",NOTES.ARCHIVE)
+				inspect_text("ARCHIVE / 23:17:08",NOTES.ARCHIVE+("\n\nCARRIER RESTORED / WORK ORDER 017 REISSUED\nThe control repeats the last unclosed call when its carrier returns. The television fault brought you here. Restoring the supply let the old attendance circuit answer again." if isolated else ""))
 				if not events.has("office"): office_event()
 				save_game()
 		"shed_record":
@@ -1014,6 +1026,7 @@ func apply_save(data: Dictionary) -> void:
 	ended = false
 	resume()
 	if data.get("ended",false): finish_game()
+	if is_instance_valid(recount):recount.restore_state()
 
 func save_game() -> void:
 	if is_instance_valid(capture_director) and capture_director.active:return
@@ -1053,6 +1066,9 @@ func prepare_automated_qa() -> void:
 
 func run_qa() -> void:
 	prepare_automated_qa()
+	if "--recount-qa" in OS.get_cmdline_user_args():
+		var test=load("res://scripts/recount_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
+		await test.run(self);return
 	if "--service-room-qa" in OS.get_cmdline_user_args():
 		var test=load("res://scripts/service_room_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
 		await test.run(self);return

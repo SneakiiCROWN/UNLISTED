@@ -268,6 +268,7 @@ func _process(delta: float) -> void:
 	# Make room for concrete sounds; silence follows the electrical change.
 	var score_target := -42.0 if game.events.has("house_responds") and not game.report_read else -35.0
 	if beat != "" or audition!="" or game.threat.active() or game.impossible_room.active:score_target = -48.0
+	if is_instance_valid(game.recount) and game.recount.active:score_target=-65.0
 	game.ambience.volume_db = move_toward(game.ambience.volume_db,score_target,delta*4)
 	feed_clock += delta
 	if feed and feed_clock > 0.4 and game.player.position.distance_to(Vector3(3.2,0,-1.8)) < 7:

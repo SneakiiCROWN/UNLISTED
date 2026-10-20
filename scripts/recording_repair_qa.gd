@@ -229,6 +229,12 @@ func run(game: Node) -> void:
 	await travel(Vector2(0,2.5),"final hall return")
 	if not g.doors.front.opened:await use("front")
 	await travel(Vector2(-0.7,5.5),"porch register return");await use("order",false)
+	check("close-out starts an in-world recount",g.recount.active and not g.menu_open and not g.ended)
+	g.player.camera.look_at(Vector3(0,1.5,-3));await wait(3.0)
+	await shot("R08_last_departure_hall")
+	await wait(6.3)
+	check("recount leaves player control and completes",g.events.get("recount_complete",false) and g.player.active and not g.menu_open)
+	await use("order",false)
 	if g.presentation.buttons.has("Eli Ward / PRESENT"):
 		g.presentation.buttons["Eli Ward / PRESENT"].pressed.emit();await wait(0.3)
 		check("Eli choice remains recoverable",not g.ended and not g.menu_open)

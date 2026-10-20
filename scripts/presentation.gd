@@ -288,6 +288,8 @@ func show_menu(main: bool) -> void:
 		add_button("Quit",func(): get_tree().quit())
 	else:
 		add_button("Resume",resume_game)
+		if is_instance_valid(game.recount) and game.recount.active:
+			add_button("Skip recount",func():game.recount.complete(true);resume_game())
 		add_button("Restart Checkpoint",restart_checkpoint,has_checkpoint())
 		add_button("Settings",func(): show_settings("pause"))
 		add_button("Main Menu",return_to_title)
@@ -606,11 +608,11 @@ func show_register() -> void:
 	section = "register"
 	label(card_body,"PROPERTY 17 / ATTENDANCE REGISTER",16,"Meta")
 	label(card_body,"UNCLOSED CALL / 1998",32,"Title")
-	label(card_body,"SIMON WARD    1998 / MARKED ABSENT / NO EXIT\nELI WARD          TONIGHT / ARRIVAL RECORDED\n\nThe relay is isolated. The old call is still open.\nWho was still inside when the 1998 entry was closed?",20)
+	label(card_body,"SIMON WARD    1998 / MARKED ABSENT / NO EXIT\nELI WARD          TONIGHT / ARRIVAL RECORDED\n\nThe call closed by marking Simon ABSENT. His departure was never witnessed.\n\nKeep his name at its last known location; this does not claim he came home.",20)
 	add_button("Simon Ward / PRESENT",func():game.finish_attendance("accounted_for"),true,card_body).grab_focus()
 	add_button("Eli Ward / PRESENT",func():resume_game();game.sound("relay",Vector3(0,1.5,4),-26);game.message("Your arrival is already entered. Simon's departure is still blank.",5),true,card_body)
 	if game.events.get("memory_confirmed",false):
-		label(card_body,"Original recording retained. You can dispute the close-out instead.",16,"Meta")
+		label(card_body,"Original source retained. You can refuse the old close-out and leave his case open.",16,"Meta")
 		add_button("Attach original / keep Simon's case open",func():game.finish_attendance("on_record"),true,card_body)
 	add_button("Leave the sheet",resume_game,true,card_body)
 	entrance_animation(card)
@@ -733,7 +735,7 @@ func notify(text: String) -> void:
 
 func moment(id: String) -> void:
 	if moment_tween and moment_tween.is_valid():moment_tween.kill()
-	var names := {"arrival":["23:17  /  NIGHT CALL","17 BRIAR LANE"],"discovery":["ARCHIVE 1998","A NAME REMOVED"],"isolation":["OCCUPANCY RELAY","MANUAL ISOLATION"]}
+	var names := {"arrival":["23:17  /  NIGHT CALL","17 BRIAR LANE"],"discovery":["ARCHIVE 1998","A NAME REMOVED"]}
 	if names.has(id):
 		location_card.visible = true
 		location_card.get_node("MomentTag").text = names[id][0]
