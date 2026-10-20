@@ -21,6 +21,10 @@ var search_leg := 0
 var collision_active := false
 var stalk_used := false
 var memory_routes: Array[int]=[]
+var service_edges: Array=[]
+var last_voice:=-100.0
+var last_attack_voice:=-100.0
+var voice_player: AudioStreamPlayer3D
 
 func _ready() -> void:
 	# Points sit inside door clearances, clear of the furnished room edges.
@@ -39,8 +43,16 @@ func _ready() -> void:
 		var id:=graph.get_point_count();graph.add_point(id,point);memory_routes.append(id);graph.set_point_disabled(id,true)
 	graph.connect_points(20,memory_routes[0]);graph.connect_points(memory_routes[0],memory_routes[1])
 	graph.connect_points(20,memory_routes[2]);graph.connect_points(memory_routes[2],memory_routes[3])
+	# Walkable maintenance aisles around the west bench and east generator.
+	# These are actor-sized routes, not eye-height sight lines over furniture.
+	var service: Array[int]=[]
+	for point in [Vector3(-3.3,-3,-20),Vector3(-3.3,-3,-22),Vector3(2,-3,-18),Vector3(2,-3,-20),Vector3(2,-3,-22.1),Vector3(4,-3,-22.1),Vector3(4,-3,-17.3)]:
+		var id:=graph.get_point_count();graph.add_point(id,point);service.append(id)
+	service_edges=[[24,26],[25,27],[26,1],[27,1],[24,2],[25,2],[26,service[0]],[service[0],service[1]],[service[1],0],[27,service[2]],[service[2],service[3]],[service[3],service[4]],[service[4],0],[service[4],service[5]],[25,service[6]],[service[6],27]]
+	for pair in service_edges:graph.connect_points(pair[0],pair[1])
 
 func reset() -> void:
+	stop_voice();last_voice=-100;last_attack_voice=-100
 	for id in memory_routes:graph.set_point_disabled(id,true)
 	state = "dormant"
 	clock = 0
@@ -93,8 +105,23 @@ func begin(basement := false) -> void:
 	grace = 3.0 if basement else 4.5
 	game.surveyor_actor.set_mode("listen")
 	game.sound("latch",Vector3(0,1,3.8),-23)
-	var breathing=game.sound("breath",game.presence.position,-25)
-	game.sound_caption("Breathing, close by.",2.5,"CELLAR" if basement else "HALL",breathing)
+	var breathing=voice("warning",-28)
+	if breathing:game.sound_caption("Breathing, close by.",2.5,"CELLAR" if basement else "HALL",breathing)
+
+func stop_voice() -> void:
+	if is_instance_valid(voice_player):voice_player.stop();voice_player.queue_free()
+	voice_player=null
+
+func voice(slot: String,db: float) -> AudioStreamPlayer3D:
+	var now: float=game.time_in_game
+	if slot=="attack":
+		if now-last_attack_voice<4:return null
+		last_attack_voice=now
+	elif now-last_voice<12:return null
+	last_voice=now;stop_voice()
+	voice_player=game.sound("surveyor_"+slot,game.presence.position+Vector3.UP*1.45,db)
+	voice_player.reparent(game.presence)
+	return voice_player
 
 func active() -> bool:
 	return state not in ["dormant","complete","dead"]
@@ -124,11 +151,11 @@ func change(next: String) -> void:
 	state = next
 	clock = 0
 	stuck = 0
-	if state == "pursue":game.sound("breath",game.presence.position,-21)
+	if state == "pursue":voice("pursuit",-26)
 	if state == "attack":
 		game.surveyor_actor.set_mode("attack")
-		var breathing=game.sound("breath",game.presence.position,-19)
-		game.sound_caption("A sharp intake of breath.",1,"NEARBY",breathing)
+		var breathing=voice("attack",-23)
+		if breathing:game.sound_caption("A sharp intake of breath.",1,"NEARBY",breathing)
 	if state in ["search","observe","recovery"]:game.surveyor_actor.set_mode("watch")
 
 func closest(point: Vector3) -> int:
@@ -138,21 +165,39 @@ func closest(point: Vector3) -> int:
 		if graph.is_point_disabled(id):continue
 		var p := graph.get_point_position(id)
 		var score := p.distance_to(point)
-		if score < distance and clear_line(point+Vector3.UP*0.85,p+Vector3.UP*0.85):
+		if score < distance and route_clear(point,p):
 			distance = score
 			best = id
 	return graph.get_closest_point(point) if best < 0 else best
 
+func route_clear(from: Vector3,to: Vector3) -> bool:
+	if from.z < -15 and to.z < -15 and absf(from.y+3)<.2 and absf(to.y+3)<.2:
+		# Reuse the actual 2.05 m / .38 m capsule. Lift a few centimetres solely
+		# for a horizontal query above the floor; movement/gravity stay unchanged.
+		return not game.presence.test_move(Transform3D(Basis.IDENTITY,from+Vector3.UP*.035),to-from)
+	return clear_line(from+Vector3.UP*.85,to+Vector3.UP*.85)
+
 func plan(point: Vector3) -> void:
 	for id in memory_routes:graph.set_point_disabled(id,not game.impossible_room.active)
+	for pair in service_edges:
+		var clear:=route_clear(graph.get_point_position(pair[0]),graph.get_point_position(pair[1]))
+		if clear and not graph.are_points_connected(pair[0],pair[1]):graph.connect_points(pair[0],pair[1])
+		elif not clear and graph.are_points_connected(pair[0],pair[1]):graph.disconnect_points(pair[0],pair[1])
 	var from := closest(game.presence.position)
 	var to := closest(point)
 	route = graph.get_point_path(from,to)
-	if route.size() > 1 and clear_line(game.presence.position+Vector3.UP,route[1]+Vector3.UP):route.remove_at(0)
+	if game.presence.position.z < -15 and absf(game.presence.position.y+3)<.2:
+		# On the flat cellar floor, keep the furthest capsule-clear route point.
+		# Nearest-node replans otherwise reverse at an adjacent branch every .5 s.
+		var skip:=0
+		for i in range(route.size()-1,0,-1):
+			if route[i].z < -15 and absf(route[i].y+3)<.2 and route_clear(game.presence.position,route[i]):skip=i;break
+		for i in skip:route.remove_at(0)
+	elif route.size() > 1 and route_clear(game.presence.position,route[1]):route.remove_at(0)
 	elif not route.is_empty() and game.presence.position.distance_to(route[0]) < 0.45:route.remove_at(0)
 	# A direct final segment is only allowed inside the same clear room/floor.
 	var end := graph.get_point_position(to)
-	if absf(end.y-point.y)<0.6 and point.distance_to(end)<3.0 and clear_line(end+Vector3.UP,point+Vector3.UP):route.append(point)
+	if absf(end.y-point.y)<0.6 and point.distance_to(end)<3.0 and route_clear(end,point):route.append(point)
 
 func move_route(delta: float,speed: float) -> void:
 	var body: CharacterBody3D = game.presence

@@ -163,8 +163,12 @@ func run(game: Node) -> void:
 	await travel(Vector2(-0.3,-22),"occupancy approach");await use("valve2")
 	await travel(Vector2(2,-22),"isolator approach");await use("isolate")
 	check("continuous fresh route reaches isolation",g.isolated and g.valve_order==[1,0,2])
-	await travel(Vector2(0,-21),"relay return clearance")
-	await travel(Vector2(0,-18),"recorded Surveyor approach")
+	if "--service-aisle" in OS.get_cmdline_user_args():
+		await travel(Vector2(-2.8,-22),"natural route west working aisle",true)
+		await travel(Vector2(-3,-18.6),"natural route beyond maintenance bench",true)
+	else:
+		await travel(Vector2(0,-21),"relay return clearance")
+		await travel(Vector2(0,-18),"recorded Surveyor approach")
 	phase = "Surveyor detection and warned contact"
 	# Face and walk toward the actual actor, then stop; no AI state injection.
 	for i in 400:

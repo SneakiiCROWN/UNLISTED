@@ -19,6 +19,7 @@ var closing_step_played:=false
 
 func begin() -> void:
 	if active:return
+	game.threat.stop_voice()
 	active=true;clock=0;last_phase=""
 	closing_step_played=false
 	saved_collision_mask=game.presence.collision_mask

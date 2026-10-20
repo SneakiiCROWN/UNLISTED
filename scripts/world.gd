@@ -81,6 +81,7 @@ func _ready() -> void:
 	qa_mode = qa_mode or "--hands-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--presence-views" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--impossible-qa" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--service-room-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--exterior-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--capture-qa" in OS.get_cmdline_user_args()
 	automated_qa=(qa_mode and not "--visual-probe" in OS.get_cmdline_user_args()) or (dev_mode and "--dev-tools-qa" in OS.get_cmdline_user_args())
@@ -230,7 +231,7 @@ func wall(pos: Vector3, width: float, angle := 0.0, height := 2.8) -> void:
 		piece.set_meta("exterior_wall",pos.y>-1 and (absf(pos.x)>7.4 or is_equal_approx(pos.z,4.0) or is_equal_approx(pos.z,-10.0)))
 		for mesh in all_meshes(piece):
 			var exterior := absf(pos.x) > 7.4 or is_equal_approx(pos.z,4.0) or is_equal_approx(pos.z,-10.0)
-			mesh.material_override = texture_mat("res://assets/architecture/concrete.jpg" if pos.y < -1 or exterior else "res://assets/original/aged_paper.png",Color(0.63,0.66,0.60) if exterior else Color(0.76,0.76,0.7))
+			mesh.material_override = texture_mat("res://assets/exterior/Concrete019_1K-JPG_Color.jpg" if pos.y < -1 else ("res://assets/architecture/concrete.jpg" if exterior else "res://assets/original/aged_paper.png"),Color(0.63,0.66,0.60) if exterior else Color(0.76,0.76,0.7))
 		# Exterior concrete keeps its outside face; quiet paper lines the occupied interior.
 		if pos.y > -1 and (absf(pos.x)>7.4 or is_equal_approx(pos.z,4.0) or is_equal_approx(pos.z,-10.0)):
 			var inward := Vector3(-signf(pos.x),0,0) if absf(pos.x)>7.4 else Vector3(0,0,-signf(pos.z))
@@ -245,8 +246,11 @@ func wall(pos: Vector3, width: float, angle := 0.0, height := 2.8) -> void:
 	add_child(trim)
 	trim.position = pos
 	trim.rotation.y = angle
-	box(trim, Vector3(0, 0.12, -0.11), Vector3(width, 0.22, 0.055), Color(0.13, 0.12, 0.10))
-	box(trim, Vector3(0, height - 0.12, -0.11), Vector3(width, 0.15, 0.07), Color(0.18, 0.17, 0.14))
+	var lower_trim:=box(trim, Vector3(0, 0.12, -0.11), Vector3(width, 0.22, 0.055), Color(0.13, 0.12, 0.10))
+	var upper_trim:=box(trim, Vector3(0, height - 0.12, -0.11), Vector3(width, 0.15, 0.07), Color(0.18, 0.17, 0.14))
+	if pos.y < -1:
+		lower_trim.material_override=texture_mat("res://assets/exterior/Concrete019_1K-JPG_Color.jpg",Color(.25,.28,.25))
+		upper_trim.material_override=texture_mat("res://assets/dusk/psx_house_steel_01.png",Color(.25,.27,.24))
 
 func floor_area(x1: float, x2: float, z1: float, z2: float, y := 0.0) -> void:
 	var x := x1
@@ -257,7 +261,7 @@ func floor_area(x1: float, x2: float, z1: float, z2: float, y := 0.0) -> void:
 			var d := minf(2, z2 - z)
 			var tile := model("res://assets/architecture/floor_2x2.glb", self, Vector3(x + w/2, y - 0.15, z + d/2), Vector3(w, 0.15, d))
 			if y==0 and z2<=-10 and x1>=-14:tile.add_to_group("duplicate_yard_tiles")
-			for mesh in all_meshes(tile): mesh.material_override = texture_mat("res://assets/dusk/psx_house_floor_tiles_01.png" if y < -1 else "res://assets/dusk/psx_house_old_wood_01.png",Color(0.6,0.59,0.54))
+			for mesh in all_meshes(tile): mesh.material_override = texture_mat("res://assets/exterior/Concrete019_1K-JPG_Color.jpg" if y < -1 else "res://assets/dusk/psx_house_old_wood_01.png",Color(0.6,0.59,0.54))
 			if y == 0 and z2 <= -10 and x2 >= -14 and x1 < -1.6:
 				for mesh in all_meshes(tile):mesh.material_override = texture_mat("res://assets/architecture/concrete.jpg",Color(0.37,0.40,0.35))
 			z += 2
@@ -597,8 +601,14 @@ func build_presence() -> void:
 
 func sound(name_: String, pos: Vector3, db := -20.0, looping := false) -> AudioStreamPlayer3D:
 	var path := "res://assets/audio/"+name_+".wav"
+	# Optional owner recordings replace individual cues without changing timing.
+	var slot:=name_
+	if name_ in ["surveyor_warning","surveyor_pursuit","surveyor_attack"]:path="res://assets/audio/foley/surveyor_inhale.ogg"
 	if name_=="breath":path="res://assets/audio/foley/surveyor_inhale.ogg"
 	if name_=="capture_contact":path="res://assets/audio/foley/capture_cloth.ogg"
+	if name_ in ["surveyor_warning","surveyor_pursuit","surveyor_attack","capture_contact","capture_register"]:
+		var replacement:="res://assets/audio/owner/"+name_+".ogg"
+		if ResourceLoader.exists(replacement):path=replacement
 	if name_ in ["step","prop_impact","door"]:
 		var inside_house:=absf(pos.x)<7.4 and pos.z<4 and pos.z>-10.4
 		var porch_deck:=absf(pos.x)<1.65 and pos.z>=4 and pos.z<6.4
@@ -614,6 +624,7 @@ func sound(name_: String, pos: Vector3, db := -20.0, looping := false) -> AudioS
 	var audio := AudioStreamPlayer3D.new()
 	audio.stream = resources[path]
 	audio.set_meta("sample",name_)
+	if slot.begins_with("surveyor_") or slot.begins_with("capture_"):audio.set_meta("voice_slot",slot)
 	audio.bus = "Ambience" if looping else "SFX"
 	if not looping:
 		if pos.y < -0.8:audio.bus = "HouseCellar"
@@ -1035,6 +1046,9 @@ func prepare_automated_qa() -> void:
 
 func run_qa() -> void:
 	prepare_automated_qa()
+	if "--service-room-qa" in OS.get_cmdline_user_args():
+		var test=load("res://scripts/service_room_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
+		await test.run(self);return
 	if "--impossible-qa" in OS.get_cmdline_user_args():
 		var test=load("res://scripts/impossible_room_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
 		await test.run(self);return

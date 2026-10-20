@@ -273,9 +273,14 @@ func relay_room() -> void:
 		var id := "valve"+str(i)
 		g.valve_visuals[id] = wheel
 		g.collision(g,Vector3(x,-1.65,-23.2),Vector3(0.7,0.8,0.55),id)
-		plaque(Vector3(x,-0.97,-23.22),["01 / RED\nSUPPLY","02 / BLUE\nCOOLANT","03 / WHITE\nOCCUPANCY"][i],0.8)
-	plaque(Vector3(-1.5,-0.32,-23.51),"OCCUPANCY RELAY / FEED ISOLATION",3.6)
+		plaque(Vector3(x+.38,-0.97,-23.635),["01 / RED\nSUPPLY","02 / BLUE\nCOOLANT","03 / WHITE\nOCCUPANCY"][i],0.65)
+	# Plates sit on the backboard, beside the pipes, rather than floating out
+	# in front of them. The backboard itself is fixed to the structural wall.
+	for x in [-3.55,.55]:
+		for y in [-2.55,-.70]:textured_box(Vector3(x,y,-23.84),Vector3(.10,.10,.18),steel,Color(.26,.28,.25))
+	plaque(Vector3(-1.5,-0.34,-23.88),"OCCUPANCY RELAY / FEED ISOLATION",3.6)
 	g.box(g,Vector3(-1.5,-0.37,-22.8),Vector3(2.8,0.07,0.16),Color(0.48,0.58,0.46),false,true)
+	for x in [-2.6,-.4]:tube(Vector3(x,-.34,-22.8),Vector3(x,-.19,-22.8),.018)
 	g.lamp(Vector3(-1.5,-0.57,-22.4),Color(0.63,0.74,0.62),1.3,4.2)
 	var control := Node3D.new()
 	g.add_child(control)
@@ -286,15 +291,24 @@ func relay_room() -> void:
 	var handle: MeshInstance3D = g.box(control,Vector3(0,0.5,0.16),Vector3(0.20,0.07,0.08),Color(0.31,0.12,0.075))
 	handle.name = "IsolationHandle"
 	g.collision(control,Vector3(0,0.45,0),Vector3(0.48,0.68,0.23),"isolate")
-	plaque(Vector3(2,-0.65,-23.30),"MANUAL / PULL TO ISOLATE",1.7)
+	plaque(Vector3(2,-0.82,-23.88),"MANUAL / PULL TO ISOLATE",1.7)
+	for y in [-1.7,-1.2]:textured_box(Vector3(2,y,-23.87),Vector3(.34,.06,.12),steel,Color(.24,.27,.24))
 	textured_box(Vector3(3.85,-2.91,-20.0),Vector3(1.65,0.18,2.5),concrete,Color(0.4,0.42,0.37),true)
 	g.model("res://assets/machinery/generator.glb",g,Vector3(3.85,-2.81,-20.0),Vector3(1.25,1.45,2.2),0,true)
 	tube(Vector3(4.55,-2.5,-21.2),Vector3(4.55,-0.6,-21.2),0.12)
 	tube(Vector3(4.55,-0.6,-21.2),Vector3(4.55,-0.6,-23.5),0.12)
 	for x in [-0.3,0.3]:tube(Vector3(x,-0.5,-16),Vector3(x,-0.5,-23.5),0.03,Color(0.13,0.14,0.11))
 	for z in [-17,-19,-21,-23]:textured_box(Vector3(0,-0.42,z),Vector3(0.9,0.06,0.12),steel,Color(0.3,0.32,0.27))
-	var bench: Node3D = g.table(Vector3(-3,-3,-17.2),2.0,0.7)
-	g.model("res://assets/dusk/psx_prop_tins_01.glb",g,Vector3(-3.5,-2.19,-17.2),Vector3(0.3,0.28,0.2))
+	# Wall-side maintenance station: keep the surveyed west pursuit aisle clear.
+	# Every loose-looking detail belongs to the bench or the actual wall.
+	var bench: Node3D = g.table(Vector3(-4.58,-3,-17.4),1.8,.64)
+	bench.name="CellarMaintenanceBench";bench.rotation.y=PI/2
+	g.collision(bench,Vector3(0,.4,0),Vector3(1.8,.8,.64))
+	g.model("res://assets/dusk/psx_prop_tins_01.glb",bench,Vector3(-.45,.80,0),Vector3(.3,.28,.2))
+	g.model("res://assets/machinery/circuit_breaker.glb",g,Vector3(-4.82,-2.02,-16.8),Vector3(.32,.50,.12),PI/2)
+	tube(Vector3(-4.81,-1.52,-16.8),Vector3(-4.81,-.45,-16.8),.022)
+	tube(Vector3(-4.81,-.45,-16.8),Vector3(-4.81,-.45,-20),.022)
+	for z in [-16.8,-18.3,-19.8]:textured_box(Vector3(-4.85,-.45,z),Vector3(.10,.07,.09),steel,Color(.23,.25,.23))
 	rack(Vector3(-4.6,-3,-20),2.2,PI/2)
 
 func build(game: Node3D) -> void:

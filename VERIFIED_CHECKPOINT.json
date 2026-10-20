@@ -47,5 +47,17 @@
   "final_art_approval": false,
   "audio_listening": false,
   "surveyor_model_changed": false,
-  "known_driver_crash": "Earlier e989023 room run: nvoglv64.dll / 0xc0000005; final sequential results above; root cause not proven."
+  "known_driver_crash": "Earlier e989023 room run: nvoglv64.dll / 0xc0000005; final sequential results above; root cause not proven.",
+  "development_source_commit": "421b70c67a8758c9ee0182236f79480ff4d2cb58",
+  "development_checks": {
+    "cellar_west": {
+      "passed": 11,
+      "failed": 0
+    },
+    "cellar_east": {
+      "passed": 11,
+      "failed": 0
+    }
+  },
+  "development_scope": "Targeted exported pursuit/geometry/audio checks; full-route repair candidate verification in progress. Existing runtime fields describe published 0.5.3."
 }

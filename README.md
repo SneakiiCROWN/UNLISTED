@@ -4,6 +4,10 @@ A first-person horror investigation in a rain-soaked house, service yard and woo
 
 **Current prerelease: 0.5.3 On Record · runtime 9de26ec.**
 
+## Development snapshot
+
+The source tip now includes the first human-feedback cellar repair: wall-side workbench, actor-sized pursuit routes, mounted relay plates and restrained replaceable enemy cues. West/east exported pursuit and death/retry checks pass. Full-route verification is running; the downloadable prerelease above remains 0.5.3 until a new tested build is published. See OWNER_RECORDING_CUES.md for optional owner recording slots.
+
 ## Download and play
 
 1. [Download the Windows ZIP](https://github.com/SneakiiCROWN/UNLISTED/releases/download/unlisted-v0.5.3-on-record-public-test-20261020/UNLISTED-Windows-On-Record-Test.zip).
