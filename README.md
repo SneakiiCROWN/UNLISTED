@@ -47,3 +47,7 @@ Original project material is source-available with the permissions in LICENSE.tx
 ## Found a bug?
 
 [Open an issue](https://github.com/SneakiiCROWN/UNLISTED/issues) with the release version, Windows version, graphics hardware, steps to reproduce and what happened. Share screenshots or a short recording if useful; leave personal saves, account details and private logs out of public reports.
+
+## Current development work
+
+The verified download remains **v0.5.4 Cellar Repair**. A later source checkpoint adds clearer roof-aware foreground rain and isolated Surveyor construction studies. The study is **not approved or the default enemy**; face, hair and garment art still need improvement. No new Windows prerelease is claimed. See [current work and limitations](CHARACTER_RAIN_PROGRESS.md).

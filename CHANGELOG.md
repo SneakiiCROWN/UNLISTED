@@ -1,3 +1,9 @@
+# Unreleased working continuation
+
+- Clearer foreground rain, retaining roof collision and sheltered sound.
+- Isolated Surveyor sculpt/continuous garment study with live-AI contact evidence; not promoted.
+- Targeted Windows checks; no new complete-route acceptance or release claim.
+
 # Changelog
 
 ## 0.5.4 — Cellar Repair — 20 October 2026

@@ -17,3 +17,5 @@ The character study was not accepted; the active Surveyor model is unchanged.
 OWNER_RECORDING_CUES.md documents optional replacement cues without shipping owner
 recordings. Third-party rights and the source-available project licence are unchanged.
 Godot is MIT licensed. Do not extract/repackage game-only media as standalone assets.
+
+Current development code follows private checkpoint 033c467345a3457f4ba4b2dca4db770ead486dc5. This is newer than the verified v0.5.4 binary. DEVELOPMENT_CHECKPOINT.json describes its narrower verification scope. Character geometry, editable blends, textures, captures and complete licensed source remain local.

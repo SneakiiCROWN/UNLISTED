@@ -13,6 +13,11 @@ func _process_modification_with_delta(delta: float) -> void:
 	yaw = lerpf(yaw,target_yaw,1.0-exp(-maxf(delta,0)*0.8))
 	var transform := s.get_bone_global_pose(id)
 	transform.basis = Basis(Vector3.UP,yaw)*transform.basis*Basis(Vector3.RIGHT,-0.065)
+	if actor.tailored_presence:
+		# A held listening angle, with restrained settling while moving. The body,
+		# real locomotion and attack timing remain governed by the existing AI.
+		var roll: float=-0.13 if actor.mode in ["listen","watch"] else -0.065
+		transform.basis=transform.basis*Basis(Vector3.FORWARD,roll)
 	if actor.capture_amount>0:
 		var tilt: float=sin(smoothstep(0.25,0.67,actor.capture_phase)*PI*0.7)*0.3
 		transform.basis=Basis(Vector3.FORWARD,tilt)*transform.basis

@@ -1,0 +1,32 @@
+{
+  "private_source_checkpoint": "033c467345a3457f4ba4b2dca4db770ead486dc5",
+  "status": "working continuation; not a new verified release",
+  "default_enemy_changed": false,
+  "surveyor_art_approved": false,
+  "changes": [
+    "isolated continuous-garment and facial construction study",
+    "roof-aware foreground rain and shelter mix"
+  ],
+  "targeted_exported_results": {
+    "study_contact": {
+      "passed": 12,
+      "failed": 0
+    },
+    "exterior_movement": {
+      "passed": 54,
+      "failed": 0
+    },
+    "systems": {
+      "passed": 33,
+      "failed": 0
+    }
+  },
+  "views": [
+    "1920x1080",
+    "2560x1440",
+    "3440x1440"
+  ],
+  "full_route_repeated": false,
+  "raw_media_included": false,
+  "human_playtesting": false
+}

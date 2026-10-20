@@ -233,7 +233,7 @@ func build_feed() -> void:
 	camera.fov = 68
 	camera.cull_mask = 1|4
 	camera.current = true
-	feed_ghost = load("res://assets/original/surveyor_presence.glb").instantiate()
+	feed_ghost = load(game.surveyor_model_path()).instantiate()
 	game.add_child(feed_ghost)
 	feed_ghost.position = Vector3(0.85,0,-6.2)
 	feed_ghost.scale = Vector3.ONE*1.05

@@ -4,6 +4,7 @@ var game: Node3D
 var outside: AudioStreamPlayer
 var sheltered: AudioStreamPlayer
 var mix_level:=0.0
+var near_rain: GPUParticles3D
 
 func _ready() -> void:
 	name="BriarLaneWeather"
@@ -36,6 +37,23 @@ func _ready() -> void:
 	water.billboard_mode=BaseMaterial3D.BILLBOARD_FIXED_Y
 	water.cull_mode=BaseMaterial3D.CULL_DISABLED
 	streak.material=water;rain.draw_pass_1=streak;add_child(rain)
+	# The property-wide field supplies depth, but spreads its drops over almost
+	# 7,000 square metres. A roof-aware foreground field gives normal walking
+	# views readable, fast rain streaks without turning the whole sky white.
+	near_rain=GPUParticles3D.new();near_rain.name="ForegroundRain"
+	near_rain.amount=1500;near_rain.lifetime=1.8;near_rain.preprocess=1.8
+	near_rain.local_coords=false;near_rain.layers=8
+	near_rain.position=Vector3(0,12,9)
+	near_rain.visibility_aabb=AABB(Vector3(-18,-20,-20),Vector3(36,34,40))
+	near_rain.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var close_motion:=motion.duplicate() as ParticleProcessMaterial
+	close_motion.emission_box_extents=Vector3(8,0.12,10)
+	near_rain.process_material=close_motion
+	var close_streak:=QuadMesh.new();close_streak.size=Vector2(.012,.21)
+	var close_water:=water.duplicate() as StandardMaterial3D
+	close_water.albedo_color=Color(.47,.56,.63,.30)
+	close_streak.material=close_water;near_rain.draw_pass_1=close_streak
+	add_child(near_rain)
 	build_mist()
 	# One quiet licensed rain recording, crossfaded by shelter and routed through
 	# the existing ambience control. No thunder or new creature vocal design.
@@ -47,7 +65,7 @@ func _ready() -> void:
 		AudioServer.add_bus_effect(index,lowpass)
 	var stream: AudioStreamOggVorbis=load("res://assets/audio/foley/rain_window.ogg")
 	stream.loop=true
-	outside=AudioStreamPlayer.new();outside.stream=stream;outside.bus="Ambience";outside.volume_db=-29
+	outside=AudioStreamPlayer.new();outside.stream=stream;outside.bus="Ambience";outside.volume_db=-24
 	sheltered=AudioStreamPlayer.new();sheltered.stream=stream;sheltered.bus=bus;sheltered.volume_db=-65
 	add_child(outside);add_child(sheltered);outside.play();sheltered.play()
 
@@ -77,10 +95,11 @@ func build_mist() -> void:
 func _process(delta: float) -> void:
 	if not is_instance_valid(game.player) or not is_instance_valid(outside):return
 	var p: Vector3=game.player.position
+	near_rain.position=Vector3(p.x,p.y+12,p.z)
 	var inside:=absf(p.x)<7.6 and p.z>-10.1 and p.z<4.1
 	var shed:=p.x>-20.1 and p.x< -13.9 and p.z>-17.1 and p.z< -10.9
 	var roof:=absf(p.x)<1.8 and p.z>4 and p.z<6.5
 	var cellar:=p.y< -0.5 or (absf(p.x)<1.9 and p.z< -10 and p.z> -16)
 	mix_level=move_toward(mix_level,1.0 if inside or shed or roof or cellar else 0.0,delta*1.1)
-	outside.volume_db=lerpf(-29,-65,mix_level)
-	sheltered.volume_db=lerpf(-65,-39 if not cellar else -48,mix_level)
+	outside.volume_db=lerpf(-24,-65,mix_level)
+	sheltered.volume_db=lerpf(-65,-37 if not cellar else -48,mix_level)

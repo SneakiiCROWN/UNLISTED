@@ -12,7 +12,7 @@ func run(current: Node) -> void:
 	var actor: Node3D=g.surveyor_actor
 	var old: Node3D=actor.figure
 	old.get_parent().remove_child(old);old.queue_free()
-	var path:="res://assets/original/surveyor_continuation.glb" if "--presence-before" in OS.get_cmdline_user_args() else "res://assets/original/surveyor_presence.glb"
+	var path: String="res://assets/original/surveyor_continuation.glb" if "--presence-before" in OS.get_cmdline_user_args() else g.surveyor_model_path()
 	var external:=""
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--presence-model="):external=arg.trim_prefix("--presence-model=")

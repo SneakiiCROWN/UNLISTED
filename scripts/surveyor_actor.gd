@@ -11,12 +11,17 @@ var clips := {}
 var capture_amount:=0.0
 var capture_phase:=0.0
 var capture_diagnostics: Dictionary={}
+var tailored_presence:=false
 
 func _ready() -> void:
 	for mesh in figure.find_children("*","MeshInstance3D",true,false):
+		if mesh.name.begins_with("Continuous tailored"):tailored_presence=true
 		for i in mesh.mesh.get_surface_count():
 			var material: Material=mesh.get_active_material(i)
-			if material is BaseMaterial3D:material.texture_filter=BaseMaterial3D.TEXTURE_FILTER_NEAREST_WITH_MIPMAPS
+			if material is BaseMaterial3D:
+				material.texture_filter=BaseMaterial3D.TEXTURE_FILTER_NEAREST_WITH_MIPMAPS
+				if material.resource_name in ["Saturated umber service canvas","Ashen tissue - recessed healed orbits","Clotted wet hair","Cracked gloves and work boots"]:
+					material.vertex_color_use_as_albedo=true
 	skeleton = figure.find_children("*","Skeleton3D",true,false)[0]
 	animator = figure.find_children("*","AnimationPlayer",true,false)[0]
 	var prefixes := {"listen":"Idle_","watch":"Idle_","walk":"Walk_Formal_","run":"Jog_Fwd_","attack":"Interact_","capture":"Idle_","react":"Hit_Head_"}

@@ -573,6 +573,13 @@ func build_basement() -> void:
 	lamp(Vector3(0,-0.5,-22),warm,1.4,6)
 	sound("hum",Vector3(3,-1.5,-21),-24,true)
 
+func surveyor_model_path() -> String:
+	# An art study must pass visual review before becoming the ordinary actor.
+	# This switch is available only inside the isolated automated QA environment.
+	if qa_mode and "--surveyor-study" in OS.get_cmdline_user_args():
+		return "res://assets/original/surveyor_erasure_study.glb"
+	return "res://assets/original/surveyor_presence.glb"
+
 func build_presence() -> void:
 	presence = CharacterBody3D.new()
 	add_child(presence)
@@ -588,7 +595,7 @@ func build_presence() -> void:
 	shape.shape = capsule
 	shape.position.y = 1.025
 	presence.add_child(shape)
-	var figure := load("res://assets/original/surveyor_presence.glb").instantiate() as Node3D
+	var figure := load(surveyor_model_path()).instantiate() as Node3D
 	presence.add_child(figure)
 	figure.scale = Vector3.ONE*1.05
 	figure.rotation.y = PI

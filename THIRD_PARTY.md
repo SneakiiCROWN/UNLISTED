@@ -48,3 +48,5 @@ No reference screenshots are used as textures. No paid assets or software purcha
 
 - First-person work torch, hands and sleeves: original project geometry and materials; reproducible source tools/build_first_person.py and FirstPerson_WorkTorch.blend. No new external art dependencies.
 - Surveyor presence: existing CC0 Quaternius worker topology/rig and seven retargeted UAL clips, with original fitted thick hood, damp hair, facial sculpt and coat-fold changes. Active source tools/Surveyor_Presence.blend and refine_surveyor_presence.py. Earlier sources/models remain preserved. Provenance assets/original/surveyor_presence_provenance.json. Existing Sonniss temporary vocal/cloth cues remain unchanged and replaceable.
+
+- Isolated Erasure character study (not the default Surveyor): existing CC0 Quaternius base/UAL clips plus Hair_Long from Universal Base Characters Standard, licence reread from the preserved archive. Original continuous weighted coat, facial sculpt, vertex wear and fitting. Existing skin/work-canvas textures retained. Packed editable study: tools/Surveyor_ErasureStudy.blend. No rejected Hollow/Return design was promoted.
