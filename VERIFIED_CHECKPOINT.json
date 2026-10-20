@@ -1,0 +1,37 @@
+{
+  "runtime_commit": "1974fd4bc8ce3429b7dbed89cda20b05263c8ead",
+  "complete_source_commit": "08bab003a735880cdc2b16171667fc1af1ffd937",
+  "reports": {
+    "capture_1920x1080": {
+      "passed": 37,
+      "failed": 0,
+      "duration_seconds": 86.137525
+    },
+    "capture_2560x1440": {
+      "passed": 12,
+      "failed": 0,
+      "duration_seconds": 18.53742
+    },
+    "capture_3440x1440": {
+      "passed": 12,
+      "failed": 0,
+      "duration_seconds": 19.106241
+    },
+    "repair_native": {
+      "passed": 114,
+      "failed": 0,
+      "duration_seconds": 209.256946
+    }
+  },
+  "source_sha256": "ce9aa6efc1c1de798f12febb9d910f636fed201d9047ec1d6684cea8cc1ba791",
+  "executable_sha256": "27c1e289248f224f1d682f024b5a7011950386c89a52203ee4fe0ac681ee19e1",
+  "development_sha256": "7ce8716445f26d9ac1b6b7e28875529b941e437bc84c787df68725c9df3fc647",
+  "preserved_checkpoints": [
+    "6d5f334",
+    "7d063c6",
+    "f33438a"
+  ],
+  "human_playtesting": false,
+  "final_art_approval": false,
+  "audio_listening": false
+}

@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[node name="MenuButton" type="Button" unique_id=72083221]
+custom_minimum_size = Vector2(360, 48)
+mouse_default_cursor_shape = 2
+alignment = 0

@@ -1,0 +1,25 @@
+name: Review public source boundary
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate builder and redistribution boundary
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import ast,json
+          ast.parse(Path('tools/build_local_release.py').read_text())
+          assert not Path('assets').exists(), 'Game-only media must stay outside public source'
+          data=json.loads(Path('VERIFIED_CHECKPOINT.json').read_text())
+          assert len(data['executable_sha256'])==64
+          for path in Path('.').rglob('*'):
+              if '.git' in path.parts: continue
+              assert path.suffix.lower() not in {'.keystore','.jks','.pfx','.sav','.ogg','.wav','.ttf'}, str(path)
+          print('Public source boundary and local builder syntax passed')
+          PY

@@ -1,0 +1,52 @@
+extends Node3D
+# Imported skeletal animation, with a separate post-animation gaze modifier.
+var game: Node3D
+var figure: Node3D
+var animator: AnimationPlayer
+var skeleton: Skeleton3D
+var gaze: SkeletonModifier3D
+var mode := "listen"
+var speed := 0.0
+var clips := {}
+var capture_amount:=0.0
+var capture_phase:=0.0
+var capture_diagnostics: Dictionary={}
+
+func _ready() -> void:
+	for mesh in figure.find_children("*","MeshInstance3D",true,false):
+		for i in mesh.mesh.get_surface_count():
+			var material: Material=mesh.get_active_material(i)
+			if material is BaseMaterial3D:material.texture_filter=BaseMaterial3D.TEXTURE_FILTER_NEAREST_WITH_MIPMAPS
+	skeleton = figure.find_children("*","Skeleton3D",true,false)[0]
+	animator = figure.find_children("*","AnimationPlayer",true,false)[0]
+	var prefixes := {"listen":"Idle_","watch":"Idle_","walk":"Walk_Formal_","run":"Jog_Fwd_","attack":"Interact_","capture":"Idle_","react":"Hit_Head_"}
+	var library := AnimationLibrary.new()
+	for id in prefixes:
+		for name_ in animator.get_animation_list():
+			if name_.begins_with(prefixes[id]):
+				var a := animator.get_animation(name_).duplicate() as Animation
+				a.loop_mode = Animation.LOOP_NONE if id in ["attack","capture","react"] else Animation.LOOP_LINEAR
+				library.add_animation(id,a)
+				clips[id] = "surveyor/"+id
+				break
+	animator.add_animation_library("surveyor",library)
+	gaze = load("res://scripts/surveyor_gaze.gd").new()
+	gaze.actor = self
+	skeleton.add_child(gaze)
+	animator.play(clips.listen)
+
+func set_mode(value: String) -> void:
+	if not clips.has(value):return
+	if mode == value and animator.is_playing():return
+	mode = value
+	animator.speed_scale = 1.0
+	animator.play(clips[mode],0.36 if mode in ["listen","watch","walk"] else 0.2)
+
+func locomotion(distance_per_second: float, running := false) -> void:
+	speed = distance_per_second
+	if speed < 0.06:set_mode("watch");return
+	set_mode("run" if running else "walk")
+	animator.speed_scale = clampf(speed/(2.581*1.05 if running else 1.018*1.05),0.18,2.3)
+
+func _process(_delta: float) -> void:
+	if mode in ["listen","watch"]:animator.speed_scale = 0.72
