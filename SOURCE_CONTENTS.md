@@ -1,21 +1,23 @@
 # Source and build boundary
 
-This is the reviewed code/scene snapshot of UNLISTED 0.5.2 Room Memory.
-Complete local source checkpoint: e4b3aad07ea1b6c22b6b57e5ce6369794cacd29d.
-Final Windows runtime checkpoint: d268bae1e31b35dfd97e1a3369bfc3815689983b.
-Full native route core: 6fd2f9151086307a0b00287dac8322a588e92f88.
-Only the non-colliding drawing adjustment, matching wording and QA photos followed
-that core. See README.md and VERIFIED_CHECKPOINT.json for exact verification scope.
+This is the reviewed code/scene snapshot of UNLISTED 0.5.3 On Record.
+Complete local source checkpoint: 5e5ed5668b2a4a9d5e60877c5a2cad6c60e2d597.
+Final Windows runtime checkpoint: 9de26ece1274726b3fe500d7fb85d69ecee03423.
+Earlier complete original-ending route: e989023767b01db6e1ea5a1ecc7ae045b6b91b0b.
+The final runtime adds the physical rereadable source copy and shorter ending copy.
+Both outcomes and completed-save layouts are retested in the final executable.
+See VERIFIED_CHECKPOINT.json for exact results, including sequential room reruns.
 
-The complete active project, original assets and full local Git history remain
-preserved outside this public repository. No assets/ media, private logs, QA saves,
-conversion inboxes or original sound/font collections are published here. Asset
-references are intentional: this source snapshot alone is not a complete game.
+Full assets, original modelling sources and private Git history remain preserved
+locally. This public repository omits all assets/ media, private logs, QA saves and
+original font/sound collections. Referenced assets are intentionally absent: this
+source snapshot alone is not a playable game. Use the Windows prerelease to play.
 
-Use the Windows prerelease to play. A complete licensed local development checkout
-is required to rebuild using tools/build_local_release.py. It copies tracked files
-into isolated staging, imports, exports and exercises systems, hands and room-memory
-QA without changing the active development checkout or ordinary player saves.
+A complete licensed development checkout is required for tools/build_local_release.py.
+That builder snapshots tracked files into isolated staging, imports/exports there,
+and tests systems, hands, room, story and physical comparison. It does not change
+ordinary player saves or the active development checkout. Experimental character
+studies were rejected; the active character model remains the previous one.
 
-Godot is MIT licensed. Original material and third-party licences remain separate.
+Godot is MIT licensed. Original project and third-party licences remain separate.
 Do not extract/repackage game-only font or sound assets as standalone media.

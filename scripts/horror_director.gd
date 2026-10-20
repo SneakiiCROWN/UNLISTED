@@ -214,7 +214,7 @@ func exclude_channel(channel: String) -> void:
 		return
 	game.events.memory_confirmed = true
 	stop_audition()
-	game.inspect_text("SIMON / RETURN CHANNEL","The second channel contains an arrival with no microphone source. The mechanism has accepted your exclusion.\n\nA sheet emerges from the transport:\n\n1998 / S. WARD\nThe house can repeat a movement. It cannot understand a departure.\nDo not erase the missing person to make the count balance.\n\nBelow it, in new ink: E. WARD / THE SOURCE REMAINS.")
+	game.inspect_text("SIMON / RETURN CHANNEL",game.NOTES.SOURCE_COPY)
 	game.save_game()
 
 func build_feed() -> void:

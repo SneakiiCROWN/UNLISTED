@@ -13,7 +13,15 @@ func run(current: Node) -> void:
 	var old: Node3D=actor.figure
 	old.get_parent().remove_child(old);old.queue_free()
 	var path:="res://assets/original/surveyor_continuation.glb" if "--presence-before" in OS.get_cmdline_user_args() else "res://assets/original/surveyor_presence.glb"
-	actor.figure=load(path).instantiate();g.presence.add_child(actor.figure)
+	var external:=""
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--presence-model="):external=arg.trim_prefix("--presence-model=")
+	if external!="":
+		var document:=GLTFDocument.new();var state:=GLTFState.new()
+		assert(document.append_from_file(external,state)==OK)
+		actor.figure=document.generate_scene(state);path=external
+	else:actor.figure=load(path).instantiate()
+	g.presence.add_child(actor.figure)
 	actor.figure.scale=Vector3.ONE*1.05;actor.figure.rotation.y=PI;actor._ready()
 	g.presence.position=Vector3(0,0.04,-6.2);g.presence.visible=true
 	await wait(3.2)

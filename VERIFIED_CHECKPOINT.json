@@ -1,43 +1,51 @@
 {
-  "runtime_commit": "d268bae1e31b35dfd97e1a3369bfc3815689983b",
-  "complete_source_commit": "e4b3aad07ea1b6c22b6b57e5ce6369794cacd29d",
-  "core_full_route_commit": "6fd2f9151086307a0b00287dac8322a588e92f88",
+  "runtime_commit": "9de26ece1274726b3fe500d7fb85d69ecee03423",
+  "complete_source_commit": "5e5ed5668b2a4a9d5e60877c5a2cad6c60e2d597",
+  "earlier_accounted_route_commit": "e989023767b01db6e1ea5a1ecc7ae045b6b91b0b",
   "reports": {
+    "story": {
+      "passed": 83,
+      "failed": 0
+    },
+    "polish": {
+      "passed": 32,
+      "failed": 0
+    },
+    "on_record_route": {
+      "passed": 118,
+      "failed": 0,
+      "duration_seconds": 208.528337
+    },
     "room": {
+      "passed": 43,
+      "failed": 0,
+      "duration_seconds": 53.983214
+    },
+    "room_sequential_repeat": {
       "passed": 44,
       "failed": 0,
-      "duration_seconds": 55.065916
-    },
-    "story": {
-      "passed": 34,
-      "failed": 0
+      "duration_seconds": 55.023455
     },
     "systems": {
       "passed": 33,
       "failed": 0
     },
+    "accounted_route_prior_e989023": {
+      "passed": 116,
+      "failed": 0,
+      "duration_seconds": 207.776488
+    },
     "development": {
       "passed": 21,
       "failed": 0
-    },
-    "core_full_route": {
-      "passed": 114,
-      "failed": 0,
-      "duration_seconds": 209.324596
     }
   },
-  "core_threat": {
-    "passed": 54,
-    "failed": 0
-  },
-  "core_hands": {
-    "passed": 15,
-    "failed": 0
-  },
-  "executable_sha256": "94b0457416caba567b3b5fe1fb5f32d5838a944d3c292b5363b38639436c17bd",
-  "development_sha256": "aa3acdb3a27c87353a63463d799bc993df1c7dd5b8cebb4352d5fd27bf2fc80f",
-  "source_sha256": "11e1166363517588dd4685c645a47ff4f8830cddff8729f265e4a2861624eb81",
+  "executable_sha256": "579ffef56fee70c2bce2c271d8fcf192aa0ccbdc93b5fbe799e0abf6d796e9e9",
+  "development_sha256": "23f0b5916af0be38873efe8dfd649601869530d2a521c2ad780642eb81e11638",
+  "source_sha256": "990fd02c488f606ca306ed9262106f36319c74285ac3ff92ff386812442acc8d",
   "human_playtesting": false,
   "final_art_approval": false,
-  "audio_listening": false
+  "audio_listening": false,
+  "surveyor_model_changed": false,
+  "known_driver_crash": "Earlier e989023 room run: nvoglv64.dll / 0xc0000005; final sequential results above; root cause not proven."
 }

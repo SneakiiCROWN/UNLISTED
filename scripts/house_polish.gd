@@ -53,7 +53,9 @@ func build(game: Node3D) -> void:
 	var receipt := Node3D.new();receipt.name = "TransportReceipt";transport.add_child(receipt);receipt.position = Vector3(0,0.025,0.21);receipt.visible = false;g.memory_receipt = receipt
 	g.box(receipt,Vector3(0,0,0.08),Vector3(0.24,0.003,0.16),Color("9e967d"))
 	var tail: MeshInstance3D = g.box(receipt,Vector3(0,-0.025,0.235),Vector3(0.24,0.003,0.16),Color("9e967d"));tail.rotation.x = 0.32
-	var ink: Label3D = g.label3(receipt,"SOURCE RETAINED\nWARD / 1998",Vector3(0,0.004,0.07),0,16,Color("303b33"));ink.rotation.x = -PI/2;ink.pixel_size = 0.0011
+	var ink: Label3D = g.label3(receipt,"SOURCE RETAINED\nWARD / 1998\nCLOSE-OUT DISPUTED",Vector3(0,0.004,0.07),0,16,Color("303b33"));ink.rotation.x = -PI/2;ink.pixel_size = 0.0011
+	var source_copy: StaticBody3D=g.collision(g,transport.position+Vector3(0,.032,.29),Vector3(.25,.035,.13),"source_copy")
+	source_copy.name="ReadableTransportCopy";source_copy.collision_layer=0
 	# Warm desk pool and cold perimeter give the room depth, with real shade/arm supports.
 	repair.tube(Vector3(6.4,0.82,-8.96),Vector3(6.4,1.33,-8.96),0.016)
 	g.box(g,Vector3(6.4,1.32,-8.87),Vector3(0.22,0.055,0.24),Color("37423a"))

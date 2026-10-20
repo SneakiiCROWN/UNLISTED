@@ -2,11 +2,11 @@
 
 A first-person horror investigation in a rain-soaked house, service yard and woodland, with physical interactions, puzzles and the Surveyor.
 
-**Current prerelease: 0.5.2 Room Memory · runtime d268bae.**
+**Current prerelease: 0.5.3 On Record · runtime 9de26ec.**
 
 ## Download and play
 
-1. [Download the Windows ZIP](https://github.com/SneakiiCROWN/UNLISTED/releases/download/unlisted-v0.5.2-room-memory-public-test-20261020/UNLISTED-Windows-Room-Memory-Test.zip).
+1. [Download the Windows ZIP](https://github.com/SneakiiCROWN/UNLISTED/releases/download/unlisted-v0.5.3-on-record-public-test-20261020/UNLISTED-Windows-On-Record-Test.zip).
 2. Right-click it, choose **Extract All**, then open the extracted folder.
 3. Double-click **UNLISTED.exe** and keep its supporting files together.
 
@@ -14,17 +14,17 @@ No coding tools are needed. GitHub’s **Code → Download ZIP** contains source
 
 ## What is in this version?
 
-An authored room-memory event now develops Eli's childhood drawing through the actual environment. It is optional, reacts to observation, and preserves ordinary gravity and movement. The television's loose lead and drawing are visible physical clues. Recovery no longer retains stale arrival fades or camera zoom, and pickup prompts respect actual reach.
+The optional SOURCE / RETURN investigation now earns a different final decision. A disputed 1998 close-out, original recording and physically rereadable paper copy connect Eli's investigation to Simon's missing-person record. The existing ACCOUNTED FOR ending remains; the new ON RECORD outcome keeps the case open. Eli's own attendance answer is still recoverable.
 
-The first-person hands/work torch, carry/throw support, animated Surveyor, exterior rain and lane, A/B investigation, recoverable Eli choice and Simon / ACCOUNTED FOR ending remain. One completed ending exists. This download uses the ordinary playable executable; previous downloads remain under Releases.
+The impossible lounge, save/retry recovery, first-person hands/work torch, rain, forest and property routes remain. Completed saves remember the achieved ending; legacy completed saves retain the original one. The title-screen watcher no longer intrudes on either ending, and final choices clear the footer at all three tested resolutions.
 
 ## Checked, and still unfinished
 
-The final Windows export passed 44 room-event checks, 34 story/choice checks and 33 systems checks; its development companion passed 21 F1 checks. Native screenshots were reviewed at 1080p, 1440p and 3440×1440. Actual room movement, pickup, save/restore, Surveyor contact, death and retry were exercised with isolated automated input.
+The final Windows candidate passes 83 story/layout/save checks and 32 physical comparison/receipt/staging checks. The new ending is exercised through a continuous native route with real movement, interaction, Surveyor contact, death/retry, escape, paper reading and completed-save menus. See VERIFIED_CHECKPOINT.json for exact results and provenance. The original ending also completed a full native route on the preceding narrative runtime, before the paper interaction and final text-clearance adjustment. Both outcomes are rechecked in the final UI/save tests.
 
-The 6fd2f91 core also passed the 114-check native route, 54 threat checks and 15 hand/torch checks. The subsequent final runtime changes only adjust a non-colliding drawing, matching observation wording and QA photos. These core results are reused evidence, not a claim that the entire route ran again after the final cosmetic adjustment.
+A room test in that earlier candidate crashed in NVIDIA's nvoglv64.dll (0xc0000005) while GPU tests had overlapped. Failed evidence remains preserved locally. The final room checks run sequentially; successful reruns do not establish the root cause or guarantee crash-free behaviour on every driver.
 
-Human playtesting, subjective creature/art approval and audio listening remain pending. Surveyor character art still needs substantial improvement; this update fixes its routing through the changed room, without claiming a finished redesign. Broader story/journal/ending pacing is unfinished. No one-hour duration or additional ending is promised. Capture audio is non-silent; that measurement is not subjective mix approval.
+Human playtesting, subjective art approval and audio listening remain pending. Two character-art candidates were rejected after actual scene review; the Surveyor model is unchanged and still needs substantial work. Temporary vocals remain replaceable. Broader story pacing and the complete-game goal remain unfinished. This is an incremental alpha with two outcomes, not a promised hour-long finished game.
 
 ## Updating without losing progress
 

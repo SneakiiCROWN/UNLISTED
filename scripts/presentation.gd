@@ -607,8 +607,11 @@ func show_register() -> void:
 	label(card_body,"PROPERTY 17 / ATTENDANCE REGISTER",16,"Meta")
 	label(card_body,"UNCLOSED CALL / 1998",32,"Title")
 	label(card_body,"SIMON WARD    1998 / MARKED ABSENT / NO EXIT\nELI WARD          TONIGHT / ARRIVAL RECORDED\n\nThe relay is isolated. The old call is still open.\nWho was still inside when the 1998 entry was closed?",20)
-	add_button("Simon Ward / PRESENT",game.finish_game,true,card_body).grab_focus()
+	add_button("Simon Ward / PRESENT",func():game.finish_attendance("accounted_for"),true,card_body).grab_focus()
 	add_button("Eli Ward / PRESENT",func():resume_game();game.sound("relay",Vector3(0,1.5,4),-26);game.message("Your arrival is already entered. Simon's departure is still blank.",5),true,card_body)
+	if game.events.get("memory_confirmed",false):
+		label(card_body,"Original recording retained. You can dispute the close-out instead.",16,"Meta")
+		add_button("Attach original / keep Simon's case open",func():game.finish_attendance("on_record"),true,card_body)
 	add_button("Leave the sheet",resume_game,true,card_body)
 	entrance_animation(card)
 
@@ -643,21 +646,28 @@ func show_death(already_black := false) -> void:
 func show_ending() -> void:
 	clear_transients()
 	footer.visible = true
-	footer.text = "23:18     /     REGISTER CORRECTED"
+	var retained: bool=game.events.get("ending","accounted_for")=="on_record"
+	footer.text = "23:18     /     CLOSE-OUT DISPUTED" if retained else "23:18     /     REGISTER CORRECTED"
 	pause_world()
 	section = "ending"
 	stage.set_active(true)
+	stage.ending_outcome="on_record" if retained else "accounted_for"
+	stage.clock=0
 	stage.shadow.visible = false
 	card.visible = false
 	shade.visible = true
 	body.visible = true
 	status.visible = true
 	clear_body()
-	label(body,"PROPERTY 17  /  REGISTER CORRECTED",14,"Meta")
-	label(body,"ACCOUNTED\nFOR",48,"Title")
+	label(body,"PROPERTY 17  /  ORIGINAL RETAINED" if retained else "PROPERTY 17  /  REGISTER CORRECTED",14,"Meta")
+	label(body,"ON\nRECORD" if retained else "ACCOUNTED\nFOR",48,"Title")
 	rule(body)
-	label(body,"1998 / Simon Ward     PRESENT\nTonight / Eli Ward      DEPARTURE RECORDED",21)
-	label(body,"Your departure is recorded at 23:18.\nDispatch cancels a job at an address\nthat does not exist.\n\nYour father's service key is warm\non the passenger seat.",19)
+	if retained:
+		label(body,"1998 / Simon Ward     STILL MISSING\nTonight / Eli Ward      WITNESS RECORDED",21)
+		label(body,"You attach the original. The call stays open.\nDispatch receives your copy at 23:18.\nSeventeen Briar Lane stays in the file.\n\nYou have not brought your father home.\nYou have stopped them calling him absent.",19)
+	else:
+		label(body,"1998 / Simon Ward     PRESENT\nTonight / Eli Ward      DEPARTURE RECORDED",21)
+		label(body,"Your departure is recorded at 23:18.\nDispatch cancels a job at an address\nthat does not exist.\n\nYour father's service key is warm\non the passenger seat.",19)
 	add_button("Credits",show_credits)
 	add_button("Main Menu",func():game.started = false;show_menu(true))
 	add_button("Quit to Desktop",func():get_tree().quit())

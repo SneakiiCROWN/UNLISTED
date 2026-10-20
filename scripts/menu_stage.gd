@@ -11,6 +11,7 @@ var trees: Array[Node] = []
 var porch: OmniLight3D
 var facade_fill: OmniLight3D
 var mist: GPUParticles3D
+var ending_outcome:=""
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -79,6 +80,7 @@ func create_mist() -> void:
 
 func set_active(value: bool) -> void:
 	active = value
+	ending_outcome=""
 	porch.visible = value
 	facade_fill.visible = value
 	mist.visible = value
@@ -88,8 +90,12 @@ func set_active(value: bool) -> void:
 func _process(delta: float) -> void:
 	if not active: return
 	clock += delta
-	shadow.visible = fmod(clock,47.0) > 31.0 and fmod(clock,47.0) < 34.0
-	porch.light_energy = 0.9 if reduce_flash else 0.9-0.18*pow(maxf(sin(clock*0.37),0),18)
+	shadow.visible = ending_outcome=="" and fmod(clock,47.0) > 31.0 and fmod(clock,47.0) < 34.0
+	if ending_outcome!="":
+		# The unresolved file keeps its light. The acknowledged call goes quiet.
+		# No title-screen watcher or flicker can intrude on either earned ending.
+		porch.light_energy=.78 if ending_outcome=="on_record" else lerpf(.9,.12,smoothstep(2,8,clock))
+	else:porch.light_energy = 0.9 if reduce_flash else 0.9-0.18*pow(maxf(sin(clock*0.37),0),18)
 	if not reduce_motion:
 		camera.position.x = -10.5+sin(clock*0.055)*0.14
 		camera.look_at(Vector3(-0.1,1.8,3.6))

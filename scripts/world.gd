@@ -703,6 +703,7 @@ func _process(delta: float) -> void:
 	if not is_instance_valid(player) or not started or menu_open: return
 	time_in_game += delta
 	if memory_receipt:memory_receipt.visible = events.get("memory_confirmed",false)
+	if targets.has("source_copy"):targets.source_copy.collision_layer=1 if events.get("memory_confirmed",false) else 0
 	for key in get_tree().get_nodes_in_group("record_keys"):key.visible = not get(key.get_meta("record_flag"))
 	objective.text = current_objective()
 	var hit: Dictionary = player.target()
@@ -743,6 +744,7 @@ func open_casebook() -> void:
 	presentation.inspect_document("FIELD NOTES / RECORDS EXAMINED",text_)
 
 func interaction_name(id: String) -> String:
+	if id=="source_copy":return "Read source copy"
 	if id in ["audition_source","audition_return","exclude_return"] and stage<3:return "Inspect unpowered transport"
 	if id=="front_gate":return "Close gate" if doors[id].opened else "Open gate"
 	if doors.has(id): return "Try door" if doors[id].locked else ("Close door" if doors[id].opened else "Open door")
@@ -767,6 +769,8 @@ func interact(id: String) -> void:
 		doors[id].use()
 		return
 	match id:
+		"source_copy":
+			if events.get("memory_confirmed",false):inspect_text("SIMON / RETURN CHANNEL",NOTES.SOURCE_COPY)
 		"order":
 			if isolated:
 				presentation.show_register()
@@ -908,6 +912,16 @@ func return_event() -> void:
 	sound_caption("A single footstep.",3,"FRONT HALL",footstep)
 	for l in lamps: l.light_energy = 0.6
 	threat.arm()
+
+func finish_attendance(outcome: String) -> bool:
+	# Existing saves retain schema one. The evidence outcome is earned through the
+	# optional listening comparison; the original acknowledgement remains available.
+	if ended or not isolated or not report_read:return false
+	if outcome not in ["accounted_for","on_record"]:return false
+	if outcome=="on_record" and not events.get("memory_confirmed",false):return false
+	events.ending=outcome
+	finish_game()
+	return true
 
 func finish_game() -> void:
 	horror.beat = ""
