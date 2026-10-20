@@ -23,9 +23,9 @@ def run(label,args):
  text=log.read_text(errors='replace');assert r.returncode==0 and 'SCRIPT ERROR' not in text and 'ERROR:' not in text,(label,r.returncode,str(log))
 run('import',[a.engine,'--headless','--path',staging,'--editor','--import','--quit'])
 exe=runtime/'UNLISTED.exe';run('export',[a.engine,'--headless','--path',staging,'--export-release','Windows Desktop',exe])
-for flag in ['--systems-qa','--hands-qa']:run(flag[2:],[exe,'--max-fps','60','--',flag])
+for flag in ['--systems-qa','--hands-qa','--impossible-qa']:run(flag[2:],[exe,'--max-fps','60','--',flag])
 # Checks use dedicated fixture files; no normal saves are written by these QA modes.
-receipt={'source_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=source,text=True).strip(),'source_files':manifest,'exe_sha256':hashlib.sha256(exe.read_bytes()).hexdigest(),'checks':['systems','hands'],'human_playtest':False}
+receipt={'source_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=source,text=True).strip(),'source_files':manifest,'exe_sha256':hashlib.sha256(exe.read_bytes()).hexdigest(),'checks':['systems','hands','impossible-room'],'human_playtest':False}
 (runtime/'PRIVATE_BUILD_RECEIPT.json').write_text(json.dumps(receipt,indent=2))
 with zipfile.ZipFile(output,'w',zipfile.ZIP_DEFLATED,6) as z:
  z.write(exe,'UNLISTED.exe')

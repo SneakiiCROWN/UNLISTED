@@ -134,6 +134,10 @@ func build_ui() -> void:
 	button(events,"Test timber sound",func():
 		if allow_action():game.sound("door",game.player.position+Vector3(2,1,0),-26);log_event("sound",{"sample":"door","offset":Vector3(2,1,0)}))
 	var previews:=row(body)
+	button(previews,"Preview room memory",func():
+		if not allow_action():return
+		if game.impossible_room.begin():log_event("impossible_room");close_panel()
+		else:status.text="Stand outside the lounge, close its door and end other active encounters first.")
 	button(previews,"Preview warned contact",func():
 		if not allow_action():return
 		if game.threat.active() and game.presence.position.distance_to(game.player.position)<1.3 and game.threat.can_see_player():
@@ -240,8 +244,9 @@ func toggle_navigation() -> void:
 	geometry.surface_begin(Mesh.PRIMITIVE_LINES,material)
 	var graph: AStar3D=game.threat.graph
 	for id in graph.get_point_ids():
+		if graph.is_point_disabled(id):continue
 		for neighbor in graph.get_point_connections(id):
-			if neighbor<id:continue
+			if neighbor<id or graph.is_point_disabled(neighbor):continue
 			geometry.surface_set_color(Color("b0ac72") if graph.get_point_position(id).y< -1 else Color("67b495"))
 			geometry.surface_add_vertex(graph.get_point_position(id)+Vector3.UP*0.08)
 			geometry.surface_add_vertex(graph.get_point_position(neighbor)+Vector3.UP*0.08)

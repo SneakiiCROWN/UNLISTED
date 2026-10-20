@@ -84,12 +84,15 @@ func impact(body: RigidBody3D,id: String) -> void:
 	audio.pitch_scale = 1.25 if id=="cup" else (0.85 if body.position.y < -1 else 1.02)
 	game.threat.hear(body.position,minf(14,strength*2.4))
 
+func can_carry(body: RigidBody3D) -> bool:
+	return body.global_position.distance_to(game.player.camera.global_position)<=2.0
+
 func use() -> bool:
 	if held:release(false);return true
 	var hit: Dictionary = game.player.target()
 	if hit.is_empty() or not hit.collider.has_meta("loose_prop"):return false
 	var body: RigidBody3D = hit.collider
-	if body.position.distance_to(game.player.camera.global_position)>2.0:return false
+	if not can_carry(body):return false
 	held = body
 	held.freeze_mode = RigidBody3D.FREEZE_MODE_KINEMATIC
 	held.freeze = true

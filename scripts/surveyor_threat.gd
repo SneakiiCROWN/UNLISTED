@@ -20,6 +20,7 @@ var enabled := true
 var search_leg := 0
 var collision_active := false
 var stalk_used := false
+var memory_routes: Array[int]=[]
 
 func _ready() -> void:
 	# Points sit inside door clearances, clear of the furnished room edges.
@@ -32,8 +33,15 @@ func _ready() -> void:
 	for point in [Vector3(-3.7,-3,-16.1),Vector3(3.7,-3,-16.1),Vector3(-2.8,-3,-18.3),Vector3(2.8,-3,-18.3)]:
 		graph.add_point(graph.get_point_count(),point)
 	for pair in [[24,26],[25,27],[26,1],[27,1],[24,2],[25,2]]:graph.connect_points(pair[0],pair[1])
+	# The turned-over tables leave player-height clearance, but the Surveyor is
+	# taller. Survey actual side aisles rather than forcing it under the furniture.
+	for point in [Vector3(2.85,0,-.55),Vector3(4.5,0,-1.2),Vector3(3,0,1.9),Vector3(4.5,0,1.85)]:
+		var id:=graph.get_point_count();graph.add_point(id,point);memory_routes.append(id);graph.set_point_disabled(id,true)
+	graph.connect_points(20,memory_routes[0]);graph.connect_points(memory_routes[0],memory_routes[1])
+	graph.connect_points(20,memory_routes[2]);graph.connect_points(memory_routes[2],memory_routes[3])
 
 func reset() -> void:
+	for id in memory_routes:graph.set_point_disabled(id,true)
 	state = "dormant"
 	clock = 0
 	age = 0
@@ -127,6 +135,7 @@ func closest(point: Vector3) -> int:
 	var best := -1
 	var distance := INF
 	for id in graph.get_point_ids():
+		if graph.is_point_disabled(id):continue
 		var p := graph.get_point_position(id)
 		var score := p.distance_to(point)
 		if score < distance and clear_line(point+Vector3.UP*0.85,p+Vector3.UP*0.85):
@@ -135,6 +144,7 @@ func closest(point: Vector3) -> int:
 	return graph.get_closest_point(point) if best < 0 else best
 
 func plan(point: Vector3) -> void:
+	for id in memory_routes:graph.set_point_disabled(id,not game.impossible_room.active)
 	var from := closest(game.presence.position)
 	var to := closest(point)
 	route = graph.get_point_path(from,to)

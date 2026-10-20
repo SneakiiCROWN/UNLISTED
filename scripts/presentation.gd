@@ -40,6 +40,7 @@ var fade: ColorRect
 var transition: Tween
 var moment_tween: Tween
 var arrival_fade: Tween
+var arrival_lens: Tween
 var footer: Label
 var last_tab := "Audio"
 var display_resolution := Vector2i(1280,720)
@@ -607,7 +608,7 @@ func show_register() -> void:
 	label(card_body,"UNCLOSED CALL / 1998",32,"Title")
 	label(card_body,"SIMON WARD    1998 / MARKED ABSENT / NO EXIT\nELI WARD          TONIGHT / ARRIVAL RECORDED\n\nThe relay is isolated. The old call is still open.\nWho was still inside when the 1998 entry was closed?",20)
 	add_button("Simon Ward / PRESENT",game.finish_game,true,card_body).grab_focus()
-	add_button("Eli Ward / PRESENT",func():resume_game();game.sound("relay",Vector3(0,1.5,4),-26);game.message("Your name joins the 1998 entry. Neither exit is recorded.",5),true,card_body)
+	add_button("Eli Ward / PRESENT",func():resume_game();game.sound("relay",Vector3(0,1.5,4),-26);game.message("Your arrival is already entered. Simon's departure is still blank.",5),true,card_body)
 	add_button("Leave the sheet",resume_game,true,card_body)
 	entrance_animation(card)
 
@@ -666,6 +667,9 @@ func show_ending() -> void:
 func clear_transients() -> void:
 	if moment_tween and moment_tween.is_valid():moment_tween.kill()
 	if arrival_fade and arrival_fade.is_valid():arrival_fade.kill()
+	if arrival_lens and arrival_lens.is_valid():
+		arrival_lens.kill()
+		game.player.camera.fov=77
 	location_card.modulate.a = 0
 	location_card.visible = false
 	pending_moment = ""
@@ -741,8 +745,8 @@ func moment(id: String) -> void:
 		arrival_fade.tween_property(fade,"color:a",0.0,1.8)
 		if not prefs.data.reduced_motion:
 			game.player.camera.fov = 82
-			var lens := game.create_tween()
-			lens.tween_property(game.player.camera,"fov",77.0,3.0)
+			arrival_lens = game.create_tween()
+			arrival_lens.tween_property(game.player.camera,"fov",77.0,3.0)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if section == "intro" and event is InputEventKey and event.pressed and not event.echo and event.keycode in [KEY_SPACE,KEY_E,KEY_ESCAPE]:

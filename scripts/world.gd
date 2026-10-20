@@ -46,6 +46,8 @@ var threat: Node3D
 var physical: Node3D
 var capture_director: Node
 var memory_receipt: Node3D
+var lounge_contents: Node3D
+var impossible_room: Node3D
 var hint_until := 0.0
 var tv_light: OmniLight3D
 var security_light: OmniLight3D
@@ -78,6 +80,7 @@ func _ready() -> void:
 	qa_mode = qa_mode or "--exterior-views" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--hands-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--presence-views" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--impossible-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--exterior-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--capture-qa" in OS.get_cmdline_user_args()
 	automated_qa=(qa_mode and not "--visual-probe" in OS.get_cmdline_user_args()) or (dev_mode and "--dev-tools-qa" in OS.get_cmdline_user_args())
@@ -108,6 +111,8 @@ func _ready() -> void:
 	physical = load("res://scripts/physical_props.gd").new()
 	physical.game = self
 	add_child(physical)
+	impossible_room=load("res://scripts/impossible_room.gd").new()
+	impossible_room.game=self;add_child(impossible_room)
 	capture_director=load("res://scripts/surveyor_capture.gd").new()
 	capture_director.game=self
 	add_child(capture_director)
@@ -411,6 +416,8 @@ func build_world() -> void:
 	model("res://assets/dusk/psx_prop_radiator_01.glb",self,Vector3(-1.24,0.12,-3),Vector3(1.4,0.78,0.18),PI/2,true)
 	furniture("vase",Vector3(1.05,0,-4),Vector3(0.35,0.6,0.35))
 	# Occupied living room: a television, conversation seating, fallen chair, clutter.
+	lounge_contents=Node3D.new();lounge_contents.name="LoungeContents";add_child(lounge_contents)
+	var lounge_before:=get_children()
 	furniture("couch",Vector3(6.4,0,0.3),Vector3(2.6,0.95,0.95),PI/2)
 	table(Vector3(4.5,0,0.3),1.7,0.9)
 	model("res://assets/dusk/psx_prop_newspapers_01.glb",self,Vector3(4.1,0.81,0.2),Vector3(0.5,0.04,0.35))
@@ -421,6 +428,8 @@ func build_world() -> void:
 	table(Vector3(3.2,0,-1.85),1.5,0.7)
 	monitor(Vector3(3.2,1.13,-1.85),"television","NO SIGNAL\n\n23:17:08\n\nONE OCCUPANT")
 	tv_light = lamp(Vector3(3.2,1.5,-1.1),cold,1.2,4)
+	for piece in get_children():
+		if not lounge_before.has(piece):piece.reparent(lounge_contents)
 	fixture(Vector3(5,2.67,1.8),false)
 	window_at(Vector3(7.37,0,2),-PI/2)
 	# Kitchen and electrical fault. Not all rooms are lit before power restoration.
@@ -472,6 +481,7 @@ func build_world() -> void:
 	add_child(ambience)
 	ambience.play()
 	roomtone = sound("hum",Vector3(3.2,1.2,-1.8),-28,true)
+	roomtone.reparent(lounge_contents)
 	sound("wind",Vector3(0,1,8),-24,true)
 	var outdoor=load("res://scripts/exterior_world.gd").new()
 	outdoor.game=self;add_child(outdoor)
@@ -486,6 +496,7 @@ func glazed_wall(pos: Vector3,width: float,angle: float,offset: float,half:=0.67
 	wall(pos+tangent*offset+Vector3.UP*2.4,half*2,angle,0.4)
 	var glass_collision:=collision(self,pos+tangent*offset+Vector3.UP*1.7,Vector3(half*2,1.4,0.10))
 	glass_collision.rotation.y=angle;glass_collision.name="ClosedWindowGlass"
+	glass_collision.set_meta("transparent_glass",true)
 
 func window_glass_material() -> StandardMaterial3D:
 	if materials.has("closed_window_glass"):return materials.closed_window_glass
@@ -640,6 +651,7 @@ func show_credits() -> void:
 	presentation.show_credits()
 
 func new_game() -> void:
+	if is_instance_valid(impossible_room):impossible_room.reset()
 	if is_instance_valid(capture_director):capture_director.cancel()
 	if is_instance_valid(capture_director):capture_director.repeats=0
 	presentation.pending_notice = ""
@@ -697,7 +709,7 @@ func _process(delta: float) -> void:
 	prompt.text = ""
 	if physical.held:prompt.text = "[ E ]  Release"
 	elif not hit.is_empty() and hit.collider.has_meta("loose_prop"):
-		prompt.text = "[ E ]  Carry "+str(hit.collider.get_meta("prop_label"))
+		if physical.can_carry(hit.collider):prompt.text = "[ E ]  Carry "+str(hit.collider.get_meta("prop_label"))
 	elif not hit.is_empty() and hit.collider.has_meta("interaction"):
 		var id: String = hit.collider.get_meta("interaction")
 		prompt.text = "[ E ]  " + interaction_name(id)
@@ -762,13 +774,13 @@ func interact(id: String) -> void:
 				stage = maxi(stage,1)
 				inspect_text("NIGHT CALL / 17 BRIAR LANE",NOTES.CALL)
 		"television":
-			if stage < 3:inspect_text("DISCONNECTED SET","The plug lies behind the table. The set hums anyway. There is no signal.\n\nUnder it is a child's floor-plan drawing, signed ELI / AGE 7.")
+			if stage < 3:inspect_text("DISCONNECTED SET","The lead ends in a loose plug behind the table. The set is humming.\n\nA drawing lies beside it: ELI / AGE 7. Its chair is drawn against the ceiling.")
 			else:
 				var observation := "A worker stands beside the office door."
 				if events.get("memory_echo",false):
 					observation = "The worker follows the route you took. It pauses where you paused. Its head turns late.\nThe footsteps you heard after stopping had the same uneven rhythm as yours."
 					events.memory_reviewed = true
-				inspect_text("CAM 02 / HALL","The picture shows the hall you just left. "+observation+"\n\nThe timestamp does not advance. There is no camera mounted at that angle.\n\nUnder the set is your drawing, signed ELI / AGE 7.")
+				inspect_text("CAM 02 / HALL","The picture shows the hall you just left. "+observation+"\n\nThe timestamp does not advance. There is no camera mounted at that angle.\n\nBeside the set is your drawing, signed ELI / AGE 7.")
 
 		"fuse":
 			if not fuse:
@@ -889,8 +901,9 @@ func basement_event() -> void:
 func return_event() -> void:
 	events["return"] = true
 	if not threat.active():presence.visible = false
-	chair.rotation.z = 0
-	chair.position = Vector3(0.65,0,-2.8)
+	if not impossible_room.active:
+		chair.rotation.z = 0
+		chair.position = Vector3(0.65,0,-2.8)
 	var footstep=sound("step",Vector3(0,0,1),-18)
 	sound_caption("A single footstep.",3,"FRONT HALL",footstep)
 	for l in lamps: l.light_energy = 0.6
@@ -919,7 +932,11 @@ func door_save_states() -> Dictionary:
 	return result
 
 func apply_save(data: Dictionary) -> void:
+	if is_instance_valid(impossible_room):impossible_room.reset()
 	if is_instance_valid(capture_director):capture_director.cancel()
+	presentation.clear_transients()
+	subtitle.text="";caption_until=time_in_game
+	player.camera.fov=77
 	presentation.pending_notice = ""
 	presence.visible = false
 	chair.rotation = Vector3(0,PI,0)
@@ -958,6 +975,7 @@ func apply_save(data: Dictionary) -> void:
 	if events.has("return"):
 		chair.rotation.z = 0
 		chair.position = Vector3(0.65,0,-2.8)
+	impossible_room.restore_saved()
 	targets["fuse"].collision_layer = 0 if fuse else 1
 	fuse_mesh.visible = not fuse
 	started = true
@@ -1003,6 +1021,9 @@ func prepare_automated_qa() -> void:
 
 func run_qa() -> void:
 	prepare_automated_qa()
+	if "--impossible-qa" in OS.get_cmdline_user_args():
+		var test=load("res://scripts/impossible_room_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
+		await test.run(self);return
 	if "--presence-views" in OS.get_cmdline_user_args():
 		var test = load("res://scripts/surveyor_presence_views.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
 		await test.run(self);return

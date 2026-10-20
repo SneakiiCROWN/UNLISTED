@@ -87,12 +87,38 @@ func details(g: Node) -> void:
 	# Clips join the stock sheets to the existing backing board.
 	for x in [-3.2,-2.65,-2.10]:g.box(g,Vector3(x,2.02,-9.79),Vector3(0.07,0.045,0.05),Color(0.30,0.31,0.27))
 	# The child's plan is a physical clue underneath the impossible television feed.
-	g.box(g,Vector3(3.58,0.814,-1.63),Vector3(0.31,0.008,0.23),Color(0.57,0.55,0.43))
+	var drawing_before: Array=g.get_children()
+	g.box(g,Vector3(3.58,0.814,-1.63),Vector3(0.25,0.008,0.23),Color(0.57,0.55,0.43))
 	for x in [-0.06,0.06]:g.box(g,Vector3(3.58+x,0.82,-1.63),Vector3(0.003,0.002,0.17),Color(0.19,0.23,0.20))
 	for z in [-0.05,0.04]:g.box(g,Vector3(3.58,0.82,-1.63+z),Vector3(0.22,0.002,0.003),Color(0.19,0.23,0.20))
+	# A small chair is drawn against the top of the room, not its floor.
+	# This physical clue precedes the later room-memory; no extra popup or sign.
+	for spec in [Vector4(3.535,-1.68,3.535,-1.64),Vector4(3.575,-1.68,3.575,-1.64),Vector4(3.535,-1.64,3.585,-1.64),Vector4(3.585,-1.64,3.585,-1.608)]:
+		var a:=Vector3(spec.x,.8215,spec.y);var b:=Vector3(spec.z,.8215,spec.w)
+		var stroke: MeshInstance3D=g.box(g,(a+b)*.5,Vector3(.0018,.001,a.distance_to(b)),Color(.15,.18,.16))
+		stroke.look_at(b,Vector3.UP)
 	var drawing: Label3D = g.label3(g,"ELI / AGE 7",Vector3(3.58,0.824,-1.54),0,16,Color(0.18,0.20,0.16))
 	drawing.rotation.x = -PI/2
 	drawing.pixel_size = 0.0014
+	# The same drawing belongs to the table when the remembered room turns over.
+	for piece in g.get_children():
+		if not drawing_before.has(piece):
+			piece.reparent(g.lounge_contents)
+			piece.position.x+=.22
+	# Make the work-order fault physically inspectable: a real loose lead and
+	# three-pin plug behind the humming set, separated from its wall socket.
+	var lead:=Node3D.new();lead.name="UnpluggedTelevisionLead";g.lounge_contents.add_child(lead)
+	var points: Array[Vector3]=[Vector3(3.0,1.02,-2.16),Vector3(3.05,.83,-2.30),Vector3(3.18,.35,-2.32),Vector3(3.27,.032,-2.35),Vector3(3.55,.027,-2.40),Vector3(3.84,.035,-2.34)]
+	for i in range(points.size()-1):
+		var a:=points[i];var b:=points[i+1]
+		var cord:=cylinder(g,lead,(a+b)*.5,.006,a.distance_to(b),Color(.035,.04,.036))
+		cord.quaternion=Quaternion(Vector3.UP,(b-a).normalized())
+	g.box(lead,Vector3(3.86,.035,-2.33),Vector3(.046,.028,.054),Color(.13,.135,.12))
+	for pin in [Vector3(0,.020,-.016),Vector3(-.014,.020,.009),Vector3(.014,.020,.009)]:
+		g.box(lead,Vector3(3.86,.035,-2.33)+pin,Vector3(.004,.015,.004),Color(.40,.32,.15))
+	g.box(g,Vector3(3.85,.28,-2.892),Vector3(.085,.13,.026),Color(.43,.42,.34))
+	for pin in [Vector3(0,.027,0),Vector3(-.016,0,0),Vector3(.016,0,0)]:
+		g.box(g,Vector3(3.85,.28,-2.876)+pin,Vector3(.005,.014,.003),Color(.07,.075,.065))
 	# Useful, sparse maintenance records sit on the existing office desk.
 	g.box(g,Vector3(6.26,0.835,-8.61),Vector3(0.35,0.045,0.27),Color(0.34,0.30,0.21))
 	g.box(g,Vector3(6.24,0.865,-8.6),Vector3(0.31,0.018,0.23),Color(0.61,0.58,0.45))

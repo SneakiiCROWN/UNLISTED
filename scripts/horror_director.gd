@@ -112,7 +112,7 @@ func record_step(point: Vector3,sample := "step",pitch := 1.0) -> void:
 
 func memory_process(delta: float) -> void:
 	process_audition(delta)
-	if game.events.get("memory_reviewed",false):game.physical.repeat_placement()
+	if game.events.get("memory_reviewed",false) and not game.impossible_room.active:game.physical.repeat_placement()
 	archive_clock += delta
 	if not game.events.get("memory_echo",false) and game.stage>=3 and game.events.get("memory_trace",[]).size()>=4 and game.player.velocity.length()<0.2 and not game.report_read:
 		echo_clock += delta
@@ -267,7 +267,7 @@ func _process(delta: float) -> void:
 	memory_process(delta)
 	# Make room for concrete sounds; silence follows the electrical change.
 	var score_target := -42.0 if game.events.has("house_responds") and not game.report_read else -35.0
-	if beat != "" or audition!="" or game.threat.active():score_target = -48.0
+	if beat != "" or audition!="" or game.threat.active() or game.impossible_room.active:score_target = -48.0
 	game.ambience.volume_db = move_toward(game.ambience.volume_db,score_target,delta*4)
 	feed_clock += delta
 	if feed and feed_clock > 0.4 and game.player.position.distance_to(Vector3(3.2,0,-1.8)) < 7:

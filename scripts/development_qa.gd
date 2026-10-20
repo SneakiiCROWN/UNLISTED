@@ -57,6 +57,16 @@ func run(game: Node,dev: CanvasLayer) -> void:
 	await dev.capture()
 	check(dev.status.text.begins_with("Screenshot:"),"screenshot capture returns a real file")
 	await key(KEY_F1)
+	await key(KEY_F1);dev.armed.button_pressed=true
+	check(dev.teleport_to(Vector3(.3,.08,1)),"safe room-preview position")
+	var room_preview: Button
+	for node in dev.panel.find_children("*","Button",true,false):
+		if node.text=="Preview room memory":room_preview=node
+	check(room_preview!=null,"room-memory preview is exposed in actual F1 tools")
+	if room_preview:
+		room_preview.pressed.emit();await get_tree().create_timer(.2).timeout
+		check(game.impossible_room.active and not dev.opened and game.player.active,"F1 preview uses the live room system and restores controls")
+	game.new_game();await get_tree().create_timer(.2).timeout
 	game.presentation.show_menu(true)
 	await key(KEY_F1)
 	check(dev.opened and get_tree().paused,"title inspection")

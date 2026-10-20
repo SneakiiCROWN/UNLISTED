@@ -70,8 +70,11 @@ func build(game: Node3D) -> void:
 		var ring := MeshInstance3D.new();var torus := TorusMesh.new();torus.inner_radius = 0.11;torus.outer_radius = 0.145;torus.rings = 16;torus.ring_segments = 6;ring.mesh = torus;ring.material_override = g.mat(Color("333b33"));g.add_child(ring);ring.position = Vector3(-7.25,1.40,z);ring.rotation.z = PI/2
 	g.model("res://assets/dusk/psx_prop_cooking_pot_01.glb",g,Vector3(-5.3,0,-9.35),Vector3(0.42,0.22,0.40))
 	# Lounge: frayed runner and neglected reading corner, away from collision routes.
+	var lounge_before: Array=g.get_children()
 	surface(Vector3(4.8,0.012,0.35),Vector3(2.6,0.012,2.0),Color("3b4038"),"res://assets/original/work_canvas.png")
 	for i in 4:book(Vector3(5.6+i*0.17,1.15,-2.65),0.12,0.27,Color("424b3d"))
+	for piece in g.get_children():
+		if not lounge_before.has(piece):piece.reparent(g.lounge_contents)
 	# Low wall-side plumbing/weathering also anchors the shed exterior.
 	repair.tube(Vector3(-19.85,0.05,-16.5),Vector3(-19.85,2.8,-16.5),0.055)
 	for y in [0.5,1.6,2.4]:g.box(g,Vector3(-19.89,y,-16.5),Vector3(0.10,0.05,0.14),Color("42483d"))
