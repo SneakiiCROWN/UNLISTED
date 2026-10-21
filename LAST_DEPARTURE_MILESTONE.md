@@ -1,4 +1,4 @@
-# UNLISTED 0.5.5 — Last Departure
+# UNLISTED 0.5.5 â€” Last Departure
 
 The final interactive attendance register stays on the porch. The 1998 office
 workstation remains historical evidence. Both original outcomes, their eligibility,
@@ -37,8 +37,13 @@ Skip recount, which reaches the same physical evidence and choices. Walking away
 holds the sequence until the listener returns. Completed saves retain View Ending.
 The sequence does not dismiss a live Surveyor encounter.
 
-Acceptance candidate: ../Builds/UNLISTED_LastDeparture_03. Final results and delivery
-hashes will be recorded in LAST_DEPARTURE_PUBLICATION.md after acceptance completes.
+Acceptance candidate: ../Builds/UNLISTED_LastDeparture_03. Both complete Windows
+ending routes passed (122 checks each), including ordinary movement/interaction,
+valve solving, the repaired bench aisle, live contact, death/retry, escape, recount
+and completed-save menus. The new recount recovery fixture passed 20 checks; the
+impossible room 44, story/layouts 84, threat/hiding/story mode 54 and systems 33.
+Resolution fixtures and F1 companion verification are recorded separately. Final
+delivery hashes are in LAST_DEPARTURE_PUBLICATION.md and BUILD_MANIFEST.json.
 The first full-route attempt exposed a genuine defect: the retained impossible-room
 state incorrectly blocked the register. It was scenery, not a live encounter. The
 restriction was removed; the failed run remains separately in LastDeparture_02.
@@ -55,7 +60,19 @@ horror, audio-mix approval and new human playtesting remain pending.
 No rejected character study is promoted. Surveyor art remains unfinished. The new
 asset-first intake is outside the game under Assets/Intake_20261021_MakeHuman. Anatomy,
 skin and garment sources have provenance; the formal suit was rejected as a final
-wardrobe direction. Workwear and a deliberately constructed face must be reviewed
-in Blender before another isolated candidate. Existing AI/rig/animations and owner
+wardrobe direction. A separate Blender source-review library now holds the CC0 anatomy and workwear,
+with embedded provenance and a capped candidate review brief. It is not a fitted,
+rigged or approved enemy. Workwear and a deliberately constructed face must be
+reviewed before another isolated runtime candidate. Existing AI/rig/animations and owner
 vocal replacement slots remain unchanged. Preserve the stronger rain, forest, gates,
 both endings, impossible room, earlier releases and all private source/assets.
+
+## Separate shutdown diagnostic
+
+Forced headless exits reported ObjectDB/audio-resource cleanup warnings with exit
+code zero. The preserved v0.5.4 binary reproduces the same warning. A separate
+source-engine ordinary Quit probe also reports it. This is pre-existing, not a
+recount gameplay regression or a confirmed crash. The gameplay QA teardown stops
+audio before invoking Quit; its clean exits must not be used to claim this ordinary
+shutdown issue is fixed. FailedDiagnostics preserves all probes. Fixing ordinary
+audio-thread shutdown remains follow-up work.

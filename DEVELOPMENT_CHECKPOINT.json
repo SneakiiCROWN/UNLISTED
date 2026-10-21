@@ -1,26 +1,11 @@
 {
-  "private_source_checkpoint": "a8ef8e87a0d065727f2cceba5085413f57d7c015",
-  "status": "working continuation; final multi-suite acceptance in progress; not a new release yet",
-  "default_enemy_changed": false,
+  "private_source_checkpoint": "04431a85c3c64b110e565fac8cefa811f985acdd",
+  "runtime_checkpoint": "a8ef8e87a0d065727f2cceba5085413f57d7c015",
+  "status": "verified 0.5.5 Last Departure milestone",
   "surveyor_art_approved": false,
-  "targeted_exported_results": {
-    "recount_recovery": {
-      "passed": 20,
-      "failed": 0
-    },
-    "accounted_for_full_route": {
-      "passed": 122,
-      "failed": 0
-    }
-  },
-  "remaining_acceptance": [
-    "on_record full route",
-    "impossible room",
-    "story layouts",
-    "threat",
-    "systems",
-    "higher-resolution recount captures"
-  ],
+  "default_enemy_changed": false,
   "raw_media_included": false,
-  "human_playtesting": false
+  "human_playtesting": false,
+  "completed_acceptance": "See VERIFIED_CHECKPOINT.json; both full routes, recovery, three resolutions, threat, room, systems and F1",
+  "shutdown_limitation": "Pre-existing cleanup warnings remain documented"
 }

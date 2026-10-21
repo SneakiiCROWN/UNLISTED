@@ -1,10 +1,17 @@
-# Unreleased working continuation
-
-- Clearer foreground rain, retaining roof collision and sheltered sound.
-- Isolated Surveyor sculpt/continuous garment study with live-AI contact evidence; not promoted.
-- Targeted Windows checks; no new complete-route acceptance or release claim.
-
 # Changelog
+
+## 0.5.5 — Last Departure — 21 October 2026
+
+- Added a readable mechanical return record after relay isolation and historical context for the reissued call.
+- Added a controllable porch recount with real hall footsteps, practical lights and a physical two-arrival sheet.
+- Kept the porch register, both ending conditions and schema-one save compatibility.
+- Added pause/load recovery and optional recount skip; removed an unintended impossible-room block on the final interaction.
+- Clarified the distinction between acknowledging Simon's last known location and attaching the original to dispute the close-out.
+- Quieted the isolated electrical plant and removed the isolation chapter overlay.
+- Included clearer roof-aware foreground rain and sheltered audio from the intervening development checkpoint.
+- Preserved the active Surveyor model; rejected studies remain inactive. New licensed anatomy/workwear Blender intake is separate and not shipped.
+
+Human retesting and subjective horror/audio/art approval remain pending. Broader art and pacing work continues.
 
 ## 0.5.4 — Cellar Repair — 20 October 2026
 

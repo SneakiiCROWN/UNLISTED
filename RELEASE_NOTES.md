@@ -1,27 +1,13 @@
-# UNLISTED 0.5.4 — Cellar Repair (public test)
+# UNLISTED 0.5.5 / Last Departure / public test
 
-A repair pass responding to the first human playtest, preserving the 0.5.3 story and both endings.
+The service system now leads into a short environmental close-out at the existing porch register. A released 1998 relay record and the changed office display explain the reissued call. Hall footsteps, practical lighting and a changed physical sheet build the final recount without a camera lock or a duplicate ending interaction.
 
-The Surveyor's old west-cellar link crossed a workbench. The actor now uses capsule-clear
-routes and no longer reverses repeatedly at adjacent waypoints. The bench and its props
-sit along the wall, relay signage is mounted, light/backboard supports are connected,
-and worn concrete replaces the domestic cellar tiles and noisy foundation surfaces.
+Both ACCOUNTED FOR and the earned ON RECORD choice remain. New wording distinguishes acknowledging Simon's last known location from claiming he returned home. The office remains historical evidence. Pause, mid-recount save/load, walking away, optional skip and completed-save menus retain recovery.
 
-Repeated enemy breaths are quieter, spaced and non-stacking. Optional separate recording
-slots allow the owner to replace temporary sounds; the 1.1-second attack warning and
-capture timing remain unchanged. See OWNER_RECORDING_CUES.md.
+Includes the stronger roof-aware drizzle and preserves the cellar repair, impossible room, property, saves and configurable visual settings. The active Surveyor art is unchanged; rejected candidates are not promoted.
 
-The exported game is verified through both complete normal-input routes, including the
-repaired aisle, contact, death/retry, escape, both endings and completed-save menus.
-Targeted west/east scenarios reproduce the old fault and verify current behaviour.
-Separate resolution, room-memory, story-mode/hiding and system evidence is recorded.
+Both full exported ending routes and separate recovery, resolution, threat, room and system checks are documented in VERIFIED_CHECKPOINT.json. These are automated real-engine inputs and visual captures, not a new human playtest or subjective horror/mix approval.
 
-Still unfinished: Surveyor character art, more readable rain, broader environment
-placement/detail, environmental audio variety and a stronger post-relay climax. The
-recovered art study is not active. Previous NVIDIA-driver crashes remain unresolved.
-Human retesting of this candidate and subjective audio/art approval remain pending.
-No claim of a polished, finished or hour-long game is made.
+Still unfinished: Surveyor character art, broader environmental furnishing/audio variety and full-game pacing. The mechanical drawer uses simple original geometry. The earlier NVIDIA driver crash cause is unresolved. This is a meaningful continuation, not a claim of a complete or polished game.
 
-Extract into a new folder and launch UNLISTED.exe. Existing human-playtest saves and
-settings are preserved. Previous releases remain available for rollback. Public source
-omits restricted raw assets; the complete working source and assets remain local.
+Extract into a new folder and launch UNLISTED.exe. Keep previous releases and existing app data. Restricted raw assets, personal data and private source history are not included in this public source snapshot.

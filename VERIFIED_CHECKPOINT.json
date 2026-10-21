@@ -1,71 +1,89 @@
 {
-  "runtime_commit": "421b70c67a8758c9ee0182236f79480ff4d2cb58",
-  "complete_source_commit": "8e15337d5e7d624d4a81ccf58b936eaa950a34ae",
+  "runtime_commit": "a8ef8e87a0d065727f2cceba5085413f57d7c015",
+  "complete_source_commit": "04431a85c3c64b110e565fac8cefa811f985acdd",
   "reports": {
-    "west": {
-      "passed": 11,
+    "recount": {
+      "passed": 20,
       "failed": 0,
-      "duration_seconds": 14.570516
-    },
-    "east": {
-      "passed": 11,
-      "failed": 0,
-      "duration_seconds": 18.297216
-    },
-    "1440": {
-      "passed": 11,
-      "failed": 0,
-      "duration_seconds": 19.046044
-    },
-    "ultrawide": {
-      "passed": 11,
-      "failed": 0,
-      "duration_seconds": 15.835558
+      "duration_seconds": 19.607564
     },
     "accounted_for": {
-      "passed": 118,
+      "passed": 122,
       "failed": 0,
-      "duration_seconds": 208.722996
+      "duration_seconds": 222.267682
     },
     "on_record": {
-      "passed": 118,
+      "passed": 122,
       "failed": 0,
-      "duration_seconds": 208.593291
+      "duration_seconds": 222.159443
     },
-    "story": {
-      "passed": 83,
-      "failed": 0
-    },
-    "room": {
+    "impossible": {
       "passed": 44,
       "failed": 0,
-      "duration_seconds": 55.066186
+      "duration_seconds": 55.055598
     },
-    "systems": {
-      "passed": 33,
+    "story": {
+      "passed": 84,
       "failed": 0
     },
     "threat": {
       "passed": 54,
       "failed": 0
     },
+    "systems": {
+      "passed": 33,
+      "failed": 0
+    },
+    "1440": {
+      "passed": 20,
+      "failed": 0,
+      "duration_seconds": 21.408952
+    },
+    "ultrawide": {
+      "passed": 20,
+      "failed": 0,
+      "duration_seconds": 23.022346
+    },
     "development": {
       "passed": 21,
       "failed": 0
     }
   },
-  "executable_sha256": "2ed03e7e1cb6e5f56b0acbbfe3aec2ba57e1813ae53770cf34c581c4d1857837",
-  "development_sha256": "313443107835ac14384d52957571191b56cc55ef332d4312147ce1d983f2a085",
-  "source_sha256": "149c16f30f0fb2b99e1c54aaec6d710023d49a43d53dbcaeadd9552a95771946",
-  "human_feedback_received": true,
-  "new_candidate_human_playtested": false,
-  "final_art_approval": false,
-  "audio_listening": false,
+  "executable_sha256": "c16bae3962c4132b0653b767f1ae8405e69bc949eda2d3fca61ff1c6a756dd98",
+  "source_sha256": "ee0a53285dcd53a9ea8b793d659a7921b1c1ec632610aa1a792765dc10616526",
+  "human_playtested": false,
   "surveyor_model_changed": false,
-  "known_limitations": [
-    "Surveyor art unfinished; recovered candidate not active",
-    "Broader furnishing/rain/exterior/audio/climax repairs pending",
-    "Prior nvoglv64.dll crash unresolved; final checks run serially"
+  "surveyor_art_approved": false,
+  "subjective_audio_review": false,
+  "player_data_preserved": true,
+  "audio_signal": {
+    "accounted": {
+      "peak_dbfs": -8.441966058883265,
+      "rms_dbfs": -40.4025307480085,
+      "clipped_samples": 0,
+      "subjective_listening": false
+    },
+    "on_record": {
+      "peak_dbfs": -8.731166302389898,
+      "rms_dbfs": -40.55966003411563,
+      "clipped_samples": 0,
+      "subjective_listening": false
+    },
+    "recount": {
+      "peak_dbfs": -26.96856278338923,
+      "rms_dbfs": -60.37732502032411,
+      "clipped_samples": 0,
+      "subjective_listening": false
+    }
+  },
+  "limitations": [
+    "Short environmental climax, not a completed full game",
+    "Mechanical drawer uses simple original geometry",
+    "Surveyor art remains unfinished; new licensed Blender source review not shipped",
+    "Human narrative and subjective sound approval pending",
+    "Prior NVIDIA driver crash cause unresolved; GPU checks serial",
+    "Pre-existing headless/ordinary source Quit resource-cleanup warnings remain; exit code zero; QA teardown explicitly stops audio"
   ],
-  "player_data_preserved": true
+  "status": "verified Last Departure Windows prerelease",
+  "full_routes_use_automated_input": true
 }
