@@ -25,19 +25,25 @@ Do not replace that ZIP, tag, complete-source archive or evidence directory.
 
 ## Evidence and verification
 
-Current export: ../Builds/UNLISTED_InteriorLife_04/UNLISTED.exe.
-Its targeted interior route passes 28 checks using normal movement and interaction
+Current export: ../Builds/UNLISTED_InteriorLife_06/UNLISTED.exe.
+The gameplay/rendering files match InteriorLife_04; only the exterior test fixture
+changed afterwards. Interior captures therefore remain in InteriorLife_04.
+The targeted interior route passes 28 checks using normal movement and interaction
 from a labelled powered fixture: hall recording, transport playback, archive/key,
 door return, utility fuse, lounge circulation, window approach and save/load.
 Screenshots and a six-second game-bus recording are in QA/interiors.
 
 Before the final cosmetic cloth/rain rendering changes, InteriorLife_02 also passed
 the impossible-room regression (44) and systems/physical interaction (33). Those
-results are not mislabelled as tests of a newer binary. Final exterior/recount
-receipts are kept alongside the current preview. The first fixture omitted the
+results are not mislabelled as tests of a newer binary. Final InteriorLife_06 exterior route passes 55 checks at 2560x1440, including gate
+operation, both lane directions, the shed circuit, service-door return and compatible
+gate saves. Recount recovery passes 20 checks on the same export. The first fixture omitted the
 hall recording and failed to reopen the deliberately slammed office door; its
 failed evidence remains in InteriorLife_01. Normal gameplay was not changed to
-make those mistaken fixture assumptions pass.
+make those mistaken fixture assumptions pass. Additional failed gate fixtures
+remain in InteriorLife_04/05: the test re-aimed at a closing gate and then stood
+outside reach once it shut. The final test waits for the actual leaf and walks
+closer before reusing it. Player reach and gate collisions were not changed.
 
 No complete fresh route or new public release is claimed for this continuation.
 The published Last Departure binary separately has both full ending routes verified.
@@ -60,3 +66,12 @@ Surveyor anatomy/workwear source review stays separate in
 It is source preparation, not a fitted/rigged enemy or approved character candidate.
 The ordinary Quit cleanup warning and earlier NVIDIA issue remain documented in
 LAST_DEPARTURE_PUBLICATION.md; neither is claimed fixed by this art/audio work.
+
+## Recovery paths
+
+Runtime/art checkpoint: 46e0a3c. Later commits only document acceptance and delivery.
+Complete private source: ../Checkpoints/20261021_interior_life_working/UNLISTED_InteriorLife_Complete_Source.zip
+Private preview: ../Builds/UNLISTED_InteriorLife_Working_Preview.zip
+Visual comparison: ../Builds/UNLISTED_InteriorLife_06/Evidence/index.html
+The final source, preview and executable hashes are in that checkpoint directory
+and preview BUILD_MANIFEST.json. No previous archive or GitHub release was replaced.
