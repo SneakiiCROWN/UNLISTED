@@ -80,7 +80,7 @@ func begin_basement() -> void:
 	# Save the established relay checkpoint, never the actor's contact position.
 	begin(true)
 
-func begin(basement := false) -> void:
+func begin(basement := false,position_override: Variant=null) -> void:
 	game.horror.stop_audition()
 	stalk_used = false
 	game.horror.beat = ""
@@ -92,6 +92,9 @@ func begin(basement := false) -> void:
 	if basement:
 		game.presence.position = Vector3(-3.7 if game.horror.variant==0 else 3.7,-2.99,-16.1)
 		game.presence.look_at(Vector3(game.player.position.x,-2.99,game.player.position.z))
+	if position_override is Vector3:
+		game.presence.position=position_override
+		game.presence.look_at(Vector3(game.player.position.x,game.presence.position.y,game.player.position.z))
 	game.presence.visible = true
 	game.presence.velocity = Vector3.ZERO
 	set_collision(true)
@@ -263,7 +266,9 @@ func _physics_process(delta: float) -> void:
 	if state=="capture":return
 	if state == "dormant":
 		if game.events.get("threat_pending",false):
-			if game.events.get("threat_origin","")=="basement" and game.horror.beat!="wrong_direction":begin(true)
+			if game.events.get("threat_origin","")=="window" and game.events.get("threat_spawn",[]).size()==3:
+				var p: Array=game.events.threat_spawn;begin(false,Vector3(p[0],p[1],p[2]))
+			elif game.events.get("threat_origin","")=="basement" and game.horror.beat!="wrong_direction":begin(true)
 			elif game.player.position.y > -0.3 and game.player.position.z > -8.2:begin()
 		return
 	if not active():return

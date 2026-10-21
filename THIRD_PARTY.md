@@ -1,5 +1,12 @@
 # UNLISTED asset provenance
 
+Missing Minute: bedSingle, cabinetBedDrawer, bookcaseClosedDoors, books,
+lampRoundTable and radio reuse the existing Kenney Furniture Kit 2.0 archive,
+CC0 (assets/interiors/Kenney_CC0.txt). Private provenance records hashes in
+assets/interiors/missing_minute_provenance.json. The single carryable tin is a
+scene-selection derivative of the approved licensed Dusk tins model; geometry
+and textures stay private. No new third-party downloads or AI-generated media.
+
 Working interior continuation (after public 0.5.5): selected desk and open archive
 box from Kenney Furniture Kit 2.0, supplied archive kenney_furniture-kit.zip.
 Included License.txt explicitly declares CC0; retained in assets/interiors/Kenney_CC0.txt

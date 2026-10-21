@@ -610,7 +610,9 @@ func show_register() -> void:
 	label(card_body,"PROPERTY 17 / ATTENDANCE REGISTER",16,"Meta")
 	label(card_body,"UNCLOSED CALL / 1998",32,"Title")
 	var final_line:="and keep his case open. Take the receipt out to the lane." if game.events.get("case_v2",false) else "and keep his case open. The sheet will be sent to dispatch."
-	label(card_body,"SIMON WARD    1998 / MARKED ABSENT / NO EXIT\nELI WARD          TONIGHT / ARRIVAL RECORDED\n\nSimon was still inside when the office marked him absent.\n\nCorrect his entry and close the call, or attach the evidence\n"+final_line,20)
+	var context:="Simon was still inside when the office marked him absent."
+	if game.events.get("case_v3",false):context="Simon heard me inside. He had already phoned home.\nHe stayed because he thought someone else was trapped."
+	label(card_body,"SIMON WARD    1998 / MARKED ABSENT / NO EXIT\nELI WARD          TONIGHT / ARRIVAL RECORDED\n\n"+context+"\n\nCorrect his entry and close the call, or attach the evidence\n"+final_line,20)
 	var close_call:=add_button("Simon Ward / PRESENT",func():game.finish_attendance("accounted_for"),true,card_body)
 	close_call.text="Correct Simon's entry / close the call";close_call.grab_focus()
 	if not game.events.get("case_v2",false):add_button("Eli Ward / PRESENT",func():resume_game();game.sound("relay",Vector3(0,1.5,4),-26);game.message("Your arrival is already entered. Simon's departure is still blank.",5),true,card_body)
@@ -670,10 +672,10 @@ func show_ending() -> void:
 	rule(body)
 	if retained:
 		label(body,"1998 / Simon Ward     STILL MISSING\nTonight / Eli Ward      WITNESS RECORDED",21)
-		label(body,"You attach the original. The call stays open.\nDispatch receives your copy at 23:18.\nSeventeen Briar Lane stays in the file.\n\nYou have not brought your father home.\nYou have stopped them calling him absent.",19)
+		label(body,"You attach both pages and the faulty recording.\nDad's disappearance stays open.\nDispatch takes your name as a witness.\n\nYou haven't brought him home.\nThey cannot call this an empty house again." if game.events.get("case_v3",false) else "You attach the original. The call stays open.\nDispatch receives your copy at 23:18.\nSeventeen Briar Lane stays in the file.\n\nYou have not brought your father home.\nYou have stopped them calling him absent.",19)
 	else:
 		label(body,"1998 / Simon Ward     PRESENT\nTonight / Eli Ward      DEPARTURE RECORDED",21)
-		label(body,"You send the corrected call sheet.\nSimon Ward was here. He never logged out.\nDispatch acknowledges your departure,\nbut cannot find the address on its route.\n\nYou keep your father's service key.",19)
+		label(body,"You correct Simon's entry.\nHe refused to call the house empty.\nHis name will stay on the record.\nYou close tonight's job and walk away.\n\nYou keep the page he wrote for you." if game.events.get("case_v3",false) else "You send the corrected call sheet.\nSimon Ward was here. He never logged out.\nDispatch acknowledges your departure,\nbut cannot find the address on its route.\n\nYou keep your father's service key.",19)
 	add_button("Credits",show_credits)
 	add_button("Main Menu",func():game.started = false;show_menu(true))
 	add_button("Quit to Desktop",func():get_tree().quit())

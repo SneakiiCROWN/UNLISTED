@@ -13,7 +13,7 @@ var forearm: Node3D
 func _ready() -> void:
 	make_prop("cup","mug","res://assets/dusk/psx_prop_mug_01.glb",Vector3(4.6,0.89,0),Vector3(0.12,0.14,0.12),0.24)
 	make_prop("spare","iron fitting","res://assets/machinery/pipe_valve.glb",Vector3(-17.25,0.93,-16),Vector3(0.26,0.22,0.26),1.1)
-	make_prop("tin","tool tin","res://assets/dusk/psx_prop_tins_01.glb",Vector3(-3.20,.96,-9.4),Vector3(.23,.24,.22),1.05)
+	make_prop("tin","tool tin","res://assets/dusk/psx_prop_single_tin.glb",Vector3(-3.20,.96,-9.4),Vector3(.23,.24,.22),1.05)
 	make_prop("kitchen_mug","enamel mug","res://assets/dusk/psx_prop_mug_01.glb",Vector3(-5.6,.91,-.7),Vector3(.12,.14,.12),.25)
 	make_prop("pot","cooking pot","res://assets/dusk/psx_prop_cooking_pot_01.glb",Vector3(-6.8,1.03,1.45),Vector3(.30,.25,.30),.85)
 	build_support()

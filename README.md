@@ -30,3 +30,7 @@ Existing saves/settings remain in `%APPDATA%/UNLISTED`. Extract updates separate
 64-bit Windows and a Vulkan-capable graphics driver for Godot Forward+. The public repository deliberately omits licensed media, private logs, saves and private Git history. Rebuilding requires the complete licensed local checkout. Original code is source-available under LICENSE.txt; third-party rights remain intact. The Windows ZIP includes required notices. See THIRD_PARTY.md and ThirdPartyNotices.
 
 [Report a bug](https://github.com/SneakiiCROWN/UNLISTED/issues) with the version and reproduction steps. Keep personal saves and private logs out of public reports. Optional owner vocal recordings remain documented in OWNER_RECORDING_CUES.md.
+
+## Working source after this release
+
+The branch now contains the 0.6.0 Missing Minute chapter candidate: pressure-mark rubbing, a tunable radio, a furnished bedroom memory and a physical window encounter. The 0.5.6 download above is unchanged. Targeted native chapter checks have passed; full-route release acceptance is in progress. See MISSING_MINUTE_PROGRESS.md and STORY_ROUTE_MAP.md. The 30-60-minute target is not claimed achieved; character art and human approval remain pending.

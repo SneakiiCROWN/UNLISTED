@@ -50,6 +50,7 @@ var lounge_contents: Node3D
 var impossible_room: Node3D
 var recount: Node3D
 var investigation: Node3D
+var chapter: Node3D
 var hint_until := 0.0
 var tv_light: OmniLight3D
 var security_light: OmniLight3D
@@ -89,6 +90,7 @@ func _ready() -> void:
 	qa_mode = qa_mode or "--recount-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--interior-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--investigation-qa" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--missing-minute-qa" in OS.get_cmdline_user_args()
 	automated_qa=(qa_mode and not "--visual-probe" in OS.get_cmdline_user_args()) or (dev_mode and "--dev-tools-qa" in OS.get_cmdline_user_args())
 	if automated_qa:
 		get_tree().root.set_flag(Window.FLAG_NO_FOCUS,true)
@@ -125,6 +127,7 @@ func _ready() -> void:
 	recount=load("res://scenes/departure_recount.tscn").instantiate()
 	recount.game=self;add_child(recount)
 	investigation=load("res://scripts/investigation.gd").new();investigation.game=self;add_child(investigation)
+	chapter=load("res://scripts/missing_minute.gd").new();chapter.game=self;add_child(chapter)
 	set_volume(volume)
 	show_menu("UNLISTED", true)
 	if dev_mode:
@@ -704,6 +707,8 @@ func new_game() -> void:
 	ended = false
 	events.clear()
 	events.case_v2=true
+	events.case_v3=true
+	if is_instance_valid(chapter):chapter.restore()
 	if is_instance_valid(investigation):investigation.restore()
 	if is_instance_valid(recount):recount.restore_state()
 	physical.restore()
@@ -788,6 +793,11 @@ func open_casebook() -> void:
 	presentation.inspect_document("FIELD NOTES / RECORDS EXAMINED",text_)
 
 func interaction_name(id: String) -> String:
+	if id=="carbon_return":return "Examine impressions" if events.get("field_return_read",false) else "Inspect writing mat"
+	if id=="return_receiver":return "Tune receiver"
+	if id=="memory_drawer":return "Close drawer" if chapter.drawer_open else "Open drawer"
+	if id=="memory_page":return "Take folded page"
+	if id=="record" and events.get("case_v3",false):return "Read works-office record"
 	if id=="field_notebook":return "Take original field return"
 	if id=="relay_record":return "Read field return"
 	if id=="order" and isolated and recount.active:return "Listen"
@@ -804,6 +814,11 @@ func try_interact() -> void:
 		interact(str(hit.collider.get_meta("interaction")))
 
 func interact(id: String) -> void:
+	if id=="carbon_return":chapter.open_carbon();return
+	if id=="return_receiver":chapter.open_receiver();return
+	if id=="memory_drawer":chapter.use_drawer();return
+	if id=="memory_page":chapter.take_page();return
+	if id=="record" and events.get("case_v3",false):inspect_text("BRIAR LANE / TEMPORARY OFFICE",NOTES.SITE);save_game();return
 	if id in ["audition_source","audition_return","exclude_return"]:
 		if stage<3:message("No power. The empty kitchen carrier supplies this desk.",2.5);return
 		if id=="exclude_return":presentation.show_exclusion()
@@ -971,6 +986,7 @@ func finish_attendance(outcome: String) -> bool:
 	if ended or not isolated or not report_read:return false
 	if outcome not in ["accounted_for","on_record"]:return false
 	if outcome=="on_record" and not events.get("memory_confirmed",false):return false
+	if events.get("case_v3",false) and not events.get("bedroom_left",false):return false
 	if events.get("case_v2",false):
 		if not events.get("field_return_read",false):return false
 		events.departure_pending=outcome
@@ -1055,6 +1071,7 @@ func apply_save(data: Dictionary) -> void:
 	if data.get("ended",false): finish_game()
 	if is_instance_valid(recount):recount.restore_state()
 	if is_instance_valid(investigation):investigation.restore()
+	if is_instance_valid(chapter):chapter.restore()
 
 func save_game() -> void:
 	if is_instance_valid(capture_director) and capture_director.active:return
@@ -1094,6 +1111,9 @@ func prepare_automated_qa() -> void:
 
 func run_qa() -> void:
 	prepare_automated_qa()
+	if "--missing-minute-qa" in OS.get_cmdline_user_args():
+		var test=load("res://scripts/missing_minute_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
+		await test.run(self);return
 	if "--investigation-qa" in OS.get_cmdline_user_args():
 		var test=load("res://scripts/investigation_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
 		await test.run(self);return

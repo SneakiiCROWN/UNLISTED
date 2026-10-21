@@ -76,6 +76,9 @@ func request() -> bool:
 	if game.events.get("case_v2",false) and not game.events.get("field_return_read",false):
 		game.inspect_text("FIELD RETURN MISSING","The office file is a copy. Simon marked an original return in the service cabinet. I haven't found it yet.")
 		return false
+	if game.events.get("case_v3",false) and not game.events.get("bedroom_left",false):
+		game.inspect_text("THE UNFINISHED RETURN","The final page is missing from Dad's report. His pencil left marks on the backing sheet. I want to know what he wrote before I sign anything.")
+		return false
 	if active:return false
 	if game.events.get("recount_complete",false):return true
 	# A retained room-memory is scenery, not a live encounter. It must never

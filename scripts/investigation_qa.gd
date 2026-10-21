@@ -6,7 +6,7 @@ func run(current: Node) -> void:
 		if arg.begins_with("--evidence="):output=arg.trim_prefix("--evidence=")
 	DirAccess.make_dir_recursive_absolute(output);g.checkpoint_path=output.path_join("checkpoint.json")
 	await exact_resolution();started_at=Time.get_ticks_usec()
-	g.new_game();g.stage=3;g.isolated=true;g.report_read=true;g.shed_read=true;g.brass_key=true
+	g.new_game();g.events.case_v3=false;g.stage=3;g.isolated=true;g.report_read=true;g.shed_read=true;g.brass_key=true
 	g.events.threat_resolved=true;g.events["return"]=true;g.events.chair=true
 	g.threat.enabled=false;g.threat.reset()
 	for id in ["utility","basement","front"]:g.doors[id].locked=false;g.doors[id].set_open(true,0)

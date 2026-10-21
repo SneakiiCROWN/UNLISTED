@@ -254,6 +254,12 @@ func run(game: Node) -> void:
 		check("physical source copy can be reread",g.presentation.section=="document" and g.events.notes.has("SIMON / RETURN CHANNEL"))
 		await shot("R07_source_copy");await action("ui_cancel")
 	await travel(Vector2(3,-7),"office investigation exit");await travel(Vector2(0,-7),"hall final return")
+	if g.events.get("case_v3",false):
+		phase="Missing Minute / continuous earned investigation"
+		var chapter_test=load("res://scripts/missing_minute_qa.gd").new();add_child(chapter_test)
+		chapter_test.g=g;chapter_test.output=output;chapter_test.started_at=started_at
+		await chapter_test.play_chapter(true)
+		checks.append_array(chapter_test.checks);chapter_test.queue_free()
 	await travel(Vector2(0,2.5),"final hall return")
 	if not g.doors.front.opened:await use("front")
 	await travel(Vector2(-0.7,5.5),"porch register return");await use("order",false)
@@ -263,6 +269,8 @@ func run(game: Node) -> void:
 	await wait(6.3)
 	check("recount leaves player control and completes",g.events.get("recount_complete",false) and g.player.active and not g.menu_open)
 	await use("order",false)
+	var earned_path:=output.path_join("earned_register_checkpoint.json")
+	g.save_game();DirAccess.copy_absolute(g.checkpoint_path,earned_path)
 	if g.presentation.section=="register":
 		var final_choice:="Attach original / keep Simon's case open" if "--on-record-ending" in OS.get_cmdline_user_args() else "Simon Ward / PRESENT"
 		check("earned final choice available",g.presentation.buttons.has(final_choice))
@@ -295,6 +303,24 @@ func run(game: Node) -> void:
 	if g.presentation.buttons.has("View Ending"):g.presentation.buttons["View Ending"].pressed.emit()
 	await wait(0.5);check("completed save restores achieved ending",g.ended and g.presentation.section=="ending")
 	check("completed menu preserves selected outcome",g.events.get("ending","accounted_for")==("on_record" if "--on-record-ending" in OS.get_cmdline_user_args() else "accounted_for"))
+	if "--both-earned-endings" in OS.get_cmdline_user_args():
+		phase="Alternate ending / restore naturally earned porch checkpoint"
+		g.checkpoint_path=earned_path;g.presentation.restart_checkpoint();await wait(.5)
+		check("earned branch restores complete investigation",not g.ended and g.events.get("bedroom_left",false) and g.events.get("memory_confirmed",false))
+		await use("order",false)
+		if g.presentation.buttons.has("Attach original / keep Simon's case open"):g.presentation.buttons["Attach original / keep Simon's case open"].pressed.emit()
+		await travel(Vector2(0,8),"evidence branch porch departure")
+		await travel(Vector2(0,15.1),"evidence branch gate approach")
+		if not g.doors.front_gate.opened:await use("front_gate")
+		await travel(Vector2(0,19.5),"evidence branch crosses gate")
+		g.player.rotation.y=PI;g.player.camera.rotation=Vector3.ZERO;Input.action_press("forward")
+		var branch_until:=seconds()+5
+		while not g.ended and seconds()<branch_until:await get_tree().physics_frame
+		Input.action_release("forward")
+		check("earned alternate branch leaves on record",g.ended and g.events.get("ending","")=="on_record")
+		await shot("R09_on_record_branch")
+		g.save_game();g.load_game();await wait(.3)
+		check("alternate completed save restores correct outcome",g.ended and g.events.get("ending","")=="on_record")
 	recorder.set_recording_active(false);recorder.get_recording().save_to_wav(output.path_join("game_bus.wav"))
 	recording = false;await wait(0.2)
 	var failed := 0

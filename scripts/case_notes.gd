@@ -1,5 +1,7 @@
 extends RefCounted
 
+const SITE := "Briar Lane / temporary works office / 1998\n\nNos. 13–19 have been vacated for clearance. No. 17 is retained as the site office until the final inspection. Front room: waiting area. Rear room: property files.\n\nLeave the service feed connected until the last worker has signed out. Check the electrical occupancy counter against the handwritten register. The counter alone is not proof that a building is empty.\n\nAfter the final close-out, remove the address from the call-out list.\n\nA pencil note at the bottom: Counter has shown two all night. Only one contractor checked in."
+
 const CALL := "Work Order 017 / 17 Briar Lane\nEli Ward / night call-out\n\nA television can be heard inside. The property is supposed to be empty and its mains supply was disconnected years ago. Caller withheld.\n\nThere is no owner contact. The address was removed from the service list in 1999.\n\nI've kept Dad's last work slip since I was seven. This is the address on it. That's why I took the job."
 const ARCHIVE := "Simon Ward / electrician / 1998\nArrived 23:17. No departure recorded.\n\nAt 23:18 someone changed his entry to ABSENT. The front door had not opened. The attached missing-person report mentions his son, Eli, aged seven.\n\nA service-camera still shows another man in the hall. He isn't on the crew list. The note beneath it reads: Do not follow him downstairs.\n\nDad requested the original field return before the call was closed. It was never collected. A brass service key is clipped inside the file."
 const PROCEDURE := "Dad's service notes / 1998\n\nClose the cooling line before the supply. Leave occupancy until last, then pull the isolator. The plates on the manifold identify the lines.\n\nThe return drawer still catches. Put a weight on the floor release to hold it down. Don't open it while the feed is live.\n\nSomeone is walking upstairs. I came here alone. When I stop, he stops. I'm leaving my field return in the cabinet. If I don't get out, don't let them write this off as an empty house.\n\nA small stairwell key is taped to the back."
@@ -9,6 +11,11 @@ const ORIGINAL := "Simon Ward / original field return / 1998\n\nThe counter isn'
 const RECOUNT := "Dad's original return says he was trapped inside. The office closed his call by marking him absent, without checking the house.\n\nThe porch sheet now lists his arrival beside mine. I can correct his entry and close the service call, or attach the original and the failed comparison so his disappearance stays on record. Neither choice brings him home. I still have to get the papers out of here."
 
 static func clue(game: Node) -> String:
+	if game.events.get("case_v3",false) and game.events.get("field_return_read",false) and not game.events.get("bedroom_left",false):
+		if game.events.get("last_page_read",false):return "I have Dad's last page. I can leave the room."
+		if game.events.get("receiver_found",false):return "The answer came from the lounge. The door was shut when Dad saw it change."
+		if game.events.get("carbon_read",false):return "104.6 is a radio frequency. There is a receiver on the office desk."
+		return "The torn page left impressions. The office writing mat has a soft pencil."
 	if game.events.get("departure_pending","")!="":return "I have the receipt. I need to get it out to the lane."
 	if game.isolated and game.events.get("case_v2",false) and not game.events.get("field_return_read",false):return "The lower return drawer needs its floor release held down. A mug is too light."
 	if game.isolated:return "The original contradicts the office file. The porch register still carries the false entry."
