@@ -1,13 +1,13 @@
-# Known limitations / 0.5.5
+# Known limitations / 0.5.6
 
-- Alpha game: not a completed hour-long experience. The new recount is intentionally brief.
-- Surveyor character art remains below the intended quality. Asset-first Blender construction is underway; no new candidate is approved or active.
-- Broader furnishing, object placement, outdoor composition and environmental sound variety need further human-led visual review.
-- The mechanical relay drawer uses simple original geometry. It opens after isolation, when pursuit can begin; reading it is optional and can wait until escape.
-- Human playtesting of this candidate, artistic sign-off, horror effectiveness and subjective audio-mix approval remain pending. Signal measurements only prove captured audio is non-silent and not clipped.
-- Earlier NVIDIA nvoglv64.dll crashes have no confirmed root cause. Final tests run one GPU process at a time; this does not prove the driver issue is resolved.
-- Native recordings use timestamped viewport sampling and repeated frames at original wall-clock timing. Capture cadence is not a performance benchmark.
-- Public source excludes licensed media. Use the Windows ZIP to play; rebuilding needs the complete licensed local checkout.
-- Temporary Surveyor vocals remain replaceable through documented owner recording slots.
-
-Ordinary source-engine Quit and forced headless exits can report pre-existing audio/resource cleanup warnings despite exit code zero. The older 0.5.4 binary reproduces them. Gameplay QA stops audio during teardown, so its clean logs do not prove ordinary shutdown is fixed.
+- Still a short alpha; no one-hour or finished-game claim.
+- Surveyor character art remains below the intended quality. No rejected candidate is active. Temporary vocals remain replaceable.
+- Broader object/contact audits, furnishing, exterior composition, audio variety and a richer climax remain production work.
+- The physical cabinet/release uses simple original geometry. Some evidence is presented as readable documents.
+- Existing saves retain their original route; the new required investigation/departure applies to New Game.
+- Human retesting, artistic approval, subjective audio quality and horror effectiveness are pending. Signal measurements prove non-silence only.
+- The full-route recordings precede a final register-label width correction. Focused final-build checks retest that layout and the physical investigation/departure; gameplay code is unchanged.
+- Earlier NVIDIA driver crashes have no confirmed root cause. GPU tests run serially; this is not proof the driver issue is fixed.
+- Pre-existing ordinary source Quit/forced headless audio-resource warnings remain. QA stops audio during teardown, so clean QA exit logs do not prove ordinary shutdown fixed.
+- Native recordings retain original wall-clock timing with repeated sampled frames; readback cadence is not an FPS benchmark.
+- Public source omits licensed media. Use the Windows ZIP to play.

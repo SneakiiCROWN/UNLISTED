@@ -1,30 +1,26 @@
 {
-  "runtime_commit": "a8ef8e87a0d065727f2cceba5085413f57d7c015",
-  "complete_source_commit": "04431a85c3c64b110e565fac8cefa811f985acdd",
+  "version": "0.5.6",
+  "complete_source_commit": "dbe8341426bd6840124aca1b48ba50bb777d728a",
+  "executable_sha256": "cea2b1257035bbb5b998c9d719bf6f266bd4ecd1cb21f0bfb2c0ad9e10f05fcf",
   "reports": {
-    "recount": {
-      "passed": 20,
-      "failed": 0,
-      "duration_seconds": 19.607564
+    "investigation": {
+      "passed": 48,
+      "failed": 0
     },
-    "accounted_for": {
-      "passed": 122,
+    "accounted": {
+      "passed": 142,
       "failed": 0,
-      "duration_seconds": 222.267682
+      "duration_seconds": 261.401689
     },
     "on_record": {
-      "passed": 122,
+      "passed": 142,
       "failed": 0,
-      "duration_seconds": 222.159443
+      "duration_seconds": 262.67636
     },
     "impossible": {
-      "passed": 44,
+      "passed": 43,
       "failed": 0,
-      "duration_seconds": 55.055598
-    },
-    "story": {
-      "passed": 84,
-      "failed": 0
+      "duration_seconds": 57.878096
     },
     "threat": {
       "passed": 54,
@@ -34,56 +30,24 @@
       "passed": 33,
       "failed": 0
     },
+    "story": {
+      "passed": 84,
+      "failed": 0
+    },
     "1440": {
       "passed": 20,
       "failed": 0,
-      "duration_seconds": 21.408952
+      "duration_seconds": 22.025503
     },
     "ultrawide": {
       "passed": 20,
       "failed": 0,
-      "duration_seconds": 23.022346
-    },
-    "development": {
-      "passed": 21,
-      "failed": 0
+      "duration_seconds": 23.578847
     }
   },
-  "executable_sha256": "c16bae3962c4132b0653b767f1ae8405e69bc949eda2d3fca61ff1c6a756dd98",
-  "source_sha256": "ee0a53285dcd53a9ea8b793d659a7921b1c1ec632610aa1a792765dc10616526",
+  "acceptance_delta": "Register explanatory label shortened and line-broken; QA width check added. Final delivery repeats focused physical investigation, save/departure, old-save endings and 1080/1440/ultrawide layouts; navigation/AI/puzzle/ending code is identical to the continuous-route build.",
   "human_playtested": false,
   "surveyor_model_changed": false,
-  "surveyor_art_approved": false,
   "subjective_audio_review": false,
-  "player_data_preserved": true,
-  "audio_signal": {
-    "accounted": {
-      "peak_dbfs": -8.441966058883265,
-      "rms_dbfs": -40.4025307480085,
-      "clipped_samples": 0,
-      "subjective_listening": false
-    },
-    "on_record": {
-      "peak_dbfs": -8.731166302389898,
-      "rms_dbfs": -40.55966003411563,
-      "clipped_samples": 0,
-      "subjective_listening": false
-    },
-    "recount": {
-      "peak_dbfs": -26.96856278338923,
-      "rms_dbfs": -60.37732502032411,
-      "clipped_samples": 0,
-      "subjective_listening": false
-    }
-  },
-  "limitations": [
-    "Short environmental climax, not a completed full game",
-    "Mechanical drawer uses simple original geometry",
-    "Surveyor art remains unfinished; new licensed Blender source review not shipped",
-    "Human narrative and subjective sound approval pending",
-    "Prior NVIDIA driver crash cause unresolved; GPU checks serial",
-    "Pre-existing headless/ordinary source Quit resource-cleanup warnings remain; exit code zero; QA teardown explicitly stops audio"
-  ],
-  "status": "verified Last Departure Windows prerelease",
-  "full_routes_use_automated_input": true
+  "player_data_preserved": true
 }

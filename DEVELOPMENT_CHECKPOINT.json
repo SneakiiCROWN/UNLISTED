@@ -1,40 +1,4 @@
 {
-  "private_source_checkpoint": "a8c62b01daf9a2808f9f5d1ce6322339a4548765",
-  "runtime_checkpoint": "46e0a3c61522456ab8e7762ff9e9242270797919",
-  "status": "targeted Windows-verified working interior/weather preview after sealed 0.5.5; not a new public binary",
-  "surveyor_art_approved": false,
-  "default_enemy_changed": false,
-  "raw_media_included": false,
-  "human_playtesting": false,
-  "targeted_windows_results": {
-    "interiors": {
-      "passed": 28,
-      "failed": 0,
-      "candidate": "InteriorLife_04; identical gameplay/rendering"
-    },
-    "exterior": {
-      "passed": 55,
-      "failed": 0,
-      "candidate": "InteriorLife_06"
-    },
-    "recount": {
-      "passed": 20,
-      "failed": 0,
-      "candidate": "InteriorLife_06"
-    },
-    "room": {
-      "passed": 44,
-      "failed": 0,
-      "candidate": "InteriorLife_02; before cosmetic cloth/rain-mask changes"
-    },
-    "systems": {
-      "passed": 33,
-      "failed": 0,
-      "candidate": "InteriorLife_02; before cosmetic cloth/rain-mask changes"
-    }
-  },
-  "full_new_game_routes_repeated": false,
-  "complete_local_source_sha256": "a1c8f630fef30f5a2cda6c4d07a1a7e8039a724ae192e37da68172974efed5fe",
-  "released_binary": "0.5.5 Last Departure; see VERIFIED_CHECKPOINT.json",
-  "ordinary_player_data_preserved": true
+  "superseded_by": "0.5.6 Field Return",
+  "previous_working_public_checkpoint": "a8bb848197ddf8acc55ccb6b96c506137f000f4c"
 }
