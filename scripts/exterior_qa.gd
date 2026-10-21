@@ -29,6 +29,13 @@ func run(game: Node) -> void:
 	await travel(Vector2(0,14.7),"gate inward crossing")
 	await use("front_gate");await wait(0.8)
 	check("gate closes from garden side",not g.doors.front_gate.opened)
+	# Wait for the physical leaf, not only its destination flag, before re-aiming.
+	for i in 30:
+		if absf(g.doors.front_gate.pivot.rotation.y)<.01:break
+		await wait(.05)
+	# The closed leaf is farther away than the swung-open one. Approach within
+	# the player's ordinary 3D interaction reach instead of aiming from its edge.
+	await travel(Vector2(0,15.2),"approach closed gate from garden")
 	await use("front_gate");await wait(0.8)
 	await travel(Vector2(0,23),"garden to country lane")
 	await shot("E01_gate_house_return")

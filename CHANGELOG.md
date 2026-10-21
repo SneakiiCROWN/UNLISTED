@@ -1,5 +1,13 @@
 # Changelog
 
+## Working after 0.5.5 / not a new release
+
+- Fitted weathered archive desks, contained CRT/page text and connected recorder hardware.
+- Utility mattress supported by a cot, with draped canvas.
+- Positional rain at the real glazing; interior fragment clipping removes observed stray indoor streaks.
+- Targeted Windows movement/interaction tests; full new-game acceptance not repeated yet.
+- No Surveyor candidate promoted and no public binary replaced.
+
 ## 0.5.5 — Last Departure — 21 October 2026
 
 - Added a readable mechanical return record after relay isolation and historical context for the reissued call.

@@ -37,3 +37,7 @@ Extract each release into its own folder. Existing saves and settings remain in 
 The public repository deliberately omits media, personal saves, private logs and private Git history. The complete licensed project and backups remain local. Rebuilding requires that complete checkout; tools/build_local_release.py stages it separately. The playable ZIP incorporates licensed media without offering restricted raw assets separately. See THIRD_PARTY.md and ThirdPartyNotices.
 
 [Report a bug](https://github.com/SneakiiCROWN/UNLISTED/issues) with the version, reproduction steps and relevant screenshots. Keep personal saves and private logs out of public reports. Optional owner voice recording slots remain documented in OWNER_RECORDING_CUES.md.
+
+## Working source after this release
+
+The current branch also includes a later interior/weather continuation: fitted archive desks, contained CRT/page text, a utility cot and positional window rain with a fix for observed indoor streaks. This is **not inside the sealed 0.5.5 download**. Targeted testing and remaining acceptance are described in [INTERIOR_LIFE_PROGRESS.md](INTERIOR_LIFE_PROGRESS.md) and DEVELOPMENT_CHECKPOINT.json. Restricted/raw media remain local; the new Surveyor source library is not a runtime character.

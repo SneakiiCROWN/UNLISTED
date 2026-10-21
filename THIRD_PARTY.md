@@ -1,5 +1,11 @@
 # UNLISTED asset provenance
 
+Working interior continuation (after public 0.5.5): selected desk and open archive
+box from Kenney Furniture Kit 2.0, supplied archive kenney_furniture-kit.zip.
+Included License.txt explicitly declares CC0; retained in assets/interiors/Kenney_CC0.txt
+with SHA-256 provenance.json. Source colours are replaced by existing worn materials.
+These are not retroactively added to the sealed Last Departure executable.
+
 Verified 19 October 2026. Original archives remain untouched in ../Assets and Downloads.
 
 - Architecture: Elegant Crow, Retro Modular House Pack. Models CC0, textures AmbientCG and additional Pexels images as declared by creator. https://elegantcrow.itch.io/retro-modular-house-pack . Converted selected FBX files with Blender, attached supplied atlas. https://creativecommons.org/publicdomain/zero/1.0/ ; https://www.pexels.com/license/ . Use integrated game only; do not resell source images as an asset pack.

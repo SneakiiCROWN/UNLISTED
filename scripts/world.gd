@@ -86,6 +86,7 @@ func _ready() -> void:
 	qa_mode = qa_mode or "--exterior-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--capture-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--recount-qa" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--interior-qa" in OS.get_cmdline_user_args()
 	automated_qa=(qa_mode and not "--visual-probe" in OS.get_cmdline_user_args()) or (dev_mode and "--dev-tools-qa" in OS.get_cmdline_user_args())
 	if automated_qa:
 		get_tree().root.set_flag(Window.FLAG_NO_FOCUS,true)
@@ -366,6 +367,13 @@ func monitor(pos: Vector3, id: String, text: String, angle := 0.0) -> Node3D:
 	var screen_ := box(node, Vector3(0,0.03,0.305), Vector3(0.73,0.49,0.02), Color(0.12,0.31,0.28), false, true)
 	if id == "television":screen_.name = "TelevisionScreen";screen_.layers = 8
 	var legend_ := label3(node,text,Vector3(0,0.04,0.325),0,15,Color(0.6,0.9,0.78))
+	if id=="security":
+		legend_.font_size=16;legend_.pixel_size=.004
+		var glass: StandardMaterial3D=screen_.material_override.duplicate()
+		glass.albedo_color=Color(.035,.075,.06);glass.emission=Color(.08,.17,.135);glass.emission_energy_multiplier=.6
+		screen_.material_override=glass
+		for x in [-.30,-.23,-.16]:box(node,Vector3(x,-.285,.315),Vector3(.035,.025,.018),Color("4b5147"))
+		box(node,Vector3(.33,-.285,.315),Vector3(.012,.012,.012),Color("7d8468"),false,true)
 	if id == "television":legend_.name = "TelevisionLegend";legend_.layers = 8;legend_.position.y = 0.19;legend_.font_size = 10
 	collision(node,Vector3.ZERO,Vector3(0.9,0.68,0.65),id)
 	return node
@@ -458,15 +466,16 @@ func build_world() -> void:
 	fixture(Vector3(-4.5,2.67,1),false)
 	window_at(Vector3(-7.37,0,1),PI/2)
 	# The records office points toward the shed and personal stakes.
-	table(Vector3(5.6,0,-8.7),2.0,0.85)
+	load("res://scripts/interior_life.gd").new().desk(self,Vector3(5.6,0,-8.7),2.0,.85)
 	monitor(Vector3(5.6,1.13,-8.7),"security","SECURITY ARCHIVE\n\nWARD, SIMON\nOCCUPANCY: ERASED")
 	security_light = lamp(Vector3(5.6,1.8,-8.1),cold,0.8,4)
 	furniture("chair",Vector3(6.65,0,-7.5),Vector3(0.65,1.0,0.65),PI*0.85)
-	table(Vector3(3.3,0,-8.6),1.25,0.8)
+	load("res://scripts/interior_life.gd").new().desk(self,Vector3(3.3,0,-8.6),1.25,.8)
 	paper(Vector3(3.4,1.5,-9.89),"record","PROPERTY 17\n\nOCCUPANCY\nRECORD\n\nDO NOT ERASE")
 	fixture(Vector3(4,2.67,-6),false)
 	# Utility shelves and a genuine loose fuse pickup.
-	furniture("mattress",Vector3(-6.6,0,-5.4),Vector3(0.9,0.18,1.9))
+	var rest_mattress:=furniture("mattress",Vector3(-6.6,0,-5.4),Vector3(0.9,0.18,1.9))
+	rest_mattress.name="UtilityRestMattress"
 	table(Vector3(-3.5,0,-8.8),1.6,0.75)
 	fuse_mesh = ART.new().fuse(self)
 	fixture(Vector3(-4.5,2.67,-7))
@@ -477,6 +486,7 @@ func build_world() -> void:
 	environment_repair.build(self)
 	ART.new().details(self)
 	load("res://scripts/house_polish.gd").new().build(self)
+	load("res://scripts/interior_life.gd").new().build(self)
 	var paving := box(self,Vector3(-8.5,-0.10,-12.75),Vector3(11,0.20,5.5),Color(0.20,0.23,0.21),true)
 	paving.name="ServiceHardstanding"
 	paving.material_override = texture_mat("res://assets/architecture/concrete.jpg",Color(0.37,0.40,0.35))
@@ -1066,6 +1076,9 @@ func prepare_automated_qa() -> void:
 
 func run_qa() -> void:
 	prepare_automated_qa()
+	if "--interior-qa" in OS.get_cmdline_user_args():
+		var test=load("res://scripts/interior_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
+		await test.run(self);return
 	if "--recount-qa" in OS.get_cmdline_user_args():
 		var test=load("res://scripts/recount_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
 		await test.run(self);return

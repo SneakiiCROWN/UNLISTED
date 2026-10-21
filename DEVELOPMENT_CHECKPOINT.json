@@ -1,11 +1,28 @@
 {
-  "private_source_checkpoint": "04431a85c3c64b110e565fac8cefa811f985acdd",
-  "runtime_checkpoint": "a8ef8e87a0d065727f2cceba5085413f57d7c015",
-  "status": "verified 0.5.5 Last Departure milestone",
+  "private_source_checkpoint": "46e0a3c61522456ab8e7762ff9e9242270797919",
+  "status": "working interior/weather continuation after sealed 0.5.5; not a new public binary",
   "surveyor_art_approved": false,
   "default_enemy_changed": false,
   "raw_media_included": false,
   "human_playtesting": false,
-  "completed_acceptance": "See VERIFIED_CHECKPOINT.json; both full routes, recovery, three resolutions, threat, room, systems and F1",
-  "shutdown_limitation": "Pre-existing cleanup warnings remain documented"
+  "targeted_windows_results": {
+    "interiors": {
+      "passed": 28,
+      "failed": 0,
+      "candidate": "InteriorLife_04"
+    },
+    "impossible_room": {
+      "passed": 44,
+      "failed": 0,
+      "candidate": "InteriorLife_02 before cosmetic cloth/rain-mask changes"
+    },
+    "systems": {
+      "passed": 33,
+      "failed": 0,
+      "candidate": "InteriorLife_02 before cosmetic cloth/rain-mask changes"
+    }
+  },
+  "final_exterior_and_recount": "in progress on InteriorLife_06",
+  "full_new_game_routes_repeated": false,
+  "released_binary": "0.5.5 Last Departure; see VERIFIED_CHECKPOINT.json"
 }

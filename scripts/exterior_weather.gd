@@ -5,6 +5,7 @@ var outside: AudioStreamPlayer
 var sheltered: AudioStreamPlayer
 var mix_level:=0.0
 var near_rain: GPUParticles3D
+var window_rain: Array[AudioStreamPlayer3D]=[]
 
 func _ready() -> void:
 	name="BriarLaneWeather"
@@ -30,12 +31,8 @@ func _ready() -> void:
 	motion.collision_use_scale=false
 	rain.process_material=motion
 	var streak:=QuadMesh.new();streak.size=Vector2(0.013,0.24)
-	var water:=StandardMaterial3D.new()
-	water.transparency=BaseMaterial3D.TRANSPARENCY_ALPHA
-	water.albedo_color=Color(0.47,0.56,0.63,0.40)
-	water.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED
-	water.billboard_mode=BaseMaterial3D.BILLBOARD_FIXED_Y
-	water.cull_mode=BaseMaterial3D.CULL_DISABLED
+	var water:=ShaderMaterial.new();water.shader=load("res://shaders/rain_streak.gdshader")
+	water.set_shader_parameter("opacity",.40)
 	streak.material=water;rain.draw_pass_1=streak;add_child(rain)
 	# The property-wide field supplies depth, but spreads its drops over almost
 	# 7,000 square metres. A roof-aware foreground field gives normal walking
@@ -50,8 +47,8 @@ func _ready() -> void:
 	close_motion.emission_box_extents=Vector3(8,0.12,10)
 	near_rain.process_material=close_motion
 	var close_streak:=QuadMesh.new();close_streak.size=Vector2(.012,.21)
-	var close_water:=water.duplicate() as StandardMaterial3D
-	close_water.albedo_color=Color(.47,.56,.63,.30)
+	var close_water:=water.duplicate() as ShaderMaterial
+	close_water.set_shader_parameter("opacity",.30)
 	close_streak.material=close_water;near_rain.draw_pass_1=close_streak
 	add_child(near_rain)
 	build_mist()
@@ -68,6 +65,13 @@ func _ready() -> void:
 	outside=AudioStreamPlayer.new();outside.stream=stream;outside.bus="Ambience";outside.volume_db=-24
 	sheltered=AudioStreamPlayer.new();sheltered.stream=stream;sheltered.bus=bus;sheltered.volume_db=-65
 	add_child(outside);add_child(sheltered);outside.play();sheltered.play()
+	# Rain at the real glazing has direction; the room bed can remain restrained.
+	for spec in [Vector3(-7.30,1.6,1),Vector3(7.30,1.6,2)]:
+		var pane:=AudioStreamPlayer3D.new();pane.name="RainAtWindow";pane.stream=stream
+		pane.bus=bus;pane.volume_db=-65;pane.unit_size=1.7;pane.max_distance=7
+		pane.set_meta("source_slot","window_rain");add_child(pane);pane.position=spec
+		pane.play();pane.seek(fposmod(11.0+window_rain.size()*17.0,maxf(stream.get_length(),.1)))
+		window_rain.append(pane)
 
 func build_mist() -> void:
 	var mist:=CPUParticles3D.new();mist.name="LowDriftingMist"
@@ -102,4 +106,6 @@ func _process(delta: float) -> void:
 	var cellar:=p.y< -0.5 or (absf(p.x)<1.9 and p.z< -10 and p.z> -16)
 	mix_level=move_toward(mix_level,1.0 if inside or shed or roof or cellar else 0.0,delta*1.1)
 	outside.volume_db=lerpf(-24,-65,mix_level)
-	sheltered.volume_db=lerpf(-65,-37 if not cellar else -48,mix_level)
+	sheltered.volume_db=lerpf(-65,-40 if inside else (-37 if not cellar else -48),mix_level)
+	for pane in window_rain:
+		pane.volume_db=move_toward(pane.volume_db,-31 if inside and not cellar else -65,delta*15)
