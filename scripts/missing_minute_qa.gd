@@ -101,6 +101,44 @@ func confrontation() -> void:
 		await travel(Vector2(0,7),"retry reaches front approach",true)
 		check("physical escape from outside encounter",g.player.active and not g.menu_open)
 	g.threat.reset();g.presence.visible=false
+func edge_checks() -> void:
+	# Focused fixtures verify prerequisite edges; this is not a new full-route proof.
+	g.new_game();g.presentation.clear_transients();g.player.position=Vector3(3.4,.04,-8.0)
+	g.doors.office.locked=false;g.doors.office.set_open(true,.01);await wait(.3)
+	await use("record",false)
+	check("physical site history readable without power",g.stage<3 and g.presentation.section=="document" and g.events.get("notes",{}).has("BRIAR LANE / TEMPORARY OFFICE"))
+	check("site paper cannot grant archive key",not g.brass_key)
+	g.presentation.resume_game();g.events.field_return_read=true
+	g.chapter.open_carbon();await wait(.3)
+	var rubbing=rubbing_widget();var origin: Vector2=rubbing.global_position
+	await pointer(origin+Vector2(55,82),true)
+	for i in 4:await pointer(origin+Vector2(75+i*29,82),true,true)
+	await pointer(origin+Vector2(190,82),false)
+	var partial: Array=g.events.carbon_coverage.duplicate()
+	check("partial rubbing is genuinely incomplete",float(partial[0])>0 and float(partial[0])<.78 and not g.events.get("carbon_read",false))
+	g.presentation.resume_game();g.save_game();g.load_game();await wait(.3)
+	check("partial rubbing survives checkpoint",is_equal_approx(float(g.events.carbon_coverage[0]),float(partial[0])) and is_equal_approx(float(g.events.carbon_coverage[1]),float(partial[1])) and is_equal_approx(float(g.events.carbon_coverage[2]),float(partial[2])) and not g.events.get("carbon_read",false))
+	g.stage=3;g.isolated=false;g.chapter.open_receiver();await wait(.3)
+	var receiver=receiver_widget();receiver.dial.value=104.6
+	g.presentation.buttons["Listen to receiver"].pressed.emit();await wait(.2)
+	check("live feed blocks even correct frequency",not g.events.get("receiver_found",false) and receiver.display.text.contains("INTERFERENCE"))
+	g.isolated=true;g.presentation.buttons["Listen to receiver"].pressed.emit();await wait(.3)
+	check("known frequency needs no invisible clue flag",g.events.get("receiver_found",false) and not g.events.get("carbon_read",false))
+	g.threat.reset();g.presence.visible=false
+	for size_ in [Vector2i(1920,1080),Vector2i(2560,1440),Vector2i(3440,1440)]:
+		exact_target.size=size_;exact_target.size_2d_override=Vector2i(roundi(720.0*size_.x/size_.y),720)
+		for ending in ["accounted_for","on_record"]:
+			g.events.ending=ending;g.events.bedroom_left=true;g.events.case_v3=true;g.presentation.show_ending();await wait(1.2)
+			var bottom:=0.0
+			for button in g.presentation.buttons.values():bottom=maxf(bottom,button.get_global_rect().end.y)
+			check("settled ending fits "+ending+str(size_),bottom<=g.get_viewport().get_visible_rect().size.y and g.presentation.body.modulate.a>.99)
+			await shot("M10_"+ending+"_"+str(size_.x))
+	var failed:=0
+	for item in checks:if not item.passed:failed+=1
+	var file=FileAccess.open(output.path_join("report.json"),FileAccess.WRITE)
+	file.store_string(JSON.stringify({"passed":checks.size()-failed,"failed":failed,"checks":checks,"scope":"Focused prerequisite fixtures and settled ending layouts; actual site input and mouse rubbing. No route-completion claim."},"\t"));file.close()
+	print("CHAPTER_EDGE_QA_COMPLETE ",checks.size()-failed," passed ",failed," failed")
+	await g.qa_exit(0 if failed==0 else 1)
 func run(current: Node) -> void:
 	g=current;started_at=Time.get_ticks_usec();started_unix_seconds=Time.get_unix_time_from_system()
 	output=OS.get_executable_path().get_base_dir().path_join("QA/missing_minute")
@@ -108,6 +146,8 @@ func run(current: Node) -> void:
 		if arg.begins_with("--evidence="):output=arg.trim_prefix("--evidence=")
 	DirAccess.make_dir_recursive_absolute(output);g.checkpoint_path=output.path_join("checkpoint.json")
 	await exact_resolution()
+	if "--chapter-edge-qa" in OS.get_cmdline_user_args():
+		await edge_checks();return
 	g.new_game();g.presentation.clear_transients();g.stage=3;g.report_read=true;g.shed_read=true;g.isolated=true
 	g.events.field_return_read=true;g.events.threat_resolved=true;g.events["return"]=true;g.events.chair=true;g.events.impossible_room_resolved=true
 	g.threat.enabled=false;g.threat.reset();g.investigation.restore()

@@ -611,7 +611,7 @@ func show_register() -> void:
 	label(card_body,"UNCLOSED CALL / 1998",32,"Title")
 	var final_line:="and keep his case open. Take the receipt out to the lane." if game.events.get("case_v2",false) else "and keep his case open. The sheet will be sent to dispatch."
 	var context:="Simon was still inside when the office marked him absent."
-	if game.events.get("case_v3",false):context="Simon heard me inside. He had already phoned home.\nHe stayed because he thought someone else was trapped."
+	if game.events.get("case_v3",false):context="He found my drawing here. I was at home.\nHe stayed because he thought someone else was trapped."
 	label(card_body,"SIMON WARD    1998 / MARKED ABSENT / NO EXIT\nELI WARD          TONIGHT / ARRIVAL RECORDED\n\n"+context+"\n\nCorrect his entry and close the call, or attach the evidence\n"+final_line,20)
 	var close_call:=add_button("Simon Ward / PRESENT",func():game.finish_attendance("accounted_for"),true,card_body)
 	close_call.text="Correct Simon's entry / close the call";close_call.grab_focus()
