@@ -1,53 +1,63 @@
 {
-  "version": "0.5.6",
-  "complete_source_commit": "dbe8341426bd6840124aca1b48ba50bb777d728a",
-  "executable_sha256": "cea2b1257035bbb5b998c9d719bf6f266bd4ecd1cb21f0bfb2c0ad9e10f05fcf",
+  "version": "0.6.0",
+  "complete_source_commit": "4872e80aeb90f775f8b38f1f951139f11668d58c",
+  "executable_sha256": "9406ee82d8e99afd9d656c31478d32ec1dfaf720ccd5e2f941d3469cfe47d095",
+  "source_sha256": "912f8ca1031768f8a5d86c8f66524db4394cddd03173ae27ea677f59bcb5b44a",
   "reports": {
-    "investigation": {
-      "passed": 48,
+    "chapter": {
+      "passed": 55,
       "failed": 0
     },
-    "accounted": {
-      "passed": 142,
+    "continuous_and_earned_branch": {
+      "passed": 187,
       "failed": 0,
-      "duration_seconds": 261.401689
-    },
-    "on_record": {
-      "passed": 142,
-      "failed": 0,
-      "duration_seconds": 262.67636
-    },
-    "impossible": {
-      "passed": 43,
-      "failed": 0,
-      "duration_seconds": 57.878096
-    },
-    "threat": {
-      "passed": 54,
-      "failed": 0
+      "duration_seconds": 303.409756
     },
     "systems": {
       "passed": 33,
       "failed": 0
     },
-    "story": {
+    "threat": {
+      "passed": 54,
+      "failed": 0
+    },
+    "impossible": {
+      "passed": 43,
+      "failed": 0,
+      "duration_seconds": 57.222219
+    },
+    "legacy_story": {
       "passed": 84,
       "failed": 0
     },
-    "1440": {
+    "legacy_recount_1440": {
       "passed": 20,
       "failed": 0,
-      "duration_seconds": 22.025503
+      "duration_seconds": 21.37027
     },
-    "ultrawide": {
+    "legacy_recount_ultrawide": {
       "passed": 20,
       "failed": 0,
-      "duration_seconds": 23.578847
+      "duration_seconds": 22.854072
+    },
+    "final_edges_and_settled_endings": {
+      "passed": 13,
+      "failed": 0
     }
   },
-  "acceptance_delta": "Register explanatory label shortened and line-broken; QA width check added. Final delivery repeats focused physical investigation, save/departure, old-save endings and 1080/1440/ultrawide layouts; navigation/AI/puzzle/ending code is identical to the continuous-route build.",
+  "continuous_routes_build": "MissingMinute_04",
+  "delivery_build": "MissingMinute_06",
+  "acceptance_delta": "One register context sentence now refers to the discovered drawing instead of claiming Simon heard Eli. No mechanics/assets changed. Final export tests prerequisite edges, partial rubbing recovery and settled endings at 1080p/1440p/3440x1440. Separate MissingMinute_03 tests actual mouse chapter play, outside pursuit/death/retry and register layouts.",
+  "audio_signal": {
+    "peak_dbfs": -8.911938276921866,
+    "rms_dbfs": -42.78627531124843,
+    "clipped_samples": 0,
+    "subjective_listening": false
+  },
   "human_playtested": false,
   "surveyor_model_changed": false,
   "subjective_audio_review": false,
-  "player_data_preserved": true
+  "player_data_preserved": true,
+  "duration_target_achieved": false,
+  "windows_zip_sha256": "fe2dc65bd92430580aa990584b3d22d6f3ec453c30c5bed2b7c0e2c8678106c2"
 }

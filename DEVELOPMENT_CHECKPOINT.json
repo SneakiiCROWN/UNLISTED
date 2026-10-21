@@ -1,4 +1,6 @@
 {
-  "superseded_by": "0.5.6 Field Return",
-  "previous_working_public_checkpoint": "a8bb848197ddf8acc55ccb6b96c506137f000f4c"
+  "milestone": "0.6.0 The Missing Minute",
+  "preserved_previous_release": "0.5.6 Field Return",
+  "private_complete_source_checkpoint": "4872e80aeb90f775f8b38f1f951139f11668d58c",
+  "human_approval": "pending"
 }

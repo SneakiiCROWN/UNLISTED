@@ -1,13 +1,12 @@
-# Known limitations / 0.5.6
+# Known limitations / 0.6.0
 
-- Still a short alpha; no one-hour or finished-game claim.
-- Surveyor character art remains below the intended quality. No rejected candidate is active. Temporary vocals remain replaceable.
-- Broader object/contact audits, furnishing, exterior composition, audio variety and a richer climax remain production work.
-- The physical cabinet/release uses simple original geometry. Some evidence is presented as readable documents.
-- Existing saves retain their original route; the new required investigation/departure applies to New Game.
-- Human retesting, artistic approval, subjective audio quality and horror effectiveness are pending. Signal measurements prove non-silence only.
-- The full-route recordings precede a final register-label width correction. Focused final-build checks retest that layout and the physical investigation/departure; gameplay code is unchanged.
-- Earlier NVIDIA driver crashes have no confirmed root cause. GPU tests run serially; this is not proof the driver issue is fixed.
-- Pre-existing ordinary source Quit/forced headless audio-resource warnings remain. QA stops audio during teardown, so clean QA exit logs do not prove ordinary shutdown fixed.
-- Native recordings retain original wall-clock timing with repeated sampled frames; readback cadence is not an FPS benchmark.
-- Public source omits licensed media. Use the Windows ZIP to play.
+- Still a short alpha. The 30-60-minute first-playthrough target is not achieved or human measured. More meaningful exploration and chapters remain.
+- Surveyor character art is unchanged and below the intended quality. No rejected candidate is active; final vocals remain replaceable.
+- Human horror, narrative, artistic, subjective audio and playtime approval are pending. Non-silent audio measurements do not establish a good mix.
+- Broader prop-contact auditing, environmental detail, exterior composition and sound variety remain production work. The bedroom uses approved licensed low-poly furniture, not final character/environment art.
+- Some crucial evidence is still a readable document. Graphite coverage is row-based with an explicit motor-assistance alternative.
+- Earlier saves keep their previous completion requirements; use New Game for the new chapter.
+- One continuous fresh route and its earned alternate ending are captured. Targeted outside/edge/layout fixtures are separately identified. Final delivery corrects one register sentence after the route capture; no mechanics/assets changed.
+- Pre-existing ordinary source-Quit/forced-headless resource warnings and earlier NVIDIA driver crashes are not proven fixed. Native QA tears audio down before exit; clean QA logs do not establish normal shutdown fixed.
+- Native recordings preserve wall-clock timestamps using repeated sampled frames. Capture cadence is not an FPS benchmark.
+- Public source omits licensed media; download the Windows ZIP to play.
