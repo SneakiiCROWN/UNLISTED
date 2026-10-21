@@ -99,7 +99,8 @@ func _process(delta: float) -> void:
 			return
 		if game.report_read and game.events.get("lounge_seen_before",false) and game.events.get("chair",false) and not game.isolated and safe_to_change() and not game.threat.active() and game.horror.beat=="":
 			quiet+=delta
-			if quiet>5.0:begin()
+			if not game.events.has("impossible_delay"):game.events.impossible_delay=4.0+float(int(game.events.get("horror_seed",1998))%7)*.65
+			if quiet>float(game.events.impossible_delay):begin()
 		else:quiet=0
 		return
 	if not game.events.get("impossible_room_seen",false) and can_see_changed_room():

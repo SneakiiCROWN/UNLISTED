@@ -12,7 +12,10 @@ var forearm: Node3D
 
 func _ready() -> void:
 	make_prop("cup","mug","res://assets/dusk/psx_prop_mug_01.glb",Vector3(4.6,0.89,0),Vector3(0.12,0.14,0.12),0.24)
-	make_prop("spare","scrap fitting (throwable)","res://assets/machinery/pipe_valve.glb",Vector3(-17.25,0.93,-16),Vector3(0.26,0.22,0.26),1.1)
+	make_prop("spare","iron fitting","res://assets/machinery/pipe_valve.glb",Vector3(-17.25,0.93,-16),Vector3(0.26,0.22,0.26),1.1)
+	make_prop("tin","tool tin","res://assets/dusk/psx_prop_tins_01.glb",Vector3(-3.20,.96,-9.4),Vector3(.23,.24,.22),1.05)
+	make_prop("kitchen_mug","enamel mug","res://assets/dusk/psx_prop_mug_01.glb",Vector3(-5.6,.91,-.7),Vector3(.12,.14,.12),.25)
+	make_prop("pot","cooking pot","res://assets/dusk/psx_prop_cooking_pot_01.glb",Vector3(-6.8,1.03,1.45),Vector3(.30,.25,.30),.85)
 	build_support()
 
 func build_support() -> void:
@@ -101,7 +104,7 @@ func use() -> bool:
 	held.add_collision_exception_with(game.player)
 	if body==props.spare and not game.events.get("scrap_examined",false):
 		game.events.scrap_examined = true
-		game.message("A discarded fitting. All three relay wheels are already mounted. Metal carries sound.",3.5)
+		game.presentation.notify("Iron fitting / heavy")
 	if body==props.cup and not game.events.has("remembered_cup"):
 		game.events.remembered_cup = [body.position.x,body.position.y,body.position.z]
 	if not reminded and game.presentation.prefs.data.reminders:
@@ -168,7 +171,9 @@ func _physics_process(delta: float) -> void:
 	var camera: Camera3D = game.player.camera
 	var desired := camera.to_global(Vector3(-0.22,-0.30,-0.75))
 	var motion := desired-held.global_position
-	if motion.length()>2.2:release(false);return
+	# A quick turn can put the desired grip on the opposite side of the camera.
+	# Release only when the object itself falls out of reach, not on that turn.
+	if held.global_position.distance_to(camera.global_position)>3.0:release(false);return
 	# Frozen kinematic bodies are swept, never teleported through walls or furniture.
 	held.move_and_collide(motion.limit_length(delta*5.0))
 

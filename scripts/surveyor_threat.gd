@@ -115,11 +115,11 @@ func stop_voice() -> void:
 func voice(slot: String,db: float) -> AudioStreamPlayer3D:
 	var now: float=game.time_in_game
 	if slot=="attack":
-		if now-last_attack_voice<4:return null
+		if now-last_attack_voice<10:return null
 		last_attack_voice=now
-	elif now-last_voice<12:return null
+	elif now-last_voice<32:return null
 	last_voice=now;stop_voice()
-	voice_player=game.sound("surveyor_"+slot,game.presence.position+Vector3.UP*1.45,db)
+	voice_player=game.sound("surveyor_"+slot,game.presence.position+Vector3.UP*1.45,db-6)
 	voice_player.reparent(game.presence)
 	return voice_player
 
@@ -137,7 +137,7 @@ func can_see_player() -> bool:
 	var diff := target-from
 	if diff.length() > (12.0 if game.player.torch.visible else 8.0):return false
 	if diff.length() > 1.65 and -game.presence.global_basis.z.dot(diff.normalized()) < 0.30:return false
-	return clear_line(from,target)
+	return clear_line(from,target) or clear_line(from,game.player.position+Vector3.UP*(.55 if game.player.crouched else 1.0))
 
 func hear(point: Vector3,loudness: float) -> void:
 	if state not in ["observe","investigate","search"] or grace > 0:return

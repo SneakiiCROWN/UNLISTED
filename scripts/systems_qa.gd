@@ -22,7 +22,12 @@ func run(game: Node) -> void:
 	await wait(1)
 	var cup: RigidBody3D = g.physical.props.cup
 	var metal: RigidBody3D = g.physical.props.spare
-	check("curated movable props only",g.physical.props.size()==2)
+	var supported:=true
+	for body in g.physical.props.values():
+		var q:=PhysicsRayQueryParameters3D.create(body.global_position,body.global_position-Vector3.UP*.45,1)
+		q.exclude=[body.get_rid(),g.player.get_rid()]
+		if g.get_world_3d().direct_space_state.intersect_ray(q).is_empty():supported=false
+	check("all carryable props have nearby physical support",supported)
 	check("essential items remain fixed",not g.targets.fuse is RigidBody3D and not g.targets.valve0 is RigidBody3D)
 	check("props settle on furniture",cup.position.y>0.80 and cup.position.y<1.0 and metal.position.y>0.8 and metal.position.y<1.1,str(cup.position)+" "+str(metal.position))
 	check("weights and friction differ",metal.mass>cup.mass*3 and cup.physics_material_override.friction>=0.6)

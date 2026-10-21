@@ -8,7 +8,7 @@ func run(current: Node) -> void:
 	g.checkpoint_path=output.path_join("checkpoint.json")
 	started_at=Time.get_ticks_usec();started_unix_seconds=Time.get_unix_time_from_system()
 	await exact_resolution()
-	g.new_game();g.events.chair=true;g.events["return"]=true
+	g.new_game();g.events.case_v2=false;g.events.chair=true;g.events["return"]=true
 	g.stage=3;g.report_read=true;g.shed_read=true;g.brass_key=true
 	g.events.threat_resolved=true;g.threat.enabled=false
 	g.presentation.clear_transients()

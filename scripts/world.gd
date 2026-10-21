@@ -49,6 +49,7 @@ var memory_receipt: Node3D
 var lounge_contents: Node3D
 var impossible_room: Node3D
 var recount: Node3D
+var investigation: Node3D
 var hint_until := 0.0
 var tv_light: OmniLight3D
 var security_light: OmniLight3D
@@ -87,6 +88,7 @@ func _ready() -> void:
 	qa_mode = qa_mode or "--capture-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--recount-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--interior-qa" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--investigation-qa" in OS.get_cmdline_user_args()
 	automated_qa=(qa_mode and not "--visual-probe" in OS.get_cmdline_user_args()) or (dev_mode and "--dev-tools-qa" in OS.get_cmdline_user_args())
 	if automated_qa:
 		get_tree().root.set_flag(Window.FLAG_NO_FOCUS,true)
@@ -122,6 +124,7 @@ func _ready() -> void:
 	add_child(capture_director)
 	recount=load("res://scenes/departure_recount.tscn").instantiate()
 	recount.game=self;add_child(recount)
+	investigation=load("res://scripts/investigation.gd").new();investigation.game=self;add_child(investigation)
 	set_volume(volume)
 	show_menu("UNLISTED", true)
 	if dev_mode:
@@ -454,7 +457,6 @@ func build_world() -> void:
 		model("res://assets/dusk/psx_prop_base_cabinet_01.glb",self,Vector3(x,0,3.25),Vector3(0.95,0.86,0.65),PI,true)
 	model("res://assets/dusk/psx_prop_sink_01.glb",self,Vector3(-5.8,0.86,3.2),Vector3(0.9,0.25,0.6),PI)
 	model("res://assets/dusk/psx_prop_stove_01.glb",self,Vector3(-6.8,0,1.45),Vector3(0.75,0.88,0.7),PI/2,true)
-	model("res://assets/dusk/psx_prop_cooking_pot_01.glb",self,Vector3(-6.8,0.89,1.45),Vector3(0.32,0.25,0.32))
 	model("res://assets/dusk/psx_prop_mug_01.glb",self,Vector3(-4.8,0.87,3.2),Vector3(0.14,0.15,0.14))
 	model("res://assets/dusk/psx_prop_calendar_01.glb",self,Vector3(-4,1.6,3.89),Vector3(0.42,0.55,0.03),PI)
 	model("res://assets/dusk/psx_prop_wall_clock_01.glb",self,Vector3(-5.7,2.2,3.89),Vector3(0.4,0.4,0.05),PI)
@@ -476,8 +478,11 @@ func build_world() -> void:
 	# Utility shelves and a genuine loose fuse pickup.
 	var rest_mattress:=furniture("mattress",Vector3(-6.6,0,-5.4),Vector3(0.9,0.18,1.9))
 	rest_mattress.name="UtilityRestMattress"
-	table(Vector3(-3.5,0,-8.8),1.6,0.75)
+	table(Vector3(-2.7,0,-9.4),1.6,0.75)
+	var fuse_before:=get_children()
 	fuse_mesh = ART.new().fuse(self)
+	for piece in get_children():
+		if not fuse_before.has(piece) and piece is Node3D:piece.position+=Vector3(.8,0,-.6)
 	fixture(Vector3(-4.5,2.67,-7))
 	build_service_route()
 	build_basement()
@@ -698,6 +703,8 @@ func new_game() -> void:
 	isolated = false
 	ended = false
 	events.clear()
+	events.case_v2=true
+	if is_instance_valid(investigation):investigation.restore()
 	if is_instance_valid(recount):recount.restore_state()
 	physical.restore()
 	horror.reset()
@@ -770,7 +777,10 @@ func request_hint() -> void:
 func open_casebook() -> void:
 	var notes: Dictionary = events.get("notes",{})
 	var text_ := "WORK ORDER 017 / ELI WARD\n17 BRIAR LANE\n\n"
-	if isolated:text_ += "ELECTRICAL WORK / COMPLETE\nAttendance remains open on the porch call sheet.\nChannel comparison is an optional investigation.\n\n"
+	if isolated:
+		text_ += "The service circuit is isolated.\n"
+		if events.get("case_v2",false):text_ += "Dad left an original field return in the service cabinet.\n" if not events.get("field_return_read",false) else "I have Dad's original. The office file contradicts it.\n"
+		text_ += "Comparing the two recordings could give me evidence to keep his case open.\n\n"
 	if brass_key:text_ += "KEYS HELD / brass service-yard key"+("; small cellar key" if shed_read else "")+"\n\n"
 	if notes.is_empty():text_ += "No records examined.\n"
 	for title_ in notes:text_ += title_+"\n"+str(notes[title_])+"\n\n"
@@ -778,6 +788,7 @@ func open_casebook() -> void:
 	presentation.inspect_document("FIELD NOTES / RECORDS EXAMINED",text_)
 
 func interaction_name(id: String) -> String:
+	if id=="field_notebook":return "Take original field return"
 	if id=="relay_record":return "Read field return"
 	if id=="order" and isolated and recount.active:return "Listen"
 	if id=="source_copy":return "Read source copy"
@@ -805,6 +816,7 @@ func interact(id: String) -> void:
 		doors[id].use()
 		return
 	match id:
+		"field_notebook":investigation.read_original()
 		"relay_record":
 			if isolated:
 				inspect_text("FIELD RETURN / 1998",NOTES.FIELD_RETURN)
@@ -843,7 +855,7 @@ func interact(id: String) -> void:
 				horror.house_responds()
 				sound_caption("A relay clicks shut.",3,"KITCHEN PANEL",relay_sound)
 				save_game()
-			else: message("Supply restored. Relay isolated; attendance remains open on the porch sheet." if isolated else "The supply is live. The basement is drawing current with no registered load.",3)
+			else: message("The supply is on. The service circuit is isolated." if isolated else "The meter is running. There shouldn't be anything connected downstairs.",3)
 		"security", "record":
 			if stage < 3: message("The transport will not turn. Its supply indicator is dark.")
 			else:
@@ -852,7 +864,7 @@ func interact(id: String) -> void:
 				brass_key = true
 				doors["service"].locked = false
 				doors["shed"].locked = false
-				inspect_text("ARCHIVE / 23:17:08",NOTES.ARCHIVE+("\n\nCARRIER RESTORED / WORK ORDER 017 REISSUED\nThe control repeats the last unclosed call when its carrier returns. The television fault brought you here. Restoring the supply let the old attendance circuit answer again." if isolated else ""))
+				inspect_text("ARCHIVE / 23:17:08",NOTES.ARCHIVE+("\n\nAn old fault has printed again under tonight's date. The caller gave dispatch a television fault. It was Dad's last job." if isolated else ""))
 				if not events.has("office"): office_event()
 				save_game()
 		"shed_record":
@@ -862,7 +874,7 @@ func interact(id: String) -> void:
 			inspect_text("SIMON'S MANUAL OVERRIDE",NOTES.PROCEDURE)
 			save_game()
 		"valve0", "valve1", "valve2":
-			if isolated:message("All three feeds are isolated. The register is on the porch call sheet.",3);return
+			if isolated:message("The wheels won't turn any further.",3);return
 			if not shed_read:
 				message("A warning on the manifold: loaded feeds must be closed in sequence.")
 				return
@@ -874,14 +886,14 @@ func interact(id: String) -> void:
 				valve_order.clear()
 				for wheel in valve_visuals.values():wheel.rotation.z = 0
 				sound("relay",targets[id].global_position,-21)
-				message("Pressure rejected. All feeds reset. Check Simon's procedure.")
+				message("The catch kicked back. The wheels have reset.")
 			else:
 				message("Feed isolated. " + str(valve_order.size()) + " / 3")
 				var v: Node3D = valve_visuals[id]
 				var t := create_tween()
 				t.tween_property(v,"rotation:z",v.rotation.z+PI/2,0.45)
 		"isolate":
-			if valve_order != [1,0,2]: message("The relay is pressurised. Follow the procedure posted in the service shed.")
+			if valve_order != [1,0,2]: message("The handle won't move while the lines are under pressure.")
 			elif not isolated:
 				isolated = true
 				for l in lamps: l.light_energy = 0.15
@@ -959,6 +971,11 @@ func finish_attendance(outcome: String) -> bool:
 	if ended or not isolated or not report_read:return false
 	if outcome not in ["accounted_for","on_record"]:return false
 	if outcome=="on_record" and not events.get("memory_confirmed",false):return false
+	if events.get("case_v2",false):
+		if not events.get("field_return_read",false):return false
+		events.departure_pending=outcome
+		presentation.resume_game();recount.update_sheet();save_game()
+		return true
 	events.ending=outcome
 	finish_game()
 	return true
@@ -1037,6 +1054,7 @@ func apply_save(data: Dictionary) -> void:
 	resume()
 	if data.get("ended",false): finish_game()
 	if is_instance_valid(recount):recount.restore_state()
+	if is_instance_valid(investigation):investigation.restore()
 
 func save_game() -> void:
 	if is_instance_valid(capture_director) and capture_director.active:return
@@ -1076,6 +1094,9 @@ func prepare_automated_qa() -> void:
 
 func run_qa() -> void:
 	prepare_automated_qa()
+	if "--investigation-qa" in OS.get_cmdline_user_args():
+		var test=load("res://scripts/investigation_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
+		await test.run(self);return
 	if "--interior-qa" in OS.get_cmdline_user_args():
 		var test=load("res://scripts/interior_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
 		await test.run(self);return

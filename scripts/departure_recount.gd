@@ -69,8 +69,13 @@ func update_sheet() -> void:
 	sheet.text="1998 / TONIGHT\n\nS. WARD / IN\nE. WARD / IN\n\nEXIT / --\nWITNESS / ____" if complete else "NIGHT CALL\n\nE. WARD\n23:17\n\nVACANT"
 	sheet.font_size=16 if complete else 17
 	sheet.pixel_size=.0035 if complete else .005
+	if str(game.events.get("departure_pending",""))!="":
+		sheet.text="WITNESSED / E. WARD\n\nS. WARD / IN\n\nRECEIPT RETAINED\nEXIT / PENDING"
 
 func request() -> bool:
+	if game.events.get("case_v2",false) and not game.events.get("field_return_read",false):
+		game.inspect_text("FIELD RETURN MISSING","The office file is a copy. Simon marked an original return in the service cabinet. I haven't found it yet.")
+		return false
 	if active:return false
 	if game.events.get("recount_complete",false):return true
 	# A retained room-memory is scenery, not a live encounter. It must never

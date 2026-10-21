@@ -9,6 +9,22 @@ var active := false
 var invert_y := false
 var moved_distance := 0.0
 var viewmodel: Node3D
+var crouched:=false
+var body_shape: CollisionShape3D
+
+func near_cover() -> bool:
+	for direction in [Vector3.LEFT,Vector3.RIGHT,Vector3.FORWARD,Vector3.BACK]:
+		var q:=PhysicsRayQueryParameters3D.create(camera.global_position,camera.global_position+direction*.8,1)
+		q.exclude=[get_rid()]
+		if not get_world_3d().direct_space_state.intersect_ray(q).is_empty():return true
+	return false
+
+func can_stand() -> bool:
+	var test:=CapsuleShape3D.new();test.radius=.25;test.height=1.68
+	var query:=PhysicsShapeQueryParameters3D.new();query.shape=test
+	query.transform=Transform3D(global_basis,global_position+Vector3.UP*.87)
+	query.collision_mask=1|16|32;query.exclude=[get_rid()]
+	return get_world_3d().direct_space_state.intersect_shape(query).is_empty()
 
 func _ready() -> void:
 	collision_layer = 2
@@ -20,6 +36,7 @@ func _ready() -> void:
 	shape.shape = capsule
 	shape.position.y = 0.86
 	add_child(shape)
+	body_shape=shape
 	camera = Camera3D.new()
 	camera.position.y = 1.62
 	camera.fov = 77
@@ -63,11 +80,15 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _physics_process(delta: float) -> void:
 	if not active: return
+	crouched=Input.is_action_pressed("crouch") or (crouched and not can_stand())
+	var capsule: CapsuleShape3D=body_shape.shape
+	capsule.height=1.04 if crouched else 1.72
+	body_shape.position.y=capsule.height*.5
 	var input := Input.get_vector("left", "right", "forward", "back")
 	var direction := global_basis * Vector3(input.x, 0, input.y)
 	var speed := 2.15
 	if Input.is_action_pressed("sprint"): speed = 3.65
-	if Input.is_action_pressed("crouch"): speed = 1.15
+	if crouched: speed = 1.15
 	velocity.x = move_toward(velocity.x, direction.x * speed, delta * 12)
 	velocity.z = move_toward(velocity.z, direction.z * speed, delta * 12)
 	if not is_on_floor(): velocity.y -= 20 * delta
@@ -84,11 +105,11 @@ func _physics_process(delta: float) -> void:
 	step_clock += walked
 	if step_clock > 1.25 and is_on_floor():
 		step_clock = 0
-		var audio = game.sound("step", position, -29 if Input.is_action_pressed("crouch") else (-23 if speed < 3 else -20))
+		var audio = game.sound("step", position, -29 if crouched else (-23 if speed < 3 else -20))
 		audio.pitch_scale = 0.94 if position.y < -1 else 1.0
-		if is_instance_valid(game.threat):game.threat.hear(position,2.4 if Input.is_action_pressed("crouch") else (8.5 if speed < 3 else 13.0))
+		if is_instance_valid(game.threat):game.threat.hear(position,2.4 if crouched else (8.5 if speed < 3 else 13.0))
 		if is_instance_valid(game.horror):game.horror.record_step(position,audio.get_meta("sample"),audio.pitch_scale)
-	var eye := 1.12 if Input.is_action_pressed("crouch") else 1.62
+	var eye := .94 if crouched else 1.62
 	camera.position.y = lerpf(camera.position.y, eye, delta * 10)
 
 func target() -> Dictionary:

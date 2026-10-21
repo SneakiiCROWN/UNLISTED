@@ -3,7 +3,7 @@ func run(game: Node) -> void:
 	g=game;p=g.presentation
 	output=ProjectSettings.globalize_path("res://qa/story_clarity") if OS.has_feature("editor") else OS.get_executable_path().get_base_dir().path_join("QA/story_clarity")
 	DirAccess.make_dir_recursive_absolute(output);g.checkpoint_path=output.path_join("checkpoint.json")
-	g.new_game();g.events.chair=true;g.stage=3;g.isolated=true
+	g.new_game();g.events.case_v2=false;g.events.chair=true;g.stage=3;g.isolated=true
 	g.report_read=true;g.brass_key=true;g.shed_read=true;g.threat.enabled=false
 	check("unearned evidence ending refused",not g.finish_attendance("on_record") and not g.ended)
 	g.events.memory_confirmed=true;g.isolated=false

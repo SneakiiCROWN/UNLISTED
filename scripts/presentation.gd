@@ -10,6 +10,7 @@ var prefs: RefCounted
 var stage: Node3D
 var screen: Control
 var film: ColorRect
+var cover_amount:=0.0
 var shade: TextureRect
 var body: VBoxContainer
 var card: PanelContainer
@@ -378,9 +379,9 @@ func begin_new_game() -> void:
 	stage.set_active(true)
 	intro_text.visible = true
 	fade.color.a = 1
-	intro_lines("PROPERTY SERVICES / NIGHT REGISTER","WORK ORDER 017","23:17 / Electrical fault / Occupancy listed as vacant")
+	intro_lines("ELI WARD / NIGHT CALL-OUT","17 BRIAR LANE","My father disappeared on a job here in 1998.\nTonight the same address turned up on my call sheet.")
 	intro_tween = create_tween()
-	intro_tween.tween_interval(2.2)
+	intro_tween.tween_interval(5.0)
 	intro_tween.tween_callback(func():intro_text.visible = false)
 	intro_tween.tween_property(fade,"color:a",0.0,1.0)
 	intro_tween.tween_interval(1.3)
@@ -608,12 +609,15 @@ func show_register() -> void:
 	section = "register"
 	label(card_body,"PROPERTY 17 / ATTENDANCE REGISTER",16,"Meta")
 	label(card_body,"UNCLOSED CALL / 1998",32,"Title")
-	label(card_body,"SIMON WARD    1998 / MARKED ABSENT / NO EXIT\nELI WARD          TONIGHT / ARRIVAL RECORDED\n\nThe call closed by marking Simon ABSENT. His departure was never witnessed.\n\nKeep his name at its last known location; this does not claim he came home.",20)
-	add_button("Simon Ward / PRESENT",func():game.finish_attendance("accounted_for"),true,card_body).grab_focus()
-	add_button("Eli Ward / PRESENT",func():resume_game();game.sound("relay",Vector3(0,1.5,4),-26);game.message("Your arrival is already entered. Simon's departure is still blank.",5),true,card_body)
+	var final_line:="and keep his case open. Take the receipt out to the lane." if game.events.get("case_v2",false) else "and keep his case open. The sheet will be sent to dispatch."
+	label(card_body,"SIMON WARD    1998 / MARKED ABSENT / NO EXIT\nELI WARD          TONIGHT / ARRIVAL RECORDED\n\nSimon was still inside when the office marked him absent.\n\nCorrect his entry and close the call, or attach the evidence\n"+final_line,20)
+	var close_call:=add_button("Simon Ward / PRESENT",func():game.finish_attendance("accounted_for"),true,card_body)
+	close_call.text="Correct Simon's entry / close the call";close_call.grab_focus()
+	if not game.events.get("case_v2",false):add_button("Eli Ward / PRESENT",func():resume_game();game.sound("relay",Vector3(0,1.5,4),-26);game.message("Your arrival is already entered. Simon's departure is still blank.",5),true,card_body)
 	if game.events.get("memory_confirmed",false):
 		label(card_body,"Original source retained. You can refuse the old close-out and leave his case open.",16,"Meta")
-		add_button("Attach original / keep Simon's case open",func():game.finish_attendance("on_record"),true,card_body)
+		var keep_case:=add_button("Attach original / keep Simon's case open",func():game.finish_attendance("on_record"),true,card_body)
+		keep_case.text="Attach the evidence / keep the case open"
 	add_button("Leave the sheet",resume_game,true,card_body)
 	entrance_animation(card)
 
@@ -669,7 +673,7 @@ func show_ending() -> void:
 		label(body,"You attach the original. The call stays open.\nDispatch receives your copy at 23:18.\nSeventeen Briar Lane stays in the file.\n\nYou have not brought your father home.\nYou have stopped them calling him absent.",19)
 	else:
 		label(body,"1998 / Simon Ward     PRESENT\nTonight / Eli Ward      DEPARTURE RECORDED",21)
-		label(body,"Your departure is recorded at 23:18.\nDispatch cancels a job at an address\nthat does not exist.\n\nYour father's service key is warm\non the passenger seat.",19)
+		label(body,"You send the corrected call sheet.\nSimon Ward was here. He never logged out.\nDispatch acknowledges your departure,\nbut cannot find the address on its route.\n\nYou keep your father's service key.",19)
 	add_button("Credits",show_credits)
 	add_button("Main Menu",func():game.started = false;show_menu(true))
 	add_button("Quit to Desktop",func():get_tree().quit())
@@ -774,6 +778,9 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	if not is_instance_valid(game):return
+	var covered: bool=section=="game" and game.player.crouched and game.player.near_cover() and (not game.threat.active() or not game.threat.can_see_player())
+	cover_amount=move_toward(cover_amount,1.0 if covered else 0.0,delta*3)
+	film.material.set_shader_parameter("cover",cover_amount)
 	if resume_requested:resume_now()
 	if stage.active:
 		atmosphere_time += delta

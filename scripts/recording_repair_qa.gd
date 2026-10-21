@@ -93,6 +93,33 @@ func listen(channel: String) -> void:
 		if g.horror.audition=="":break
 		await wait(0.1)
 	check("completed audition "+channel,g.events.get("audition_"+channel,false))
+func recover_field_return() -> void:
+	await travel(Vector2(-3.2,-7.75),"tool tin approach")
+	var tin: RigidBody3D=g.physical.props.tin
+	g.player.camera.look_at(tin.global_position);await wait(.3);await action("interact")
+	check("tool tin picked up through normal input",g.physical.held==tin)
+	await wait(.7)
+	await travel(Vector2(-3.1,-7),"carried weight clears utility")
+	await travel(Vector2(0,-7),"carried weight to hall")
+	check("weight remains in hand through doorway",g.physical.held==tin,"tin="+str(tin.position))
+	if not g.doors.basement.opened:await use("basement")
+	await travel(Vector2(0,-18),"carried weight descends actual ramp")
+	await travel(Vector2(1.6,-19.25),"floor release approach")
+	Input.action_press("crouch");await wait(.5)
+	g.player.camera.look_at(g.investigation.pad+Vector3(.22,.10,0));await wait(1)
+	await action("interact");Input.action_release("crouch");await wait(2)
+	check("physical weight releases original drawer",g.investigation.open,"tin="+str(tin.position))
+	g.player.camera.look_at(g.investigation.pad);await wait(.2);await shot("I00_physical_weight")
+	await travel(Vector2(2,-22),"weighted release holds across room")
+	await travel(Vector2(3.8,-22.15),"original cabinet approach")
+	g.player.camera.look_at(Vector3(3.85,-2.1,-23.65));await wait(.2)
+	await shot("I01_weighted_return_drawer")
+	await use("field_notebook",false)
+	check("original field return discovered",g.events.get("field_return_read",false) and g.presentation.section=="document")
+	await shot("I02_original_return");if g.menu_open:await action("ui_cancel")
+	await travel(Vector2(2,-22),"evidence exit around generator")
+	await travel(Vector2(0,-18),"evidence to ramp")
+	await travel(Vector2(0,-7),"evidence reaches hallway")
 func run(game: Node) -> void:
 	g = game
 	await exact_resolution()
@@ -209,7 +236,8 @@ func run(game: Node) -> void:
 	g.player.camera.look_at(Vector3(0,1.4,-12.7));await wait(0.2)
 	await shot("R06_annex_and_boundaries")
 	await travel(Vector2(-4.5,-8.6),"yard return after escape")
-	await travel(Vector2(-3.1,-7),"return utility clear");await travel(Vector2(0,-7),"return hall")
+	await travel(Vector2(-3.1,-7),"return utility clear")
+	await recover_field_return()
 	if not g.doors.office.opened:await use("office")
 	await travel(Vector2(3,-7),"office optional investigation approach")
 	await travel(Vector2(3.3,-7.3),"transport clear standing")
@@ -235,14 +263,28 @@ func run(game: Node) -> void:
 	await wait(6.3)
 	check("recount leaves player control and completes",g.events.get("recount_complete",false) and g.player.active and not g.menu_open)
 	await use("order",false)
-	if g.presentation.buttons.has("Eli Ward / PRESENT"):
-		g.presentation.buttons["Eli Ward / PRESENT"].pressed.emit();await wait(0.3)
-		check("Eli choice remains recoverable",not g.ended and not g.menu_open)
-		await use("order",false)
+	if g.presentation.section=="register":
 		var final_choice:="Attach original / keep Simon's case open" if "--on-record-ending" in OS.get_cmdline_user_args() else "Simon Ward / PRESENT"
 		check("earned final choice available",g.presentation.buttons.has(final_choice))
 		if g.presentation.buttons.has(final_choice):g.presentation.buttons[final_choice].pressed.emit()
 		await wait(1)
+	check("signing the register preserves control for departure",not g.ended and g.player.active and str(g.events.get("departure_pending",""))!="")
+	g.save_game();g.load_game();await wait(.3)
+	check("signed departure survives save recovery",not g.ended and g.player.active and str(g.events.get("departure_pending",""))!="")
+	await action("ui_cancel");var departure_time: float=g.investigation.departure_clock
+	await wait(.5)
+	check("pause suspends departure cues",g.menu_open and is_equal_approx(departure_time,g.investigation.departure_clock))
+	await action("ui_cancel")
+	await travel(Vector2(0,8),"leave porch with evidence")
+	await travel(Vector2(0,15.1),"approach property gate")
+	if not g.doors.front_gate.opened:await use("front_gate")
+	await travel(Vector2(0,19.5),"cross property gate")
+	g.player.rotation.y=PI;g.player.camera.rotation=Vector3.ZERO
+	Input.action_press("forward")
+	var leave_until:=seconds()+5
+	while not g.ended and seconds()<leave_until:await get_tree().physics_frame
+	Input.action_release("forward")
+	check("walking into lane completes departure",g.ended and g.player.position.z>21)
 	check("fresh route ending",g.ended and g.presentation.section=="ending")
 	check("fresh route preserves selected outcome",g.events.get("ending","accounted_for")==("on_record" if "--on-record-ending" in OS.get_cmdline_user_args() else "accounted_for"))
 	await shot("R08_ending")

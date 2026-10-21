@@ -63,7 +63,6 @@ func build(game: Node3D) -> void:
 	# Kitchen: used place setting, worn runner and a second tucked-in chair.
 	g.model("res://assets/dusk/psx_prop_kitchen_chair_01.glb",g,Vector3(-6.4,0,-1.4),Vector3(0.5,0.9,0.52),0,true)
 	g.model("res://assets/dusk/psx_prop_newspapers_01.glb",g,Vector3(-6.05,0.815,-0.78),Vector3(0.36,0.025,0.26))
-	g.model("res://assets/dusk/psx_prop_mug_01.glb",g,Vector3(-5.58,0.815,-0.7),Vector3(0.12,0.13,0.12))
 	surface(Vector3(-5.8,0.013,1.95),Vector3(1.2,0.013,0.64),Color("4a5144"),"res://assets/original/work_canvas.png")
 	# Utility work corner: supported peg rail, cable coils and a wash pan.
 	repair.tube(Vector3(-7.28,1.58,-7.6),Vector3(-7.28,1.58,-6.0),0.024)

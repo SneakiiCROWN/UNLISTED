@@ -27,7 +27,7 @@ func run(current: Node) -> void:
 	await travel(Vector2(.5,1),"normal lounge exit threshold")
 	await use("lounge");await wait(1.2)
 	check("closed door hides interior before change",g.impossible_room.closed() and not g.impossible_room.can_see_changed_room())
-	await wait(5.4)
+	await wait(8.8)
 	check("authored room turns over only while unoccupied and closed",g.impossible_room.active)
 	check("inverted television collider follows real furniture",g.targets.television.global_position.distance_to(initial_tv.origin)>2.0)
 	check("no journal prediction before witnessing",not g.events.get("impossible_room_seen",false))
