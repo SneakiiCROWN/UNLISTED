@@ -1,3 +1,7 @@
+# Latest / accepted 0.8.1 candidate
+
+Arrival_07 acceptance complete; read the final table in DIRECTOR_PASS_VERIFICATION.md. Runtime matches the recorded 05 route. Both endings completed; one obsolete test-title failure is retained and separately resolved by native physical rereading. Packaging/publication follows; no new download claimed until verified.
+
 # Director pass / working checkpoint
 
 Published playable remains **0.8.0 Dead Line**. Newer complete local Spare Place work was recovered and committed at 3aaa440; safe public recovery is 7d5c629. Never restore the incomplete public checkout over the complete local project. No released tags or old packages changed.

@@ -1,15 +1,16 @@
-# UNLISTED 0.8.0 / Dead Line
+# UNLISTED 0.8.1 / The Spare Place
 
-The underfloor test now leads to an optional investigation upstairs. Simon's annotation describes a working circuit: calibrate the striker, disconnect its feed and captive return lead, then listen from the hall. The house answers from beyond the shut lounge. Check what the unpowered counter has recorded.
+A new optional investigation follows the disconnected counter's impossible arrival. An empty utility cot, a birthday that never happened and a contradictory reflection lead into a physical search encounter. Eli's recollection and the 1998 paperwork disagree; neither proves Simon returned.
 
-The experiment uses physical controls and the rhythm tapped below the office. Its evidence connects Eli, Simon's 1998 date and the difference between an electrical arrival and a witnessed person. No extra valve, key hunt, locked-room gate or mandatory ending requirement is added. Existing save completion conditions and both departures remain valid.
+- New games begin outside the front garden gate. Knock once at the house; the door eases ajar, then the next press opens it fully. It behaves normally afterwards. Old saves retain their position and ordinary doors.
+- The mirror now frames the covered outline clearly while the real cot is empty. Its physical interaction records what Eli actually observed.
+- Main papers, journal entries, comparison feedback and endings use a consistent timeline and distinguish closing Eli's call-out from resolving Simon's disappearance. Previously collected known papers update without granting undiscovered clues.
+- Nine shared loose props support carrying and experimentation. The maintenance release follows real supporting contacts, including stacked objects. Kitchen props and lounge shelf contents have measured support; unsupported books are removed.
+- Occasional window taps, footsteps across the hall and a falling kitchen tin use positional sound, eligibility, silence, cooldowns and saved limits. They stay out of authored sequences and active encounters.
+- Surveyor facing follows the player and actual movement. Stationary searching scans rather than spinning continuously. Approaching an indoor retreat gives a new warning; the exterior escape remains valid.
 
-The station has a fitted, weathered housing, attached conduits/captive lead, readable labels, pilot and a quiet local motor that stops with the feed. Sound responses use actual 3D positions and optional accessibility captions. Quiet checkpoint writes avoid new pop-ups during the response. Pause, interrupted-save recovery and competing encounters re-arm unfinished responses safely. Printed evidence is introduced only outside the player's view. The impossible room remains and its staging yields to an active sound test.
+Keep old releases and `%APPDATA%/UNLISTED`. Extract this Windows package into a new folder. New Game includes all current content; older saves keep their existing route and ending eligibility. The impossible room, underfloor rack, Dead Line, both endings and accessibility controls remain.
 
-## Verification and limitations
+This is still an alpha, not the finished 30-60-minute game. The Surveyor's character art has not been replaced. Broader room/exterior art, fuller cinematic endings and richer audio work remain. The mirror does not render a player body. There is no new lightning event. Human first-playthrough, fear, narrative/art approval and subjective listening are pending. Automated route timing does not establish player duration. Temporary vocals remain replaceable.
 
-Native Windows tests cover actual movement from the cellar, crawling, the rack, reading Simon's sheet, physical station controls, hall response, pause and interrupted-save recovery. The full fresh shared route plus its naturally earned alternate branch are recorded in DeadLine_03; final DeadLine_08 adds local motor feedback, context-limited optional hints, a read-strip prompt, conservative visibility sampling, clearer cable routing and version. Final targeted input, chapter, legacy saves and cover checks are separately recorded. 1440p and 3440x1440 station/document/visibility fixtures are labelled as seeded visual checks, not additional fresh routes.
-
-Still a short alpha. This is one connected investigation, not a complete middle act or a 30-60-minute game. Surveyor character art is unchanged, and the broader furnishing/exterior/audio overhaul remains unfinished. No rejected model is active. Human narrative, horror, art, subjective listening and first-playthrough assessment are pending. Measurements do not establish a good mix. Temporary owner vocal slots remain replaceable. Historic shutdown warnings/driver failures are not proven fixed by controlled QA exits.
-
-Extract into a new folder and open UNLISTED.exe. Keep AppData/UNLISTED. New Game includes all current discoveries; old saves preserve their previous completion route. Earlier releases remain available. Public source omits licensed media; download the Windows ZIP to play.
+Exact native Windows checks, build scopes, signal measurements and remaining risks are in DIRECTOR_PASS_VERIFICATION.md and BUILD_MANIFEST.json. Clean isolated QA exits do not establish that historical ordinary-shutdown or driver/resource warnings are fixed.

@@ -1,12 +1,9 @@
-# Known limitations / 0.8.0
+# Known limitations / 0.8.1
 
-- Short alpha. The new optional causal investigation is one step toward a stronger middle act, not the complete 30-60-minute target.
-- Human narrative, horror, art, subjective listening and first-playthrough assessment remain pending. Signal measurements do not prove sound quality.
-- Surveyor character art is unchanged. The licensed MakeHuman/workwear intake is source review, not a rig-compatible approved replacement. No rejected study is active; owner vocals remain replaceable.
-- Broader furniture/contact, house/exterior composition and sound variety remain production work. Simple construction and readable documents still carry some presentation.
-- Old saves retain prior completion paths and may retain previously collected journal wording. New Game includes the complete current investigation.
-- Full-route capture is DeadLine_03. Final DeadLine_08 adds local motor feedback, hint/prompt/version and conservative visibility/cable refinements, tested separately.
-- The alternate ending restores its naturally earned porch checkpoint; this is not two independent fresh runs. 1440p/ultrawide document views are explicitly seeded fixtures.
-- Captures retain wall-clock timing with sampled frames repeated at 30 fps; they are not FPS benchmarks or human duration measurements.
-- Historical ordinary shutdown resource warnings and NVIDIA driver failures are not proven fixed. QA stops audio during teardown.
-- Public source deliberately omits licensed raw media. Use the Windows ZIP to play.
+- Alpha; the complete 30-60-minute game is unfinished. Human first-playthrough, fear, narrative/art and listening assessment pending.
+- Surveyor model unchanged. No rejected study promoted. Vocals remain replaceable.
+- Whole-property support/art audit, richer audio, stronger cinematic endings and lightning unfinished.
+- Planar mirror has no player-body reflection.
+- Native fresh shared route completed both endings, with one obsolete title assertion preserved and separately verified by physical rereading. Final runtime matches that route; exact scopes in DIRECTOR_PASS_VERIFICATION.md.
+- Historical ordinary-shutdown/resource and driver risks are not proved fixed by QA cleanup.
+- Public code excludes licensed raw media and cannot rebuild the complete game by itself.

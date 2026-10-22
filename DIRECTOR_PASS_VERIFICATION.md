@@ -46,3 +46,24 @@ Every rare/legacy string still needs final continuity sign-off. Whole-property m
 Arrival_05 completed the fresh shared investigation and both earned departures in 453.99 automated seconds: 290 checks passed, one obsolete assertion failed because it expected the retired Simon/Return Channel journal title. The complete report and recording are preserved unchanged, not relabelled as a clean pass. Actual comparison input, both endings, death/retry, record-store/Dead Line/Spare Place progression and physical exits completed.
 
 Arrival_07 has identical runtime fingerprints to 05; only QA changes. Its separately restored earned-evidence fixture physically rereads the comparison and verifies the current canonical title and full body: 4/0, actual image inspected. The first 06 reread fixture mistakenly restored completed-ending presentation and was rejected; 07 explicitly revisits earned evidence in exploration, without granting clues. Broader 07 acceptance is still running at this checkpoint. No need to replay the complete investigation for a test-only title correction.
+
+
+## Final continuation acceptance / Arrival_07
+
+All changed gameplay runtime files in final Arrival_07 hash identically to the recorded Arrival_05 route. Only QA scripts differ. Arrival_05 reached both earned endings in 453.99 automated seconds, with 290 passes and one preserved obsolete-title assertion. That assertion is resolved separately by Arrival_07's actual physical reread (4/0); the report remains untouched. This is not a claim of a clean 291/0 route or two independent human playthroughs.
+
+| Native scope | Result | Build |
+|---|---|---|
+| Front gate, knock/ajar/open, normal reuse, pause, repeated input, saved ajar and legacy position/door | 23/0 each at 1080p, 1440p, 3440x1440 | Arrival_05 1080p; identical-runtime Arrival_07 larger sizes |
+| Correct comparison title/body, physical reread from earned evidence | 4/0 | Arrival_07 |
+| Carrying, memory, footsteps and save systems | 33/0 | Arrival_07 |
+| Underfloor rack, crouch/stand, collision, live pursuit and cover | 41/0 | Arrival_07; omitted explicit capture-size flag accounts for one fewer size assertion than earlier 42 |
+| Impossible room, pursuit/retry and three render sizes | 43/0 | Arrival_07 |
+| Current/legacy story, ending eligibility, visible encoding and three-size layouts | 132/0 | Arrival_07 |
+| Cot reflection/card/journal visual fixture | 10/0 each at 1080p, 1440p, 3440x1440 | Atmosphere_03 1080p; Arrival_07 larger sizes |
+| Ambient scheduling, actual event audio/physics and support/circulation | 38/0 | Atmosphere_03; later arrival does not change these systems |
+| Surveyor approach/search/retreat, attack/retry/hiding and story-mode | 56/0 | Atmosphere_03; later arrival does not change AI |
+
+Actual screenshots inspected: new gate arrival and ajar door; 1440p/ultrawide mirror and prompt; corrected comparison paper; supported lounge bottles. Native route includes the Spare Place physical search, original records, both departures, death/retry and completion menus. Source frames, trace, unchanged failed assertion and game-bus WAV are preserved. Master signal peak -8.61 dBFS, RMS -43.62 dBFS, zero clipped samples; not subjective listening approval. Continuous_native.mp4 retains wall-clock timestamps, with sampled frames repeated at 30 fps, not interpolated or speed-adjusted. It is not an FPS benchmark or human playtime.
+
+Owner checkpoint/settings hashes unchanged across isolated Windows batches. New source/Windows packaging must retain this exact provenance. Source remains complete privately; public code excludes licensed raw media. Surveyor art, full room/property audit, stronger cinematic endings, lightning, first-person art and human story/art/fear/listening approval remain unfinished. No character study was promoted. Ordinary shutdown/driver/resource risk is not established fixed by explicit QA cleanup.

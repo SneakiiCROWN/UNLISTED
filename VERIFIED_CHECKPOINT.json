@@ -1,79 +1,79 @@
 {
-  "version": "0.8.0",
-  "title": "Dead Line",
-  "complete_source_commit": "fd9034e2cf6ad67e5745e54c461d20759a350ca3",
-  "source_sha256": "82d8d947048a57656d44ac06fdfc357a19b1200d755b7bf9950af216b074e856",
-  "executable_sha256": "72196d3de8a5dec9870925368e127af2337366370a2261b7ec5dae2d8abf3fc1",
+  "version": "0.8.1",
+  "title": "The Spare Place",
+  "private_source_commit": "5e8bc7a132db37c1f81f8796fc6aaf642798ee93",
+  "executable_sha256": "0b296f55f5ca99b3c1aab3d2927dd9d431868ecd01996e049616c90a5f09e2ef",
   "reports": {
-    "final_dead_line": {
-      "passed": 73,
-      "failed": 0,
-      "duration_seconds": 98.541448
-    },
-    "final_1440_fixture": {
-      "passed": 7,
-      "failed": 0,
-      "duration_seconds": 6.537576
-    },
-    "final_ultrawide_fixture": {
-      "passed": 7,
-      "failed": 0,
-      "duration_seconds": 7.22876
-    },
-    "final_chapter": {
-      "passed": 56,
+    "arrival": {
+      "passed": 23,
       "failed": 0
     },
-    "final_maintenance_and_cover": {
-      "passed": 42,
-      "failed": 0,
-      "duration_seconds": 62.250457
-    },
-    "final_legacy_story": {
-      "passed": 84,
+    "arrival_1440": {
+      "passed": 23,
       "failed": 0
     },
-    "continuous_and_earned_branch": {
-      "passed": 263,
-      "failed": 0,
-      "duration_seconds": 414.246582
+    "arrival_uw": {
+      "passed": 23,
+      "failed": 0
+    },
+    "comparison_reread": {
+      "passed": 4,
+      "failed": 0
     },
     "systems": {
       "passed": 33,
       "failed": 0
     },
-    "threat": {
-      "passed": 54,
-      "failed": 0
+    "underfloor": {
+      "passed": 41,
+      "failed": 0,
+      "duration_seconds": 60.565109
     },
     "impossible": {
       "passed": 43,
       "failed": 0,
-      "duration_seconds": 57.347901
+      "duration_seconds": 57.398918
     },
-    "settled_endings": {
-      "passed": 13,
+    "story": {
+      "passed": 132,
       "failed": 0
+    },
+    "mirror_1440": {
+      "passed": 10,
+      "failed": 0,
+      "duration_seconds": 9.886084
+    },
+    "mirror_uw": {
+      "passed": 10,
+      "failed": 0,
+      "duration_seconds": 10.915113
+    },
+    "ambient": {
+      "passed": 38,
+      "failed": 0
+    },
+    "mirror_1080": {
+      "passed": 10,
+      "failed": 0,
+      "duration_seconds": 8.538223
+    },
+    "threat": {
+      "passed": 56,
+      "failed": 0
+    },
+    "full_shared_route": {
+      "passed": 290,
+      "failed": 1,
+      "duration_seconds": 453.992309,
+      "exception": "Obsolete pre-director paper-title assertion; preserved untouched. Correct canonical title/body independently reread through native input in final comparison_reread fixture. No runtime change."
     }
   },
-  "full_route_build": "DeadLine_03",
-  "final_build": "DeadLine_08",
-  "final_runtime_delta": [
-    "scripts/case_notes.gd",
-    "scripts/dead_line.gd",
-    "scripts/world.gd",
-    "project.godot"
-  ],
-  "delta_scope": "Final adds the quiet local motor tied to feed state, context-limited optional hint, read-strip prompt, more conservative visibility samples, clearer cable routing and version. Playable routes, interaction targets, save transitions, house response and ending eligibility match the full-route build. Targeted final gameplay and audio/control/visibility checks are separate.",
+  "full_route_build": "UNLISTED_Director_Arrival_05",
   "human_playtested": false,
-  "duration_target_achieved": false,
   "subjective_listening": false,
-  "surveyor_art_changed": false,
-  "audio_signal": {
-    "peak_dbfs": -22.64346569104135,
-    "rms_dbfs": -47.645881396289894,
-    "clipped_samples": 0,
-    "subjective_listening": false
-  },
-  "windows_zip_sha256": "a8111ec36c6f1457ed49b0d458e4a43a618fb662ccfa73ac64af1f598071bf78"
+  "duration_target_achieved": false,
+  "windows_zip_sha256": "2599cdf549395fbbf75f11ca928ff6b5b836d90836090a5d673376f8e9aaeb6c",
+  "windows_zip_bytes": 49101421,
+  "raw_licensed_assets_published": false,
+  "download_url": "https://github.com/SneakiiCROWN/UNLISTED/releases/download/unlisted-v0.8.1-spare-place-public-test-20261022/UNLISTED-Windows-Spare-Place-Test.zip"
 }
