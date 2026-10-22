@@ -1,12 +1,12 @@
-# Known limitations / 0.7.0
+# Known limitations / 0.8.0
 
-- Still a short alpha. The 30-60-minute target is unfinished and not human measured. The new maintenance investigation is optional; it is not forced padding.
-- Surveyor character art is unchanged and below the intended target. No rejected study is active; temporary vocals remain replaceable.
-- Human narrative, horror, artistic, subjective listening and first-playthrough assessment are pending. Signal/gain measurements do not prove a good mix.
-- Broader furnishing/contact audits, environmental detail, exterior composition and richer sound variety remain production work. The game still uses simple construction in places and readable documents for some evidence.
-- Earlier saves retain their prior completion route and may retain previously collected journal wording. New Game shows the whole current investigation.
-- Full-route evidence precedes a final non-colliding decorative shelf placement/material correction. Final native maintenance, live cover, render-mesh support and settled layouts are separately identified.
-- The captured alternate ending is restored from its naturally earned porch checkpoint, not a second independent fresh playthrough.
-- Earlier ordinary source-Quit/forced-headless resource warnings and NVIDIA driver crashes are not proven fixed. QA stops audio before exit; clean QA logs do not establish ordinary shutdown fixed.
-- Captures retain wall-clock timing with repeated sampled frames; readback cadence is not an FPS benchmark.
-- Public source omits licensed media. Download the Windows ZIP to play.
+- Short alpha. The new optional causal investigation is one step toward a stronger middle act, not the complete 30-60-minute target.
+- Human narrative, horror, art, subjective listening and first-playthrough assessment remain pending. Signal measurements do not prove sound quality.
+- Surveyor character art is unchanged. The licensed MakeHuman/workwear intake is source review, not a rig-compatible approved replacement. No rejected study is active; owner vocals remain replaceable.
+- Broader furniture/contact, house/exterior composition and sound variety remain production work. Simple construction and readable documents still carry some presentation.
+- Old saves retain prior completion paths and may retain previously collected journal wording. New Game includes the complete current investigation.
+- Full-route capture is DeadLine_03. Final DeadLine_08 adds local motor feedback, hint/prompt/version and conservative visibility/cable refinements, tested separately.
+- The alternate ending restores its naturally earned porch checkpoint; this is not two independent fresh runs. 1440p/ultrawide document views are explicitly seeded fixtures.
+- Captures retain wall-clock timing with sampled frames repeated at 30 fps; they are not FPS benchmarks or human duration measurements.
+- Historical ordinary shutdown resource warnings and NVIDIA driver failures are not proven fixed. QA stops audio during teardown.
+- Public source deliberately omits licensed raw media. Use the Windows ZIP to play.

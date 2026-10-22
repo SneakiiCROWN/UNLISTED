@@ -13,3 +13,7 @@ Surveyor source intake was rechecked: licensed MakeHuman anatomy/workwear is pre
 ## Accepted investigation and remaining release checks
 
 DeadLine_03 passed the expanded fresh route plus naturally earned alternate (263/0, 414.246582 seconds), systems 33/0, threat 54/0, impossible 43/0 and settled layout/prerequisite 13/0. This is known-route automated timing with quick document dismissal, not human first-playthrough duration. Final DeadLine_08 passed 73/0 targeted input/save/causal-investigation checks and 7/0 each at 1440p/ultrawide in explicitly seeded layout/visibility fixtures. Its motor shutoff pauses actual playback. The prior 06 near-silent-level assertion and 07 power diagnostic are preserved/excluded as described in verification. Final chapter, underfloor live cover and legacy-story checks remain running before packaging/publication. No additional raw assets or rejected character models were introduced.
+
+## Release acceptance
+
+Final DeadLine_08 also passed actual mouse-rubbing/bedroom/window confrontation (56/0), underfloor/rack/recovery/live pursuit into cover (42/0), and legacy story/completed saves/layouts (84/0). All final logs exited cleanly without logged errors; player save/settings integrity receipts remained unchanged. Actual 1080p station/output and 1440p/ultrawide documents were inspected. No human horror/art/listening approval or longer first-playthrough claim. Packages, source-import and independent public-download verification are sealed separately in the publication receipt.

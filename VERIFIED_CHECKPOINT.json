@@ -1,29 +1,42 @@
 {
-  "version": "0.7.0",
-  "title": "Under the Floor",
-  "complete_source_commit": "817f12986ba78da1ce1d522640e855d82c6bf7f1",
-  "delivery_build": "Underfloor_07",
-  "full_route_build": "Underfloor_06",
-  "executable_sha256": "2dfd3e736be8c8905950f8d65e8f6232f5e0c0c90e655f18c005782b95fcbaf0",
-  "source_sha256": "6c6bf817a312aecb93b49a4064d0907d5db9a26af9d577998de64bbf1a47dec9",
+  "version": "0.8.0",
+  "title": "Dead Line",
+  "complete_source_commit": "fd9034e2cf6ad67e5745e54c461d20759a350ca3",
+  "source_sha256": "82d8d947048a57656d44ac06fdfc357a19b1200d755b7bf9950af216b074e856",
+  "executable_sha256": "72196d3de8a5dec9870925368e127af2337366370a2261b7ec5dae2d8abf3fc1",
   "reports": {
-    "final_maintenance": {
-      "passed": 42,
+    "final_dead_line": {
+      "passed": 73,
       "failed": 0,
-      "duration_seconds": 62.177632
+      "duration_seconds": 98.541448
     },
-    "final_layouts": {
-      "passed": 13,
-      "failed": 0
+    "final_1440_fixture": {
+      "passed": 7,
+      "failed": 0,
+      "duration_seconds": 6.537576
     },
-    "chapter_mouse_and_window": {
+    "final_ultrawide_fixture": {
+      "passed": 7,
+      "failed": 0,
+      "duration_seconds": 7.22876
+    },
+    "final_chapter": {
       "passed": 56,
       "failed": 0
     },
-    "continuous_and_earned_branch": {
-      "passed": 216,
+    "final_maintenance_and_cover": {
+      "passed": 42,
       "failed": 0,
-      "duration_seconds": 346.849542
+      "duration_seconds": 62.250457
+    },
+    "final_legacy_story": {
+      "passed": 84,
+      "failed": 0
+    },
+    "continuous_and_earned_branch": {
+      "passed": 263,
+      "failed": 0,
+      "duration_seconds": 414.246582
     },
     "systems": {
       "passed": 33,
@@ -36,42 +49,31 @@
     "impossible": {
       "passed": 43,
       "failed": 0,
-      "duration_seconds": 57.420328
+      "duration_seconds": 57.347901
     },
-    "legacy_story": {
-      "passed": 84,
+    "settled_endings": {
+      "passed": 13,
       "failed": 0
-    },
-    "recount_1440": {
-      "passed": 20,
-      "failed": 0,
-      "duration_seconds": 21.49891
-    },
-    "recount_ultrawide": {
-      "passed": 20,
-      "failed": 0,
-      "duration_seconds": 22.920005
     }
   },
-  "acceptance_delta": "Final build changes only non-colliding archive decoration: boxes/books now sit on measured shelf faces, with cardboard material. Collider, routes, input, AI, save/retry and story logic match the complete-route build. Final native checks repeat the entire maintenance path, live chase into cover, rack obstruction/recovery, actual mesh support, settled layouts and player-eye views.",
-  "audio_signal": {
-    "continuous": {
-      "peak_dbfs": -8.91489693815734,
-      "rms_dbfs": -43.06221853092723,
-      "clipped_samples": 0,
-      "subjective_listening": false
-    },
-    "underfloor": {
-      "peak_dbfs": -22.455059634001042,
-      "rms_dbfs": -46.5153797422056,
-      "clipped_samples": 0,
-      "subjective_listening": false
-    }
-  },
+  "full_route_build": "DeadLine_03",
+  "final_build": "DeadLine_08",
+  "final_runtime_delta": [
+    "scripts/case_notes.gd",
+    "scripts/dead_line.gd",
+    "scripts/world.gd",
+    "project.godot"
+  ],
+  "delta_scope": "Final adds the quiet local motor tied to feed state, context-limited optional hint, read-strip prompt, more conservative visibility samples, clearer cable routing and version. Playable routes, interaction targets, save transitions, house response and ending eligibility match the full-route build. Targeted final gameplay and audio/control/visibility checks are separate.",
   "human_playtested": false,
-  "surveyor_model_changed": false,
-  "subjective_audio_review": false,
   "duration_target_achieved": false,
-  "player_data_preserved": true,
-  "windows_zip_sha256": "f91ff61f92b1152c8e10b70ce739335bc26df6285b8c1a8e1b62f03b5b0f7b3a"
+  "subjective_listening": false,
+  "surveyor_art_changed": false,
+  "audio_signal": {
+    "peak_dbfs": -22.64346569104135,
+    "rms_dbfs": -47.645881396289894,
+    "clipped_samples": 0,
+    "subjective_listening": false
+  },
+  "windows_zip_sha256": "a8111ec36c6f1457ed49b0d458e4a43a618fb662ccfa73ac64af1f598071bf78"
 }
