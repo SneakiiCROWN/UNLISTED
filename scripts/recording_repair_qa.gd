@@ -193,6 +193,13 @@ func run(game: Node) -> void:
 		var line_test=load("res://scripts/dead_line_qa.gd").new();add_child(line_test)
 		line_test.g=g;line_test.output=output;line_test.started_at=started_at;line_test.exact_target=exact_target
 		await line_test.upstairs_test();checks.append_array(line_test.checks);line_test.queue_free()
+		if "--spare-place-route" in OS.get_cmdline_user_args():
+			var place_test=load("res://scripts/spare_place_qa.gd").new();add_child(place_test)
+			place_test.g=g;place_test.output=output;place_test.started_at=started_at;place_test.exact_target=exact_target
+			await place_test.play_place();checks.append_array(place_test.checks);place_test.queue_free()
+			await travel(Vector2(-4.5,-8.5),"spare-place return through service door")
+			await travel(Vector2(-3.1,-7),"spare-place return to utility aisle")
+			await travel(Vector2(0,-7),"spare-place investigation returns to original hall")
 		await travel(Vector2(0,-18),"sound investigation rejoins live cellar route")
 	await travel(Vector2(-1.5,-22),"coolant approach");await use("valve1")
 	await travel(Vector2(-2.7,-22),"supply approach");await use("valve0")

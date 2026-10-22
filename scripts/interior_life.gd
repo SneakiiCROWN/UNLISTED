@@ -45,10 +45,11 @@ func build(g: Node3D) -> void:
 	# Give the existing rest mattress a plausible folding cot rather than a floor prop.
 	var mattress: Node3D=g.get_node("UtilityRestMattress")
 	mattress.position.y=.34
-	for x in [-7.01,-6.19]:
+	mattress.position.x=-6.8
+	for x in [-7.21,-6.39]:
 		repair.tube(Vector3(x,.32,-6.28),Vector3(x,.32,-4.52),.022)
 		for z in [-6.18,-4.62]:repair.tube(Vector3(x,.03,z),Vector3(x,.32,z),.025)
-	for z in [-6.28,-4.52]:repair.tube(Vector3(-7.01,.32,z),Vector3(-6.19,.32,z),.022)
+	for z in [-6.28,-4.52]:repair.tube(Vector3(-7.21,.32,z),Vector3(-6.39,.32,z),.022)
 	# Worn folded cloth follows the mattress edges; the outer hems hang over it.
 	var cloth:=SurfaceTool.new();cloth.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var xs:=[-.475,-.41,-.2,.0,.2,.41,.475]

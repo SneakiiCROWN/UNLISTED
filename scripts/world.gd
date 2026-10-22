@@ -52,6 +52,7 @@ var recount: Node3D
 var investigation: Node3D
 var maintenance: Node3D
 var dead_line: Node3D
+var spare_place: Node3D
 var chapter: Node3D
 var hint_until := 0.0
 var tv_light: OmniLight3D
@@ -81,6 +82,7 @@ func _ready() -> void:
 		checkpoint_path = "user://development/checkpoint.json"
 	qa_mode = "--door-repair-qa" in OS.get_cmdline_user_args() or "--recording-repair-qa" in OS.get_cmdline_user_args() or "--qa" in OS.get_cmdline_user_args() or "--presentation-qa" in OS.get_cmdline_user_args() or "--milestone-qa" in OS.get_cmdline_user_args() or "--threat-qa" in OS.get_cmdline_user_args() or "--systems-qa" in OS.get_cmdline_user_args() or "--polish-qa" in OS.get_cmdline_user_args() or "--visual-probe" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--production-views" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--spare-place-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--dead-line-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--maintenance-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--caption-qa" in OS.get_cmdline_user_args()
@@ -135,6 +137,7 @@ func _ready() -> void:
 	chapter=load("res://scripts/missing_minute.gd").new();chapter.game=self;add_child(chapter)
 	maintenance=load("res://scripts/maintenance_store.gd").new();maintenance.game=self;add_child(maintenance)
 	dead_line=load("res://scripts/dead_line.gd").new();dead_line.game=self;add_child(dead_line)
+	spare_place=load("res://scripts/spare_place.gd").new();spare_place.game=self;add_child(spare_place)
 	set_volume(volume)
 	show_menu("UNLISTED", true)
 	if dev_mode:
@@ -721,6 +724,7 @@ func new_game() -> void:
 	if is_instance_valid(chapter):chapter.restore()
 	if is_instance_valid(maintenance):maintenance.restore()
 	if is_instance_valid(dead_line):dead_line.restore()
+	if is_instance_valid(spare_place):spare_place.restore()
 	if is_instance_valid(investigation):investigation.restore()
 	if is_instance_valid(recount):recount.restore_state()
 	physical.restore()
@@ -805,6 +809,8 @@ func open_casebook() -> void:
 	presentation.inspect_document("FIELD NOTES / RECORDS EXAMINED",text_)
 
 func interaction_name(id: String) -> String:
+	if id=="spare_cover":return "Pull back blanket"
+	if id=="spare_card":return "Turn birthday card"
 	if id=="line_feed":return "Connect feed" if events.get("line_feed_off",false) else "Disconnect feed"
 	if id=="line_return":return "Plug in return" if events.get("line_return_out",false) else "Unplug return"
 	if id=="line_strike":return "Test striker"
@@ -834,6 +840,7 @@ func try_interact() -> void:
 		interact(str(hit.collider.get_meta("interaction")))
 
 func interact(id: String) -> void:
+	if id.begins_with("spare_"):spare_place.use(id);return
 	if id.begins_with("line_"):dead_line.use(id);return
 	if id=="carbon_return":chapter.open_carbon();return
 	if id=="return_receiver":chapter.open_receiver();return
@@ -1100,6 +1107,7 @@ func apply_save(data: Dictionary) -> void:
 	if is_instance_valid(chapter):chapter.restore()
 	if is_instance_valid(maintenance):maintenance.restore()
 	if is_instance_valid(dead_line):dead_line.restore()
+	if is_instance_valid(spare_place):spare_place.restore()
 
 func save_game(quiet := false) -> void:
 	if is_instance_valid(capture_director) and capture_director.active:return
@@ -1167,6 +1175,7 @@ func run_qa() -> void:
 	if "--production-views" in OS.get_cmdline_user_args():path="res://scripts/production_views.gd"
 	if "--maintenance-qa" in OS.get_cmdline_user_args():path="res://scripts/maintenance_qa.gd"
 	if "--dead-line-qa" in OS.get_cmdline_user_args():path="res://scripts/dead_line_qa.gd"
+	if "--spare-place-qa" in OS.get_cmdline_user_args():path="res://scripts/spare_place_qa.gd"
 	if "--caption-qa" in OS.get_cmdline_user_args():path="res://scripts/caption_qa.gd"
 	if "--capture-qa" in OS.get_cmdline_user_args():path="res://scripts/capture_qa.gd"
 	var qa = load(path).new()
