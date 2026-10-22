@@ -1,6 +1,6 @@
 # Latest / accepted 0.8.1 candidate
 
-Arrival_07 acceptance complete; read the final table in DIRECTOR_PASS_VERIFICATION.md. Runtime matches the recorded 05 route. Both endings completed; one obsolete test-title failure is retained and separately resolved by native physical rereading. Packaging/publication follows; no new download claimed until verified.
+Arrival_07 acceptance complete; read the final table in DIRECTOR_PASS_VERIFICATION.md. Runtime matches the recorded 05 route. Both endings completed; one obsolete test-title failure is retained and separately resolved by native physical rereading. Published and anonymously downloaded: see SPARE_PLACE_PUBLICATION.md. Native downloaded arrival23/0; complete archived source freshly imports.
 
 # Director pass / working checkpoint
 
