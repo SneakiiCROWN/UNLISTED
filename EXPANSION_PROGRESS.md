@@ -46,3 +46,8 @@ The office cupboard is a Blender derivative of the existing Kenney CC0 bookcase.
 Additional coherence repairs: the unpowered file terminal no longer displays its readable file; initial journal states Eli's motivation without future clues. The playback decision asks whether the extra step came from the recording or the room, after both auditions. The old journal heading migrates without granting evidence. UV observation follows actual written line width, requires scanning frequency digits and never copies unread lower lines. Legacy completed knowledge is retained. One corrupted backup-winding message was corrected to ASCII after Inspection_10; Inspection_11 contains that text-only correction.
 
 The second physical hiding interaction is now implemented and targeted-tested, superseding the earlier remaining-work list. Bigger middle-act expansion, vent investigation, professional Surveyor character art, full rare-text sign-off, broader environment/audio review, safe blackout event and fuller ending presentation are still unfinished. No 30-60-minute human duration, subjective listening or artistic approval is claimed.
+
+
+## Final Inspection candidate acceptance
+
+Inspection_11 earned fresh investigation and both endings 284/0; chapter56, systems33, threat56, underfloor42 and impossible43 passed. Final Inspection_12 differs only by one comparison status sentence; equipment/UV79 at ultrawide, prerequisite edges15 and story/layout156 passed. Read INSPECTION_VERIFICATION.md for exact scopes and preserved rejected edge fixture. No more full-route repetition is required for documentation/package changes. Packaging and independent download verification are the remaining release steps. All broader remaining production work stays open.

@@ -130,7 +130,7 @@ func edge_checks() -> void:
 	g.stage=3;g.isolated=false;g.chapter.open_receiver();await wait(.3)
 	var receiver=receiver_widget();receiver.dial.value=g.PUZZLES.station(g.events)
 	g.presentation.buttons["Listen to receiver"].pressed.emit();await wait(.2)
-	check("live feed blocks even correct frequency",not g.events.get("receiver_found",false) and receiver.display.text.contains("INTERFERENCE"))
+	check("live feed blocks even correct frequency",not g.events.get("receiver_found",false) and g.menu_open and receiver.display.text.to_lower().contains("interference"),receiver.display.text)
 	g.isolated=true;g.presentation.buttons["Listen to receiver"].pressed.emit();await wait(.3)
 	check("known frequency needs no invisible clue flag",g.events.get("receiver_found",false) and not g.events.get("carbon_read",false))
 	g.threat.reset();g.presence.visible=false

@@ -599,7 +599,7 @@ func show_exclusion() -> void:
 	var state_a := "heard" if game.events.get("audition_A",false) else "not heard"
 	var state_b := "heard" if game.events.get("audition_B",false) else "not heard"
 	var available: bool = game.stage>=3 and not game.threat.active()
-	label(card_body,"A: "+state_a+"     /     B: "+state_b+"\n"+("Playing "+game.horror.audition if game.horror.audition!="" else ("Listen to both before marking a fault." if available else "Playback unavailable: "+("no power" if game.stage<3 else "movement nearby"))),18)
+	label(card_body,"A: "+state_a+"     /     B: "+state_b+"\n"+("Playing "+game.horror.audition if game.horror.audition!="" else (("Mark where the extra step came from." if heard_both else "Listen to both before comparing.") if available else "Playback unavailable: "+("no power" if game.stage<3 else "movement nearby"))),18)
 	var row := HBoxContainer.new();card_body.add_child(row)
 	for channel in ["A","B"]:
 		add_button("Listen "+channel,func():resume_game();game.horror.audition_channel(channel),available,row)
