@@ -1,6 +1,6 @@
 # UNLISTED
 
-**Newer unreleased source:** the final sprint adds a physical crawlspace clearance-carbon investigation and story clarity. Targeted acceptance is being finished; the verified public Windows download remains 0.9.0 below.
+**Newer unreleased source:** the final sprint adds a physical crawlspace clearance-carbon investigation and story clarity. Targeted native checks passed; full new-route acceptance and human review are still pending. [Resume from the sprint recovery document](SPRINT_RECOVERY.md). The verified public Windows download remains 0.9.0 below.
 
 *No Record. No Exit.*
 
