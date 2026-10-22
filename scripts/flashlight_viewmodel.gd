@@ -4,6 +4,8 @@ var player: CharacterBody3D
 var clock := 0.0
 var home := Vector3(0.23,-0.205,-0.43)
 var obstruction := 0.0
+var inspection_rim: MeshInstance3D
+var inspection_material: StandardMaterial3D
 
 func prepare_meshes(root: Node) -> void:
 	for child in root.get_children():
@@ -18,6 +20,10 @@ func _ready() -> void:
 	var model: Node3D = preload("res://assets/first_person/work_torch.glb").instantiate()
 	add_child(model)
 	prepare_meshes(model)
+	for mesh in player.game.all_meshes(model):
+		if "Bezel wear" in mesh.name or "Bezel_wear" in mesh.name:inspection_rim=mesh
+	inspection_material=StandardMaterial3D.new();inspection_material.albedo_color=Color("62627c");inspection_material.roughness=.65
+
 	# Restrained bounce on the hands only; no extra light reaches the house.
 	var bounce := OmniLight3D.new()
 	bounce.position = Vector3(-0.08,0.13,-0.15)
@@ -29,6 +35,7 @@ func _ready() -> void:
 	add_child(bounce)
 
 func _process(delta: float) -> void:
+	if is_instance_valid(inspection_rim) and is_instance_valid(player.game.equipment):inspection_rim.material_override=inspection_material if player.game.equipment.data.get("uv",false) else null
 	var prefs: Dictionary = player.game.presentation.prefs.data
 	var hit: Dictionary = player.target()
 	var clearance := 5.0

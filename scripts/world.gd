@@ -1,5 +1,6 @@
 extends Node3D
 
+const PUZZLES = preload("res://scripts/case_puzzles.gd")
 const NOTES = preload("res://scripts/case_notes.gd")
 const PLAYER = preload("res://scripts/player.gd")
 const DOOR = preload("res://scripts/door.gd")
@@ -38,6 +39,7 @@ var targets: Dictionary = {}
 var lamps: Array[OmniLight3D] = []
 var valve_order: Array[int] = []
 var valve_visuals: Dictionary = {}
+var valve_labels: Dictionary = {}
 var chair: Node3D
 var presence: CharacterBody3D
 var horror: Node3D
@@ -53,6 +55,7 @@ var investigation: Node3D
 var maintenance: Node3D
 var dead_line: Node3D
 var spare_place: Node3D
+var equipment: Node3D
 var ambient_director: Node3D
 var spare_mirror: Node3D
 var chapter: Node3D
@@ -84,6 +87,7 @@ func _ready() -> void:
 		checkpoint_path = "user://development/checkpoint.json"
 	qa_mode = "--door-repair-qa" in OS.get_cmdline_user_args() or "--recording-repair-qa" in OS.get_cmdline_user_args() or "--qa" in OS.get_cmdline_user_args() or "--presentation-qa" in OS.get_cmdline_user_args() or "--milestone-qa" in OS.get_cmdline_user_args() or "--threat-qa" in OS.get_cmdline_user_args() or "--systems-qa" in OS.get_cmdline_user_args() or "--polish-qa" in OS.get_cmdline_user_args() or "--visual-probe" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--production-views" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--inspection-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--arrival-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--ambient-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--director-qa" in OS.get_cmdline_user_args()
@@ -145,6 +149,7 @@ func _ready() -> void:
 	spare_place=load("res://scripts/spare_place.gd").new();spare_place.game=self;add_child(spare_place)
 	spare_mirror=load("res://scripts/spare_mirror.gd").new();spare_mirror.game=self;add_child(spare_mirror)
 	ambient_director=load("res://scripts/ambient_director.gd").new();ambient_director.game=self;add_child(ambient_director)
+	equipment=load("res://scripts/inspection_gear.gd").new();equipment.game=self;add_child(equipment)
 	set_volume(volume)
 	show_menu("UNLISTED", true)
 	if dev_mode:
@@ -159,12 +164,18 @@ func _ready() -> void:
 	if qa_mode and not "--visual-probe" in OS.get_cmdline_user_args(): call_deferred("run_qa")
 
 func configure_input() -> void:
-	var keys := {"forward":KEY_W, "back":KEY_S, "left":KEY_A, "right":KEY_D, "sprint":KEY_SHIFT, "crouch":KEY_CTRL, "interact":KEY_E, "flashlight":KEY_F,"journal":KEY_J,"hint":KEY_H}
+	var keys := {"forward":KEY_W, "back":KEY_S, "left":KEY_A, "right":KEY_D, "sprint":KEY_SHIFT, "crouch":KEY_CTRL, "interact":KEY_E, "flashlight":KEY_F,"journal":KEY_J,"hint":KEY_H,"battery_status":KEY_B,"battery_replace":KEY_T}
 	for action in keys:
 		if not InputMap.has_action(action): InputMap.add_action(action)
 		var event := InputEventKey.new()
 		event.physical_keycode = keys[action]
 		InputMap.action_add_event(action, event)
+	for pair in [["flashlight",JOY_BUTTON_RIGHT_SHOULDER],["battery_status",JOY_BUTTON_DPAD_UP],["battery_replace",JOY_BUTTON_Y]]:
+		var button:=InputEventJoypadButton.new();button.button_index=pair[1];InputMap.action_add_event(pair[0],button)
+
+	for axis in [["inspect_left",JOY_AXIS_RIGHT_X,-1.0],["inspect_right",JOY_AXIS_RIGHT_X,1.0],["inspect_up",JOY_AXIS_RIGHT_Y,-1.0],["inspect_down",JOY_AXIS_RIGHT_Y,1.0]]:
+		InputMap.add_action(axis[0],.20)
+		var motion:=InputEventJoypadMotion.new();motion.axis=axis[1];motion.axis_value=axis[2];InputMap.action_add_event(axis[0],motion)
 
 func mat(color: Color, emission := false) -> StandardMaterial3D:
 	var key := str(color) + str(emission)
@@ -422,7 +433,10 @@ func paper(pos: Vector3, id: String, title_: String, angle := 0.0) -> void:
 	node.position = pos
 	node.rotation.y = angle
 	box(node,Vector3.ZERO,Vector3(0.48,0.6,0.025),Color(0.62,0.56,0.40))
-	label3(node,title_,Vector3(0,0,0.018),0,17,black)
+	var ink:=label3(node,title_,Vector3(0,0,0.018),0,17,black)
+	var measured:=ThemeDB.fallback_font.get_multiline_string_size(title_,HORIZONTAL_ALIGNMENT_CENTER,-1,17)
+	ink.pixel_size=minf(.005,minf(.42/maxf(measured.x,1),.50/maxf(measured.y,1)))
+
 	collision(node,Vector3.ZERO,Vector3(0.50,0.62,0.05),id)
 
 func build_world() -> void:
@@ -607,7 +621,7 @@ func build_service_route() -> void:
 	ring.inner_radius=0.018;ring.outer_radius=0.026;ring.rings=8;ring.ring_segments=6
 	shackle.mesh=ring;shackle.material_override=mat(Color("454d49"));shackle.rotation.x=PI/2
 	padlock.add_child(shackle)
-	table(Vector3(-18,0,-16),2.5,0.9)
+	table(Vector3(-18,0,-16),2.5,0.9).name="ShedEquipmentBench"
 	paper(Vector3(-18,1.45,-16.89),"shed_record","RELAY 17\n\nSERVICE PROCEDURE\nS. WARD / 1998\n\nREAD BEFORE ISOLATION")
 	model("res://assets/machinery/generator.glb",self,Vector3(-18.8,0,-12.3),Vector3(1.0,1.4,2),PI/2,true)
 	fixture(Vector3(-17,2.67,-14))
@@ -753,6 +767,11 @@ func new_game() -> void:
 	events.case_v2=true
 	events.case_v3=true
 	events.arrival_check=true
+	PUZZLES.generate(events)
+	for arg in OS.get_cmdline_user_args():
+		if automated_qa and arg.begins_with("--puzzle-seed="):PUZZLES.generate(events,int(arg.trim_prefix("--puzzle-seed=")))
+	refresh_puzzle_labels()
+	equipment.new_case()
 	if is_instance_valid(chapter):chapter.restore()
 	if is_instance_valid(maintenance):maintenance.restore()
 	if is_instance_valid(dead_line):dead_line.restore()
@@ -841,6 +860,8 @@ func open_casebook() -> void:
 	presentation.inspect_document("FIELD NOTES / RECORDS EXAMINED",text_)
 
 func interaction_name(id: String) -> String:
+	if id=="inspection_kit":return "Fit inspection head"
+	if id.begins_with("battery_"):return "Take battery pack"
 	if id=="spare_mirror":return "Touch glass"
 	if id=="spare_cover":return "Pull back blanket"
 	if id=="spare_card":return "Turn birthday card"
@@ -852,7 +873,7 @@ func interaction_name(id: String) -> String:
 	if id=="archive_rack":return "Move shelving"
 	if id=="underfloor_sheet":return "Read test sheet"
 	if id=="test_joist":return "Tap timber"
-	if id=="carbon_return":return "Examine impressions" if events.get("field_return_read",false) else "Inspect writing mat"
+	if id=="carbon_return":return "Inspect report sleeve"
 	if id=="return_receiver":return "Tune receiver"
 	if id=="memory_drawer":return "Close drawer" if chapter.drawer_open else "Open drawer"
 	if id=="memory_page":return "Take folded page"
@@ -874,6 +895,7 @@ func try_interact() -> void:
 		interact(str(hit.collider.get_meta("interaction")))
 
 func interact(id: String) -> void:
+	if id=="inspection_kit" or id.begins_with("battery_"):equipment.collect(id);return
 	if id=="spare_mirror":spare_mirror.touch();return
 	if id.begins_with("spare_"):spare_place.use(id);return
 	if id.begins_with("line_"):dead_line.use(id);return
@@ -962,7 +984,7 @@ func interact(id: String) -> void:
 			var index := int(id.right(1))
 			valve_order.append(index)
 			sound("valve",targets[id].global_position,-21)
-			var expected: Array[int] = [1,0,2]
+			var expected: Array[int] = PUZZLES.sequence(events)
 			if valve_order != expected.slice(0,valve_order.size()):
 				valve_order.clear()
 				for wheel in valve_visuals.values():wheel.rotation.z = 0
@@ -973,7 +995,7 @@ func interact(id: String) -> void:
 				var t := create_tween()
 				t.tween_property(v,"rotation:z",v.rotation.z+PI/2,0.45)
 		"isolate":
-			if valve_order != [1,0,2]: message("The handle won't move while the lines are under pressure.")
+			if valve_order != PUZZLES.sequence(events): message("The handle won't move while the lines are under pressure.")
 			elif not isolated:
 				isolated = true
 				for l in lamps: l.light_energy = 0.15
@@ -1069,6 +1091,10 @@ func finish_game() -> void:
 	presentation.show_ending()
 	if not qa_mode: save_game()
 
+func refresh_puzzle_labels() -> void:
+	for i in 3:
+		if valve_labels.has(i):valve_labels[i].text=PUZZLES.plate(events,i)
+
 func door_swing_states() -> Dictionary:
 	var result := {}
 	for id in doors:result[id] = doors[id].open_angle
@@ -1106,6 +1132,8 @@ func apply_save(data: Dictionary) -> void:
 	isolated = data.get("isolated",false)
 	events = data.get("events",{}).duplicate(true)
 	if events.get("front_ajar",false) and not doors.front.opened:doors.front.restore_arrival()
+	PUZZLES.ensure(events)
+	refresh_puzzle_labels()
 	NOTES.refresh_collected(events)
 	if isolated and not events.get("return",false) and not events.get("threat_resolved",false):
 		events.threat_pending = true
@@ -1145,6 +1173,7 @@ func apply_save(data: Dictionary) -> void:
 	if is_instance_valid(dead_line):dead_line.restore()
 	if is_instance_valid(spare_place):spare_place.restore()
 	if is_instance_valid(ambient_director):ambient_director.restore()
+	if is_instance_valid(equipment):equipment.restore()
 
 func save_game(quiet := false) -> void:
 	if is_instance_valid(capture_director) and capture_director.active:return
@@ -1209,6 +1238,7 @@ func run_qa() -> void:
 		var test = load("res://scripts/hands_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
 		await test.run(self);return
 	var path := "res://scripts/input_isolation_qa.gd" if "--input-isolation-qa" in OS.get_cmdline_user_args() else "res://scripts/exterior_views.gd" if "--exterior-views" in OS.get_cmdline_user_args() else "res://scripts/exterior_qa.gd" if "--exterior-qa" in OS.get_cmdline_user_args() else "res://scripts/door_repair_qa.gd" if "--door-repair-qa" in OS.get_cmdline_user_args() else "res://scripts/recording_repair_qa.gd" if "--recording-repair-qa" in OS.get_cmdline_user_args() else "res://scripts/polish_qa.gd" if "--polish-qa" in OS.get_cmdline_user_args() else "res://scripts/systems_qa.gd" if "--systems-qa" in OS.get_cmdline_user_args() else "res://scripts/threat_qa.gd" if "--threat-qa" in OS.get_cmdline_user_args() else "res://scripts/milestone_qa.gd" if "--milestone-qa" in OS.get_cmdline_user_args() else "res://scripts/presentation_qa.gd" if "--presentation-qa" in OS.get_cmdline_user_args() else "res://scripts/runtime_qa.gd"
+	if "--inspection-qa" in OS.get_cmdline_user_args():path="res://scripts/inspection_qa.gd"
 	if "--arrival-qa" in OS.get_cmdline_user_args():path="res://scripts/arrival_qa.gd"
 	if "--ambient-qa" in OS.get_cmdline_user_args():path="res://scripts/ambient_qa.gd"
 	if "--director-qa" in OS.get_cmdline_user_args():path="res://scripts/director_qa.gd"

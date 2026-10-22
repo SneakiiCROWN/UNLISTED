@@ -6,14 +6,14 @@ const RUBBING_LINES := ["Kitchen radio: 104.6.","I phoned home. Eli answered. He
 
 const COMPARISON_TITLE := "ELI / TONIGHT'S COMPARISON"
 
-const SITE := "Briar Lane clearance works / 1998\nSite office: No. 17\n\nNos. 13-19 are vacant. Keep No. 17 open until the final inspection. Front room: waiting area. Rear room: property files.\n\nLeave the service feed on until everyone has signed out. Check the electrical counter against the paper register. If they disagree, check the building. Do not certify it empty from the counter alone.\n\nRemove this address from the call-out list when the site closes.\n\nHandwritten below: Counter says two. Only Ward signed in. I've checked the book twice."
+const SITE := "Briar Lane clearance works / 1998\nSite office: No. 17\n\nNos. 13-19 are vacant. Keep No. 17 open until the final inspection. Front room: waiting area. Rear room: property files.\n\nLeave the service feed on until everyone has signed out. Check the electrical counter against the paper register. If they disagree, check the building. Do not certify it empty from the counter alone.\n\nRemove this address from the call-out list when the site closes.\n\nHandwritten below: Counter says two arrivals. Ward is the only name in the sign-in book."
 
 const CALL := "PROPERTY SERVICES / WORK ORDER 017\n17 Briar Lane / Eli Ward\n\nReported fault: television playing in a vacant property. Supply listed as disconnected. Caller gave no name or contact number.\n\nDispatch note: Address removed from service list in 1999. Confirm address before attending.\n\nMy note: Dispatch nearly cancelled it. Then they said Briar Lane. I've still got Dad's last job slip. Same house. I asked them to give me the call."
 const ARCHIVE := "PROPERTY FILE / SIMON WARD\nElectrical contractor / 1998\n\n23:17 - Signed in.\n23:18 - Status changed to ABSENT.\nDeparture time: blank. No door opening recorded.\n\nMissing-person report attached. Ward did not return from this call. His son, Eli, was seven.\n\nService-camera still: a second man at the stairs. No name or vehicle recorded.\n\nSimon's pencil note: He stands there whenever I try to leave. Keep my notebook. Don't file this as an empty property.\n\nA brass service key is clipped inside the folder."
-const PROCEDURE := "SERVICE SHED / S. WARD / 1998\n\nIsolation order:\nCOOLING, then SUPPLY, then OCCUPANCY.\nPull the isolator only after all three lines are closed. Use the labels beside the pipes; the wheels have been repainted.\n\nThe lower return drawer has a spring catch. Keep the floor release weighted while opening it. Disconnect the feed first.\n\nI've left my original report in that drawer. Someone keeps walking above me. If I stop, he stops. I haven't seen another contractor all night.\n\nPlease check the house if I don't sign out.\n\nA small key is taped to the back."
+const PROCEDURE := "SERVICE SHED / S. WARD / 1998\n\nIsolation order:\nCOOLING first, then SUPPLY, then COUNTER.\nPull the isolator only after all three lines are closed. Trace the service names on the plates. The colours are only line identifiers.\n\nThe lower return drawer has a spring catch. Keep the floor release weighted while opening it. Disconnect the feed first.\n\nI've left my original report in that drawer. The office copy has been changed; use the original if I don't come back. Someone keeps walking above me. If I stop, he stops. I haven't seen another contractor all night.\n\nPlease check the house if I don't sign out.\n\nA small key is taped to the back."
 const SOURCE_COPY := "MY RECORDING / TONIGHT\n\nA is the hall microphone. Those are my footsteps. B plays them back. When B finishes, another step comes from the office doorway. I wasn't moving.\n\nThis isn't an old recording of Dad. It's happening to me, here, tonight.\n\nI've kept the comparison with his report. If I submit both, dispatch will have more than a missing entry to investigate."
-const FIELD_RETURN := "COUNTER STRIP / 1998\nS. WARD / IN 23:17\nABSENT 23:18\nEXIT / --\n\nNo departure was recorded.\n\nPencil note: Notebook in lower drawer. Floor release operates the catch.\n\nA fresh carbon underneath carries tonight's work-order number. The old job has come up again."
-const ORIGINAL := "S. WARD / FIELD REPORT / 1998\n\nThe counter registered another arrival. I disconnected its feed. The motor stopped. The hall lights didn't.\n\nA man is standing by the stairs. No van, no tools. He won't answer me. When I go towards the front door, he moves in front of it.\n\nI came here about a television. I've just seen my own name crossed out in the office file. I'm still in the building.\n\nCheck every room before signing it off. Don't let the counter decide I'm gone.\n\n[The last page is missing. Pencil marks are pressed into the next sheet.]"
+const FIELD_RETURN := "COUNTER STRIP / 1998\nS. WARD / IN 23:17\nABSENT 23:18\nEXIT / --\n\nNo departure was recorded.\n\nPencil note: Notebook in lower drawer. Floor release operates the catch.\n\nA fresh carbon underneath carries tonight's work-order number. Tonight's job is being filed against Dad's old record."
+const ORIGINAL := "S. WARD / FIELD REPORT / 1998\n\nThe counter registered another arrival. I disconnected its feed. The motor stopped. The hall lights didn't.\n\nA man is standing by the stairs. No van, no tools. He won't answer me. When I go towards the front door, he moves in front of it.\n\nI came here about a television. I've just seen my own name crossed out in the office file. I'm still in the building.\n\nCheck every room before signing it off. Don't let the counter decide I'm gone.\n\n[The last page is missing. The report sleeve is marked: UV / inspect reverse.]"
 const RECOUNT := "Dad was still inside when they marked him absent. Nobody checked.\n\nNow the register has both our names. His arrival in 1998. Mine tonight.\n\nI can correct his entry and close my call-out. Or I can attach his report and tonight's comparison, and leave the fault open for investigation. Either way, he stays missing. I need to take the receipt with me."
 
 const MISSING_PAGE := "23:18 / Simon\n\nI rang home. Eli answered. He asked if I'd be back for tea.\n\nI opened the lounge door. His bed was in there. His books. The little chair from his room. His drawing was on the cupboard - the one he'd put in my toolbox this morning.\n\nI know what I saw. I also know he's at home. This isn't our house.\n\nThe office radio was on our kitchen station. 104.6. The clock still says 23:18.\n\nThere's someone moving in that room. It can't be Eli. But if there's a child in here, I can't just leave.\n\nEli, if you get this: I was trying to get home to you. I didn't choose to stay."
@@ -28,8 +28,12 @@ const SPARE_CARD_NOTE := "The cover was moving. There was nobody underneath it.\
 
 const SPARE_GLASS_NOTE := "The cot was empty when I pulled the cover back. In the mirror, something was still underneath it.\n\nFirst the strip. Now the card. This house keeps getting my life wrong."
 
-static func rubbing_note() -> String:
-	return "\n".join(RUBBING_LINES)+"\n\nDad's pencil marked the sheet underneath. He wrote about my room. It shouldn't have been here."
+static func rubbing_note(events: Dictionary={}) -> String:
+	return "\n".join(preload("res://scripts/case_puzzles.gd").lines(events))+"\n\nDad wrote this on the report sleeve in inspection ink. He said my room was here. I was at home."
+
+static func missing_page(events: Dictionary) -> String:
+	return MISSING_PAGE.replace("104.6","%.1f"%preload("res://scripts/case_puzzles.gd").station(events))
+
 
 static func clue(game: Node) -> String:
 	if game.events.get("underfloor_read",false) and not game.events.get("line_strip_read",false) and not game.isolated and game.player.position.y>-.2 and ((game.player.position.x>1.6 and game.player.position.z< -3) or game.events.get("line_test_armed",false)):
@@ -39,8 +43,9 @@ static func clue(game: Node) -> String:
 	if game.events.get("case_v3",false) and game.events.get("field_return_read",false) and not game.events.get("bedroom_left",false):
 		if game.events.get("last_page_read",false):return "I have Dad's last page. I can leave the room."
 		if game.events.get("receiver_found",false):return "I heard something beyond the lounge door. Dad wrote that the room changed after he shut it."
-		if game.events.get("carbon_read",false):return "104.6 is a radio frequency. There is a receiver on the office desk."
-		return "The torn page left impressions. The office writing mat has a soft pencil."
+		if game.events.get("carbon_read",false):return "Dad wrote down %.1f. I can try it on the office radio."%game.PUZZLES.station(game.events)
+		if not game.equipment.data.uv:return "Dad marked the sleeve for inspection light. The equipment case in the shed had an inspection-head label."
+		return "Dad marked the report sleeve for inspection light. I can examine it on the office desk."
 	if game.events.get("departure_pending","")!="":return "I have the receipt. I need to get it out to the lane."
 	if game.isolated and game.events.get("case_v2",false) and not game.events.get("field_return_read",false):return "The spring catch closes when I step off the floor release. It needs more weight."
 	if game.isolated:return "The original contradicts the office file. The porch register still carries the false entry."
@@ -55,7 +60,7 @@ static func clue(game: Node) -> String:
 # progression flags while loading a legacy checkpoint.
 static func refresh_collected(events: Dictionary) -> void:
 	var notes: Dictionary=events.get("notes",{})
-	var current: Dictionary={"BRIAR LANE / TEMPORARY OFFICE":SITE,"NIGHT CALL / 17 BRIAR LANE":CALL,"ARCHIVE / 23:17:08":ARCHIVE,"SIMON'S MANUAL OVERRIDE":PROCEDURE,COMPARISON_TITLE:SOURCE_COPY,"TRANSPORT / LEADER":TRANSPORT_LEADER,"THE UNFINISHED RETURN":unfinished_return(events),"TORN PAGE / IMPRESSIONS":rubbing_note(),"FIELD RETURN / 1998":FIELD_RETURN,"SIMON / ORIGINAL FIELD RETURN":ORIGINAL,"TWO ARRIVALS / NO EXIT":RECOUNT,"SIMON / THE MISSING PAGE":MISSING_PAGE,"SIMON / UNDERFLOOR TEST":UNDERFLOOR_TEST,"SIMON / CONTINUITY TEST":CONTINUITY_TEST,"UNWITNESSED ARRIVAL":DEAD_LINE_RESULT,"THE SPARE PLACE":SPARE_CARD_NOTE,"THE UTILITY GLASS":SPARE_GLASS_NOTE}
+	var current: Dictionary={"BRIAR LANE / TEMPORARY OFFICE":SITE,"NIGHT CALL / 17 BRIAR LANE":CALL,"ARCHIVE / 23:17:08":ARCHIVE,"SIMON'S MANUAL OVERRIDE":PROCEDURE,COMPARISON_TITLE:SOURCE_COPY,"TRANSPORT / LEADER":TRANSPORT_LEADER,"THE UNFINISHED RETURN":unfinished_return(events),"TORN PAGE / IMPRESSIONS":rubbing_note(events),"FIELD RETURN / 1998":FIELD_RETURN,"SIMON / ORIGINAL FIELD RETURN":ORIGINAL,"TWO ARRIVALS / NO EXIT":RECOUNT,"SIMON / THE MISSING PAGE":missing_page(events),"SIMON / UNDERFLOOR TEST":UNDERFLOOR_TEST,"SIMON / CONTINUITY TEST":CONTINUITY_TEST,"UNWITNESSED ARRIVAL":DEAD_LINE_RESULT,"THE SPARE PLACE":SPARE_CARD_NOTE,"THE UTILITY GLASS":SPARE_GLASS_NOTE}
 	if notes.has("SIMON / RETURN CHANNEL"):
 		notes[COMPARISON_TITLE]=SOURCE_COPY
 		notes.erase("SIMON / RETURN CHANNEL")
@@ -67,4 +72,4 @@ static func unfinished_return(events: Dictionary) -> String:
 	if events.get("last_page_read",false):return "I've got Dad's last page. I need to leave that room behind."
 	if events.get("receiver_found",false):return "That sound came from the lounge. I'm checking it before I sign this."
 	if events.get("carbon_read",false):return "Dad wrote down our kitchen radio station. I haven't tried it yet."
-	return "Dad's last page is missing. There are pencil marks pressed into the next sheet. I need to see what he wrote before I sign this."
+	return "Dad's last page is missing. The report sleeve says to check its reverse under an inspection lamp. I want to know what he left before I sign anything."

@@ -381,7 +381,7 @@ func begin_new_game() -> void:
 	stage.set_active(true)
 	intro_text.visible = true
 	fade.color.a = 1
-	intro_lines("ELI WARD / NIGHT CALL-OUT","17 BRIAR LANE","My father disappeared on a job here in 1998.\nTonight the same address turned up on my call sheet.")
+	intro_lines("ELI WARD / NIGHT CALL-OUT","17 BRIAR LANE","Dad disappeared on a job here in 1998. They never found him.\nTonight someone reported a television playing in the empty house.\nI asked dispatch to give me the call.")
 	intro_tween = create_tween()
 	intro_tween.tween_interval(5.0)
 	intro_tween.tween_callback(func():intro_text.visible = false)

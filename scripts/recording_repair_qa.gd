@@ -183,6 +183,7 @@ func run(game: Node) -> void:
 	await travel(Vector2(-12.4,-14),"shed approach");await use("shed")
 	await travel(Vector2(-16,-14),"shed threshold inward")
 	await travel(Vector2(-18,-15.2),"shed manual standing");await use("shed_record")
+	await travel(Vector2(-18.4,-15.1),"shed inspection case approach");await use("inspection_kit");await use("battery_shed")
 	check("fresh stairwell key",g.shed_read and not g.doors.basement.locked)
 	await travel(Vector2(-16,-14),"shed exit turn");await travel(Vector2(-12.4,-14),"shed threshold return")
 	await travel(Vector2(-12,-12.5),"yard return turn");await travel(Vector2(-4.5,-12.5),"yard east")
@@ -206,11 +207,10 @@ func run(game: Node) -> void:
 			await travel(Vector2(-3.1,-7),"spare-place return to utility aisle")
 			await travel(Vector2(0,-7),"spare-place investigation returns to original hall")
 		await travel(Vector2(0,-18),"sound investigation rejoins live cellar route")
-	await travel(Vector2(-1.5,-22),"coolant approach");await use("valve1")
-	await travel(Vector2(-2.7,-22),"supply approach");await use("valve0")
-	await travel(Vector2(-0.3,-22),"occupancy approach");await use("valve2")
+	for index in g.PUZZLES.sequence(g.events):
+		await travel(Vector2(-2.7+index*1.2,-22),"service line "+str(index));await use("valve"+str(index))
 	await travel(Vector2(2,-22),"isolator approach");await use("isolate")
-	check("continuous fresh route reaches isolation",g.isolated and g.valve_order==[1,0,2])
+	check("continuous fresh route reaches isolation",g.isolated and g.valve_order==g.PUZZLES.sequence(g.events))
 	if "--service-aisle" in OS.get_cmdline_user_args():
 		await travel(Vector2(-2.8,-22),"natural route west working aisle",true)
 		await travel(Vector2(-3,-18.6),"natural route beyond maintenance bench",true)

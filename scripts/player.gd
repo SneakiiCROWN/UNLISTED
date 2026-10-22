@@ -80,7 +80,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("journal"):game.open_casebook();return
 	if event.is_action_pressed("hint"):game.request_hint();return
 	if event.is_action_pressed("flashlight"):
-		torch.visible = not torch.visible
+		game.equipment.cycle()
+	if event.is_action_pressed("battery_status"):game.equipment.status();return
+	if event.is_action_pressed("battery_replace"):game.equipment.replace_pack();return
 	if event.is_action_pressed("interact"):
 		if game.physical.use():return
 		game.try_interact()

@@ -25,3 +25,10 @@ It repeats footsteps and rhythms, rearranges an unobserved room and presents pri
 ## Not yet signed off
 
 The major documents and finale wording are revised in this pass. Every rare caption, old tutorial and environmental label still needs the final full-string review against runtime evidence. No claim of complete narrative or human approval. Wider room audit, event director and stronger cinematic outcomes remain production work.
+
+
+## Active inspection continuation / newer than 0.8.1
+
+The report sleeve carries fluorescent security ink, not a pencil-rubbing instruction. Its station and the remembered kitchen station share saved case-puzzle data. New cases vary; old cases retain the historical 104.6 solution. Simon's ordinary pencil notes elsewhere need not be erased.
+
+The inspection case has a 2018 stock label. Eli can observe that date, but neither the label nor the case proves a person visited in 2018. It is another uncertain artifact in a house already fabricating chronology, not proof Simon returned after 1998. The existing missing-person history and both ending meanings stay intact. The 2018 contradiction needs later playable payoff; do not introduce further unsupported visitors or identities.

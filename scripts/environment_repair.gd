@@ -222,7 +222,7 @@ func dressing() -> void:
 			textured_box(Vector3(2.4+float(i)*0.68,y,-9.12),Vector3(0.55,0.34,0.035),steel,Color(0.33,0.37,0.31))
 			g.box(g,Vector3(2.4+float(i)*0.68,y,-9.08),Vector3(0.15,0.025,0.04),Color(0.12,0.14,0.12))
 	g.model("res://assets/dusk/psx_prop_newspapers_01.glb",g,Vector3(5.05,0.81,-8.96),Vector3(0.55,0.05,0.35))
-	g.model("res://assets/dusk/psx_prop_mug_01.glb",g,Vector3(6.2,0.81,-8.65),Vector3(0.14,0.16,0.14))
+	# Keep the actual report-sleeve work surface clear; its mug is a shared loose prop on the archive cabinet.
 	# Notice board on utility wall; attached labels and clipped papers.
 	textured_box(Vector3(-2.6,1.75,-9.84),Vector3(1.7,0.8,0.06),wood,Color(0.46,0.37,0.25))
 	for i in range(3):
@@ -273,7 +273,8 @@ func relay_room() -> void:
 		var id := "valve"+str(i)
 		g.valve_visuals[id] = wheel
 		g.collision(g,Vector3(x,-1.65,-23.2),Vector3(0.7,0.8,0.55),id)
-		plaque(Vector3(x+.38,-0.97,-23.635),["01 / RED\nSUPPLY","02 / BLUE\nCOOLANT","03 / WHITE\nOCCUPANCY"][i],0.65)
+		var plate:=plaque(Vector3(x+.38,-0.97,-23.635),g.PUZZLES.plate(g.events,i),0.65)
+		g.valve_labels[i]=plate.find_children("*","Label3D",true,false)[0]
 	# Plates sit on the backboard, beside the pipes, rather than floating out
 	# in front of them. The backboard itself is fixed to the structural wall.
 	for x in [-3.55,.55]:

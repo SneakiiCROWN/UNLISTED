@@ -17,7 +17,6 @@ var watch_clock:=-1.0
 var unseen:=0.0
 var watch_seen:=false
 var watch_walk:=0.0
-const LAST_PAGE=preload("res://scripts/case_notes.gd").MISSING_PAGE
 func _ready() -> void:
 	name="TheMissingMinute"
 	build_work_surface();build_room();restore()
@@ -51,7 +50,7 @@ func build_work_surface() -> void:
 	var mat: MeshInstance3D=game.box(self,Vector3(6.27,.809,-8.56),Vector3(.38,.012,.36),Color("3b3d34"));mat.name="CarbonWritingMat"
 	game.box(self,Vector3(6.27,.819,-8.56),Vector3(.30,.004,.31),Color("aaa18a"))
 	game.collision(self,Vector3(6.27,.827,-8.56),Vector3(.36,.025,.34),"carbon_return")
-	var pencil: MeshInstance3D=game.box(self,Vector3(6.50,.821,-8.55),Vector3(.012,.012,.24),Color("8e7650"));pencil.rotation.y=.15
+	var label: Label3D=game.label3(self,"UV / REVERSE",Vector3(6.27,.824,-8.43),0,12,Color("4c5149"));label.rotation.x=-PI/2;label.pixel_size=.002
 func build_room() -> void:
 	room=Node3D.new();room.name="RememberedBedroom";add_child(room)
 	var bed=model("bedSingle",Vector3(6.35,0,-1.65),Vector3(1.16,.72,2.15))
@@ -120,19 +119,21 @@ func sync_page() -> void:
 	game.targets.memory_page.collision_layer=1 if active and drawer_open and page.visible else 0
 func open_carbon() -> void:
 	if not game.events.get("field_return_read",false):
-		game.inspect_text("WRITING MAT","A soft pencil and a sheet of tracing paper. The mat is marked with old graphite.");return
+		game.inspect_text("REPORT SLEEVE","A note on the sleeve: inspection ink / check reverse. Dad's original report should tell me what belongs here.");return
+	if not game.equipment.data.uv:
+		game.inspect_text("REPORT SLEEVE","The sleeve says UV / inspect reverse. The inspection case is in the service shed.");return
 	var p=game.presentation;p.pause_world();p.clear_transients();p.clear_card();p.section="document"
 	var backing: StyleBoxFlat=p.normal_panel.duplicate();backing.bg_color=Color(0,0,0,0);backing.border_width_left=0;backing.border_width_top=0;p.card.add_theme_stylebox_override("panel",backing)
-	p.label(p.card_body,"Hold and move the pencil over the paper.",17).modulate=Color("b2b7a9")
+	p.label(p.card_body,"Inspection ink / F or RB changes light. Hold and sweep over the sleeve.",17).modulate=Color("b2b7a9")
 	var rubbing=load("res://scripts/carbon_rubbing.gd").new();rubbing.game=game;p.card_body.add_child(rubbing)
 	var actions:=HBoxContainer.new();p.card_body.add_child(actions)
-	p.add_button("Rub for me",rubbing.complete_accessibly,true,actions)
+	p.add_button("Slow automatic scan",rubbing.complete_accessibly,true,actions)
 	p.add_button("Put sheet down",func():game.save_game();p.resume_game(),true,actions)
 	p.entrance_animation(p.card)
 func complete_rubbing() -> void:
 	game.events.carbon_read=true
 	game.events.notes=game.events.get("notes",{})
-	game.events.notes["TORN PAGE / IMPRESSIONS"]=game.NOTES.rubbing_note()
+	game.events.notes["TORN PAGE / IMPRESSIONS"]=game.NOTES.rubbing_note(game.events)
 	game.save_game()
 func open_receiver() -> void:
 	if game.stage<3:game.message("The receiver is silent. Its supply light is out.",3);return
@@ -158,7 +159,7 @@ func use_drawer() -> void:
 func take_page() -> void:
 	if not active or not drawer_open or game.events.get("last_page_read",false):return
 	game.events.last_page_read=true;sync_page()
-	game.inspect_text("SIMON / THE MISSING PAGE",LAST_PAGE)
+	game.inspect_text("SIMON / THE MISSING PAGE",game.NOTES.missing_page(game.events))
 	game.events.memory_watch_pending=true
 	game.save_game();door_clock=0
 func point_visible(point: Vector3) -> bool:
@@ -193,7 +194,11 @@ func watcher_process(delta: float) -> void:
 		body.rotation.y=lerp_angle(body.rotation.y,-PI/2,1-exp(-delta*1.7))
 		body.velocity=Vector3(.42,body.velocity.y-20*delta,0);body.move_and_slide()
 		watch_walk+=body.position.distance_to(before);game.surveyor_actor.locomotion(.42)
-	else:game.surveyor_actor.set_mode("watch")
+	else:
+		# Re-aim at the actual window as Eli moves through the room.
+		var toward: Vector3=Vector3(7.37,game.presence.position.y,2)-game.presence.position
+		game.presence.rotation.y=lerp_angle(game.presence.rotation.y,atan2(-toward.x,-toward.z),1-exp(-delta*2.4))
+		game.surveyor_actor.set_mode("watch")
 	if watch_clock>3 and unseen>.7 and (watch_seen or not game.impossible_room.inside(game.player.position)):
 		game.presence.visible=false;game.threat.set_collision(false);game.presence.velocity=Vector3.ZERO
 		watch_clock=-1;game.events.memory_watch_done=true;game.save_game()

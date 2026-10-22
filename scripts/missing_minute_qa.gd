@@ -1,5 +1,6 @@
 extends "res://scripts/recording_repair_qa.gd"
 func pointer(point: Vector2,pressed: bool,motion:=false) -> void:
+	point=g.get_viewport().get_stretch_transform()*point # Logical UI position -> native input pixels.
 	var event: InputEvent
 	if motion:
 		var m:=InputEventMouseMotion.new();m.position=point;m.global_position=point;m.button_mask=MOUSE_BUTTON_MASK_LEFT;event=m
@@ -21,7 +22,8 @@ func play_chapter(accessibility:=false) -> void:
 	var rubbing=rubbing_widget()
 	check("original exposes rubbing interaction",rubbing!=null)
 	if rubbing==null:return
-	if accessibility:g.presentation.buttons["Rub for me"].pressed.emit()
+	if accessibility:
+		g.presentation.buttons["Slow automatic scan"].pressed.emit();await wait(10.1)
 	else:
 		for row in 3:
 			var origin: Vector2=rubbing.global_position
@@ -38,7 +40,7 @@ func play_chapter(accessibility:=false) -> void:
 	if receiver==null:return
 	receiver.dial.value=103.0;g.presentation.buttons["Listen to receiver"].pressed.emit();await wait(.2)
 	check("wrong frequency cannot change room",not g.events.get("receiver_found",false))
-	receiver.dial.value=104.6;await shot("M02_tuned_receiver")
+	receiver.dial.value=g.PUZZLES.station(g.events);await shot("M02_tuned_receiver")
 	g.presentation.buttons["Listen to receiver"].pressed.emit();await wait(2)
 	check("return is heard before exploring",g.events.get("receiver_found",false))
 	await travel(Vector2(3,-7),"archive chapter exit");await travel(Vector2(0,-7),"chapter hallway")
@@ -119,7 +121,7 @@ func edge_checks() -> void:
 	g.presentation.resume_game();g.save_game();g.load_game();await wait(.3)
 	check("partial rubbing survives checkpoint",is_equal_approx(float(g.events.carbon_coverage[0]),float(partial[0])) and is_equal_approx(float(g.events.carbon_coverage[1]),float(partial[1])) and is_equal_approx(float(g.events.carbon_coverage[2]),float(partial[2])) and not g.events.get("carbon_read",false))
 	g.stage=3;g.isolated=false;g.chapter.open_receiver();await wait(.3)
-	var receiver=receiver_widget();receiver.dial.value=104.6
+	var receiver=receiver_widget();receiver.dial.value=g.PUZZLES.station(g.events)
 	g.presentation.buttons["Listen to receiver"].pressed.emit();await wait(.2)
 	check("live feed blocks even correct frequency",not g.events.get("receiver_found",false) and receiver.display.text.contains("INTERFERENCE"))
 	g.isolated=true;g.presentation.buttons["Listen to receiver"].pressed.emit();await wait(.3)
@@ -149,6 +151,7 @@ func run(current: Node) -> void:
 	if "--chapter-edge-qa" in OS.get_cmdline_user_args():
 		await edge_checks();return
 	g.new_game();g.presentation.clear_transients();g.stage=3;g.report_read=true;g.shed_read=true;g.isolated=true
+	g.equipment.data.uv=true;g.equipment.data.mode=2;g.equipment.apply_light() # Labelled post-equipment chapter fixture.
 	g.events.field_return_read=true;g.events.threat_resolved=true;g.events["return"]=true;g.events.chair=true;g.events.impossible_room_resolved=true
 	g.threat.enabled=false;g.threat.reset();g.investigation.restore()
 	for id in ["office","front"]:g.doors[id].locked=false;g.doors[id].set_open(true,.01)

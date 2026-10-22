@@ -120,9 +120,9 @@ func details(g: Node) -> void:
 	for pin in [Vector3(0,.027,0),Vector3(-.016,0,0),Vector3(.016,0,0)]:
 		g.box(g,Vector3(3.85,.28,-2.876)+pin,Vector3(.005,.014,.003),Color(.07,.075,.065))
 	# Useful, sparse maintenance records sit on the existing office desk.
-	g.box(g,Vector3(6.26,0.835,-8.61),Vector3(0.35,0.045,0.27),Color(0.34,0.30,0.21))
-	g.box(g,Vector3(6.24,0.865,-8.6),Vector3(0.31,0.018,0.23),Color(0.61,0.58,0.45))
-	var tag: Label3D = g.label3(g,"WARD / 1998",Vector3(6.24,0.88,-8.6),0,17,Color(0.15,0.16,0.14))
+	g.box(g,Vector3(3.08,1.2625,-9.45),Vector3(0.35,0.045,0.27),Color(0.34,0.30,0.21))
+	g.box(g,Vector3(3.08,1.294,-9.45),Vector3(0.31,0.018,0.23),Color(0.61,0.58,0.45))
+	var tag: Label3D = g.label3(g,"WARD / 1998",Vector3(3.08,1.307,-9.45),0,17,Color(0.15,0.16,0.14))
 	tag.rotation.x = -PI/2
 	tag.pixel_size = 0.002
 	# Ground the table and wall junctions without adding obstacles to circulation routes.

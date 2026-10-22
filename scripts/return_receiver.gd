@@ -19,14 +19,14 @@ func tune(value: float) -> void:
 	game.events.receiver_frequency=value
 	display.text="%.1f MHz"%value
 	if is_instance_valid(hiss):
-		var strength:=maxf(0,1-absf(value-104.6)/1.5)
+		var strength:=maxf(0,1-absf(value-game.PUZZLES.station(game.events))/1.5)
 		if not game.isolated:strength=0
 		hiss.volume_db=-27-strength*13;hiss.pitch_scale=.9+strength*.25
 func listen() -> void:
 	game.save_game()
 	if not game.isolated:
 		display.text="INTERFERENCE / LIVE SERVICE FEED";return
-	if absf(dial.value-104.6)>.16:
+	if absf(dial.value-game.PUZZLES.station(game.events))>.051:
 		game.sound("latch",game.chapter.radio.global_position,-35)
 		return
 	game.chapter.receive_return()
