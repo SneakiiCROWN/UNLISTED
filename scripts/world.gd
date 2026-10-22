@@ -1024,6 +1024,7 @@ func door_swing_states() -> Dictionary:
 	return result
 
 func save_data() -> Dictionary:
+	if is_instance_valid(maintenance):events.archive_rack_x=maintenance.rack.position.x
 	if is_instance_valid(physical):events["props"] = physical.snapshot()
 	return {"schema":1,"crouched":player.crouched,"stage":stage,"fuse":fuse,"key":brass_key,"report":report_read,"shed":shed_read,"isolated":isolated,"events":events,"valves":valve_order,"pos":[player.position.x,player.position.y,player.position.z],"yaw":player.rotation.y,"pitch":player.camera.rotation.x,"ended":ended,"doors":door_save_states(),"door_swing":door_swing_states()}
 

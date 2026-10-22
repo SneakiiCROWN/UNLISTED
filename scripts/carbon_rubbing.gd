@@ -24,7 +24,7 @@ func _ready() -> void:
 			cells.append(values)
 	for value in game.events.get("carbon_strokes",[]):
 		if value is Array and value.size()==2:strokes.append(Vector2(value[0],value[1]))
-	friction=AudioStreamPlayer.new();friction.stream=load("res://assets/audio/foley/paper_handling.ogg");friction.bus="SFX";friction.volume_db=-35;add_child(friction)
+	friction=AudioStreamPlayer.new();friction.stream=load("res://assets/audio/foley/paper_handling.ogg");friction.bus="SFX";friction.volume_db=-27;add_child(friction)
 	update_ink()
 func _process(delta: float) -> void:
 	sound_wait=maxf(0,sound_wait-delta)

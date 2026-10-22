@@ -48,15 +48,27 @@ func build() -> void:
 	rack=Node3D.new();add_child(rack);rack.position=Vector3(4.95,-2.878,-7.18)
 	# This approved shelf is authored with its width on Z and its open face on +X.
 	# Fit before rotating; carriage, rail, handles and world collision dimensions stay fixed.
-	game.model("res://assets/furniture/shelf.glb",rack,Vector3.ZERO,Vector3(.50,1.65,1.35),PI/2,true)
+	var rack_frame=game.model("res://assets/furniture/shelf.glb",rack,Vector3.ZERO,Vector3(.50,1.65,1.35),PI/2,true);rack_frame.name="RackSourceFrame"
 	rack.name="RollingRecordsRack"
 	for x in [-.5,.5]:
 		for z in [-.19,.19]:
 			var wheel:=CylinderMesh.new();wheel.top_radius=.045;wheel.bottom_radius=.045;wheel.height=.025;wheel.radial_segments=10
 			var mesh:=MeshInstance3D.new();mesh.mesh=wheel;mesh.material_override=game.texture_mat(steel,Color("464b41"));rack.add_child(mesh);mesh.position=Vector3(x,-.045,z);mesh.rotation.x=PI/2
 	for i in 3:
-		game.model("res://assets/interiors/cardboardBoxOpen.glb",rack,Vector3(-.43+i*.41,.68,0),Vector3(.34,.24,.34),0,false)
-	game.model("res://assets/interiors/home/books.glb",rack,Vector3(.23,1.19,0),Vector3(.56,.25,.27))
+		# Heights come from the imported shelf's actual upper faces (.484 and .843 at source scale).
+		var filebox=game.model("res://assets/interiors/cardboardBoxOpen.glb",rack,Vector3(-.43+i*.41,.499125,0),Vector3(.34,.24,.34),0,false)
+		filebox.name="ArchiveBox"+str(i)
+		for mesh in game.all_meshes(filebox):
+			var cardboard: StandardMaterial3D=game.texture_mat("res://assets/original/aged_paper.png",Color("c2ab7c")).duplicate()
+			cardboard.uv1_triplanar=true;mesh.material_override=cardboard
+	var volumes=game.model("res://assets/interiors/home/books.glb",rack,Vector3(.23,.86934375,0),Vector3(.56,.25,.27))
+	volumes.name="ArchiveVolumes"
+	for mesh in game.all_meshes(volumes):
+		for i in mesh.mesh.get_surface_count():
+			var source=mesh.get_active_material(i)
+			if source is StandardMaterial3D:
+				var worn: StandardMaterial3D=source.duplicate();var color: Color=source.albedo_color
+				worn.albedo_color=Color.from_hsv(color.h,color.s*.35,color.v*.55);worn.roughness=.98;mesh.set_surface_override_material(i,worn)
 	game.collision(rack,Vector3(0,.85,-.32),Vector3(.82,.3,.1),"archive_rack")
 	# The inspection sheet is pinned behind the rack, not duplicated attendance UI.
 	surface(Vector3(4.95,-1.6,-6.40),Vector3(.55,.72,.018),wood,Color("635b47"))
@@ -87,7 +99,7 @@ func push_rack() -> void:
 	goal=4.95 if game.events.get("archive_rack_open",false) else 3.15
 	if occupied(rack.position.x,goal):game.message("Something is in the track.",2);return
 	game.events.archive_rack_open=goal<4;moving=true
-	rack_audio=game.sound("foley/archive_rack",rack.position,-32)
+	rack_audio=game.sound("foley/archive_rack",rack.position,-22)
 	game.save_game()
 func read_sheet() -> void:
 	if moving or not game.events.get("archive_rack_open",false):return
@@ -104,9 +116,13 @@ func tap_joist() -> void:
 		if count==3:surprise_armed=true
 	game.save_game()
 func restore() -> void:
-	if is_instance_valid(rack_audio):rack_audio.stop()
+	if is_instance_valid(rack_audio):rack_audio.stop();rack_audio.queue_free()
 	goal=3.15 if game.events.get("archive_rack_open",false) else 4.95
-	rack.position.x=goal;moving=false;tap_clock=1;answers.clear();surprise_armed=false;surprise_clock=0
+	rack.position.x=clampf(float(game.events.get("archive_rack_x",goal)),3.15,4.95)
+	moving=not is_equal_approx(rack.position.x,goal);tap_clock=1;answers.clear();surprise_armed=false;surprise_clock=0
+	if moving:
+		rack_audio=game.sound("foley/archive_rack",rack.position,-22)
+		rack_audio.seek(clampf((1-absf(goal-rack.position.x)/1.8)*4,0,4))
 	if game.events.get("underfloor_taps",0)>=3 and not game.events.get("underfloor_echo_complete",false):surprise_armed=true
 	lamp.light_color=Color("93a8a3") if game.events.get("underfloor_echo_complete",false) else Color("baae89")
 func _physics_process(delta: float) -> void:
@@ -123,7 +139,7 @@ func _physics_process(delta: float) -> void:
 		if not blocked:rack.position.x=next
 		if is_equal_approx(rack.position.x,goal):
 			moving=false
-			if is_instance_valid(rack_audio):rack_audio.stop()
+			if is_instance_valid(rack_audio):rack_audio.stop();rack_audio.queue_free()
 	for i in range(answers.size()-1,-1,-1):
 		answers[i].left-=delta
 		if answers[i].left<=0:
@@ -138,7 +154,7 @@ func _physics_process(delta: float) -> void:
 			if not game.chapter.point_visible(center) and not occupied(rack.position.x,4.95):
 				surprise_armed=false;game.events.underfloor_echo_complete=true
 				game.events.archive_rack_open=false;goal=4.95;moving=true;lamp.light_color=Color("93a8a3")
-				rack_audio=game.sound("foley/archive_rack",rack.position,-34);game.sound("step",Vector3(4.2,-.15,-8.5),-29)
+				rack_audio=game.sound("foley/archive_rack",rack.position,-25);game.sound("step",Vector3(4.2,-.15,-8.5),-29)
 				game.save_game()
 	if inside(game.player.position) and not game.events.get("service_void_visited",false):
 		game.events.service_void_visited=true;game.save_game()
