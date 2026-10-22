@@ -10,7 +10,9 @@ var tap_clock:=0.0
 var answers: Array=[]
 var surprise_armed:=false
 var surprise_clock:=0.0
-const TEST_NOTE:="Site 17 / underfloor inspection / S. Ward, 1998\n\nThe little passage runs beside the cellar ramp, under the records office. Dry storage at the far end. Someone has moved the shelving across the old inspection bay. The rails are still free.\n\nI disconnected the return at the terminal box. The motor stopped. I could still hear two sets of feet upstairs. One of them was mine. I hadn't left this room.\n\nI tapped a floor joist. Once, then twice. Something answered from the passage. The third time I stopped. It kept going.\n\nI'm leaving the test sheet here. Don't trust the sound of someone coming back. Check the doors. Check that you can actually see them.\n\nThe original call is still in my notebook. I haven't signed the empty-house certificate."
+const TEST_NOTE:="Site 17 / underfloor inspection / S. Ward, 1998\n\nThe little passage runs beside the cellar ramp, under the records office. Dry storage at the far end. Someone has moved the shelving across the old inspection bay. The rails are still free.\n\nI disconnected the return at the terminal box. The motor stopped. I could still hear two sets of feet upstairs. One of them was mine. I hadn't left this room.\n\nI tapped a floor joist. Once, then twice. Something answered from the passage. The third time I stopped. It kept going.\n\nI'm leaving the test sheet here. Don't trust the sound of someone coming back. Check the doors. Check that you can actually see them.\n\nThe continuity box upstairs has a feed switch and a removable return lead. My test is pinned below it.
+
+The original call is still in my notebook. I haven't signed the empty-house certificate."
 func _ready() -> void:
 	name="UnderfloorRecordsStore";build();restore()
 	var id: int=game.threat.graph.get_point_count()
@@ -107,11 +109,18 @@ func read_sheet() -> void:
 	game.inspect_text("SIMON / UNDERFLOOR TEST",TEST_NOTE);game.save_game()
 func tap_joist() -> void:
 	if tap_clock<.28:return
+	var interval: float=tap_clock
 	tap_clock=0
 	var cue=game.sound("prop_impact",Vector3(3.85,-.48,-8.65),-30);cue.pitch_scale=.8
 	game.threat.hear(Vector3(3.85,-3,-8.65),8)
 	var count:=int(game.events.get("underfloor_taps",0))+1;game.events.underfloor_taps=count
 	if count<=3:
+		var pattern: Array=game.events.get("underfloor_pattern",[])
+		if count==1:pattern=[0.0]
+		else:
+			if pattern.is_empty():pattern=[0.0]
+			pattern.append(float(pattern[-1])+clampf(interval,.28,4.0))
+		game.events.underfloor_pattern=pattern
 		answers.append({"left":.75 if count==1 else (.48 if count==2 else .18),"position":Vector3(3.25,-1.9,-12.8),"extra":count==3})
 		if count==3:surprise_armed=true
 	game.save_game()

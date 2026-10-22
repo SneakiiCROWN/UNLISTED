@@ -62,6 +62,7 @@ func restore_saved() -> void:
 	active=true;surfaces.visible=true
 
 func begin() -> bool:
+	if is_instance_valid(game.dead_line) and not game.dead_line.sequence.is_empty():return false
 	if active or not safe_to_change() or game.physical.held or game.threat.active() or game.horror.beat!="" or game.horror.audition!="" or game.horror.echo_index>=0:return false
 	remember_chair();game.events.impossible_room_active=true
 	game.lounge_contents.transform=TURN;surfaces.visible=true;active=true;closed_for=0

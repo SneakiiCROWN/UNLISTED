@@ -51,6 +51,7 @@ var impossible_room: Node3D
 var recount: Node3D
 var investigation: Node3D
 var maintenance: Node3D
+var dead_line: Node3D
 var chapter: Node3D
 var hint_until := 0.0
 var tv_light: OmniLight3D
@@ -80,6 +81,7 @@ func _ready() -> void:
 		checkpoint_path = "user://development/checkpoint.json"
 	qa_mode = "--door-repair-qa" in OS.get_cmdline_user_args() or "--recording-repair-qa" in OS.get_cmdline_user_args() or "--qa" in OS.get_cmdline_user_args() or "--presentation-qa" in OS.get_cmdline_user_args() or "--milestone-qa" in OS.get_cmdline_user_args() or "--threat-qa" in OS.get_cmdline_user_args() or "--systems-qa" in OS.get_cmdline_user_args() or "--polish-qa" in OS.get_cmdline_user_args() or "--visual-probe" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--production-views" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--dead-line-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--maintenance-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--caption-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--input-isolation-qa" in OS.get_cmdline_user_args()
@@ -132,6 +134,7 @@ func _ready() -> void:
 	investigation=load("res://scripts/investigation.gd").new();investigation.game=self;add_child(investigation)
 	chapter=load("res://scripts/missing_minute.gd").new();chapter.game=self;add_child(chapter)
 	maintenance=load("res://scripts/maintenance_store.gd").new();maintenance.game=self;add_child(maintenance)
+	dead_line=load("res://scripts/dead_line.gd").new();dead_line.game=self;add_child(dead_line)
 	set_volume(volume)
 	show_menu("UNLISTED", true)
 	if dev_mode:
@@ -717,6 +720,7 @@ func new_game() -> void:
 	events.case_v3=true
 	if is_instance_valid(chapter):chapter.restore()
 	if is_instance_valid(maintenance):maintenance.restore()
+	if is_instance_valid(dead_line):dead_line.restore()
 	if is_instance_valid(investigation):investigation.restore()
 	if is_instance_valid(recount):recount.restore_state()
 	physical.restore()
@@ -801,6 +805,11 @@ func open_casebook() -> void:
 	presentation.inspect_document("FIELD NOTES / RECORDS EXAMINED",text_)
 
 func interaction_name(id: String) -> String:
+	if id=="line_feed":return "Connect feed" if events.get("line_feed_off",false) else "Disconnect feed"
+	if id=="line_return":return "Plug in return" if events.get("line_return_out",false) else "Unplug return"
+	if id=="line_strike":return "Test striker"
+	if id=="line_note":return "Read service annotation"
+	if id=="line_strip":return "Read counter strip"
 	if id=="archive_rack":return "Move shelving"
 	if id=="underfloor_sheet":return "Read test sheet"
 	if id=="test_joist":return "Tap timber"
@@ -825,6 +834,7 @@ func try_interact() -> void:
 		interact(str(hit.collider.get_meta("interaction")))
 
 func interact(id: String) -> void:
+	if id.begins_with("line_"):dead_line.use(id);return
 	if id=="carbon_return":chapter.open_carbon();return
 	if id=="return_receiver":chapter.open_receiver();return
 	if id=="memory_drawer":chapter.use_drawer();return
@@ -1089,8 +1099,9 @@ func apply_save(data: Dictionary) -> void:
 	if is_instance_valid(investigation):investigation.restore()
 	if is_instance_valid(chapter):chapter.restore()
 	if is_instance_valid(maintenance):maintenance.restore()
+	if is_instance_valid(dead_line):dead_line.restore()
 
-func save_game() -> void:
+func save_game(quiet := false) -> void:
 	if is_instance_valid(capture_director) and capture_director.active:return
 	if qa_mode and checkpoint_path.begins_with("user://"): return
 	var f := FileAccess.open(checkpoint_path+".tmp",FileAccess.WRITE)
@@ -1099,7 +1110,7 @@ func save_game() -> void:
 	f.close()
 	var error := DirAccess.rename_absolute(checkpoint_path+".tmp",checkpoint_path)
 	if error != OK: message("Checkpoint could not be replaced.")
-	elif is_instance_valid(presentation) and presentation.section == "game": presentation.notify("CHECKPOINT RECORDED")
+	elif not quiet and is_instance_valid(presentation) and presentation.section == "game": presentation.notify("CHECKPOINT RECORDED")
 
 func load_game() -> void:
 	var data = JSON.parse_string(FileAccess.get_file_as_string(checkpoint_path))
@@ -1155,6 +1166,7 @@ func run_qa() -> void:
 	var path := "res://scripts/input_isolation_qa.gd" if "--input-isolation-qa" in OS.get_cmdline_user_args() else "res://scripts/exterior_views.gd" if "--exterior-views" in OS.get_cmdline_user_args() else "res://scripts/exterior_qa.gd" if "--exterior-qa" in OS.get_cmdline_user_args() else "res://scripts/door_repair_qa.gd" if "--door-repair-qa" in OS.get_cmdline_user_args() else "res://scripts/recording_repair_qa.gd" if "--recording-repair-qa" in OS.get_cmdline_user_args() else "res://scripts/polish_qa.gd" if "--polish-qa" in OS.get_cmdline_user_args() else "res://scripts/systems_qa.gd" if "--systems-qa" in OS.get_cmdline_user_args() else "res://scripts/threat_qa.gd" if "--threat-qa" in OS.get_cmdline_user_args() else "res://scripts/milestone_qa.gd" if "--milestone-qa" in OS.get_cmdline_user_args() else "res://scripts/presentation_qa.gd" if "--presentation-qa" in OS.get_cmdline_user_args() else "res://scripts/runtime_qa.gd"
 	if "--production-views" in OS.get_cmdline_user_args():path="res://scripts/production_views.gd"
 	if "--maintenance-qa" in OS.get_cmdline_user_args():path="res://scripts/maintenance_qa.gd"
+	if "--dead-line-qa" in OS.get_cmdline_user_args():path="res://scripts/dead_line_qa.gd"
 	if "--caption-qa" in OS.get_cmdline_user_args():path="res://scripts/caption_qa.gd"
 	if "--capture-qa" in OS.get_cmdline_user_args():path="res://scripts/capture_qa.gd"
 	var qa = load(path).new()

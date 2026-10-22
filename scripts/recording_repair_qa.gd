@@ -189,6 +189,11 @@ func run(game: Node) -> void:
 		var store_test=load("res://scripts/maintenance_qa.gd").new();add_child(store_test)
 		store_test.g=g;store_test.output=output;store_test.started_at=started_at;store_test.exact_target=exact_target
 		await store_test.play_store();checks.append_array(store_test.checks);store_test.queue_free()
+	if "--dead-line-route" in OS.get_cmdline_user_args():
+		var line_test=load("res://scripts/dead_line_qa.gd").new();add_child(line_test)
+		line_test.g=g;line_test.output=output;line_test.started_at=started_at;line_test.exact_target=exact_target
+		await line_test.upstairs_test();checks.append_array(line_test.checks);line_test.queue_free()
+		await travel(Vector2(0,-18),"sound investigation rejoins live cellar route")
 	await travel(Vector2(-1.5,-22),"coolant approach");await use("valve1")
 	await travel(Vector2(-2.7,-22),"supply approach");await use("valve0")
 	await travel(Vector2(-0.3,-22),"occupancy approach");await use("valve2")

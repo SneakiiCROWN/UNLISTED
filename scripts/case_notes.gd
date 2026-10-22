@@ -11,6 +11,10 @@ const ORIGINAL := "Simon Ward / original field return / 1998\n\nThe counter keep
 const RECOUNT := "Dad's original return says he was trapped inside. The office closed his call by marking him absent, without checking the house.\n\nThe porch sheet now lists his arrival beside mine. I can correct his entry and close the service call, or attach the original and the failed comparison so his disappearance stays on record. Neither choice brings him home. I still have to get the papers out of here."
 
 static func clue(game: Node) -> String:
+	if game.events.get("underfloor_read",false) and not game.events.get("line_strip_read",false) and not game.isolated and game.player.position.y>-.2 and ((game.player.position.x>1.6 and game.player.position.z< -3) or game.events.get("line_test_armed",false)):
+		if game.events.get("line_response_complete",false):return "The sound came from the lounge after I disconnected the office test box. I should check what the counter did."
+		if game.events.get("line_test_armed",false):return "Both leads are disconnected. Dad listened from the hall, with the lounge shut."
+		return "Dad tested the timber below the office, then the continuity box upstairs. His annotation is still pinned there."
 	if game.events.get("case_v3",false) and game.events.get("field_return_read",false) and not game.events.get("bedroom_left",false):
 		if game.events.get("last_page_read",false):return "I have Dad's last page. I can leave the room."
 		if game.events.get("receiver_found",false):return "I heard something beyond the lounge door. Dad wrote that the room changed after he shut it."
