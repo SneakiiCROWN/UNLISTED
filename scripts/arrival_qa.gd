@@ -6,7 +6,19 @@ func run(current: Node) -> void:
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--evidence="):output=arg.trim_prefix("--evidence=")
 	DirAccess.make_dir_recursive_absolute(output);g.checkpoint_path=output.path_join("checkpoint.json")
-	await exact_resolution();g.new_game();g.presentation.clear_transients();await wait(1)
+	await exact_resolution()
+	if "--comparison-reread-only" in OS.get_cmdline_user_args():
+		var source:=""
+		for arg in OS.get_cmdline_user_args():
+			if arg.begins_with("--earned-checkpoint="):source=arg.trim_prefix("--earned-checkpoint=")
+		var earned: Dictionary=JSON.parse_string(FileAccess.get_file_as_string(source))
+		earned.ended=false # Revisit the earned evidence in an explicit post-route fixture.
+		g.apply_save(earned);g.player.position=Vector3(3.3,.04,-7.3);g.player.velocity=Vector3.ZERO;g.presentation.clear_transients();await wait(.4)
+		check("earned comparison is already present",g.events.get("memory_confirmed",false))
+		await use("source_copy",false)
+		check("physical source copy uses canonical title and body",g.presentation.section=="document" and g.events.notes.has(g.NOTES.COMPARISON_TITLE) and g.events.notes[g.NOTES.COMPARISON_TITLE]==g.NOTES.SOURCE_COPY)
+		await shot("R07_corrected_comparison");await finish_arrival();return
+	g.new_game();g.presentation.clear_transients();await wait(1)
 	check("new case starts outside front gate",g.player.position.z>18.5 and not g.doors.front_gate.opened)
 	await shot("G01_arrival_at_gate")
 	await travel(Vector2(0,18.3),"walk to garden gate");await use("front_gate")
@@ -39,6 +51,9 @@ func run(current: Node) -> void:
 	check("legacy save retains its position",g.player.position.distance_to(Vector3(old.pos[0],old.pos[1],old.pos[2]))<.2)
 	await use("front");await wait(.3)
 	check("legacy door opens on first press",g.doors.front.opened and absf(g.doors.front.pivot.rotation.y)>1.4)
+	await finish_arrival()
+
+func finish_arrival() -> void:
 	var failed:=0
 	for entry in checks:
 		if not entry.passed:failed+=1

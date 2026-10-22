@@ -272,7 +272,7 @@ func run(game: Node) -> void:
 		check("correct exclusion earns receipt",g.events.get("memory_confirmed",false))
 		await action("ui_cancel")
 		await use("source_copy",false)
-		check("physical source copy can be reread",g.presentation.section=="document" and g.events.notes.has("SIMON / RETURN CHANNEL"))
+		check("physical source copy can be reread",g.presentation.section=="document" and g.events.notes.has(g.NOTES.COMPARISON_TITLE) and g.events.notes[g.NOTES.COMPARISON_TITLE]==g.NOTES.SOURCE_COPY)
 		await shot("R07_source_copy");await action("ui_cancel")
 	await travel(Vector2(3,-7),"office investigation exit");await travel(Vector2(0,-7),"hall final return")
 	if g.events.get("case_v3",false):

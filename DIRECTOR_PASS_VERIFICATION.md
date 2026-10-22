@@ -39,3 +39,10 @@ Every rare/legacy string still needs final continuity sign-off. Whole-property m
 - Arrival_05 integrated route and broader Windows acceptance pending at this checkpoint. No new public playable release claimed.
 - Atmosphere_01's unsupported lower shelf query was rejected; no invalid geometry promoted. Atmosphere_02 mirror artifacts corrected and inspected in 03. Earlier evidence preserved.
 - Atmosphere_03 route stopped deliberately for the requested arrival change, not a gameplay assertion failure.
+
+
+### Integrated route and targeted paper correction
+
+Arrival_05 completed the fresh shared investigation and both earned departures in 453.99 automated seconds: 290 checks passed, one obsolete assertion failed because it expected the retired Simon/Return Channel journal title. The complete report and recording are preserved unchanged, not relabelled as a clean pass. Actual comparison input, both endings, death/retry, record-store/Dead Line/Spare Place progression and physical exits completed.
+
+Arrival_07 has identical runtime fingerprints to 05; only QA changes. Its separately restored earned-evidence fixture physically rereads the comparison and verifies the current canonical title and full body: 4/0, actual image inspected. The first 06 reread fixture mistakenly restored completed-ending presentation and was rejected; 07 explicitly revisits earned evidence in exploration, without granting clues. Broader 07 acceptance is still running at this checkpoint. No need to replay the complete investigation for a test-only title correction.
