@@ -7,9 +7,17 @@ func run(game: Node) -> void:
 	g.new_game();g.events.office=true;g.threat.enabled=false;await wait(.2)
 	check("opening journal states personal motivation without future clues",g.events.notes.has("WHY I CAME") and not str(g.events.notes).contains("another arrival"))
 	check("unpowered archive cannot reveal its file on the mesh",not g.security_legend.visible)
+	g.interact("television");await wait(.15)
+	check("first fault inspection motivates reading old records",p.note.text.contains("old job records"));p.resume_game()
 	g.interact("security");await wait(.15)
 	check("unpowered archive grants no record or key",not g.report_read and not g.brass_key)
-	g.stage=3;await wait(.2);g.interact("security");await wait(.2)
+	g.fuse=true;g.stage=2;g.player.position=Vector3(-2.65,.04,2.0);g.player.camera.look_at(g.targets.breaker.global_position);await wait(.2)
+	var carrier: Dictionary=g.player.target()
+	check("physical supply control is in focus",not carrier.is_empty() and carrier.collider.get_meta("interaction","")=="breaker",str(carrier))
+	var power_input:=InputEventAction.new();power_input.action="interact";power_input.pressed=true;Input.parse_input_event(power_input);await wait(.08)
+	power_input=InputEventAction.new();power_input.action="interact";power_input.pressed=false;Input.parse_input_event(power_input);await wait(.2)
+	check("actual supply input leads naturally to office records",g.stage==3 and g.events.notes.has("THE OFFICE SUPPLY") and not g.brass_key)
+	g.interact("security");await wait(.2)
 	check("powered archive reveals coherent original record",g.security_legend.visible and g.report_read and g.brass_key and p.note.text.contains("His son, Eli, was seven"))
 	p.resume_game();g.events.erase("audition_A");g.events.erase("audition_B")
 	p.show_exclusion();await wait(.2)
@@ -86,7 +94,7 @@ func run(game: Node) -> void:
 	# Separate, clearly seeded current-case layout fixtures. Full-route tests earn
 	# these prerequisites independently; this loop checks the revised visible copy.
 	g.events.case_v2=true;g.events.case_v3=true;g.events.memory_confirmed=true
-	g.events.field_return_read=true;g.events.bedroom_left=true
+	g.events.field_return_read=true;g.events.bedroom_left=true;g.events.witness_carbon_read=true
 	for size_ in [Vector2i(1920,1080),Vector2i(2560,1440),Vector2i(3440,1440)]:
 		render_size(size_);p.show_register();await wait(.3)
 		var view:=g.get_viewport().get_visible_rect().size

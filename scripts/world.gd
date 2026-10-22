@@ -52,6 +52,7 @@ var lounge_contents: Node3D
 var impossible_room: Node3D
 var recount: Node3D
 var investigation: Node3D
+var witness: Node3D
 var maintenance: Node3D
 var dead_line: Node3D
 var spare_place: Node3D
@@ -91,6 +92,7 @@ func _ready() -> void:
 		checkpoint_path = "user://development/checkpoint.json"
 	qa_mode = "--door-repair-qa" in OS.get_cmdline_user_args() or "--recording-repair-qa" in OS.get_cmdline_user_args() or "--qa" in OS.get_cmdline_user_args() or "--presentation-qa" in OS.get_cmdline_user_args() or "--milestone-qa" in OS.get_cmdline_user_args() or "--threat-qa" in OS.get_cmdline_user_args() or "--systems-qa" in OS.get_cmdline_user_args() or "--polish-qa" in OS.get_cmdline_user_args() or "--visual-probe" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--production-views" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--witness-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--storage-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--inspection-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--arrival-qa" in OS.get_cmdline_user_args()
@@ -151,6 +153,7 @@ func _ready() -> void:
 	chapter=load("res://scripts/missing_minute.gd").new();chapter.game=self;add_child(chapter)
 	maintenance=load("res://scripts/maintenance_store.gd").new();maintenance.game=self;add_child(maintenance)
 	dead_line=load("res://scripts/dead_line.gd").new();dead_line.game=self;add_child(dead_line)
+	witness=load("res://scripts/witness_carbon.gd").new();witness.game=self;add_child(witness)
 	spare_place=load("res://scripts/spare_place.gd").new();spare_place.game=self;add_child(spare_place)
 	spare_mirror=load("res://scripts/spare_mirror.gd").new();spare_mirror.game=self;add_child(spare_mirror)
 	ambient_director=load("res://scripts/ambient_director.gd").new();ambient_director.game=self;add_child(ambient_director)
@@ -784,6 +787,7 @@ func new_game() -> void:
 	equipment.new_case()
 	storage_hide.restore()
 	if is_instance_valid(chapter):chapter.restore()
+	if is_instance_valid(witness):witness.restore()
 	if is_instance_valid(maintenance):maintenance.restore()
 	if is_instance_valid(dead_line):dead_line.restore()
 	if is_instance_valid(spare_place):spare_place.restore()
@@ -873,6 +877,9 @@ func open_casebook() -> void:
 	presentation.inspect_document("FIELD NOTES / RECORDS EXAMINED",text_)
 
 func interaction_name(id: String) -> String:
+	if id=="witness_cover":return "Close inspection cover" if events.get("witness_open",false) else "Slide inspection cover"
+	if id=="witness_carbon":return "Take clearance carbon"
+	if id.begins_with("witness_fastener"):return "Turn fastener"
 	if id=="storage_door":return "Close cupboard" if storage_hide.opened else "Open cupboard"
 	if id=="inspection_kit":return "Fit inspection head"
 	if id.begins_with("battery_"):return "Take battery pack"
@@ -909,6 +916,7 @@ func try_interact() -> void:
 		interact(str(hit.collider.get_meta("interaction")))
 
 func interact(id: String) -> void:
+	if id.begins_with("witness_"):witness.use(id);return
 	if id=="storage_door":storage_hide.use();return
 	if id=="inspection_kit" or id.begins_with("battery_"):equipment.collect(id);return
 	if id=="spare_mirror":spare_mirror.touch();return
@@ -948,7 +956,7 @@ func interact(id: String) -> void:
 				stage = maxi(stage,1)
 				inspect_text("NIGHT CALL / 17 BRIAR LANE",NOTES.CALL)
 		"television":
-			if stage < 3:inspect_text("DISCONNECTED SET","The lead ends in a loose plug behind the table. The set is humming.\n\nA drawing lies beside it: ELI / AGE 7. The chair in it is upside down.")
+			if stage < 3:inspect_text("DISCONNECTED SET","The lead ends in a loose plug behind the table. The set is humming.\n\nA drawing lies beside it: ELI / AGE 7. The chair in it is upside down.\n\nThis isn't a normal fault. I want the old job records before I touch anything else.")
 			else:
 				var observation := "A worker stands beside the office door."
 				if events.get("memory_echo",false):
@@ -972,6 +980,9 @@ func interact(id: String) -> void:
 				var relay_sound=sound("relay",targets["breaker"].global_position,-18)
 				horror.house_responds()
 				sound_caption("A relay clicks shut.",3,"KITCHEN PANEL",relay_sound)
+				sound("relay",targets.security.global_position,-28)
+				events.notes["THE OFFICE SUPPLY"]="The file terminal across the hall came on with the supply. Dad's last job was here. I want to see what they kept."
+				message("The file terminal's come on across the hall.",3)
 				save_game()
 			else: message("The supply is on. The service circuit is isolated." if isolated else "The meter is running. There shouldn't be anything connected downstairs.",3)
 		"security", "record":
@@ -1184,6 +1195,7 @@ func apply_save(data: Dictionary) -> void:
 	if is_instance_valid(recount):recount.restore_state()
 	if is_instance_valid(investigation):investigation.restore()
 	if is_instance_valid(chapter):chapter.restore()
+	if is_instance_valid(witness):witness.restore()
 	if is_instance_valid(maintenance):maintenance.restore()
 	if is_instance_valid(dead_line):dead_line.restore()
 	if is_instance_valid(spare_place):spare_place.restore()
@@ -1256,6 +1268,7 @@ func run_qa() -> void:
 	var path := "res://scripts/input_isolation_qa.gd" if "--input-isolation-qa" in OS.get_cmdline_user_args() else "res://scripts/exterior_views.gd" if "--exterior-views" in OS.get_cmdline_user_args() else "res://scripts/exterior_qa.gd" if "--exterior-qa" in OS.get_cmdline_user_args() else "res://scripts/door_repair_qa.gd" if "--door-repair-qa" in OS.get_cmdline_user_args() else "res://scripts/recording_repair_qa.gd" if "--recording-repair-qa" in OS.get_cmdline_user_args() else "res://scripts/polish_qa.gd" if "--polish-qa" in OS.get_cmdline_user_args() else "res://scripts/systems_qa.gd" if "--systems-qa" in OS.get_cmdline_user_args() else "res://scripts/threat_qa.gd" if "--threat-qa" in OS.get_cmdline_user_args() else "res://scripts/milestone_qa.gd" if "--milestone-qa" in OS.get_cmdline_user_args() else "res://scripts/presentation_qa.gd" if "--presentation-qa" in OS.get_cmdline_user_args() else "res://scripts/runtime_qa.gd"
 	if "--storage-qa" in OS.get_cmdline_user_args():path="res://scripts/storage_hide_qa.gd"
 	if "--inspection-qa" in OS.get_cmdline_user_args():path="res://scripts/inspection_qa.gd"
+	if "--witness-qa" in OS.get_cmdline_user_args():path="res://scripts/witness_carbon_qa.gd"
 	if "--arrival-qa" in OS.get_cmdline_user_args():path="res://scripts/arrival_qa.gd"
 	if "--ambient-qa" in OS.get_cmdline_user_args():path="res://scripts/ambient_qa.gd"
 	if "--director-qa" in OS.get_cmdline_user_args():path="res://scripts/director_qa.gd"

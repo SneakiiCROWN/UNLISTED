@@ -1,5 +1,7 @@
 # UNLISTED
 
+**Newer unreleased source:** the final sprint adds a physical crawlspace clearance-carbon investigation and story clarity. Targeted acceptance is being finished; the verified public Windows download remains 0.9.0 below.
+
 *No Record. No Exit.*
 
 Eli Ward takes a night call at 17 Briar Lane, the address on his father Simon's last work slip from 1998. The house has kept records of things nobody witnessed.

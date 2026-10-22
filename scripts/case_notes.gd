@@ -4,6 +4,9 @@ const TRANSPORT_LEADER := "HALL MICROPHONE / NO RECORDING YET\n\nPencil note: Wa
 
 const RUBBING_LINES := ["Kitchen radio: 104.6.","I phoned home. Eli answered. He's safe.","I shut the lounge door. Now it's his room."]
 
+const WITNESS_TITLE := "THE UNSIGNED CLEARANCE"
+const WITNESS_CARBON := "17 BRIAR LANE / CLEARANCE CARBON / 1998\n\nMachine entry: EMPTY / 23:18.\nInspection completed: [blank]\nWitness signature: [blank]\n\nSimon's handwriting: I haven't finished checking the building. I haven't signed this. The counter filed it anyway. Keep the carbon with my report. My line-test notes are in the store beyond this passage.\n\nMy note: Nobody witnessed Dad leaving. The machine closed his job while he was still inside. Correcting his entry won't bring him back. It stops this sheet being treated as proof that the house was empty."
+
 const INSPECTION_TITLE := "REPORT SLEEVE / INSPECTION"
 
 const COMPARISON_TITLE := "ELI / TONIGHT'S COMPARISON"
@@ -20,7 +23,7 @@ const RECOUNT := "Dad was still inside when they marked him absent. Nobody check
 
 const MISSING_PAGE := "23:18 / Simon\n\nI rang home. Eli answered. He asked if I'd be back for tea.\n\nI opened the lounge door. His bed was in there. His books. The little chair from his room. His drawing was on the cupboard - the one he'd put in my toolbox this morning.\n\nI know what I saw. I also know he's at home. This isn't our house.\n\nThe office radio was on our kitchen station. 104.6. The clock still says 23:18.\n\nThere's someone moving in that room. It can't be Eli. But if there's a child in here, I can't just leave.\n\nEli, if you get this: I was trying to get home to you. I didn't choose to stay."
 
-const UNDERFLOOR_TEST := "No. 17 / S. Ward / 1998\nUnderfloor inspection\n\nAccess beside the cellar ramp. Records store at the far end. The mobile rack is across the inspection bay; the rails are clear.\n\nDisconnected the return at the terminal box. Motor stopped. Footsteps continued overhead. They sounded like mine.\n\nI knocked on a joist. Once, then twice. Something knocked back from the passage. I stopped. It didn't.\n\nI tried the same pattern at the office test box. Notes pinned below it. Feed switch stops the motor; the return plug disconnects the line.\n\nThe sound of somebody coming back isn't enough. Check the door. See who it is.\n\nMy report is still in the service drawer. I haven't signed the empty-house certificate."
+const UNDERFLOOR_TEST := "No. 17 / S. Ward / 1998\nUnderfloor inspection\n\nAccess beside the cellar ramp. Records store at the far end. The mobile rack is across the inspection bay; the rails are clear.\n\nDisconnected the return at the terminal box. Motor stopped. Footsteps continued overhead. They sounded like mine.\n\nI knocked on a joist. Once, then twice. Something knocked back from the passage. I stopped. It didn't.\n\nI tried the same pattern at the office test box. Notes pinned below it. Feed switch stops the motor; the return plug disconnects the line.\n\nThe sound of somebody coming back isn't enough. Check the door. See who it is.\n\nMy report is still in the service drawer. I haven't signed the empty-house certificate. The counter filed it anyway. I've kept the unsigned carbon inside the return inspection box halfway down this passage."
 
 const CONTINUITY_TEST := "LINE TEST / S. WARD\n\n1. Leave feed and return connected. Tap the striker and listen to the reply.\n2. Switch feed OFF. Remove the return plug. Tap again. The box should stay silent.\n\nI used the rhythm marked on the joist below this office.\n\nWith both leads disconnected, I heard the reply from the lounge. The counter then printed another arrival. I checked the front door and register. Nobody had come in.\n\nKeep the strip. A printed name doesn't mean a person arrived."
 
@@ -67,7 +70,7 @@ static func clue(game: Node) -> String:
 # progression flags while loading a legacy checkpoint.
 static func refresh_collected(events: Dictionary) -> void:
 	var notes: Dictionary=events.get("notes",{})
-	var current: Dictionary={"BRIAR LANE / TEMPORARY OFFICE":SITE,"NIGHT CALL / 17 BRIAR LANE":CALL,"ARCHIVE / 23:17:08":ARCHIVE,"SIMON'S MANUAL OVERRIDE":PROCEDURE,COMPARISON_TITLE:SOURCE_COPY,"TRANSPORT / LEADER":TRANSPORT_LEADER,"THE UNFINISHED RETURN":unfinished_return(events),INSPECTION_TITLE:rubbing_note(events),"FIELD RETURN / 1998":FIELD_RETURN,"SIMON / ORIGINAL FIELD RETURN":ORIGINAL,"TWO ARRIVALS / NO EXIT":RECOUNT,"SIMON / THE MISSING PAGE":missing_page(events),"SIMON / UNDERFLOOR TEST":UNDERFLOOR_TEST,"SIMON / CONTINUITY TEST":CONTINUITY_TEST,"UNWITNESSED ARRIVAL":DEAD_LINE_RESULT,"THE SPARE PLACE":SPARE_CARD_NOTE,"THE UTILITY GLASS":SPARE_GLASS_NOTE}
+	var current: Dictionary={WITNESS_TITLE:WITNESS_CARBON,"BRIAR LANE / TEMPORARY OFFICE":SITE,"NIGHT CALL / 17 BRIAR LANE":CALL,"ARCHIVE / 23:17:08":ARCHIVE,"SIMON'S MANUAL OVERRIDE":PROCEDURE,COMPARISON_TITLE:SOURCE_COPY,"TRANSPORT / LEADER":TRANSPORT_LEADER,"THE UNFINISHED RETURN":unfinished_return(events),INSPECTION_TITLE:rubbing_note(events),"FIELD RETURN / 1998":FIELD_RETURN,"SIMON / ORIGINAL FIELD RETURN":ORIGINAL,"TWO ARRIVALS / NO EXIT":RECOUNT,"SIMON / THE MISSING PAGE":missing_page(events),"SIMON / UNDERFLOOR TEST":UNDERFLOOR_TEST,"SIMON / CONTINUITY TEST":CONTINUITY_TEST,"UNWITNESSED ARRIVAL":DEAD_LINE_RESULT,"THE SPARE PLACE":SPARE_CARD_NOTE,"THE UTILITY GLASS":SPARE_GLASS_NOTE}
 	if notes.has("TORN PAGE / IMPRESSIONS"):
 		notes[INSPECTION_TITLE]=rubbing_note(events);notes.erase("TORN PAGE / IMPRESSIONS")
 	if notes.has("SIMON / RETURN CHANNEL"):
