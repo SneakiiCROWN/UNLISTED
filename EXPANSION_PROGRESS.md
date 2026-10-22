@@ -35,3 +35,14 @@ The runtime is the installed Godot 4.7.2 Forward+ project. Save generated soluti
 ## Inspection_06 scoped checkpoint
 
 Final equipment/inspection/multiple real pipe mappings: 77/0. Chapter with actual mouse scan, generated receiver station, closed-room change, physical drawer/page, outside watcher confrontation/death/retry and three-size layouts: 56/0. Office work surface is now clear of the overlapping folder/mug; the mug is a tenth shared carryable object on a supported cabinet. UV world seal and readable shed paper screenshots reviewed. Complete fresh integrated route is RUNNING; not yet a release. Battery drains .12%/s white and .18%/s inspection. White reserve and manual winding remain available.
+
+
+## Cupboard / story prerequisite continuation, 23 October
+
+Inspection_10 native targeted acceptance: equipment/UV 79/0; cupboard search, seen-entry breach, actual thrown-prop noise, death/retry and standing/save recovery 28/0; story/prerequisite/migration and three-size comparison/ending layouts 156/0. These are scoped fixtures, not a fresh integrated route. Current candidate Inspection_11 is running a new full route with the naturally earned post-inspection search, then focused legacy systems, pursuit, underfloor and impossible-room checks.
+
+The office cupboard is a Blender derivative of the existing Kenney CC0 bookcase. Fitted imported doors, frame, handles and back are retained; internal shelves/base are removed for actual crouch clearance. Player movement and ordinary line-of-sight determine cover. Seen entry or a noisy object can expose it, with a fresh warning and safe checkpoint retained. The new search appears only off-screen after a new case's inspection discovery; legacy cases do not acquire a surprise pending encounter. No rejected Surveyor art is used.
+
+Additional coherence repairs: the unpowered file terminal no longer displays its readable file; initial journal states Eli's motivation without future clues. The playback decision asks whether the extra step came from the recording or the room, after both auditions. The old journal heading migrates without granting evidence. UV observation follows actual written line width, requires scanning frequency digits and never copies unread lower lines. Legacy completed knowledge is retained. One corrupted backup-winding message was corrected to ASCII after Inspection_10; Inspection_11 contains that text-only correction.
+
+The second physical hiding interaction is now implemented and targeted-tested, superseding the earlier remaining-work list. Bigger middle-act expansion, vent investigation, professional Surveyor character art, full rare-text sign-off, broader environment/audio review, safe blackout event and fuller ending presentation are still unfinished. No 30-60-minute human duration, subjective listening or artistic approval is claimed.

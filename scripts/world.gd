@@ -55,12 +55,16 @@ var investigation: Node3D
 var maintenance: Node3D
 var dead_line: Node3D
 var spare_place: Node3D
+var storage_hide: Node3D
+var inspection_search: Node3D
 var equipment: Node3D
 var ambient_director: Node3D
 var spare_mirror: Node3D
 var chapter: Node3D
 var hint_until := 0.0
 var tv_light: OmniLight3D
+var security_legend: Label3D
+var security_screen: MeshInstance3D
 var security_light: OmniLight3D
 var ambience: AudioStreamPlayer
 var time_in_game := 0.0
@@ -87,6 +91,7 @@ func _ready() -> void:
 		checkpoint_path = "user://development/checkpoint.json"
 	qa_mode = "--door-repair-qa" in OS.get_cmdline_user_args() or "--recording-repair-qa" in OS.get_cmdline_user_args() or "--qa" in OS.get_cmdline_user_args() or "--presentation-qa" in OS.get_cmdline_user_args() or "--milestone-qa" in OS.get_cmdline_user_args() or "--threat-qa" in OS.get_cmdline_user_args() or "--systems-qa" in OS.get_cmdline_user_args() or "--polish-qa" in OS.get_cmdline_user_args() or "--visual-probe" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--production-views" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--storage-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--inspection-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--arrival-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--ambient-qa" in OS.get_cmdline_user_args()
@@ -150,6 +155,8 @@ func _ready() -> void:
 	spare_mirror=load("res://scripts/spare_mirror.gd").new();spare_mirror.game=self;add_child(spare_mirror)
 	ambient_director=load("res://scripts/ambient_director.gd").new();ambient_director.game=self;add_child(ambient_director)
 	equipment=load("res://scripts/inspection_gear.gd").new();equipment.game=self;add_child(equipment)
+	storage_hide=load("res://scripts/storage_hide.gd").new();storage_hide.game=self;add_child(storage_hide)
+	inspection_search=load("res://scripts/inspection_search.gd").new();inspection_search.game=self;add_child(inspection_search)
 	set_volume(volume)
 	show_menu("UNLISTED", true)
 	if dev_mode:
@@ -417,6 +424,8 @@ func monitor(pos: Vector3, id: String, text: String, angle := 0.0) -> Node3D:
 	if id == "television":screen_.name = "TelevisionScreen";screen_.layers = 8
 	var legend_ := label3(node,text,Vector3(0,0.04,0.325),0,15,Color(0.6,0.9,0.78))
 	if id=="security":
+		security_legend=legend_;security_screen=screen_
+		legend_.visible=false
 		legend_.font_size=16;legend_.pixel_size=.004
 		var glass: StandardMaterial3D=screen_.material_override.duplicate()
 		glass.albedo_color=Color(.035,.075,.06);glass.emission=Color(.08,.17,.135);glass.emission_energy_multiplier=.6
@@ -527,7 +536,7 @@ func build_world() -> void:
 	window_at(Vector3(-7.37,0,1),PI/2)
 	# The records office points toward the shed and personal stakes.
 	load("res://scripts/interior_life.gd").new().desk(self,Vector3(5.6,0,-8.7),2.0,.85)
-	monitor(Vector3(5.6,1.13,-8.7),"security","SECURITY ARCHIVE\n\nWARD, SIMON\nOCCUPANCY: ERASED")
+	monitor(Vector3(5.6,1.13,-8.7),"security","PROPERTY FILES\nS. WARD / 1998")
 	security_light = lamp(Vector3(5.6,1.8,-8.1),cold,0.8,4)
 	furniture("chair",Vector3(6.65,0,-7.5),Vector3(0.65,1.0,0.65),PI*0.85)
 	load("res://scripts/interior_life.gd").new().desk(self,Vector3(3.3,0,-8.6),1.25,.8)
@@ -767,11 +776,13 @@ func new_game() -> void:
 	events.case_v2=true
 	events.case_v3=true
 	events.arrival_check=true
+	events.notes={"WHY I CAME":"Dad never came home from 17 Briar Lane. Tonight someone reported a television playing there, even though the house should have no power. I asked for the job. I want to find his old work report before I sign anything."}
 	PUZZLES.generate(events)
 	for arg in OS.get_cmdline_user_args():
 		if automated_qa and arg.begins_with("--puzzle-seed="):PUZZLES.generate(events,int(arg.trim_prefix("--puzzle-seed=")))
 	refresh_puzzle_labels()
 	equipment.new_case()
+	storage_hide.restore()
 	if is_instance_valid(chapter):chapter.restore()
 	if is_instance_valid(maintenance):maintenance.restore()
 	if is_instance_valid(dead_line):dead_line.restore()
@@ -814,6 +825,8 @@ func inspect_text(title_: String, body: String) -> void:
 
 func _process(delta: float) -> void:
 	if not is_instance_valid(player) or not started or menu_open: return
+	if is_instance_valid(security_legend):security_legend.visible=stage>=3
+	if is_instance_valid(security_screen):security_screen.material_override.emission_energy_multiplier=.6 if stage>=3 else 0.0
 	time_in_game += delta
 	if memory_receipt:memory_receipt.visible = events.get("memory_confirmed",false)
 	if targets.has("source_copy"):targets.source_copy.collision_layer=1 if events.get("memory_confirmed",false) else 0
@@ -860,6 +873,7 @@ func open_casebook() -> void:
 	presentation.inspect_document("FIELD NOTES / RECORDS EXAMINED",text_)
 
 func interaction_name(id: String) -> String:
+	if id=="storage_door":return "Close cupboard" if storage_hide.opened else "Open cupboard"
 	if id=="inspection_kit":return "Fit inspection head"
 	if id.begins_with("battery_"):return "Take battery pack"
 	if id=="spare_mirror":return "Touch glass"
@@ -886,7 +900,7 @@ func interaction_name(id: String) -> String:
 	if id=="front" and events.get("arrival_check",false) and not events.get("front_checked",false):return "Knock"
 	if id=="front_gate":return "Close gate" if doors[id].opened else "Open gate"
 	if doors.has(id): return "Try door" if doors[id].locked else ("Close door" if doors[id].opened else "Open door")
-	return {"audition_source":"Audition A","audition_return":"Audition B","exclude_return":"Compare channels","order":"Correct attendance register" if isolated else "Read call sheet", "television":"Inspect television", "fuse":"Take spare fuse", "breaker":"Restore supply", "security":"Review security archive", "record":"Read occupancy record", "shed_record":"Read manual override", "isolate":"Isolate occupancy relay", "valve0":"Turn RED valve", "valve1":"Turn BLUE valve", "valve2":"Turn WHITE valve"}.get(id,"Inspect")
+	return {"audition_source":"Play A","audition_return":"Play B","exclude_return":"Compare playback","order":"Correct attendance register" if isolated else "Read call sheet", "television":"Inspect television", "fuse":"Take spare fuse", "breaker":"Restore supply", "security":"Review security archive", "record":"Read occupancy record", "shed_record":"Read manual override", "isolate":"Isolate occupancy relay", "valve0":"Turn RED valve", "valve1":"Turn BLUE valve", "valve2":"Turn WHITE valve"}.get(id,"Inspect")
 
 func try_interact() -> void:
 	if menu_open: return
@@ -895,6 +909,7 @@ func try_interact() -> void:
 		interact(str(hit.collider.get_meta("interaction")))
 
 func interact(id: String) -> void:
+	if id=="storage_door":storage_hide.use();return
 	if id=="inspection_kit" or id.begins_with("battery_"):equipment.collect(id);return
 	if id=="spare_mirror":spare_mirror.touch();return
 	if id.begins_with("spare_"):spare_place.use(id);return
@@ -960,7 +975,7 @@ func interact(id: String) -> void:
 				save_game()
 			else: message("The supply is on. The service circuit is isolated." if isolated else "The meter is running. There shouldn't be anything connected downstairs.",3)
 		"security", "record":
-			if stage < 3: message("No power. The supply light is out.")
+			if stage < 3: message("No power. I can't read the file while the house supply is off.")
 			else:
 				if not brass_key:presentation.pending_notice = "Brass service key taken"
 				report_read = true
@@ -1174,6 +1189,7 @@ func apply_save(data: Dictionary) -> void:
 	if is_instance_valid(spare_place):spare_place.restore()
 	if is_instance_valid(ambient_director):ambient_director.restore()
 	if is_instance_valid(equipment):equipment.restore()
+	if is_instance_valid(storage_hide):storage_hide.restore()
 
 func save_game(quiet := false) -> void:
 	if is_instance_valid(capture_director) and capture_director.active:return
@@ -1238,6 +1254,7 @@ func run_qa() -> void:
 		var test = load("res://scripts/hands_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
 		await test.run(self);return
 	var path := "res://scripts/input_isolation_qa.gd" if "--input-isolation-qa" in OS.get_cmdline_user_args() else "res://scripts/exterior_views.gd" if "--exterior-views" in OS.get_cmdline_user_args() else "res://scripts/exterior_qa.gd" if "--exterior-qa" in OS.get_cmdline_user_args() else "res://scripts/door_repair_qa.gd" if "--door-repair-qa" in OS.get_cmdline_user_args() else "res://scripts/recording_repair_qa.gd" if "--recording-repair-qa" in OS.get_cmdline_user_args() else "res://scripts/polish_qa.gd" if "--polish-qa" in OS.get_cmdline_user_args() else "res://scripts/systems_qa.gd" if "--systems-qa" in OS.get_cmdline_user_args() else "res://scripts/threat_qa.gd" if "--threat-qa" in OS.get_cmdline_user_args() else "res://scripts/milestone_qa.gd" if "--milestone-qa" in OS.get_cmdline_user_args() else "res://scripts/presentation_qa.gd" if "--presentation-qa" in OS.get_cmdline_user_args() else "res://scripts/runtime_qa.gd"
+	if "--storage-qa" in OS.get_cmdline_user_args():path="res://scripts/storage_hide_qa.gd"
 	if "--inspection-qa" in OS.get_cmdline_user_args():path="res://scripts/inspection_qa.gd"
 	if "--arrival-qa" in OS.get_cmdline_user_args():path="res://scripts/arrival_qa.gd"
 	if "--ambient-qa" in OS.get_cmdline_user_args():path="res://scripts/ambient_qa.gd"

@@ -4,11 +4,13 @@ const TRANSPORT_LEADER := "HALL MICROPHONE / NO RECORDING YET\n\nPencil note: Wa
 
 const RUBBING_LINES := ["Kitchen radio: 104.6.","I phoned home. Eli answered. He's safe.","I shut the lounge door. Now it's his room."]
 
+const INSPECTION_TITLE := "REPORT SLEEVE / INSPECTION"
+
 const COMPARISON_TITLE := "ELI / TONIGHT'S COMPARISON"
 
 const SITE := "Briar Lane clearance works / 1998\nSite office: No. 17\n\nNos. 13-19 are vacant. Keep No. 17 open until the final inspection. Front room: waiting area. Rear room: property files.\n\nLeave the service feed on until everyone has signed out. Check the electrical counter against the paper register. If they disagree, check the building. Do not certify it empty from the counter alone.\n\nRemove this address from the call-out list when the site closes.\n\nHandwritten below: Counter says two arrivals. Ward is the only name in the sign-in book."
 
-const CALL := "PROPERTY SERVICES / WORK ORDER 017\n17 Briar Lane / Eli Ward\n\nReported fault: television playing in a vacant property. Supply listed as disconnected. Caller gave no name or contact number.\n\nDispatch note: Address removed from service list in 1999. Confirm address before attending.\n\nMy note: Dispatch nearly cancelled it. Then they said Briar Lane. I've still got Dad's last job slip. Same house. I asked them to give me the call."
+const CALL := "PROPERTY SERVICES / WORK ORDER 017\n17 Briar Lane / Eli Ward\n\nReported fault: television playing in a vacant property. Supply listed as disconnected. Caller gave no name or contact number.\n\nDispatch note: Address removed from service list in 1999. Confirm address before attending. Check the building before signing the return. Keep any corrected entries with the job sheet.\n\nMy note: Dispatch nearly cancelled it. Then they said Briar Lane. I've still got Dad's last job slip. Same house. I asked them to give me the call."
 const ARCHIVE := "PROPERTY FILE / SIMON WARD\nElectrical contractor / 1998\n\n23:17 - Signed in.\n23:18 - Status changed to ABSENT.\nDeparture time: blank. No door opening recorded.\n\nMissing-person report attached. Ward did not return from this call. His son, Eli, was seven.\n\nService-camera still: a second man at the stairs. No name or vehicle recorded.\n\nSimon's pencil note: He stands there whenever I try to leave. Keep my notebook. Don't file this as an empty property.\n\nA brass service key is clipped inside the folder."
 const PROCEDURE := "SERVICE SHED / S. WARD / 1998\n\nIsolation order:\nCOOLING first, then SUPPLY, then COUNTER.\nPull the isolator only after all three lines are closed. Trace the service names on the plates. The colours are only line identifiers.\n\nThe lower return drawer has a spring catch. Keep the floor release weighted while opening it. Disconnect the feed first.\n\nI've left my original report in that drawer. The office copy has been changed; use the original if I don't come back. Someone keeps walking above me. If I stop, he stops. I haven't seen another contractor all night.\n\nPlease check the house if I don't sign out.\n\nA small key is taped to the back."
 const SOURCE_COPY := "MY RECORDING / TONIGHT\n\nA is the hall microphone. Those are my footsteps. B plays them back. When B finishes, another step comes from the office doorway. I wasn't moving.\n\nThis isn't an old recording of Dad. It's happening to me, here, tonight.\n\nI've kept the comparison with his report. If I submit both, dispatch will have more than a missing entry to investigate."
@@ -29,7 +31,12 @@ const SPARE_CARD_NOTE := "The cover was moving. There was nobody underneath it.\
 const SPARE_GLASS_NOTE := "The cot was empty when I pulled the cover back. In the mirror, something was still underneath it.\n\nFirst the strip. Now the card. This house keeps getting my life wrong."
 
 static func rubbing_note(events: Dictionary={}) -> String:
-	return "\n".join(preload("res://scripts/case_puzzles.gd").lines(events))+"\n\nDad wrote this on the report sleeve in inspection ink. He said my room was here. I was at home."
+	var lines: Array[String]=preload("res://scripts/case_puzzles.gd").lines(events)
+	var seen: Array=events.get("uv_rows",[true,true,true])
+	var observed: Array[String]=[]
+	for i in 3:
+		if seen[i]:observed.append(lines[i])
+	return "\n".join(observed)+"\n\nDad wrote this on the report sleeve in inspection ink."+(" He said my room was here. I was at home." if seen[2] else "")
 
 static func missing_page(events: Dictionary) -> String:
 	return MISSING_PAGE.replace("104.6","%.1f"%preload("res://scripts/case_puzzles.gd").station(events))
@@ -60,7 +67,9 @@ static func clue(game: Node) -> String:
 # progression flags while loading a legacy checkpoint.
 static func refresh_collected(events: Dictionary) -> void:
 	var notes: Dictionary=events.get("notes",{})
-	var current: Dictionary={"BRIAR LANE / TEMPORARY OFFICE":SITE,"NIGHT CALL / 17 BRIAR LANE":CALL,"ARCHIVE / 23:17:08":ARCHIVE,"SIMON'S MANUAL OVERRIDE":PROCEDURE,COMPARISON_TITLE:SOURCE_COPY,"TRANSPORT / LEADER":TRANSPORT_LEADER,"THE UNFINISHED RETURN":unfinished_return(events),"TORN PAGE / IMPRESSIONS":rubbing_note(events),"FIELD RETURN / 1998":FIELD_RETURN,"SIMON / ORIGINAL FIELD RETURN":ORIGINAL,"TWO ARRIVALS / NO EXIT":RECOUNT,"SIMON / THE MISSING PAGE":missing_page(events),"SIMON / UNDERFLOOR TEST":UNDERFLOOR_TEST,"SIMON / CONTINUITY TEST":CONTINUITY_TEST,"UNWITNESSED ARRIVAL":DEAD_LINE_RESULT,"THE SPARE PLACE":SPARE_CARD_NOTE,"THE UTILITY GLASS":SPARE_GLASS_NOTE}
+	var current: Dictionary={"BRIAR LANE / TEMPORARY OFFICE":SITE,"NIGHT CALL / 17 BRIAR LANE":CALL,"ARCHIVE / 23:17:08":ARCHIVE,"SIMON'S MANUAL OVERRIDE":PROCEDURE,COMPARISON_TITLE:SOURCE_COPY,"TRANSPORT / LEADER":TRANSPORT_LEADER,"THE UNFINISHED RETURN":unfinished_return(events),INSPECTION_TITLE:rubbing_note(events),"FIELD RETURN / 1998":FIELD_RETURN,"SIMON / ORIGINAL FIELD RETURN":ORIGINAL,"TWO ARRIVALS / NO EXIT":RECOUNT,"SIMON / THE MISSING PAGE":missing_page(events),"SIMON / UNDERFLOOR TEST":UNDERFLOOR_TEST,"SIMON / CONTINUITY TEST":CONTINUITY_TEST,"UNWITNESSED ARRIVAL":DEAD_LINE_RESULT,"THE SPARE PLACE":SPARE_CARD_NOTE,"THE UTILITY GLASS":SPARE_GLASS_NOTE}
+	if notes.has("TORN PAGE / IMPRESSIONS"):
+		notes[INSPECTION_TITLE]=rubbing_note(events);notes.erase("TORN PAGE / IMPRESSIONS")
 	if notes.has("SIMON / RETURN CHANNEL"):
 		notes[COMPARISON_TITLE]=SOURCE_COPY
 		notes.erase("SIMON / RETURN CHANNEL")

@@ -33,6 +33,10 @@ func play_chapter(accessibility:=false) -> void:
 	check("rubbing reveals impressions through input",g.events.get("carbon_read",false),str(g.events.get("carbon_coverage",[])))
 	await shot("M01_carbon_rubbing")
 	g.presentation.buttons["Put sheet down"].pressed.emit();await wait(.3)
+	if g.events.get("inspection_search_pending",false) or (g.events.get("inspection_search_started",false) and not g.events.get("inspection_search_done",false)):
+		var hiding=load("res://scripts/storage_hide_qa.gd").new();add_child(hiding)
+		hiding.g=g;hiding.output=output;hiding.started_at=started_at;hiding.exact_target=exact_target
+		await hiding.survive_search();checks.append_array(hiding.checks);hiding.queue_free()
 	g.save_game();g.load_game();await wait(.3)
 	check("impressions persist through save recovery",g.events.get("carbon_read",false))
 	await travel(Vector2(4.9,-7.3),"receiver approach");await use("return_receiver",false)
@@ -111,6 +115,9 @@ func edge_checks() -> void:
 	check("physical site history readable without power",g.stage<3 and g.presentation.section=="document" and g.events.get("notes",{}).has("BRIAR LANE / TEMPORARY OFFICE"))
 	check("site paper cannot grant archive key",not g.brass_key)
 	g.presentation.resume_game();g.events.field_return_read=true
+	g.chapter.open_carbon();await wait(.2)
+	check("inspection requires the physical light attachment",rubbing_widget()==null and not g.events.get("carbon_read",false))
+	g.equipment.data.uv=true;g.equipment.data.mode=2;g.equipment.apply_light()
 	g.chapter.open_carbon();await wait(.3)
 	var rubbing=rubbing_widget();var origin: Vector2=rubbing.global_position
 	await pointer(origin+Vector2(55,113),true)
@@ -151,6 +158,7 @@ func run(current: Node) -> void:
 	if "--chapter-edge-qa" in OS.get_cmdline_user_args():
 		await edge_checks();return
 	g.new_game();g.presentation.clear_transients();g.stage=3;g.report_read=true;g.shed_read=true;g.isolated=true
+	g.events.inspection_search_started=true;g.events.inspection_search_done=true # Isolate the existing chapter fixture.
 	g.equipment.data.uv=true;g.equipment.data.mode=2;g.equipment.apply_light() # Labelled post-equipment chapter fixture.
 	g.events.field_return_read=true;g.events.threat_resolved=true;g.events["return"]=true;g.events.chair=true;g.events.impossible_room_resolved=true
 	g.threat.enabled=false;g.threat.reset();g.investigation.restore()

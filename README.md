@@ -1,6 +1,6 @@
 # UNLISTED
 
-**Unreleased source checkpoint:** inspection equipment and saved puzzle variants are in development. The playable download below remains verified 0.8.1. See [active progress](EXPANSION_PROGRESS.md); integrated acceptance is still running.
+**Unreleased source checkpoint:** inspection equipment, saved puzzle variants and physical cupboard cover are implemented with targeted native checks. A new full integrated candidate is being tested. The playable download below remains verified 0.8.1. See [active progress](EXPANSION_PROGRESS.md); integrated acceptance is still running.
 
 Eli Ward answers a night call at 17 Briar Lane, the address on his father Simon's last work slip from 1998.
 

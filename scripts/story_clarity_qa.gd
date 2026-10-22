@@ -3,6 +3,33 @@ func run(game: Node) -> void:
 	g=game;p=g.presentation
 	output=ProjectSettings.globalize_path("res://qa/story_clarity") if OS.has_feature("editor") else OS.get_executable_path().get_base_dir().path_join("QA/story_clarity")
 	DirAccess.make_dir_recursive_absolute(output);g.checkpoint_path=output.path_join("checkpoint.json")
+	# Current-case fixtures check knowledge prerequisites separately from the earned route.
+	g.new_game();g.events.office=true;g.threat.enabled=false;await wait(.2)
+	check("opening journal states personal motivation without future clues",g.events.notes.has("WHY I CAME") and not str(g.events.notes).contains("another arrival"))
+	check("unpowered archive cannot reveal its file on the mesh",not g.security_legend.visible)
+	g.interact("security");await wait(.15)
+	check("unpowered archive grants no record or key",not g.report_read and not g.brass_key)
+	g.stage=3;await wait(.2);g.interact("security");await wait(.2)
+	check("powered archive reveals coherent original record",g.security_legend.visible and g.report_read and g.brass_key and p.note.text.contains("His son, Eli, was seven"))
+	p.resume_game();g.events.erase("audition_A");g.events.erase("audition_B")
+	p.show_exclusion();await wait(.2)
+	check("comparison cannot be solved before listening",p.buttons["Exclude channel A"].disabled and p.buttons["Exclude channel B"].disabled)
+	g.events.audition_A=true;g.events.audition_B=true
+	for size_ in [Vector2i(1920,1080),Vector2i(2560,1440),Vector2i(3440,1440)]:
+		render_size(size_);p.show_exclusion();await wait(.2)
+		check("comparison uses recording versus room "+str(size_),p.buttons["Exclude channel A"].text=="From the recording" and p.buttons["Exclude channel B"].text=="From the room" and not p.buttons["Exclude channel B"].disabled)
+		check("comparison choices fit "+str(size_),p.card_body.get_global_rect().end.y<=g.get_viewport().get_visible_rect().size.y)
+		await capture("inspection_comparison_"+str(size_.x))
+	p.buttons["Exclude channel A"].pressed.emit();await wait(.2)
+	check("wrong interpretation preserves investigation",not g.events.get("memory_confirmed",false) and g.player.active)
+	p.show_exclusion();p.buttons["Exclude channel B"].pressed.emit();await wait(.2)
+	check("room step interpretation preserves evidence ending eligibility",g.events.get("memory_confirmed",false) and p.note.text.contains("It's happening to me, here, tonight"))
+	var old: Dictionary={"notes":{"TORN PAGE / IMPRESSIONS":"Old collected text"},"carbon_read":true}
+	g.NOTES.refresh_collected(old)
+	check("legacy collected paper is renamed without losing knowledge",old.notes.has(g.NOTES.INSPECTION_TITLE) and not old.notes.has("TORN PAGE / IMPRESSIONS") and old.notes[g.NOTES.INSPECTION_TITLE].contains("I phoned home"))
+	var unknown: Dictionary={"notes":{}};g.NOTES.refresh_collected(unknown)
+	check("text migration never grants undiscovered evidence",unknown.notes.is_empty() and not unknown.get("carbon_read",false))
+	p.resume_game()
 	g.new_game();g.events.case_v2=false;g.events.case_v3=false;g.events.chair=true;g.stage=3;g.isolated=true
 	g.report_read=true;g.brass_key=true;g.shed_read=true;g.threat.enabled=false
 	check("unearned evidence ending refused",not g.finish_attendance("on_record") and not g.ended)

@@ -210,7 +210,7 @@ func exclude_channel(channel: String) -> void:
 	if channel=="A":
 		game.presentation.resume_game()
 		game.sound("relay",Vector3(3.3,1,-8.52),-28)
-		game.message("A is the microphone. I need that recording.",4)
+		game.message("The playback had already stopped. I should listen again.",4)
 		return
 	game.events.memory_confirmed = true
 	stop_audition()

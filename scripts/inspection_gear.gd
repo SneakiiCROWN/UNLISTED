@@ -62,7 +62,7 @@ func step_power(delta: float) -> void:
 			data.charge=maxf(float(data.charge),25);winding=0;apply_light();game.save_game(true);game.presentation.notify("Backup charged / 25%")
 		return
 	if Input.is_action_pressed("battery_replace") and int(data.spares)==0 and float(data.charge)<20:
-		winding=.001;apply_light();game.presentation.notify("Winding backupÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¦ keep holding");return
+		winding=.001;apply_light();game.presentation.notify("Winding backup... keep holding");return
 	if int(data.mode)!=0:
 		data.charge=maxf(0,float(data.charge)-delta*(.18 if is_uv() else .12))
 		if float(data.charge)<=10 and not notified_low:

@@ -592,9 +592,10 @@ func show_exclusion() -> void:
 	body.visible = false
 	clear_card()
 	section = "document"
-	label(card_body,"PROPERTY SERVICES / CHANNEL EXCLUSION",15,"Meta")
-	label(card_body,"SOURCE / RETURN",32,"Title")
-	label(card_body,"Optional comparison / needed to submit a fault report, not to close my call-out.\nA  /  FIELD MICROPHONE     B  /  RETURN PLAYBACK\n\nA records the hall. B plays it back. Listen for anything that happens after the recording stops.",20)
+	label(card_body,"FIELD TEST / HALL MICROPHONE",15,"Meta")
+	label(card_body,"THE LAST FOOTSTEP",32,"Title")
+	var heard_both: bool=game.events.get("audition_A",false) and game.events.get("audition_B",false)
+	label(card_body,"A / HALL MICROPHONE     B / PLAYBACK\n\n"+("I stood still after playback stopped. There was one more step.\nDid it come from the recording, or the room?" if heard_both else "A records the hall. B plays it back. Compare them while standing still."),20)
 	var state_a := "heard" if game.events.get("audition_A",false) else "not heard"
 	var state_b := "heard" if game.events.get("audition_B",false) else "not heard"
 	var available: bool = game.stage>=3 and not game.threat.active()
@@ -603,8 +604,8 @@ func show_exclusion() -> void:
 	for channel in ["A","B"]:
 		add_button("Listen "+channel,func():resume_game();game.horror.audition_channel(channel),available,row)
 	var ready_: bool = game.events.get("audition_A",false) and game.events.get("audition_B",false)
-	var exclude_a:=add_button("Exclude channel A",func():game.horror.exclude_channel("A"),ready_,card_body);exclude_a.text="Mark A as unreliable"
-	var exclude_b:=add_button("Exclude channel B",func():game.horror.exclude_channel("B"),ready_,card_body);exclude_b.text="Mark B as unreliable"
+	var exclude_a:=add_button("Exclude channel A",func():game.horror.exclude_channel("A"),ready_,card_body);exclude_a.text="From the recording"
+	var exclude_b:=add_button("Exclude channel B",func():game.horror.exclude_channel("B"),ready_,card_body);exclude_b.text="From the room"
 	add_button("Leave transport",resume_game,true,card_body).grab_focus()
 	entrance_animation(card)
 

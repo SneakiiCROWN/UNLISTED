@@ -25,7 +25,7 @@ func tune(value: float) -> void:
 func listen() -> void:
 	game.save_game()
 	if not game.isolated:
-		display.text="INTERFERENCE / LIVE SERVICE FEED";return
+		display.text="Too much interference. The service circuit is still running.";return
 	if absf(dial.value-game.PUZZLES.station(game.events))>.051:
 		game.sound("latch",game.chapter.radio.global_position,-35)
 		return

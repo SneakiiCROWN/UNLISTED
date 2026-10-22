@@ -6,6 +6,7 @@ func run(current: Node) -> void:
 		if arg.begins_with("--evidence="):output=arg.trim_prefix("--evidence=")
 	DirAccess.make_dir_recursive_absolute(output);g.checkpoint_path=output.path_join("checkpoint.json")
 	await exact_resolution();g.new_game();g.stage=3;g.brass_key=true;g.shed_read=true;g.threat.enabled=false;g.threat.reset()
+	g.events.inspection_search_started=true;g.events.inspection_search_done=true # Mechanics fixture; search has separate native coverage.
 	g.events.chair=true;g.events.office=true;g.events.yard=true;g.events["return"]=true
 	g.presentation.clear_transients();for light in g.lamps:light.light_energy=.7
 	var frequencies: Dictionary={};var configurations: Dictionary={};var valid:=true
@@ -52,17 +53,25 @@ func run(current: Node) -> void:
 	await shot("I04_local_uv_beam")
 	g.save_game();g.load_game();await wait(.2);await use("carbon_return",false);widget=rubbing_widget()
 	check("partial UV coverage survives load",float(g.events.carbon_coverage[0])>0 and not g.events.get("carbon_read",false))
+	# Reading the actual frequency must not require rubbing blank paper margins.
+	origin=widget.global_position;await pointer(origin+Vector2(55,113),true)
+	var end: float=58+widget.HAND.get_string_size(widget.TEXT[0],HORIZONTAL_ALIGNMENT_LEFT,-1,28).x
+	for x in range(55,ceili(end)+20,10):await pointer(origin+Vector2(x,113),true,true)
+	await pointer(origin+Vector2(end,113),false)
+	check("actual frequency is enough without scanning blank paper",g.events.get("carbon_read",false))
+	check("journal does not invent unread lower lines",not g.events.notes.get(g.NOTES.INSPECTION_TITLE,"").contains("I phoned home"))
+	await pointer(origin+Vector2(end-30,113),false);await shot("I04b_frequency_under_beam")
 	for row in 3:
 		for pass_ in 2:
 			origin=widget.global_position;await pointer(origin+Vector2(55,113+row*74),true)
 			for i in 24:await pointer(origin+Vector2(55+i*28,113+row*74),true,true)
 			await pointer(origin+Vector2(720,113+row*74),false)
-	check("physical mouse sweep discovers current station",g.events.get("carbon_read",false) and g.events.notes["TORN PAGE / IMPRESSIONS"].contains("%.1f"%g.PUZZLES.station(g.events)),"coverage="+str(widget.coverage)+" beam="+str(widget.beam))
+	check("physical mouse sweep discovers current station",g.events.get("carbon_read",false) and g.events.notes[g.NOTES.INSPECTION_TITLE].contains("%.1f"%g.PUZZLES.station(g.events)),"coverage="+str(widget.coverage)+" beam="+str(widget.beam))
 	await shot("I05_discovered_uv_paper");await action("flashlight");await action("flashlight");await shot("I06_white_after_discovery")
 	check("recording clue never locks UV permanently on",not g.equipment.is_uv())
 	g.presentation.buttons["Put sheet down"].pressed.emit();await wait(.2)
 	# Same mechanism offers a slow, visible controller/accessibility scan, not an instant answer.
-	g.events.erase("carbon_read");g.events.erase("carbon_cells");g.events.erase("carbon_coverage")
+	g.events.erase("carbon_read");g.events.erase("carbon_cells");g.events.erase("carbon_coverage");g.events.erase("uv_rows")
 	g.equipment.data.mode=2;g.equipment.apply_light();await use("carbon_return",false);widget=rubbing_widget()
 	g.presentation.buttons["Slow automatic scan"].pressed.emit();await wait(.3)
 	check("accessible scan is gradual",not g.events.get("carbon_read",false))

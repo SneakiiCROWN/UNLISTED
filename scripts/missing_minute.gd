@@ -131,15 +131,16 @@ func open_carbon() -> void:
 	p.add_button("Put sheet down",func():game.save_game();p.resume_game(),true,actions)
 	p.entrance_animation(p.card)
 func complete_rubbing() -> void:
+	if not game.events.get("carbon_read",false) and int(game.events.get("puzzles",{}).get("version",0))>=1 and not game.events.get("inspection_search_started",false):game.events.inspection_search_pending=true
 	game.events.carbon_read=true
 	game.events.notes=game.events.get("notes",{})
-	game.events.notes["TORN PAGE / IMPRESSIONS"]=game.NOTES.rubbing_note(game.events)
+	game.events.notes[game.NOTES.INSPECTION_TITLE]=game.NOTES.rubbing_note(game.events)
 	game.save_game()
 func open_receiver() -> void:
-	if game.stage<3:game.message("The receiver is silent. Its supply light is out.",3);return
+	if game.stage<3:game.message("The radio has no power.",3);return
 	if game.threat.active():game.message("I can't listen with him this close.",3);return
 	var p=game.presentation;p.pause_world();p.clear_transients();p.clear_card();p.section="document"
-	p.label(p.card_body,"ARCHIVE / RETURN RECEIVER",15,"Meta")
+	p.label(p.card_body,"OFFICE RADIO",15,"Meta")
 	var widget=load("res://scripts/return_receiver.gd").new();widget.game=game;p.card_body.add_child(widget)
 	p.add_button("Leave receiver",func():game.save_game();p.resume_game(),true,p.card_body)
 	p.entrance_animation(p.card)

@@ -51,11 +51,11 @@ func build(game: Node3D) -> void:
 		g.box(transport,Vector3(x,0.07,0.13),Vector3(0.12,0.035,0.09),Color("56594b"))
 		var id: String = ["audition_source","audition_return","exclude_return"][i]
 		g.collision(g,transport.position+Vector3(x,0.1,0.13),Vector3(0.17,0.12,0.13),id)
-		var tag: Label3D = g.label3(transport,["A","B","EXCLUDE"][i],Vector3(x,0.092,0.14),0,15,Color("b0ab91"));tag.rotation.x = -PI/2;tag.pixel_size = 0.001
+		var tag: Label3D = g.label3(transport,["A","B","COMPARE"][i],Vector3(x,0.092,0.14),0,15,Color("b0ab91"));tag.rotation.x = -PI/2;tag.pixel_size = 0.001
 	var receipt := Node3D.new();receipt.name = "TransportReceipt";transport.add_child(receipt);receipt.position = Vector3(0,0.025,0.21);receipt.visible = false;g.memory_receipt = receipt
 	g.box(receipt,Vector3(0,0,0.08),Vector3(0.24,0.003,0.16),Color("9e967d"))
 	var tail: MeshInstance3D = g.box(receipt,Vector3(0,-0.025,0.235),Vector3(0.24,0.003,0.16),Color("9e967d"));tail.rotation.x = 0.32
-	var ink: Label3D = g.label3(receipt,"COMPARISON SAVED\nTONIGHT\nFAULT DISPUTED",Vector3(0,0.004,0.07),0,16,Color("303b33"));ink.rotation.x = -PI/2;ink.pixel_size = 0.0011
+	var ink: Label3D = g.label3(receipt,"EXTRA STEP\nIN THE ROOM\nE. WARD / TONIGHT",Vector3(0,0.004,0.07),0,16,Color("303b33"));ink.rotation.x = -PI/2;ink.pixel_size = 0.0011
 	var source_copy: StaticBody3D=g.collision(g,transport.position+Vector3(0,.032,.29),Vector3(.25,.035,.13),"source_copy")
 	source_copy.name="ReadableTransportCopy";source_copy.collision_layer=0
 	# Warm desk pool and cold perimeter give the room depth, with real shade/arm supports.

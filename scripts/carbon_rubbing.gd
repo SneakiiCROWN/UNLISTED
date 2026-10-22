@@ -10,10 +10,13 @@ var beam:=Vector2(-200,-200)
 var previous:=Vector2(-200,-200)
 var auto_clock:=-1.0
 var TEXT: Array[String]=[]
+var needed: Array[int]=[]
 func _ready() -> void:
 	process_mode=Node.PROCESS_MODE_ALWAYS
 	custom_minimum_size=Vector2(800,390);mouse_filter=Control.MOUSE_FILTER_STOP;focus_mode=Control.FOCUS_ALL
 	TEXT=game.PUZZLES.lines(game.events)
+	if game.events.get("carbon_read",false) and not game.events.has("uv_rows"):game.events.uv_rows=[true,true,true]
+	for line in TEXT:needed.append(clampi(ceili((18+HAND.get_string_size(line,HORIZONTAL_ALIGNMENT_LEFT,-1,28).x)/44.0),1,16))
 	coverage=game.events.get("carbon_coverage",[0.0,0.0,0.0]).duplicate()
 	cells=game.events.get("carbon_cells",[]).duplicate(true)
 	if cells.size()!=3:
@@ -63,15 +66,26 @@ func scan(point: Vector2) -> void:
 	if not Rect2(Vector2(40,85),Vector2(705,220)).has_point(point):previous=point;return
 	if previous.distance_to(point)<7:return
 	previous=point
-	if game.events.get("carbon_read",false):return
 	for row in 3:
 		if absf(point.y-(113+row*74))>30:continue
 		var col:=clampi(int((point.x-40)/44.0),0,15)
 		for index in range(maxi(0,col-1),mini(16,col+2)):cells[row][index]=minf(1,float(cells[row][index])+.38)
 		coverage[row]=0.0
-		for value in cells[row]:coverage[row]+=float(value)/16
+		for index in needed[row]:coverage[row]+=float(cells[row][index])/needed[row]
 	game.events.carbon_coverage=coverage.duplicate();game.events.carbon_cells=cells.duplicate(true)
-	if float(coverage.min())>=.78:game.chapter.complete_rubbing()
+	var rows: Array=game.events.get("uv_rows",[false,false,false]).duplicate()
+	var changed:=false
+	for row in 3:
+		var read: bool=float(coverage[row])>=.72
+		if row==0:
+			var number_start:=clampi(int((18+HAND.get_string_size("Kitchen radio: ",HORIZONTAL_ALIGNMENT_LEFT,-1,28).x)/44),0,15)
+			for index in range(number_start,needed[0]):read=read and float(cells[0][index])>=.65
+		if read and not rows[row]:rows[row]=true;changed=true
+	game.events.uv_rows=rows
+	if rows[0] and not game.events.get("carbon_read",false):game.chapter.complete_rubbing()
+	elif changed and game.events.get("carbon_read",false):
+		game.events.notes[game.NOTES.INSPECTION_TITLE]=game.NOTES.rubbing_note(game.events);game.save_game(true)
+
 	queue_redraw()
 func rub(point: Vector2) -> void:
 	# Legacy tooling entry, now subject to real UV state and movement.
