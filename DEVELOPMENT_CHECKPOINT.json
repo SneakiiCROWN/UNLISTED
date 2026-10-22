@@ -1,6 +1,6 @@
 {
-  "milestone": "0.6.0 The Missing Minute",
-  "preserved_previous_release": "0.5.6 Field Return",
-  "private_complete_source_checkpoint": "4872e80aeb90f775f8b38f1f951139f11668d58c",
+  "milestone": "0.7.0 Under the Floor",
+  "private_complete_source_checkpoint": "817f12986ba78da1ce1d522640e855d82c6bf7f1",
+  "previous_release_preserved": "0.6.0 The Missing Minute",
   "human_approval": "pending"
 }

@@ -1,17 +1,29 @@
 {
-  "version": "0.6.0",
-  "complete_source_commit": "4872e80aeb90f775f8b38f1f951139f11668d58c",
-  "executable_sha256": "9406ee82d8e99afd9d656c31478d32ec1dfaf720ccd5e2f941d3469cfe47d095",
-  "source_sha256": "912f8ca1031768f8a5d86c8f66524db4394cddd03173ae27ea677f59bcb5b44a",
+  "version": "0.7.0",
+  "title": "Under the Floor",
+  "complete_source_commit": "817f12986ba78da1ce1d522640e855d82c6bf7f1",
+  "delivery_build": "Underfloor_07",
+  "full_route_build": "Underfloor_06",
+  "executable_sha256": "2dfd3e736be8c8905950f8d65e8f6232f5e0c0c90e655f18c005782b95fcbaf0",
+  "source_sha256": "6c6bf817a312aecb93b49a4064d0907d5db9a26af9d577998de64bbf1a47dec9",
   "reports": {
-    "chapter": {
-      "passed": 55,
+    "final_maintenance": {
+      "passed": 42,
+      "failed": 0,
+      "duration_seconds": 62.177632
+    },
+    "final_layouts": {
+      "passed": 13,
+      "failed": 0
+    },
+    "chapter_mouse_and_window": {
+      "passed": 56,
       "failed": 0
     },
     "continuous_and_earned_branch": {
-      "passed": 187,
+      "passed": 216,
       "failed": 0,
-      "duration_seconds": 303.409756
+      "duration_seconds": 346.849542
     },
     "systems": {
       "passed": 33,
@@ -24,40 +36,42 @@
     "impossible": {
       "passed": 43,
       "failed": 0,
-      "duration_seconds": 57.222219
+      "duration_seconds": 57.420328
     },
     "legacy_story": {
       "passed": 84,
       "failed": 0
     },
-    "legacy_recount_1440": {
+    "recount_1440": {
       "passed": 20,
       "failed": 0,
-      "duration_seconds": 21.37027
+      "duration_seconds": 21.49891
     },
-    "legacy_recount_ultrawide": {
+    "recount_ultrawide": {
       "passed": 20,
       "failed": 0,
-      "duration_seconds": 22.854072
-    },
-    "final_edges_and_settled_endings": {
-      "passed": 13,
-      "failed": 0
+      "duration_seconds": 22.920005
     }
   },
-  "continuous_routes_build": "MissingMinute_04",
-  "delivery_build": "MissingMinute_06",
-  "acceptance_delta": "One register context sentence now refers to the discovered drawing instead of claiming Simon heard Eli. No mechanics/assets changed. Final export tests prerequisite edges, partial rubbing recovery and settled endings at 1080p/1440p/3440x1440. Separate MissingMinute_03 tests actual mouse chapter play, outside pursuit/death/retry and register layouts.",
+  "acceptance_delta": "Final build changes only non-colliding archive decoration: boxes/books now sit on measured shelf faces, with cardboard material. Collider, routes, input, AI, save/retry and story logic match the complete-route build. Final native checks repeat the entire maintenance path, live chase into cover, rack obstruction/recovery, actual mesh support, settled layouts and player-eye views.",
   "audio_signal": {
-    "peak_dbfs": -8.911938276921866,
-    "rms_dbfs": -42.78627531124843,
-    "clipped_samples": 0,
-    "subjective_listening": false
+    "continuous": {
+      "peak_dbfs": -8.91489693815734,
+      "rms_dbfs": -43.06221853092723,
+      "clipped_samples": 0,
+      "subjective_listening": false
+    },
+    "underfloor": {
+      "peak_dbfs": -22.455059634001042,
+      "rms_dbfs": -46.5153797422056,
+      "clipped_samples": 0,
+      "subjective_listening": false
+    }
   },
   "human_playtested": false,
   "surveyor_model_changed": false,
   "subjective_audio_review": false,
-  "player_data_preserved": true,
   "duration_target_achieved": false,
-  "windows_zip_sha256": "fe2dc65bd92430580aa990584b3d22d6f3ec453c30c5bed2b7c0e2c8678106c2"
+  "player_data_preserved": true,
+  "windows_zip_sha256": "f91ff61f92b1152c8e10b70ce739335bc26df6285b8c1a8e1b62f03b5b0f7b3a"
 }
