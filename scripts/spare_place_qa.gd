@@ -26,7 +26,10 @@ func play_place() -> void:
 	check("search save safely restores investigation and card",g.events.get("spare_card_read",false) and g.threat.grace>0 and g.spare_place.hunt_running)
 	danger_snapshot=g.save_data().duplicate(true)
 	await travel(Vector2(-5.95,-5.15),"crouch behind actual utility screen",false,true)
-	await wait(5)
+	for i in 140:
+		if g.presence.position.distance_to(Vector3(-4.9,0,-5.8))<.85:break
+		await wait(.1)
+	check("real search reaches utility rest area",g.presence.position.distance_to(Vector3(-4.9,0,-5.8))<.85,str(g.presence.position))
 	check("cover blocks real pursuer sight",not g.threat.can_see_player() and g.presentation.section!="dead")
 	g.player.camera.look_at(Vector3(-4.9,1.1,-5.8));await shot("S04_actual_search_cover")
 	await travel(Vector2(-5.95,-6.7),"leave cover through rear aisle",false,true)
@@ -68,13 +71,32 @@ func run(current: Node) -> void:
 	g.doors.service.locked=false;g.doors.basement.locked=false;g.player.position=Vector3(0,.04,-7)
 	g.presentation.clear_transients();for light in g.lamps:light.light_energy=.6
 	recorder=AudioEffectRecord.new();recorder.format=AudioStreamWAV.FORMAT_16_BITS;AudioServer.add_bus_effect(0,recorder);recorder.set_recording_active(true);recording=true
+	if "--spare-layouts-only" in OS.get_cmdline_user_args():
+		g.events.spare_offered=true;g.events.spare_uncovered=true;g.events.spare_hunt_done=true;g.spare_place.restore()
+		g.player.position=Vector3(-6.4,.04,-6.7);g.player.camera.look_at(g.spare_place.card.global_position)
+		await wait(.3);await shot("S10_card_layout");await use("spare_card")
+		check("seeded layout / physical card opens without menu",g.events.get("spare_card_read",false) and not g.menu_open)
+		await shot("S11_open_card_layout");await action("journal");await shot("S12_recallable_note_layout")
+		check("seeded layout / discovered note is accessible",g.menu_open and g.events.notes.has("THE SPARE PLACE"))
+		await action("ui_cancel")
+		await travel(Vector2(-5.95,-6.7),"mirror fixture / clear rear of cot")
+		await travel(Vector2(-5.95,-3.7),"mirror fixture / use widened side aisle")
+		await travel(Vector2(-6.8,-3.7),"mirror fixture / approach glass from bed end")
+		g.player.camera.look_at(g.spare_mirror.center);await wait(.6);await shot("S13_occupied_return")
+		await use("spare_mirror")
+		check("glass contradiction is recorded only after physical observation",g.events.get("spare_glass_seen",false))
+		check("render-only body is excluded from player camera",(g.player.camera.cull_mask & g.spare_mirror.RETURN_CLOTH)==0 and g.spare_mirror.returned.visible)
+		g.spare_mirror.feed.get_texture().get_image().save_png(output.path_join("S14_return_camera.png"))
+		await finish();return
 	await wait(1)
 	check("offered only after Dead Line discovery",g.events.get("spare_offered",false))
 	await play_place()
 	if "--spare-risk-qa" in OS.get_cmdline_user_args():await risk_check()
+	await finish()
+func finish() -> void:
 	recorder.set_recording_active(false);recorder.get_recording().save_to_wav(output.path_join("game_bus.wav"));recording=false;await wait(.2)
 	var failed:=0
 	for item in checks:if not item.passed:failed+=1
-	for spec in [["input_trace.json",trace],["frames.json",frames],["repair_report.json",{"passed":checks.size()-failed,"failed":failed,"checks":checks,"duration_seconds":seconds(),"scope":"Seeded post-Dead-Line setup, actual movement/input/AI/save recovery; not a fresh route or human playtest."}]]:
+	for spec in [["input_trace.json",trace],["frames.json",frames],["repair_report.json",{"passed":checks.size()-failed,"failed":failed,"checks":checks,"duration_seconds":seconds(),"scope":"Seeded native visual/card/journal fixture; no traversal claim." if "--spare-layouts-only" in OS.get_cmdline_user_args() else "Seeded post-Dead-Line setup, actual movement/input/AI/save recovery; not a fresh route or human playtest."}]]:
 		var f=FileAccess.open(output.path_join(spec[0]),FileAccess.WRITE);f.store_string(JSON.stringify(spec[1],"\t"));f.close()
 	print("SPARE_PLACE_COMPLETE ",checks.size()-failed," passed ",failed," failed");await g.qa_exit(0 if failed==0 else 1)

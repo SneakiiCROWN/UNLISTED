@@ -53,6 +53,7 @@ var investigation: Node3D
 var maintenance: Node3D
 var dead_line: Node3D
 var spare_place: Node3D
+var spare_mirror: Node3D
 var chapter: Node3D
 var hint_until := 0.0
 var tv_light: OmniLight3D
@@ -138,6 +139,7 @@ func _ready() -> void:
 	maintenance=load("res://scripts/maintenance_store.gd").new();maintenance.game=self;add_child(maintenance)
 	dead_line=load("res://scripts/dead_line.gd").new();dead_line.game=self;add_child(dead_line)
 	spare_place=load("res://scripts/spare_place.gd").new();spare_place.game=self;add_child(spare_place)
+	spare_mirror=load("res://scripts/spare_mirror.gd").new();spare_mirror.game=self;add_child(spare_mirror)
 	set_volume(volume)
 	show_menu("UNLISTED", true)
 	if dev_mode:
@@ -809,6 +811,7 @@ func open_casebook() -> void:
 	presentation.inspect_document("FIELD NOTES / RECORDS EXAMINED",text_)
 
 func interaction_name(id: String) -> String:
+	if id=="spare_mirror":return "Touch glass"
 	if id=="spare_cover":return "Pull back blanket"
 	if id=="spare_card":return "Turn birthday card"
 	if id=="line_feed":return "Connect feed" if events.get("line_feed_off",false) else "Disconnect feed"
@@ -840,6 +843,7 @@ func try_interact() -> void:
 		interact(str(hit.collider.get_meta("interaction")))
 
 func interact(id: String) -> void:
+	if id=="spare_mirror":spare_mirror.touch();return
 	if id.begins_with("spare_"):spare_place.use(id);return
 	if id.begins_with("line_"):dead_line.use(id);return
 	if id=="carbon_return":chapter.open_carbon();return

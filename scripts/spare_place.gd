@@ -22,36 +22,40 @@ func build() -> void:
 	var material:=ShaderMaterial.new();material.shader=load("res://shaders/memory_wool.gdshader")
 	material.set_shader_parameter("weave",load("res://assets/original/work_canvas.png"));cloth.material_override=material
 	game.collision(self,Vector3(-6.8,.69,-5.25),Vector3(.65,.17,.9),"spare_cover")
-	card=Node3D.new();add_child(card);card.position=Vector3(-6.80,.55,-5.35)
+	card=Node3D.new();add_child(card);card.position=Vector3(-6.80,.522,-5.35)
 	# A folded card occupies real cot fabric, with no floating world label.
 	var paper: StandardMaterial3D=game.texture_mat("res://assets/original/aged_paper.png",Color("c1ae88"))
 	var back: MeshInstance3D=game.box(card,Vector3.ZERO,Vector3(.26,.004,.21),Color.WHITE);back.material_override=paper
 	lid=Node3D.new();card.add_child(lid);lid.position=Vector3(-.13,.005,0)
 	var front: MeshInstance3D=game.box(lid,Vector3(.13,0,0),Vector3(.26,.003,.21),Color.WHITE);front.material_override=paper
-	var ink: Label3D=game.label3(lid,"ELI\n8\n1999",Vector3(.13,.008,0),0,28,Color("534a38"));ink.rotation.x=-PI/2;ink.rotation.y=PI;ink.pixel_size=.0018;ink.shaded=false;ink.font=load("res://assets/fonts/Kalam-Regular.ttf")
-	var signature: Label3D=game.label3(card,"Back for tea.\nDad",Vector3(0,.004,0),0,24,Color("494738"));signature.rotation.x=-PI/2;signature.rotation.y=PI;signature.pixel_size=.0018;signature.shaded=false;signature.font=ink.font
+	var ink: Label3D=game.label3(lid,"ELI\n8\n1999",Vector3(.13,.008,0),0,28,Color("171b16"));ink.rotation.x=-PI/2;ink.rotation.y=PI;ink.pixel_size=.0018;ink.shaded=false;ink.font=load("res://assets/fonts/Kalam-Regular.ttf")
+	var signature: Label3D=game.label3(card,"Back for tea.\nDad",Vector3(0,.004,0),0,24,Color("171b16"));signature.rotation.x=-PI/2;signature.rotation.y=PI;signature.pixel_size=.0018;signature.shaded=false;signature.font=ink.font
 	game.collision(self,Vector3(-6.8,.57,-5.35),Vector3(.28,.07,.25),"spare_card")
 	# Small personal traces sit on existing backing: no new obstruction or room shell.
 	for y in [1.05,1.13,1.21]:
 		var mark: MeshInstance3D=game.box(self,Vector3(-7.382,y,-5.45),Vector3(.003,.009,.12),Color("726953"));mark.name="CopiedHeightMark"
 	var tag: Label3D=game.label3(self,"ELI / 1999",Vector3(-7.375,1.25,-5.45),PI/2,20,Color("746f56"));tag.pixel_size=.0014;tag.shaded=true
-func cover_mesh() -> void:
+func cover_mesh(copy := false) -> ArrayMesh:
+	var fold: float=0.0 if copy else uncover
 	var tool:=SurfaceTool.new();tool.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var points: Array[Vector3]=[]
 	for z in 21:
 		for x in 13:
 			var xx: float=-.48+float(x)*.08;var zz: float=-.88+float(z)*.088
 			var breathing: float=.0
-			if game.events.get("spare_offered",false) and not game.events.get("spare_uncovered",false):breathing=(.19+.018*sin(clock*1.35))*exp(-pow(xx/.27,4))*exp(-pow((zz+.07)/.62,4))
+			if game.events.get("spare_offered",false) and (copy or not game.events.get("spare_uncovered",false)):breathing=(.19+.018*sin(clock*1.35))*exp(-pow(xx/.27,4))*exp(-pow((zz+.07)/.62,4))
 			var hem: float=-.14 if x in [0,12] else .0
-			var height: float=hem+.012*sin(x*1.8+z*.7)+breathing*(1-uncover)
-			points.append(Vector3(xx,height,lerpf(zz,.65+zz*.16,uncover)))
+			var height: float=hem+.012*sin(x*1.8+z*.7)+breathing*(1-fold)
+			points.append(Vector3(xx,height,lerpf(zz,.65+zz*.16,fold)))
 	for z in 20:
 		for x in 12:
 			var i:=z*13+x
 			for index in [i,i+13,i+1,i+1,i+13,i+14]:
 				tool.set_uv(Vector2(float(index%13)/12,float(index/13)/20));tool.add_vertex(points[index])
-	tool.generate_normals();cloth.mesh=tool.commit()
+	tool.generate_normals()
+	var result: ArrayMesh=tool.commit()
+	if not copy:cloth.mesh=result
+	return result
 func observed() -> bool:
 	var camera: Camera3D=game.player.camera
 	for point in [COT+Vector3.UP*.25,COT+Vector3(0,.2,.7),Vector3(-7.375,1.15,-5.45)]:
@@ -83,6 +87,7 @@ func use(id: String) -> void:
 	elif id=="spare_card" and card.visible:
 		if not game.events.get("spare_card_read",false):
 			game.events.spare_card_read=true
+			game.message("Dad missed my eighth birthday.",3.0,"observation")
 			game.events.notes=game.events.get("notes",{})
 			game.events.notes["THE SPARE PLACE"]="An eighth-birthday card on the work cot. Dad's name, 1999. He disappeared the year before. He never came to that birthday.\n\nThe shape beneath the blanket was empty. The house has my name and the date. That doesn't make this a memory."
 			game.save_game(true)
