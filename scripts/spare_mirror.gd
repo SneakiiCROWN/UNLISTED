@@ -47,7 +47,7 @@ func touch() -> void:
 	game.sound("prop_impact",center,-37)
 	if not game.events.get("spare_uncovered",false):return
 	game.events.spare_glass_seen=true;game.events.notes=game.events.get("notes",{})
-	game.events.notes["THE UTILITY GLASS"]="I pulled the cover away. The cot was empty. In the glass, something was still underneath it.\n\nThe card says Dad came back in 1999. I know he didn't."
+	game.events.notes["THE UTILITY GLASS"]=game.NOTES.SPARE_GLASS_NOTE
 	game.save_game(true)
 func _process(delta: float) -> void:
 	if not game.started or game.menu_open:return

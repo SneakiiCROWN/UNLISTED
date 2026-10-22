@@ -161,7 +161,7 @@ func stop_audition() -> void:
 
 func audition_channel(channel: String) -> void:
 	if game.stage<3:game.message("The transport has no power.",3);return
-	if game.threat.active():game.message("The mechanism is drowned out by movement in the house.",3);return
+	if game.threat.active():game.message("Not while he's this close.",3);return
 	if game.events.get("memory_trace",[]).size()<4:
 		game.inspect_text("TRANSPORT / LEADER","The source track is blank. The pressure microphone is in the hall.\n\nA pencil note: walk the hall, let it run, then stand still.")
 		return
@@ -210,7 +210,7 @@ func exclude_channel(channel: String) -> void:
 	if channel=="A":
 		game.presentation.resume_game()
 		game.sound("relay",Vector3(3.3,1,-8.52),-28)
-		game.message("The source indicator returns. The extra footfall remains.",4)
+		game.message("A is the microphone. I need that recording.",4)
 		return
 	game.events.memory_confirmed = true
 	stop_audition()

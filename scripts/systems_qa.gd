@@ -101,7 +101,7 @@ func run(game: Node) -> void:
 	check("archive reenacts actual route",feed_before.distance_to(g.horror.feed_ghost.position)>0.15)
 	g.player.position = Vector3(3.2,0.03,-0.3);g.player.camera.look_at(Vector3(3.2,1.2,-1.85))
 	g.interact("television")
-	check("interactive discovery records witnessed echo",g.events.get("memory_reviewed",false) and g.events.notes["CAM 02 / HALL"].contains("route you took"))
+	check("interactive discovery records witnessed echo",g.events.get("memory_reviewed",false) and g.presentation.section=="document" and g.presentation.note.text==g.events.notes["CAM 02 / HALL"])
 	g.resume();await wait(0.3)
 	await shot("S02_house_memory_feed")
 	# An optional handled object returns only when both endpoints are unseen and clear.

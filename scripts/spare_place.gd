@@ -89,7 +89,7 @@ func use(id: String) -> void:
 			game.events.spare_card_read=true
 			game.message("Dad missed my eighth birthday.",3.0,"observation")
 			game.events.notes=game.events.get("notes",{})
-			game.events.notes["THE SPARE PLACE"]="An eighth-birthday card on the work cot. Dad's name, 1999. He disappeared the year before. He never came to that birthday.\n\nThe shape beneath the blanket was empty. The house has my name and the date. That doesn't make this a memory."
+			game.events.notes["THE SPARE PLACE"]=game.NOTES.SPARE_CARD_NOTE
 			game.save_game(true)
 		lid.rotation.z=0.0 if lid.rotation.z>1 else 2.0
 func start_search() -> bool:

@@ -10,9 +10,7 @@ var tap_clock:=0.0
 var answers: Array=[]
 var surprise_armed:=false
 var surprise_clock:=0.0
-const TEST_NOTE:="Site 17 / underfloor inspection / S. Ward, 1998\n\nThe little passage runs beside the cellar ramp, under the records office. Dry storage at the far end. Someone has moved the shelving across the old inspection bay. The rails are still free.\n\nI disconnected the return at the terminal box. The motor stopped. I could still hear two sets of feet upstairs. One of them was mine. I hadn't left this room.\n\nI tapped a floor joist. Once, then twice. Something answered from the passage. The third time I stopped. It kept going.\n\nI'm leaving the test sheet here. Don't trust the sound of someone coming back. Check the doors. Check that you can actually see them.\n\nThe continuity box upstairs has a feed switch and a removable return lead. My test is pinned below it.
-
-The original call is still in my notebook. I haven't signed the empty-house certificate."
+const TEST_NOTE=preload("res://scripts/case_notes.gd").UNDERFLOOR_TEST
 func _ready() -> void:
 	name="UnderfloorRecordsStore";build();restore()
 	var id: int=game.threat.graph.get_point_count()

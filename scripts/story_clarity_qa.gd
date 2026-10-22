@@ -56,6 +56,22 @@ func run(game: Node) -> void:
 	check("completed schema-one save restores evidence ending",g.ended and p.section=="ending" and g.events.get("ending","")=="on_record")
 	var legacy: Dictionary=g.save_data();legacy.events.erase("ending");g.ended=false;g.apply_save(legacy);await wait(.15)
 	check("legacy completed save keeps original ending",g.ended and p.footer.text.contains("CORRECTED"))
+	# Separate, clearly seeded current-case layout fixtures. Full-route tests earn
+	# these prerequisites independently; this loop checks the revised visible copy.
+	g.events.case_v2=true;g.events.case_v3=true;g.events.memory_confirmed=true
+	g.events.field_return_read=true;g.events.bedroom_left=true
+	for size_ in [Vector2i(1920,1080),Vector2i(2560,1440),Vector2i(3440,1440)]:
+		render_size(size_);p.show_register();await wait(.3)
+		var view:=g.get_viewport().get_visible_rect().size
+		check("current earned-choice layout fits "+str(size_),p.card_body.get_global_rect().end.y<=view.y and p.card_body.get_global_rect().end.x<=view.x)
+		await capture("current_register_"+str(size_.x))
+		for outcome in ["accounted_for","on_record"]:
+			g.events.ending=outcome;p.show_ending();await wait(.3)
+			check("current ending layout fits "+outcome+str(size_),p.body.get_global_rect().end.y<p.footer.get_global_rect().position.y-8 and p.body.get_global_rect().end.x<=view.x)
+			await capture("current_"+outcome+"_"+str(size_.x))
+		g.inspect_text("SIMON / RETURN CHANNEL",g.NOTES.SOURCE_COPY);await wait(.3)
+		check("current comparison text visible "+str(size_),p.note.text==g.NOTES.SOURCE_COPY and p.note.is_visible_in_tree() and p.card_body.get_global_rect().end.y<=view.y)
+		await capture("current_comparison_"+str(size_.x))
 	var failed:=0
 	for item in checks:if not item.passed:failed+=1
 	var file:=FileAccess.open(output.path_join("report.json"),FileAccess.WRITE)

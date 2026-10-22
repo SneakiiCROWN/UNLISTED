@@ -22,6 +22,7 @@ func _ready() -> void:
 	cover.material_override=game.texture_mat(metal,Color("53594b"))
 	game.box(cover,Vector3(.22,-.10,.035),Vector3(.04,.16,.025),Color("222a25"))
 	var plate: MeshInstance3D=game.box(self,pad-Vector3.UP*.0025,Vector3(.86,.005,.90),Color("55594a"))
+	game.collision(self,pad-Vector3.UP*.0025,Vector3(.86,.005,.90))
 	plate.name="MechanicalReleasePad";plate.material_override=game.texture_mat(metal,Color("706951"))
 	for x in [-.34,.34]:game.box(self,pad+Vector3(x,.004,0),Vector3(.012,.008,.56),Color("a1986a"))
 	var repair=load("res://scripts/environment_repair.gd").new();repair.g=game
@@ -48,15 +49,33 @@ func read_original() -> void:
 	game.inspect_text("SIMON / ORIGINAL FIELD RETURN",game.NOTES.ORIGINAL)
 	game.save_game()
 
+# Resolve a support graph rather than accepting anything floating over the plate.
+# Contact chains allow stacked props to transmit weight, with each body counted once.
+func supported_weight() -> float:
+	var total:=0.0
+	var feet: Vector3=game.player.global_position-pad
+	if absf(feet.x)<.43 and absf(feet.z)<.45 and absf(feet.y)<.1 and game.player.is_on_floor():total=70.0
+	var supported: Dictionary={}
+	var candidates: Array=[]
+	for body in game.physical.props.values():
+		if body==game.physical.held or body.freeze or body.linear_velocity.length()>.45:continue
+		candidates.append(body)
+	# One pass per body also handles upper items encountered before their support.
+	for pass_ in candidates.size():
+		var added:=false
+		for body in candidates:
+			var id: int=body.get_instance_id()
+			if supported.has(id):continue
+			for contact in body.supports:
+				var p: Vector3=contact.point-pad
+				if supported.has(contact.id) or (absf(p.x)<.43 and absf(p.z)<.45 and absf(p.y)<.035):
+					supported[id]=true;total+=body.mass;added=true;break
+		if not added:break
+	return total
+
 func _process(delta: float) -> void:
 	if not game.started or game.menu_open or game.ended:return
-	var weight:=0.0
-	var feet: Vector3=game.player.global_position-pad
-	if absf(feet.x)<.43 and absf(feet.z)<.45 and absf(feet.y)<.1 and game.player.is_on_floor():weight=70.0
-	for body in game.physical.props.values():
-		if body==game.physical.held:continue
-		var p: Vector3=body.global_position-pad
-		if absf(p.x)<.43 and absf(p.z)<.45 and p.y>0 and p.y<.4 and body.linear_velocity.length()<.45:weight+=body.mass
+	var weight:=supported_weight()
 	weighted_for=weighted_for+delta if weight>=.8 and game.isolated else 0.0
 	var released: bool=game.events.get("field_return_read",false) or weighted_for>.4
 	if released!=open:

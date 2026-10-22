@@ -1,0 +1,27 @@
+# UNLISTED narrative authority / director pass
+
+Eli Ward is an adult maintenance worker, practical and reluctant to trust the property. He requested tonight's anonymous television call because 17 Briar Lane is on Simon's last job slip. Simon is his father, not a confirmed identity for the Surveyor.
+
+## Timeline and limits
+
+- **1998:** No. 17 is the clearance site's temporary office. Simon signs in at 23:17. At 23:18 his entry becomes ABSENT without a recorded exit. Eli is seven and at home. Simon's report says he telephoned Eli, found a copy of Eli's room and stayed to check for a child. This is Simon's account; a copied room is not evidence that Eli lived here.
+- **1998 experiments:** Simon disconnects the underfloor return, hears his own movements repeated, tests the office continuity box and records a false arrival. Someone at the stairs prevents his exit. His final report is torn. He remains missing.
+- **1999:** The address is removed from the service list. The eighth-birthday card appears to claim a return in this year. Eli remembers Simon missing that birthday. The card contradicts that memory; it does not establish a real return.
+- **Tonight:** Eli restores power, investigates the archive, isolates the three service lines and recovers the original report. The rubbing and receiver lead to the copied bedroom and missing page. Optional underfloor/Dead Line experiments reproduce impossible replies and print Eli's name against 1998. Spare Place invents a birthday visit; its glass contradicts the empty cot.
+- **Departure:** The porch register repeats Simon's and Eli's arrivals. Correcting Simon's false absence closes Eli's call-out, not Simon's missing-person case. Submitting the original and tonight's comparison disputes the fault's close-out and records Eli as a witness. Both choices preserve Simon as missing; neither resurrects him. Eli must physically leave with the receipt.
+
+## What the house demonstrably does
+
+It repeats footsteps and rhythms, rearranges an unobserved room and presents private material in a false chronology. Records and sounds are unreliable witnesses. Neither its purpose nor the Surveyor's identity is resolved. Do not write a theory as a fact. The Surveyor is a bodily threat, not a harmless metaphor.
+
+## Voice and dependency map
+
+- `scripts/case_notes.gd`: canonical case papers, Simon's notes, Eli's evidence summaries and optional hints. Practical reports have concrete observations; Eli uses first person and ordinary language. It refreshes only already-collected known journal titles on load; no progression flags change.
+- `world.gd`: triggers, physical acquisition, television and one-line reactions. Preserve clue eligibility. `presentation.gd`: opening, comparison controls, choice explanation and outcome. `departure_recount.gd`: physical final sequence and prerequisite feedback.
+- `carbon_rubbing.gd` + `missing_minute.gd`: the same three revealed lines, radio 104.6, copied bedroom and torn page. Underfloor -> continuity test -> false strip -> Spare Place is optional. It never gates the two endings.
+- `horror_director.gd`: A is tonight's microphone; B is playback followed by a **live doorway step**, not proof of Simon on an old tape. Physical comparison receipt now says TONIGHT; 1998 belongs to Simon's original report.
+- Save schema 1, case_v2/v3 completion predicates and existing ending eligibility are unchanged. Unknown journal records survive. Known collected papers get current wording; absent records stay absent.
+
+## Not yet signed off
+
+The major documents and finale wording are revised in this pass. Every rare caption, old tutorial and environmental label still needs the final full-string review against runtime evidence. No claim of complete narrative or human approval. Wider room audit, event director and stronger cinematic outcomes remain production work.

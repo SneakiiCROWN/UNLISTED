@@ -17,7 +17,7 @@ var watch_clock:=-1.0
 var unseen:=0.0
 var watch_seen:=false
 var watch_walk:=0.0
-const LAST_PAGE:="23:18 / Simon Ward\n\nI rang home. Eli is all right. He answered himself and asked when I'd be back for tea.\n\nThen I opened the lounge door. His bed is in there. His books, his school chair. Even the drawing he left in my toolbox this morning. This isn't our house. None of it should be here.\n\nThe office radio was playing our kitchen station. I wrote the number down before I forgot it. The clock still says 23:18. It hasn't moved since I came downstairs.\n\nI can hear someone moving in that room. I know it isn't Eli. I can't sign a paper saying this place is empty until I've checked.\n\nIf this gets home: Eli, I didn't leave you. I was trying to make sure nobody got left here."
+const LAST_PAGE=preload("res://scripts/case_notes.gd").MISSING_PAGE
 func _ready() -> void:
 	name="TheMissingMinute"
 	build_work_surface();build_room();restore()

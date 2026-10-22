@@ -50,8 +50,11 @@ func set_mode(value: String) -> void:
 func locomotion(distance_per_second: float, running := false) -> void:
 	speed = distance_per_second
 	if speed < 0.06:set_mode("watch");return
-	set_mode("run" if running else "walk")
-	animator.speed_scale = clampf(speed/(2.581*1.05 if running else 1.018*1.05),0.18,2.3)
+	# Walk through corners and doorways even when the AI is pursuing. A slowed
+	# capsule must not keep playing a jogging clip while barely moving.
+	var jog: bool=running and speed>(1.65 if mode=="run" else 1.9)
+	set_mode("run" if jog else "walk")
+	animator.speed_scale = clampf(speed/(2.581*1.05 if jog else 1.018*1.05),0.18,2.3)
 
 func _process(_delta: float) -> void:
 	if mode in ["listen","watch"]:animator.speed_scale = 0.72

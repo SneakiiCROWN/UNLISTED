@@ -11,11 +11,14 @@ var support: Node3D
 var forearm: Node3D
 
 func _ready() -> void:
-	make_prop("cup","mug","res://assets/dusk/psx_prop_mug_01.glb",Vector3(4.6,0.89,0),Vector3(0.12,0.14,0.12),0.24)
+	make_prop("cup","mug","res://assets/dusk/psx_prop_mug_01.glb",Vector3(4.6,0.87,0),Vector3(0.12,0.14,0.12),0.24)
 	make_prop("spare","iron fitting","res://assets/machinery/pipe_valve.glb",Vector3(-17.25,0.93,-16),Vector3(0.26,0.22,0.26),1.1)
 	make_prop("tin","tool tin","res://assets/dusk/psx_prop_single_tin.glb",Vector3(-3.20,.96,-9.4),Vector3(.23,.24,.22),1.05)
-	make_prop("kitchen_mug","enamel mug","res://assets/dusk/psx_prop_mug_01.glb",Vector3(-5.6,.91,-.7),Vector3(.12,.14,.12),.25)
-	make_prop("pot","cooking pot","res://assets/dusk/psx_prop_cooking_pot_01.glb",Vector3(-6.8,1.03,1.45),Vector3(.30,.25,.30),.85)
+	make_prop("kitchen_mug","enamel mug","res://assets/dusk/psx_prop_mug_01.glb",Vector3(-5.6,.87,-.7),Vector3(.12,.14,.12),.25)
+	make_prop("pot","cooking pot","res://assets/dusk/psx_prop_cooking_pot_01.glb",Vector3(-7.04,float(game.get_node("KitchenStove").get_meta("cooktop"))+.127,1.45),Vector3(.30,.25,.30),.85)
+	make_prop("counter_mug","cup","res://assets/dusk/psx_prop_mug_01.glb",Vector3(-4.8,.936,3.55),Vector3(.14,.15,.14),.24)
+	for i in 3:
+		make_prop("can"+str(i),"food tin","res://assets/dusk/psx_prop_single_tin.glb",Vector3(-3.6-i*.15,.956,3.53),Vector3(.12,.19,.12),.32)
 	build_support()
 
 func build_support() -> void:
@@ -49,7 +52,7 @@ func make_prop(id: String,label_: String,path: String,pos: Vector3,size_: Vector
 	body.collision_mask = 1|2|16|32
 	body.continuous_cd = true
 	body.contact_monitor = true
-	body.max_contacts_reported = 4
+	body.max_contacts_reported = 12
 	body.linear_damp = 0.35
 	body.angular_damp = 0.6
 	var material := PhysicsMaterial.new()

@@ -16,7 +16,7 @@ var clock:=0.0
 var quiet:=0.0
 var cooldown:=0.0
 const PANEL:=Vector3(4.8,1.28,-3.20)
-const NOTE:="Continuity test / S. Ward\n\nThe feed switch stops the motor. Pulling the return plug separates the line from the rest of the property. Test the striker before and after. Don't mistake a sound in the house for a sound from the box.\n\nThe timber marks below the office are mine. I used the same rhythm so I could recognise it upstairs.\n\nThe counter printed another arrival after I disconnected both leads. It put the name down before anyone came through the door. I checked the register myself. No one had arrived.\n\nKeep the strip with the handwritten entry. The counter isn't a witness."
+const NOTE=preload("res://scripts/case_notes.gd").CONTINUITY_TEST
 func _ready() -> void:
 	name="DeadLineInvestigation";build()
 	motor=game.sound("hum",PANEL,-35,true);motor.max_distance=5;motor.unit_size=1.25
@@ -98,7 +98,7 @@ func use(id: String) -> void:
 	if id=="line_strip":
 		if not strip.visible:return
 		game.events.line_strip_read=true
-		game.inspect_text("UNWITNESSED ARRIVAL","17 Briar Lane / electrical counter\n\nWARD, ELI / ARRIVED 23:17 / 1998\nEXIT / --\n\nMy name. Dad's date. I was seven. I was at home when he called.\n\nI stopped the motor and disconnected the return. It printed this anyway. Whatever the house is counting, it isn't proof that someone came through the door.")
+		game.inspect_text("UNWITNESSED ARRIVAL",game.NOTES.DEAD_LINE_RESULT)
 		game.save_game(true);return
 	if id in ["line_feed","line_return"]:
 		stop_sources();sequence.clear()

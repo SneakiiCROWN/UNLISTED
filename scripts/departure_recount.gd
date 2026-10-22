@@ -74,10 +74,10 @@ func update_sheet() -> void:
 
 func request() -> bool:
 	if game.events.get("case_v2",false) and not game.events.get("field_return_read",false):
-		game.inspect_text("FIELD RETURN MISSING","The office file is a copy. Simon marked an original return in the service cabinet. I haven't found it yet.")
+		game.inspect_text("FIELD RETURN MISSING","This is the office copy. Dad said he left his own report in the service drawer. I haven't found that.")
 		return false
 	if game.events.get("case_v3",false) and not game.events.get("bedroom_left",false):
-		game.inspect_text("THE UNFINISHED RETURN","The final page is missing from Dad's report. His pencil left marks on the backing sheet. I want to know what he wrote before I sign anything.")
+		game.inspect_text("THE UNFINISHED RETURN","Dad's last page is missing. There are pencil marks pressed into the next sheet. I need to see what he wrote before I sign this.")
 		return false
 	if active:return false
 	if game.events.get("recount_complete",false):return true

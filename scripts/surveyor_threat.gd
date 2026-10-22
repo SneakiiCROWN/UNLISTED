@@ -95,6 +95,8 @@ func begin(basement := false,position_override: Variant=null) -> void:
 	if position_override is Vector3:
 		game.presence.position=position_override
 		game.presence.look_at(Vector3(game.player.position.x,game.presence.position.y,game.player.position.z))
+	var facing: Vector3=game.player.position-game.presence.position
+	if Vector2(facing.x,facing.z).length()>.05:game.presence.rotation.y=atan2(-facing.x,-facing.z)
 	game.presence.visible = true
 	game.presence.velocity = Vector3.ZERO
 	set_collision(true)

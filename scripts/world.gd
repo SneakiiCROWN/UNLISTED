@@ -83,6 +83,7 @@ func _ready() -> void:
 		checkpoint_path = "user://development/checkpoint.json"
 	qa_mode = "--door-repair-qa" in OS.get_cmdline_user_args() or "--recording-repair-qa" in OS.get_cmdline_user_args() or "--qa" in OS.get_cmdline_user_args() or "--presentation-qa" in OS.get_cmdline_user_args() or "--milestone-qa" in OS.get_cmdline_user_args() or "--threat-qa" in OS.get_cmdline_user_args() or "--systems-qa" in OS.get_cmdline_user_args() or "--polish-qa" in OS.get_cmdline_user_args() or "--visual-probe" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--production-views" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--director-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--spare-place-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--dead-line-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--maintenance-qa" in OS.get_cmdline_user_args()
@@ -244,6 +245,21 @@ func model(path: String, parent: Node3D, pos: Vector3, size: Vector3, angle := 0
 	wrapper.rotation.y = angle
 	if solid: collision(wrapper, Vector3(0, size.y / 2, 0), size)
 	return wrapper
+
+func surface_height(root: Node3D,point: Vector3) -> float:
+	var top:=-INF
+	for mesh in all_meshes(root):
+		for surface in mesh.mesh.get_surface_count():
+			var arrays: Array=mesh.mesh.surface_get_arrays(surface)
+			var vertices: PackedVector3Array=arrays[Mesh.ARRAY_VERTEX]
+			var indices: PackedInt32Array=arrays[Mesh.ARRAY_INDEX]
+			var count: int=indices.size() if not indices.is_empty() else vertices.size()
+			for i in range(0,count,3):
+				var corners: Array[Vector3]=[]
+				for j in 3:corners.append(mesh.global_transform*vertices[indices[i+j] if not indices.is_empty() else i+j])
+				var hit: Variant=Geometry3D.ray_intersects_triangle(Vector3(point.x,10,point.z),Vector3.DOWN,corners[0],corners[1],corners[2])
+				if hit is Vector3:top=maxf(top,hit.y)
+	return top
 
 func wall(pos: Vector3, width: float, angle := 0.0, height := 2.8) -> void:
 	var tangent := Vector3(cos(angle),0,-sin(angle))
@@ -467,18 +483,24 @@ func build_world() -> void:
 	fixture(Vector3(5,2.67,1.8),false)
 	window_at(Vector3(7.37,0,2),-PI/2)
 	# Kitchen and electrical fault. Not all rooms are lit before power restoration.
-	model("res://assets/dusk/psx_prop_refrigerator_01.glb",self,Vector3(-6.8,0,2.7),Vector3(0.8,1.8,0.75),PI,true)
+	model("res://assets/dusk/psx_prop_refrigerator_01.glb",self,Vector3(-6.8,0,3.48),Vector3(0.8,1.8,0.75),PI,true)
 	for x in [-5.8,-4.8,-3.8]:
-		model("res://assets/dusk/psx_prop_base_cabinet_01.glb",self,Vector3(x,0,3.25),Vector3(0.95,0.86,0.65),PI,true)
-	model("res://assets/dusk/psx_prop_sink_01.glb",self,Vector3(-5.8,0.86,3.2),Vector3(0.9,0.25,0.6),PI)
-	model("res://assets/dusk/psx_prop_stove_01.glb",self,Vector3(-6.8,0,1.45),Vector3(0.75,0.88,0.7),PI/2,true)
-	model("res://assets/dusk/psx_prop_mug_01.glb",self,Vector3(-4.8,0.87,3.2),Vector3(0.14,0.15,0.14))
-	model("res://assets/dusk/psx_prop_calendar_01.glb",self,Vector3(-4,1.6,3.89),Vector3(0.42,0.55,0.03),PI)
-	model("res://assets/dusk/psx_prop_wall_clock_01.glb",self,Vector3(-5.7,2.2,3.89),Vector3(0.4,0.4,0.05),PI)
-	model("res://assets/dusk/psx_prop_tins_01.glb",self,Vector3(-3.8,0.87,3.2),Vector3(0.3,0.25,0.2))
+		var cabinet=model("res://assets/dusk/psx_prop_base_cabinet_01.glb",self,Vector3(x,0,3.55),Vector3(0.95,0.86,0.65),PI,true)
+		cabinet.name="KitchenBase"+str(roundi(absf(x)*10))
+	var sink=model("res://assets/dusk/psx_prop_sink_01.glb",self,Vector3(-5.8,0.86,3.55),Vector3(0.9,0.14,0.6),PI)
+	sink.name="KitchenSink"
+	var stove=model("res://assets/dusk/psx_prop_stove_01.glb",self,Vector3(-7.04,0,1.45),Vector3(0.75,0.88,0.7),PI/2,false)
+	stove.name="KitchenStove"
+	var cooktop:=surface_height(stove,stove.position)
+	collision(stove,Vector3(0,cooktop/2,0),Vector3(.75,cooktop,.7))
+	stove.set_meta("cooktop",cooktop)
+
+	model("res://assets/dusk/psx_prop_calendar_01.glb",self,Vector3(-2.25,1.55,3.89),Vector3(0.42,0.55,0.03),PI)
+	model("res://assets/dusk/psx_prop_wall_clock_01.glb",self,Vector3(-2.75,2.15,3.89),Vector3(0.4,0.4,0.05),PI)
+
 	table(Vector3(-5.9,0,-0.8),1.6,0.8)
 	furniture("chair",Vector3(-4.7,0,-0.6),Vector3(0.6,0.95,0.6),PI/2)
-	furniture("vase",Vector3(-4,0.8,2.9),Vector3(0.25,0.4,0.25),0,false)
+	furniture("vase",Vector3(-3.95,.86,3.55),Vector3(0.20,0.32,0.20),0,false)
 	ART.new().panel(self)
 	fixture(Vector3(-4.5,2.67,1),false)
 	window_at(Vector3(-7.37,0,1),PI/2)
@@ -855,7 +877,7 @@ func interact(id: String) -> void:
 	if id=="test_joist":maintenance.tap_joist();return
 	if id=="record" and events.get("case_v3",false):inspect_text("BRIAR LANE / TEMPORARY OFFICE",NOTES.SITE);save_game();return
 	if id in ["audition_source","audition_return","exclude_return"]:
-		if stage<3:message("No power. The empty kitchen carrier supplies this desk.",2.5);return
+		if stage<3:message("No power. The supply light is out.",2.5);return
 		if id=="exclude_return":presentation.show_exclusion()
 		else:horror.audition_channel("A" if id=="audition_source" else "B")
 		return
@@ -880,13 +902,13 @@ func interact(id: String) -> void:
 				stage = maxi(stage,1)
 				inspect_text("NIGHT CALL / 17 BRIAR LANE",NOTES.CALL)
 		"television":
-			if stage < 3:inspect_text("DISCONNECTED SET","The lead ends in a loose plug behind the table. The set is humming.\n\nA drawing lies beside it: ELI / AGE 7. Its chair is drawn against the ceiling.")
+			if stage < 3:inspect_text("DISCONNECTED SET","The lead ends in a loose plug behind the table. The set is humming.\n\nA drawing lies beside it: ELI / AGE 7. The chair in it is upside down.")
 			else:
 				var observation := "A worker stands beside the office door."
 				if events.get("memory_echo",false):
-					observation = "The worker follows the route you took. It pauses where you paused. Its head turns late.\nThe footsteps you heard after stopping had the same uneven rhythm as yours."
+					observation = "He follows my route. Stops where I stopped. Turns his head a moment too late."
 					events.memory_reviewed = true
-				inspect_text("CAM 02 / HALL","The picture shows the hall you just left. "+observation+"\n\nThe timestamp does not advance. There is no camera mounted at that angle.\n\nBeside the set is your drawing, signed ELI / AGE 7.")
+				inspect_text("CAM 02 / HALL","That's the hall I just left. "+observation+"\n\nThe clock on the picture is stuck. There's no camera in that corner.\n\nMy drawing is beside the set. ELI / AGE 7.")
 
 		"fuse":
 			if not fuse:
@@ -909,16 +931,16 @@ func interact(id: String) -> void:
 		"security", "record":
 			if stage < 3: message("The transport will not turn. Its supply indicator is dark.")
 			else:
-				if not brass_key:presentation.pending_notice = "BRASS KEY TAKEN / SERVICE YARD"
+				if not brass_key:presentation.pending_notice = "Brass service key taken"
 				report_read = true
 				brass_key = true
 				doors["service"].locked = false
 				doors["shed"].locked = false
-				inspect_text("ARCHIVE / 23:17:08",NOTES.ARCHIVE+("\n\nAn old fault has printed again under tonight's date. The caller gave dispatch a television fault. It was Dad's last job." if isolated else ""))
+				inspect_text("ARCHIVE / 23:17:08",NOTES.ARCHIVE+("\n\nTonight's call is here now. Same address, same television fault as Dad's." if isolated else ""))
 				if not events.has("office"): office_event()
 				save_game()
 		"shed_record":
-			if not shed_read:presentation.pending_notice = "SMALL KEY TAKEN / CELLAR STAIRS"
+			if not shed_read:presentation.pending_notice = "Small stairwell key taken"
 			shed_read = true
 			doors["basement"].locked = false
 			inspect_text("SIMON'S MANUAL OVERRIDE",NOTES.PROCEDURE)
@@ -1075,6 +1097,7 @@ func apply_save(data: Dictionary) -> void:
 	shed_read = data.get("shed",false)
 	isolated = data.get("isolated",false)
 	events = data.get("events",{}).duplicate(true)
+	NOTES.refresh_collected(events)
 	if isolated and not events.get("return",false) and not events.get("threat_resolved",false):
 		events.threat_pending = true
 		events.threat_origin = "basement"
@@ -1176,6 +1199,7 @@ func run_qa() -> void:
 		var test = load("res://scripts/hands_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
 		await test.run(self);return
 	var path := "res://scripts/input_isolation_qa.gd" if "--input-isolation-qa" in OS.get_cmdline_user_args() else "res://scripts/exterior_views.gd" if "--exterior-views" in OS.get_cmdline_user_args() else "res://scripts/exterior_qa.gd" if "--exterior-qa" in OS.get_cmdline_user_args() else "res://scripts/door_repair_qa.gd" if "--door-repair-qa" in OS.get_cmdline_user_args() else "res://scripts/recording_repair_qa.gd" if "--recording-repair-qa" in OS.get_cmdline_user_args() else "res://scripts/polish_qa.gd" if "--polish-qa" in OS.get_cmdline_user_args() else "res://scripts/systems_qa.gd" if "--systems-qa" in OS.get_cmdline_user_args() else "res://scripts/threat_qa.gd" if "--threat-qa" in OS.get_cmdline_user_args() else "res://scripts/milestone_qa.gd" if "--milestone-qa" in OS.get_cmdline_user_args() else "res://scripts/presentation_qa.gd" if "--presentation-qa" in OS.get_cmdline_user_args() else "res://scripts/runtime_qa.gd"
+	if "--director-qa" in OS.get_cmdline_user_args():path="res://scripts/director_qa.gd"
 	if "--production-views" in OS.get_cmdline_user_args():path="res://scripts/production_views.gd"
 	if "--maintenance-qa" in OS.get_cmdline_user_args():path="res://scripts/maintenance_qa.gd"
 	if "--dead-line-qa" in OS.get_cmdline_user_args():path="res://scripts/dead_line_qa.gd"
