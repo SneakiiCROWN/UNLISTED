@@ -185,6 +185,10 @@ func run(game: Node) -> void:
 	await travel(Vector2(-3.1,-7),"utility exit from yard");await travel(Vector2(0,-7),"hall cellar approach")
 	await travel(Vector2(0,-8.4),"stair door approach");await use("basement")
 	await travel(Vector2(0,-18),"physical basement descent")
+	if "--underfloor-route" in OS.get_cmdline_user_args():
+		var store_test=load("res://scripts/maintenance_qa.gd").new();add_child(store_test)
+		store_test.g=g;store_test.output=output;store_test.started_at=started_at;store_test.exact_target=exact_target
+		await store_test.play_store();checks.append_array(store_test.checks);store_test.queue_free()
 	await travel(Vector2(-1.5,-22),"coolant approach");await use("valve1")
 	await travel(Vector2(-2.7,-22),"supply approach");await use("valve0")
 	await travel(Vector2(-0.3,-22),"occupancy approach");await use("valve2")

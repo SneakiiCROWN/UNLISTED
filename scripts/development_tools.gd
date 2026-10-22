@@ -1,7 +1,7 @@
 extends CanvasLayer
 # Explicit development exports, or editor + --unlisted-dev only. No production
 # autoload, ordinary saves, external processes, or arbitrary script execution.
-const BOOKMARKS := {"Porch":Vector3(0,0.08,7),"Garden gate":Vector3(0,0.08,14.5),"Country lane":Vector3(0,0.08,23),"Hall":Vector3(0,0.08,-4),"Utility":Vector3(-4.5,0.08,-8),"Service yard":Vector3(-8,0.08,-12),"Shed":Vector3(-16,0.08,-14),"Basement":Vector3(0,-2.92,-18)}
+const BOOKMARKS := {"Porch":Vector3(0,0.08,7),"Garden gate":Vector3(0,0.08,14.5),"Country lane":Vector3(0,0.08,23),"Hall":Vector3(0,0.08,-4),"Utility":Vector3(-4.5,0.08,-8),"Service yard":Vector3(-8,0.08,-12),"Shed":Vector3(-16,0.08,-14),"Basement":Vector3(0,-2.92,-18),"Service opening":Vector3(3.25,-2.92,-16.1),"Records store":Vector3(4.2,-2.92,-9.2)}
 var game: Node
 var panel: PanelContainer
 var diagnostic: Label

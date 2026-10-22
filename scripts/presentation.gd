@@ -563,7 +563,7 @@ func show_credits() -> void:
 	label(card_body,"UNLISTED",42,"Title")
 	label(card_body,"An original night call for SneakiiCROWN",19)
 	rule(card_body)
-	label(card_body,"ARCHITECTURE     Elegant Crow\nFURNITURE          Daniel Jurys / GameDev Deck\nMACHINERY         chilly_durango\nMATERIALS           Poly Haven / AmbientCG\nAMBIENCE             CAPTNPHANTOM\nANALOG MONO     Andrew Gleeson\nCHARACTER / MOTION    Quaternius (CC0)\nENGINE                 Godot 4.7.2",20)
+	label(card_body,"ARCHITECTURE     Elegant Crow\nFURNITURE          Daniel Jurys / GameDev Deck / Kenney\nMACHINERY         chilly_durango\nMATERIALS           Poly Haven / AmbientCG\nAMBIENCE             CAPTNPHANTOM\nTYPE     Andrew Gleeson / Indian Type Foundry\nCHARACTER / MOTION    Quaternius (CC0)\nENGINE                 Godot 4.7.2",20)
 	label(card_body,"Original story, adapted Surveyor, interface and staging. Sound effects by WASD Sound.\nThird-party licences accompany this build.\nGodot Engine is distributed under the MIT licence.",16)
 	add_button("Back",settings_back,true,card_body).grab_focus()
 

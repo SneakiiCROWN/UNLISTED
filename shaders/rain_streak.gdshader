@@ -18,7 +18,12 @@ void fragment() {
 	bool shed = world_point.x > -20.02 && world_point.x < -13.98 && world_point.z > -17.02 && world_point.z < -10.98 && world_point.y < 2.94;
 	bool porch = abs(world_point.x) < 1.91 && world_point.z > 4.0 && world_point.z < 6.4 && world_point.y < 2.84;
 	bool annex = abs(world_point.x) < 1.78 && world_point.z > -15.25 && world_point.z < -10.0 && world_point.y < 3.0;
-	if (house || shed || porch || annex) { discard; }
+	// The basement and the new service void are below the collision heightfield.
+	// Discard penetrated fragments only inside their actual roofed volumes.
+	bool cellar = abs(world_point.x) < 5.08 && world_point.z > -24.08 && world_point.z < -14.98 && world_point.y < 0.0;
+	bool service_void = world_point.x > 2.30 && world_point.x < 4.20 && world_point.z > -15.28 && world_point.z < -10.10 && world_point.y < -1.58;
+	bool records_store = world_point.x > 2.0 && world_point.x < 6.10 && world_point.z > -10.50 && world_point.z < -6.20 && world_point.y < -0.10;
+	if (house || shed || porch || annex || cellar || service_void || records_store) { discard; }
 	ALBEDO = vec3(0.47, 0.56, 0.63);
 	ALPHA = opacity;
 }
