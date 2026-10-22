@@ -20,7 +20,7 @@ It repeats footsteps and rhythms, rearranges an unobserved room and presents pri
 - `world.gd`: triggers, physical acquisition, television and one-line reactions. Preserve clue eligibility. `presentation.gd`: opening, comparison controls, choice explanation and outcome. `departure_recount.gd`: physical final sequence and prerequisite feedback.
 - `carbon_rubbing.gd` + `missing_minute.gd`: the same three revealed lines, radio 104.6, copied bedroom and torn page. Underfloor -> continuity test -> false strip -> Spare Place is optional. It never gates the two endings.
 - `horror_director.gd`: A is tonight's microphone; B is playback followed by a **live doorway step**, not proof of Simon on an old tape. Physical comparison receipt now says TONIGHT; 1998 belongs to Simon's original report.
-- Save schema 1, case_v2/v3 completion predicates and existing ending eligibility are unchanged. Unknown journal records survive. Known collected papers get current wording; absent records stay absent.
+- Save schema 1, case_v2/v3 completion predicates and existing ending eligibility are unchanged. Unknown journal records survive. Known collected papers get current wording; absent records stay absent. The old Simon / Return Channel title migrates to Eli / Tonight's Comparison; rubbing lines and journal share one source.
 
 ## Not yet signed off
 

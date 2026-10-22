@@ -69,7 +69,7 @@ func run(game: Node) -> void:
 			g.events.ending=outcome;p.show_ending();await wait(.3)
 			check("current ending layout fits "+outcome+str(size_),p.body.get_global_rect().end.y<p.footer.get_global_rect().position.y-8 and p.body.get_global_rect().end.x<=view.x)
 			await capture("current_"+outcome+"_"+str(size_.x))
-		g.inspect_text("SIMON / RETURN CHANNEL",g.NOTES.SOURCE_COPY);await wait(.3)
+		g.inspect_text(g.NOTES.COMPARISON_TITLE,g.NOTES.SOURCE_COPY);await wait(.3)
 		check("current comparison text visible "+str(size_),p.note.text==g.NOTES.SOURCE_COPY and p.note.is_visible_in_tree() and p.card_body.get_global_rect().end.y<=view.y)
 		await capture("current_comparison_"+str(size_.x))
 	var failed:=0

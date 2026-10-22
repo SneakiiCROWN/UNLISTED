@@ -2,6 +2,8 @@
 
 Eli Ward answers a night call at 17 Briar Lane, the address on his father Simon's last work slip from 1998.
 
+Newer source checkpoints contain an **unfinished director pass**: story continuity, kitchen contact and supported-mass repairs. See [progress](DIRECTOR_PASS_PROGRESS.md) and [verification](DIRECTOR_PASS_VERIFICATION.md). No newer public Windows download is claimed.
+
 **Current Windows prerelease: 0.8.0 Dead Line.** Still a short alpha; the 30-60-minute target is unfinished.
 
 ## Play

@@ -1,6 +1,6 @@
 extends Control
 # Graphite coverage follows pencil strokes; old row progress remains readable.
-const TEXT:=["Kitchen radio: 104.6.","I phoned home. Eli answered. He's safe.","I shut the lounge door. Now it's his room."]
+const TEXT=preload("res://scripts/case_notes.gd").RUBBING_LINES
 const HAND=preload("res://assets/fonts/Kalam-Regular.ttf")
 const PAPER=preload("res://assets/original/aged_paper.png")
 var game: Node

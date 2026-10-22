@@ -16,3 +16,5 @@ Evidence scope is explicit. Player-height fixtures are visual inspections, not c
 ## Next connected repairs
 
 Finish native evidence review, then continue room clusters and rare/legacy text inventory. Audit Surveyor visibility/spatial entry and retirement before changing encounter logic. The new weighted ambient director, lightning/window scenes, art-compatible character pipeline, broader portable objects and cinematic finale are NOT implemented by this batch. Keep these distinct from the repaired support puzzle and existing authored beats. No new runtime added just to increase content count.
+
+Final native 08 confirms the vase and all three cans have separate rendered bounds and correct support. Its 36 targeted checks pass. Director_06 full route, cover/rack, both endings and impossible room pass; Director_08 bedroom/updated text and three-resolution fixtures also pass. These functional results do not replace the unfinished deeper multi-angle room/art audit.

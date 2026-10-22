@@ -132,7 +132,7 @@ func open_carbon() -> void:
 func complete_rubbing() -> void:
 	game.events.carbon_read=true
 	game.events.notes=game.events.get("notes",{})
-	game.events.notes["TORN PAGE / IMPRESSIONS"]="Kitchen radio: 104.6.\nI phoned home. Eli answered. He's safe.\nI shut the lounge door. Now it's his room.\n\nDad's writing pressed through the missing page. The room he described wasn't part of this house."
+	game.events.notes["TORN PAGE / IMPRESSIONS"]=game.NOTES.rubbing_note()
 	game.save_game()
 func open_receiver() -> void:
 	if game.stage<3:game.message("The receiver is silent. Its supply light is out.",3);return

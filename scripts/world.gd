@@ -500,7 +500,8 @@ func build_world() -> void:
 
 	table(Vector3(-5.9,0,-0.8),1.6,0.8)
 	furniture("chair",Vector3(-4.7,0,-0.6),Vector3(0.6,0.95,0.6),PI/2)
-	furniture("vase",Vector3(-3.95,.86,3.55),Vector3(0.20,0.32,0.20),0,false)
+	var kitchen_vase=furniture("vase",Vector3(-4.15,.86,3.55),Vector3(0.20,0.32,0.20),0,false)
+	kitchen_vase.name="KitchenCounterVase"
 	ART.new().panel(self)
 	fixture(Vector3(-4.5,2.67,1),false)
 	window_at(Vector3(-7.37,0,1),PI/2)
@@ -773,7 +774,6 @@ func new_game() -> void:
 	for v in valve_visuals.values(): v.rotation.z = 0
 	save_game()
 	presentation.moment("arrival")
-	message("23:17. The porch light is on. Nobody answers.",4)
 	if presentation.prefs.data.reminders:presentation.notify("J  FIELD NOTES     H  OPTIONAL HINT")
 
 func resume() -> void:
@@ -894,7 +894,7 @@ func interact(id: String) -> void:
 				inspect_text("FIELD RETURN / 1998",NOTES.FIELD_RETURN)
 				save_game()
 		"source_copy":
-			if events.get("memory_confirmed",false):inspect_text("SIMON / RETURN CHANNEL",NOTES.SOURCE_COPY)
+			if events.get("memory_confirmed",false):inspect_text(NOTES.COMPARISON_TITLE,NOTES.SOURCE_COPY)
 		"order":
 			if isolated:
 				if recount.request():presentation.show_register()
@@ -960,7 +960,6 @@ func interact(id: String) -> void:
 				sound("relay",targets[id].global_position,-21)
 				message("The catch kicked back. The wheels have reset.")
 			else:
-				message("The line closes.",2)
 				var v: Node3D = valve_visuals[id]
 				var t := create_tween()
 				t.tween_property(v,"rotation:z",v.rotation.z+PI/2,0.45)

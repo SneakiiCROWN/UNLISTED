@@ -214,7 +214,7 @@ func exclude_channel(channel: String) -> void:
 		return
 	game.events.memory_confirmed = true
 	stop_audition()
-	game.inspect_text("SIMON / RETURN CHANNEL",game.NOTES.SOURCE_COPY)
+	game.inspect_text(game.NOTES.COMPARISON_TITLE,game.NOTES.SOURCE_COPY)
 	game.save_game()
 
 func build_feed() -> void:

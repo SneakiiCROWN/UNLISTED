@@ -16,6 +16,13 @@ func top_at(root: Node3D,point: Vector3) -> float:
 				if hit is Vector3:top=maxf(top,hit.y)
 	return top
 
+func render_bounds(root: Node3D) -> AABB:
+	var bounds:=AABB();var first:=true
+	for mesh in g.all_meshes(root):
+		var actual: AABB=mesh.global_transform*mesh.get_aabb()
+		bounds=actual if first else bounds.merge(actual);first=false
+	return bounds
+
 func clear_weights() -> void:
 	for id in g.physical.props:g.physical.props[id].call("relocate",g.physical.homes[id])
 	await wait(.8)
@@ -40,6 +47,12 @@ func run(current: Node) -> void:
 		var y:=top_at(root,body.position)
 		var bottom: float=body.position.y-body.get_node("PropShape").shape.size.y/2
 		check("rendered kitchen support "+id,is_finite(y) and absf(bottom-y)<.015,"bottom %.5f actual triangle %.5f"%[bottom,y])
+	var vase: AABB=render_bounds(g.get_node("KitchenCounterVase"))
+	var separated:=true
+	for id in ["can0","can1","can2"]:
+		if vase.intersects(render_bounds(g.physical.props[id])):separated=false
+	check("counter tins do not intersect decorative vase",separated,str(vase))
+	check("vase sits on actual cabinet surface",absf(vase.position.y-top_at(g.get_node("KitchenBase38"),vase.get_center()))<.005)
 	# Stand in the room and traverse its actual clear aisle before the close view.
 	g.player.position=Vector3(-2.8,.04,1)
 	await travel(Vector2(-4.9,1),"kitchen centre aisle")
@@ -48,7 +61,7 @@ func run(current: Node) -> void:
 	# Legacy notes update in place without injecting unearned records or flags.
 	var fixture: Dictionary={"notes":{"SIMON / RETURN CHANNEL":"obsolete 1998 recording","THE SPARE PLACE":"Dad returned in 1999","private player note":"keep"},"old_progress":true}
 	g.NOTES.refresh_collected(fixture)
-	check("legacy collected paper gets current wording",fixture.notes["SIMON / RETURN CHANNEL"]==g.NOTES.SOURCE_COPY)
+	check("legacy collected paper gets current wording",fixture.notes[g.NOTES.COMPARISON_TITLE]==g.NOTES.SOURCE_COPY and not fixture.notes.has("SIMON / RETURN CHANNEL"))
 	check("birthday contradiction remains explicitly false",fixture.notes["THE SPARE PLACE"]==g.NOTES.SPARE_CARD_NOTE)
 	check("no unearned clues or progression inserted",fixture.notes.size()==3 and fixture.size()==2 and fixture.notes["private player note"]=="keep")
 	g.isolated=true;g.player.position=Vector3(-1,-2.99,-20)
