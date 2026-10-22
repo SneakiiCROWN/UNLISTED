@@ -1,5 +1,7 @@
 extends RefCounted
 
+const TRANSPORT_LEADER := "HALL MICROPHONE / NO RECORDING YET\n\nPencil note: Walk past the microphone. Let it record your steps, then stand still."
+
 const RUBBING_LINES := ["Kitchen radio: 104.6.","I phoned home. Eli answered. He's safe.","I shut the lounge door. Now it's his room."]
 
 const COMPARISON_TITLE := "ELI / TONIGHT'S COMPARISON"
@@ -47,15 +49,22 @@ static func clue(game: Node) -> String:
 	if game.stage >= 3:return "The office equipment has power now. There may be a record of Dad's call."
 	if game.fuse:return "The kitchen carrier and the spare part share the same rating."
 	if game.stage >= 1:return "The utility stock board lists a spare electrical cartridge."
-	return "The paper beside the entrance explains why you were sent here."
+	return "The call sheet is beside the front door."
 
 # Replace wording only for records already collected. Never grant a clue or migrate
 # progression flags while loading a legacy checkpoint.
 static func refresh_collected(events: Dictionary) -> void:
 	var notes: Dictionary=events.get("notes",{})
-	var current: Dictionary={"BRIAR LANE / TEMPORARY OFFICE":SITE,"NIGHT CALL / 17 BRIAR LANE":CALL,"ARCHIVE / 23:17:08":ARCHIVE,"SIMON'S MANUAL OVERRIDE":PROCEDURE,COMPARISON_TITLE:SOURCE_COPY,"TORN PAGE / IMPRESSIONS":rubbing_note(),"FIELD RETURN / 1998":FIELD_RETURN,"SIMON / ORIGINAL FIELD RETURN":ORIGINAL,"TWO ARRIVALS / NO EXIT":RECOUNT,"SIMON / THE MISSING PAGE":MISSING_PAGE,"SIMON / UNDERFLOOR TEST":UNDERFLOOR_TEST,"SIMON / CONTINUITY TEST":CONTINUITY_TEST,"UNWITNESSED ARRIVAL":DEAD_LINE_RESULT,"THE SPARE PLACE":SPARE_CARD_NOTE,"THE UTILITY GLASS":SPARE_GLASS_NOTE}
+	var current: Dictionary={"BRIAR LANE / TEMPORARY OFFICE":SITE,"NIGHT CALL / 17 BRIAR LANE":CALL,"ARCHIVE / 23:17:08":ARCHIVE,"SIMON'S MANUAL OVERRIDE":PROCEDURE,COMPARISON_TITLE:SOURCE_COPY,"TRANSPORT / LEADER":TRANSPORT_LEADER,"THE UNFINISHED RETURN":unfinished_return(events),"TORN PAGE / IMPRESSIONS":rubbing_note(),"FIELD RETURN / 1998":FIELD_RETURN,"SIMON / ORIGINAL FIELD RETURN":ORIGINAL,"TWO ARRIVALS / NO EXIT":RECOUNT,"SIMON / THE MISSING PAGE":MISSING_PAGE,"SIMON / UNDERFLOOR TEST":UNDERFLOOR_TEST,"SIMON / CONTINUITY TEST":CONTINUITY_TEST,"UNWITNESSED ARRIVAL":DEAD_LINE_RESULT,"THE SPARE PLACE":SPARE_CARD_NOTE,"THE UTILITY GLASS":SPARE_GLASS_NOTE}
 	if notes.has("SIMON / RETURN CHANNEL"):
 		notes[COMPARISON_TITLE]=SOURCE_COPY
 		notes.erase("SIMON / RETURN CHANNEL")
 	for title_ in current:
 		if notes.has(title_):notes[title_]=current[title_]
+
+static func unfinished_return(events: Dictionary) -> String:
+	if events.get("bedroom_left",false):return "I found Dad's last page. I kept it with his report."
+	if events.get("last_page_read",false):return "I've got Dad's last page. I need to leave that room behind."
+	if events.get("receiver_found",false):return "That sound came from the lounge. I'm checking it before I sign this."
+	if events.get("carbon_read",false):return "Dad wrote down our kitchen radio station. I haven't tried it yet."
+	return "Dad's last page is missing. There are pencil marks pressed into the next sheet. I need to see what he wrote before I sign this."

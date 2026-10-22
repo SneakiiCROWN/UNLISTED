@@ -81,7 +81,7 @@ func run(current: Node) -> void:
 		await action("ui_cancel")
 		await travel(Vector2(-5.95,-6.7),"mirror fixture / clear rear of cot")
 		await travel(Vector2(-5.95,-3.7),"mirror fixture / use widened side aisle")
-		await travel(Vector2(-6.8,-3.7),"mirror fixture / approach glass from bed end")
+		await travel(Vector2(-5.95,-5.35),"mirror fixture / observe glass from clear side aisle")
 		g.player.camera.look_at(g.spare_mirror.center);await wait(.6);await shot("S13_occupied_return")
 		await use("spare_mirror")
 		check("glass contradiction is recorded only after physical observation",g.events.get("spare_glass_seen",false))

@@ -163,7 +163,7 @@ func audition_channel(channel: String) -> void:
 	if game.stage<3:game.message("The transport has no power.",3);return
 	if game.threat.active():game.message("Not while he's this close.",3);return
 	if game.events.get("memory_trace",[]).size()<4:
-		game.inspect_text("TRANSPORT / LEADER","The source track is blank. The pressure microphone is in the hall.\n\nA pencil note: walk the hall, let it run, then stand still.")
+		game.inspect_text("TRANSPORT / LEADER",game.NOTES.TRANSPORT_LEADER)
 		return
 	stop_audition()
 	echo_trace = game.events.memory_trace.duplicate(true)

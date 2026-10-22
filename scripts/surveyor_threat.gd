@@ -18,6 +18,7 @@ var deaths := 0
 var door_wait := 0.0
 var enabled := true
 var search_leg := 0
+var search_heading := 0.0
 var collision_active := false
 var stalk_used := false
 var memory_routes: Array[int]=[]
@@ -162,6 +163,7 @@ func change(next: String) -> void:
 		var breathing=voice("attack",-23)
 		if breathing:game.sound_caption("A sharp intake of breath.",1,"NEARBY",breathing)
 	if state in ["search","observe","recovery"]:game.surveyor_actor.set_mode("watch")
+	if state=="search":search_heading=game.presence.rotation.y
 
 func closest(point: Vector3) -> int:
 	var best := -1
@@ -280,6 +282,9 @@ func _physics_process(delta: float) -> void:
 	var seen := can_see_player()
 	var distance: float = game.presence.position.distance_to(game.player.position)
 	if state == "warning":
+		if seen:
+			var toward: Vector3=game.player.position-game.presence.position
+			game.presence.rotation.y=lerp_angle(game.presence.rotation.y,atan2(-toward.x,-toward.z),1-exp(-delta*1.6))
 		if grace <= 0:change("observe")
 		return
 	if state == "attack":
@@ -303,6 +308,13 @@ func _physics_process(delta: float) -> void:
 	if state == "recovery":
 		if clock > 1.4:change("search");plan(last_known)
 		return
+	# An escaping player keeps the safe yard break. Walking back up to a retreating
+	# actor indoors earns a fresh warning, rather than a harmless rigid mannequin.
+	var yard_escape: bool=game.player.position.y>-.4 and game.player.position.z< -10.7 and game.player.position.x< -3
+	if state=="retreat" and seen and distance<2.2 and not yard_escape:
+		game.events.threat_pending=true;game.events.threat_resolved=false
+		last_known=game.player.position;suspicion=1.0;change("warning");grace=1.2
+		return
 	if seen and state != "retreat":
 		lost = 0
 		last_known = game.player.position
@@ -317,7 +329,11 @@ func _physics_process(delta: float) -> void:
 		lost += delta
 		suspicion = maxf(0,suspicion-delta*0.35)
 	if state == "stalk":
-		if game.horror.visible_to_player():game.surveyor_actor.set_mode("watch")
+		if game.horror.visible_to_player():
+			game.surveyor_actor.set_mode("watch")
+			game.presence.velocity.x=0;game.presence.velocity.z=0
+			var toward: Vector3=last_known-game.presence.position
+			game.presence.rotation.y=lerp_angle(game.presence.rotation.y,atan2(-toward.x,-toward.z),1-exp(-delta*1.8))
 		else:move_route(delta,0.55)
 		if clock>1.8 or distance<3.5:change("pursue");plan(last_known)
 	elif state == "pursue":
@@ -331,7 +347,7 @@ func _physics_process(delta: float) -> void:
 	elif state == "search":
 		move_route(delta,0.85)
 		if route.is_empty():
-			game.presence.rotation.y += delta*0.23
+			game.presence.rotation.y=lerp_angle(game.presence.rotation.y,search_heading+sin(clock*.72)*.55,1-exp(-delta*1.5))
 		if lost > 8.0 and clock > 4:change("retreat");plan(Vector3(0,0,2.7))
 	elif state == "observe":
 		if clock > 3.5:last_known = Vector3(0,0,-6.5);change("investigate");plan(last_known)

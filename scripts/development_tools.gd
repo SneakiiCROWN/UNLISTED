@@ -133,6 +133,11 @@ func build_ui() -> void:
 		if allow_action() and game.player.position.y> -0.3:game.horror.begin("watcher");log_event("yard_watcher");close_panel())
 	button(events,"Test timber sound",func():
 		if allow_action():game.sound("door",game.player.position+Vector3(2,1,0),-26);log_event("sound",{"sample":"door","offset":Vector3(2,1,0)}))
+	button(events,"Next eligible house event",func():
+		if not allow_action():return
+		var options: Array[String]=game.ambient_director.eligible()
+		if not options.is_empty() and game.ambient_director.request(options[0]):close_panel()
+		else:status.text="No quiet, safe event is eligible here.")
 	var previews:=row(body)
 	button(previews,"Preview room memory",func():
 		if not allow_action():return
@@ -151,6 +156,7 @@ func build_ui() -> void:
 			seed(int(seed_value.value));game.horror.rng.seed=int(seed_value.value)
 			game.events.horror_seed=int(seed_value.value);game.events.horror_variant=int(seed_value.value)%2
 			game.horror.variant=int(seed_value.value)%2
+			game.ambient_director.set_seed(int(seed_value.value)+5903)
 			log_event("seed",{"value":seed_value.value}))
 	audio_info = label(body,"");audio_info.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	label(body,"Not yet implemented: inverted-room controls. Engine collision overlay needs a debug export template.",16)

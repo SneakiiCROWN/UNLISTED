@@ -594,17 +594,17 @@ func show_exclusion() -> void:
 	section = "document"
 	label(card_body,"PROPERTY SERVICES / CHANNEL EXCLUSION",15,"Meta")
 	label(card_body,"SOURCE / RETURN",32,"Title")
-	label(card_body,"Optional investigation / the attendance register does not require this test.\nA  /  FIELD MICROPHONE     B  /  RETURN FROM PROPERTY\n\nA records the hall. B plays it back. Listen for anything that happens after the recording stops.",20)
+	label(card_body,"Optional comparison / needed to submit a fault report, not to close my call-out.\nA  /  FIELD MICROPHONE     B  /  RETURN PLAYBACK\n\nA records the hall. B plays it back. Listen for anything that happens after the recording stops.",20)
 	var state_a := "heard" if game.events.get("audition_A",false) else "not heard"
 	var state_b := "heard" if game.events.get("audition_B",false) else "not heard"
 	var available: bool = game.stage>=3 and not game.threat.active()
-	label(card_body,"A: "+state_a+"     /     B: "+state_b+"\n"+("Playing "+game.horror.audition if game.horror.audition!="" else ("Listen to each complete track before excluding." if available else "Playback unavailable: "+("no power" if game.stage<3 else "the Surveyor is nearby"))),18)
+	label(card_body,"A: "+state_a+"     /     B: "+state_b+"\n"+("Playing "+game.horror.audition if game.horror.audition!="" else ("Listen to both before marking a fault." if available else "Playback unavailable: "+("no power" if game.stage<3 else "movement nearby"))),18)
 	var row := HBoxContainer.new();card_body.add_child(row)
 	for channel in ["A","B"]:
 		add_button("Listen "+channel,func():resume_game();game.horror.audition_channel(channel),available,row)
 	var ready_: bool = game.events.get("audition_A",false) and game.events.get("audition_B",false)
-	add_button("Exclude channel A",func():game.horror.exclude_channel("A"),ready_,card_body)
-	add_button("Exclude channel B",func():game.horror.exclude_channel("B"),ready_,card_body)
+	var exclude_a:=add_button("Exclude channel A",func():game.horror.exclude_channel("A"),ready_,card_body);exclude_a.text="Mark A as unreliable"
+	var exclude_b:=add_button("Exclude channel B",func():game.horror.exclude_channel("B"),ready_,card_body);exclude_b.text="Mark B as unreliable"
 	add_button("Leave transport",resume_game,true,card_body).grab_focus()
 	entrance_animation(card)
 

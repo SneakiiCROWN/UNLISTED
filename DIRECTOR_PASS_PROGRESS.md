@@ -24,3 +24,18 @@ Director_06 integrated checks completed cleanly: systems 33, threat 54, Spare Pl
 Image review caught the old Simon title on Eli's live comparison; final code now centralises its title and migrates already-collected older entries. Rubbing and journal share the same three lines. Final vase/tin separation is checked against rendered bounds. Redundant arrival/valve-success descriptions are removed; optional sound captions remain.
 
 Continue next with the remaining rare-string inventory and connected room audits, then controlled ambient pacing/AI entry and retreat. Do not repeat these completed suites without a relevant new change. The broader director pass remains unfinished; retain public 0.8.0 and do not present this working candidate as the completed overhaul.
+
+
+## Controlled atmosphere, mirror and front-gate arrival / 22 October continuation
+
+Recovered e96f6a9 intact. New isolated native Windows fixtures verified three modest positional events: lounge-window taps, empty-utility footsteps and a physically falling kitchen tin. A seeded weighted policy includes silence, per-event limits, nonrepetition, saved consumption, load grace and authored-scene/threat exclusions. Sixteen simulated 20-minute seeds produced 16 different schedules and 59 total events; this is scheduling simulation, not observed player frequency or listening approval. Native ambient tests passed 38/0 in Atmosphere_03. No lightning or new enemy spawn system added.
+
+The actual mirror now frames the cot from the usable aisle. Its returned blanket shows a covered human outline after the real cot is uncovered. Removed the card from that return-only layer and moved the height marks off the glass. Actual 1080p return and raw camera images reviewed; mirror fixture 10/0. It remains a limited planar reflection without a player body, not finished character art.
+
+Lounge bottles sit on the measured shelf board; four books with no supporting board were removed. Existing lounge circulation passes. Rare conditional register wording now follows the clue already found, the channel comparison distinguishes optional fault submission from closing the call, and the transport leader is centrally migrated.
+
+Surveyor warning/stalk facing, bounded stationary search and a fresh fair warning when an indoor retreat is approached passed the native 56/0 threat suite. Existing yard escape remains. No rejected character art promoted; the model remains unfinished.
+
+New Game starts outside the existing garden gate at z=19.4. First front-door interaction knocks once, then the actual colliding leaf eases ajar; the next press opens fully. Further presses open/close normally. Ajar state saves/restores without replay; older saves get no new knock or relocation. Repeated input cannot skip the beat, pause freezes the door. Arrival_05 native focused test passed 23/0 at 1080p. The connected fresh route and remaining acceptance are RUNNING, not yet accepted or published. Atmosphere_03's continuous run was deliberately stopped early to incorporate this owner-requested arrival before running the expensive route again; preserve its incomplete evidence separately from failures.
+
+Rejected Atmosphere_01 support experiment and earlier mirror artifacts remain preserved. Human playtesting, subjective listening and artistic approval remain pending. Public playable stays 0.8.0 until a verified new package exists.

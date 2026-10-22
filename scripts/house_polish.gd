@@ -7,12 +7,14 @@ func surface(pos: Vector3,size_: Vector3,tint: Color,texture := "res://assets/or
 	node.material_override = g.texture_mat(texture,tint)
 	return node
 
-func book(pos: Vector3,width: float,height: float,color: Color,lean := 0.0) -> void:
+func book(pos: Vector3,width: float,height: float,color: Color,lean := 0.0) -> Node3D:
 	var root := Node3D.new();g.add_child(root);root.position = pos;root.rotation.z = lean
 	if pos.x>6:root.rotation.y = PI/2
 	g.box(root,Vector3(0,height/2,0),Vector3(width,height,0.22),color)
 	g.box(root,Vector3(0,height/2,-0.005),Vector3(width*0.78,height*0.93,0.205),Color("857e68"))
 	for y in [0.05,height-0.05]:g.box(root,Vector3(0,y,0.114),Vector3(width*0.65,0.012,0.008),Color("726c52"))
+
+	return root
 
 func build(game: Node3D) -> void:
 	g = game
@@ -73,7 +75,7 @@ func build(game: Node3D) -> void:
 	# Lounge: frayed runner and neglected reading corner, away from collision routes.
 	var lounge_before: Array=g.get_children()
 	surface(Vector3(4.8,0.012,0.35),Vector3(2.6,0.012,2.0),Color("3b4038"),"res://assets/original/work_canvas.png")
-	for i in 4:book(Vector3(5.6+i*0.17,1.15,-2.65),0.12,0.27,Color("424b3d"))
+	# The licensed wall shelf has one board. Remove the old unsupported lower row.
 	for piece in g.get_children():
 		if not lounge_before.has(piece):piece.reparent(g.lounge_contents)
 	# Low wall-side plumbing/weathering also anchors the shed exterior.

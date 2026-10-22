@@ -18,7 +18,7 @@ func _ready() -> void:
 	make_prop("pot","cooking pot","res://assets/dusk/psx_prop_cooking_pot_01.glb",Vector3(-7.04,float(game.get_node("KitchenStove").get_meta("cooktop"))+.127,1.45),Vector3(.30,.25,.30),.85)
 	make_prop("counter_mug","cup","res://assets/dusk/psx_prop_mug_01.glb",Vector3(-4.8,.936,3.55),Vector3(.14,.15,.14),.24)
 	for i in 3:
-		make_prop("can"+str(i),"food tin","res://assets/dusk/psx_prop_single_tin.glb",Vector3(-3.6-i*.15,.956,3.53),Vector3(.12,.19,.12),.32)
+		make_prop("can"+str(i),"food tin","res://assets/dusk/psx_prop_single_tin.glb",Vector3(-3.6-i*.15,.956,3.32 if i==0 else 3.53),Vector3(.12,.19,.12),.32)
 	build_support()
 
 func build_support() -> void:

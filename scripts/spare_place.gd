@@ -33,8 +33,8 @@ func build() -> void:
 	game.collision(self,Vector3(-6.8,.57,-5.35),Vector3(.28,.07,.25),"spare_card")
 	# Small personal traces sit on existing backing: no new obstruction or room shell.
 	for y in [1.05,1.13,1.21]:
-		var mark: MeshInstance3D=game.box(self,Vector3(-7.382,y,-5.45),Vector3(.003,.009,.12),Color("726953"));mark.name="CopiedHeightMark"
-	var tag: Label3D=game.label3(self,"ELI / 1999",Vector3(-7.375,1.25,-5.45),PI/2,20,Color("746f56"));tag.pixel_size=.0014;tag.shaded=true
+		var mark: MeshInstance3D=game.box(self,Vector3(-7.382,y,-6.5),Vector3(.003,.009,.12),Color("726953"));mark.name="CopiedHeightMark"
+	var tag: Label3D=game.label3(self,"ELI / 1999",Vector3(-7.375,1.25,-6.5),PI/2,20,Color("746f56"));tag.pixel_size=.0014;tag.shaded=true
 func cover_mesh(copy := false) -> ArrayMesh:
 	var fold: float=0.0 if copy else uncover
 	var tool:=SurfaceTool.new();tool.begin(Mesh.PRIMITIVE_TRIANGLES)
@@ -43,7 +43,12 @@ func cover_mesh(copy := false) -> ArrayMesh:
 		for x in 13:
 			var xx: float=-.48+float(x)*.08;var zz: float=-.88+float(z)*.088
 			var breathing: float=.0
-			if game.events.get("spare_offered",false) and (copy or not game.events.get("spare_uncovered",false)):breathing=(.19+.018*sin(clock*1.35))*exp(-pow(xx/.27,4))*exp(-pow((zz+.07)/.62,4))
+			if game.events.get("spare_offered",false) and (copy or not game.events.get("spare_uncovered",false)):
+				var head: float=.15*exp(-pow(xx/.13,4)-pow((zz+.62)/.17,4))
+				var shoulders: float=.255*exp(-pow(xx/.25,4)-pow((zz+.30)/.26,4))
+				var torso: float=(.21+.014*sin(clock*1.35))*exp(-pow(xx/.20,4)-pow((zz-.03)/.38,4))
+				var knees: float=.12*exp(-pow(xx/.15,4)-pow((zz-.48)/.26,4))
+				breathing=maxf(head,maxf(shoulders,maxf(torso,knees)))
 			var hem: float=-.14 if x in [0,12] else .0
 			var height: float=hem+.012*sin(x*1.8+z*.7)+breathing*(1-fold)
 			points.append(Vector3(xx,height,lerpf(zz,.65+zz*.16,fold)))
@@ -58,7 +63,7 @@ func cover_mesh(copy := false) -> ArrayMesh:
 	return result
 func observed() -> bool:
 	var camera: Camera3D=game.player.camera
-	for point in [COT+Vector3.UP*.25,COT+Vector3(0,.2,.7),Vector3(-7.375,1.15,-5.45)]:
+	for point in [COT+Vector3.UP*.25,COT+Vector3(0,.2,.7),Vector3(-7.375,1.15,-6.5)]:
 		if camera.is_position_behind(point):continue
 		if not game.get_viewport().get_visible_rect().has_point(camera.unproject_position(point)):continue
 		var query:=PhysicsRayQueryParameters3D.create(camera.global_position,point,1)

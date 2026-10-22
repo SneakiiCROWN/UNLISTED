@@ -91,6 +91,9 @@ func run(game: Node) -> void:
 	check("closed front door blocks movement",g.player.position.z > 4.25,str(g.player.position))
 	await use_target("front",Vector3(0,0.02,5.5))
 	await settle(60)
+	if g.events.get("front_ajar",false):
+		await use_target("front",Vector3(0,0.02,5.5))
+		await settle(60)
 	check("front door animation",absf(g.doors.front.pivot.rotation.y)>1.4)
 	await look_from(Vector3(0,0.02,5.3),Vector3(0,1.62,1.0))
 	Input.action_press("forward")

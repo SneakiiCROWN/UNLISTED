@@ -13,7 +13,7 @@ const RETURN_CLOTH:=1<<14
 const GLASS:=1<<15
 func _ready() -> void:
 	name="UtilityInspectionGlass"
-	var frame: Node3D=game.model("res://assets/interiors/bathroomMirror.glb",self,Vector3(-7.37,.95,-4.45),Vector3(.58,.80,.065),PI/2,false)
+	var frame: Node3D=game.model("res://assets/interiors/bathroomMirror.glb",self,Vector3(-7.37,.61,-5.35),Vector3(.84,1.05,.065),PI/2,false)
 	var bounds:=AABB();var first:=true
 	for mesh in game.all_meshes(frame):
 		for i in mesh.mesh.get_surface_count():
@@ -33,8 +33,9 @@ func _ready() -> void:
 	glass=MeshInstance3D.new();var plane:=QuadMesh.new();plane.size=size_;glass.mesh=plane;glass.layers=GLASS;glass.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(glass);glass.global_position=center;glass.rotation.y=PI/2
 	var reflective:=StandardMaterial3D.new();reflective.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED;reflective.albedo_texture=feed.get_texture();reflective.uv1_scale.x=-1;reflective.uv1_offset.x=1;glass.material_override=reflective
-	game.player.camera.cull_mask|=REAL_CLOTH|GLASS;game.player.torch.light_cull_mask|=REAL_CLOTH
+	game.player.camera.cull_mask|=REAL_CLOTH|GLASS;game.player.torch.light_cull_mask|=REAL_CLOTH|RETURN_CLOTH
 	game.spare_place.cloth.layers=REAL_CLOTH
+	for geometry in game.spare_place.card.find_children("*","GeometryInstance3D",true,false):geometry.layers=REAL_CLOTH
 	returned=MeshInstance3D.new();add_child(returned);returned.global_position=game.spare_place.cloth.global_position;returned.material_override=game.spare_place.cloth.material_override;returned.layers=RETURN_CLOTH;returned.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	game.collision(self,center,Vector3(.025,size_.y,size_.x),"spare_mirror")
 func visible_glass() -> bool:
@@ -43,9 +44,16 @@ func visible_glass() -> bool:
 	var q:=PhysicsRayQueryParameters3D.create(view.global_position,center,1)
 	var hit:=get_world_3d().direct_space_state.intersect_ray(q)
 	return hit.is_empty() or is_ancestor_of(hit.collider) or hit.position.distance_to(center)<.10
+func cot_in_glass() -> bool:
+	# Do not award an observation for touching a corner of glass that only shows
+	# the opposite desk. The occupied torso must project inside the actual return.
+	var torso: Vector3=game.spare_place.COT+Vector3(0,.22,-.12)
+	if not returned.visible or camera.is_position_behind(torso):return false
+	var pixel: Vector2=camera.unproject_position(torso)
+	return Rect2(Vector2.ZERO,Vector2(feed.size)).grow(-6).has_point(pixel) and visible_glass()
 func touch() -> void:
 	game.sound("prop_impact",center,-37)
-	if not game.events.get("spare_uncovered",false):return
+	if not game.events.get("spare_uncovered",false) or not cot_in_glass():return
 	game.events.spare_glass_seen=true;game.events.notes=game.events.get("notes",{})
 	game.events.notes["THE UTILITY GLASS"]=game.NOTES.SPARE_GLASS_NOTE
 	game.save_game(true)

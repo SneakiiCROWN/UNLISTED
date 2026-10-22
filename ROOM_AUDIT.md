@@ -18,3 +18,12 @@ Evidence scope is explicit. Player-height fixtures are visual inspections, not c
 Finish native evidence review, then continue room clusters and rare/legacy text inventory. Audit Surveyor visibility/spatial entry and retirement before changing encounter logic. The new weighted ambient director, lightning/window scenes, art-compatible character pipeline, broader portable objects and cinematic finale are NOT implemented by this batch. Keep these distinct from the repaired support puzzle and existing authored beats. No new runtime added just to increase content count.
 
 Final native 08 confirms the vase and all three cans have separate rendered bounds and correct support. Its 36 targeted checks pass. Director_06 full route, cover/rack, both endings and impossible room pass; Director_08 bedroom/updated text and three-resolution fixtures also pass. These functional results do not replace the unfinished deeper multi-angle room/art audit.
+
+
+## Second connected audit / current candidate
+
+Lounge: measured shelf top is 1.85 m. Bottles now contact it. The four old lower books had no shelf at all and were removed. Existing real movement through the door, chair and front circulation passes. Other lounge corners and the full property remain pending.
+
+Utility: mirror lowered/aligned to the cot and checked from the clear aisle. Returned blanket has head/shoulder/torso/knee contour; real card is excluded from the covered return. Height marks moved clear. Actual exported screenshot reviewed. Missing player-body reflection remains a limitation.
+
+Porch/gate: new-case arrival outside existing saved gate. One knock/ajar/open sequence tested through real movement, input, collision, pause and save/load; ordinary and legacy doors retained. No exterior art overhaul this continuation.

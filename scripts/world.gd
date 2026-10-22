@@ -53,6 +53,7 @@ var investigation: Node3D
 var maintenance: Node3D
 var dead_line: Node3D
 var spare_place: Node3D
+var ambient_director: Node3D
 var spare_mirror: Node3D
 var chapter: Node3D
 var hint_until := 0.0
@@ -83,6 +84,8 @@ func _ready() -> void:
 		checkpoint_path = "user://development/checkpoint.json"
 	qa_mode = "--door-repair-qa" in OS.get_cmdline_user_args() or "--recording-repair-qa" in OS.get_cmdline_user_args() or "--qa" in OS.get_cmdline_user_args() or "--presentation-qa" in OS.get_cmdline_user_args() or "--milestone-qa" in OS.get_cmdline_user_args() or "--threat-qa" in OS.get_cmdline_user_args() or "--systems-qa" in OS.get_cmdline_user_args() or "--polish-qa" in OS.get_cmdline_user_args() or "--visual-probe" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--production-views" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--arrival-qa" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--ambient-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--director-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--spare-place-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--dead-line-qa" in OS.get_cmdline_user_args()
@@ -141,6 +144,7 @@ func _ready() -> void:
 	dead_line=load("res://scripts/dead_line.gd").new();dead_line.game=self;add_child(dead_line)
 	spare_place=load("res://scripts/spare_place.gd").new();spare_place.game=self;add_child(spare_place)
 	spare_mirror=load("res://scripts/spare_mirror.gd").new();spare_mirror.game=self;add_child(spare_mirror)
+	ambient_director=load("res://scripts/ambient_director.gd").new();ambient_director.game=self;add_child(ambient_director)
 	set_volume(volume)
 	show_menu("UNLISTED", true)
 	if dev_mode:
@@ -246,7 +250,7 @@ func model(path: String, parent: Node3D, pos: Vector3, size: Vector3, angle := 0
 	if solid: collision(wrapper, Vector3(0, size.y / 2, 0), size)
 	return wrapper
 
-func surface_height(root: Node3D,point: Vector3) -> float:
+func surface_height(root: Node3D,point: Vector3,ceiling_y := 10.0) -> float:
 	var top:=-INF
 	for mesh in all_meshes(root):
 		for surface in mesh.mesh.get_surface_count():
@@ -257,7 +261,7 @@ func surface_height(root: Node3D,point: Vector3) -> float:
 			for i in range(0,count,3):
 				var corners: Array[Vector3]=[]
 				for j in 3:corners.append(mesh.global_transform*vertices[indices[i+j] if not indices.is_empty() else i+j])
-				var hit: Variant=Geometry3D.ray_intersects_triangle(Vector3(point.x,10,point.z),Vector3.DOWN,corners[0],corners[1],corners[2])
+				var hit: Variant=Geometry3D.ray_intersects_triangle(Vector3(point.x,ceiling_y,point.z),Vector3.DOWN,corners[0],corners[1],corners[2])
 				if hit is Vector3:top=maxf(top,hit.y)
 	return top
 
@@ -473,8 +477,10 @@ func build_world() -> void:
 	model("res://assets/dusk/psx_prop_newspapers_01.glb",self,Vector3(4.1,0.81,0.2),Vector3(0.5,0.04,0.35))
 	furniture("vase",Vector3(4.8,0.80,0.3),Vector3(0.18,0.31,0.18),0,false)
 	chair = furniture("chair",Vector3(3.6,0,2.7),Vector3(0.65,0.95,0.65),PI)
-	model("res://assets/dusk/psx_prop_wall_shelf_01.glb",self,Vector3(6.0,1.1,-2.7),Vector3(1.5,0.75,0.28),0)
-	model("res://assets/dusk/psx_prop_bottles_01.glb",self,Vector3(5.9,1.72,-2.65),Vector3(0.4,0.36,0.2))
+	var lounge_shelf=model("res://assets/dusk/psx_prop_wall_shelf_01.glb",self,Vector3(6.0,1.1,-2.7),Vector3(1.5,0.75,0.28),0)
+	lounge_shelf.name="LoungeWallShelf"
+	var bottles=model("res://assets/dusk/psx_prop_bottles_01.glb",self,Vector3(5.9,surface_height(lounge_shelf,Vector3(5.9,0,-2.65)),-2.65),Vector3(0.4,0.36,0.2))
+	bottles.name="LoungeShelfBottles"
 	table(Vector3(3.2,0,-1.85),1.5,0.7)
 	monitor(Vector3(3.2,1.13,-1.85),"television","NO SIGNAL\n\n23:17:08\n\nONE OCCUPANT")
 	tv_light = lamp(Vector3(3.2,1.5,-1.1),cold,1.2,4)
@@ -746,6 +752,7 @@ func new_game() -> void:
 	events.clear()
 	events.case_v2=true
 	events.case_v3=true
+	events.arrival_check=true
 	if is_instance_valid(chapter):chapter.restore()
 	if is_instance_valid(maintenance):maintenance.restore()
 	if is_instance_valid(dead_line):dead_line.restore()
@@ -755,6 +762,7 @@ func new_game() -> void:
 	physical.restore()
 	horror.reset()
 	threat.reset()
+	if is_instance_valid(ambient_director):ambient_director.restore()
 	hint_until = 0
 	valve_order.clear()
 	for id in doors:
@@ -764,7 +772,7 @@ func new_game() -> void:
 	chair.position = Vector3(3.6,0,2.7)
 	presence.visible = false
 	for l in lamps: l.light_energy = 0
-	player.position = Vector3(0,0.06,9)
+	player.position = Vector3(0,0.06,19.4)
 	player.rotation = Vector3.ZERO
 	player.camera.rotation = Vector3.ZERO
 	player.velocity = Vector3.ZERO
@@ -839,7 +847,7 @@ func interaction_name(id: String) -> String:
 	if id=="line_feed":return "Connect feed" if events.get("line_feed_off",false) else "Disconnect feed"
 	if id=="line_return":return "Plug in return" if events.get("line_return_out",false) else "Unplug return"
 	if id=="line_strike":return "Test striker"
-	if id=="line_note":return "Read service annotation"
+	if id=="line_note":return "Read test note"
 	if id=="line_strip":return "Read counter strip"
 	if id=="archive_rack":return "Move shelving"
 	if id=="underfloor_sheet":return "Read test sheet"
@@ -852,8 +860,9 @@ func interaction_name(id: String) -> String:
 	if id=="field_notebook":return "Take original field return"
 	if id=="relay_record":return "Read field return"
 	if id=="order" and isolated and recount.active:return "Listen"
-	if id=="source_copy":return "Read source copy"
+	if id=="source_copy":return "Read comparison slip"
 	if id in ["audition_source","audition_return","exclude_return"] and stage<3:return "Inspect unpowered transport"
+	if id=="front" and events.get("arrival_check",false) and not events.get("front_checked",false):return "Knock"
 	if id=="front_gate":return "Close gate" if doors[id].opened else "Open gate"
 	if doors.has(id): return "Try door" if doors[id].locked else ("Close door" if doors[id].opened else "Open door")
 	return {"audition_source":"Audition A","audition_return":"Audition B","exclude_return":"Compare channels","order":"Correct attendance register" if isolated else "Read call sheet", "television":"Inspect television", "fuse":"Take spare fuse", "breaker":"Restore supply", "security":"Review security archive", "record":"Read occupancy record", "shed_record":"Read manual override", "isolate":"Isolate occupancy relay", "valve0":"Turn RED valve", "valve1":"Turn BLUE valve", "valve2":"Turn WHITE valve"}.get(id,"Inspect")
@@ -929,7 +938,7 @@ func interact(id: String) -> void:
 				save_game()
 			else: message("The supply is on. The service circuit is isolated." if isolated else "The meter is running. There shouldn't be anything connected downstairs.",3)
 		"security", "record":
-			if stage < 3: message("The transport will not turn. Its supply indicator is dark.")
+			if stage < 3: message("No power. The supply light is out.")
 			else:
 				if not brass_key:presentation.pending_notice = "Brass service key taken"
 				report_read = true
@@ -1087,7 +1096,7 @@ func apply_save(data: Dictionary) -> void:
 	chair.position = Vector3(3.6,0,2.7)
 	for id in doors:
 		doors[id].open_angle = float(data.get("door_swing",{}).get(id,-1.55))
-		doors[id].set_open(data.get("doors",{}).get(id,false),0.01)
+		doors[id].set_open(data.get("doors",{}).get(id,false),0.01,true)
 	for id in valve_visuals: valve_visuals[id].rotation.z = 0
 	stage = int(data.get("stage",0))
 	fuse = data.get("fuse",false)
@@ -1096,6 +1105,7 @@ func apply_save(data: Dictionary) -> void:
 	shed_read = data.get("shed",false)
 	isolated = data.get("isolated",false)
 	events = data.get("events",{}).duplicate(true)
+	if events.get("front_ajar",false) and not doors.front.opened:doors.front.restore_arrival()
 	NOTES.refresh_collected(events)
 	if isolated and not events.get("return",false) and not events.get("threat_resolved",false):
 		events.threat_pending = true
@@ -1134,6 +1144,7 @@ func apply_save(data: Dictionary) -> void:
 	if is_instance_valid(maintenance):maintenance.restore()
 	if is_instance_valid(dead_line):dead_line.restore()
 	if is_instance_valid(spare_place):spare_place.restore()
+	if is_instance_valid(ambient_director):ambient_director.restore()
 
 func save_game(quiet := false) -> void:
 	if is_instance_valid(capture_director) and capture_director.active:return
@@ -1149,7 +1160,7 @@ func save_game(quiet := false) -> void:
 func load_game() -> void:
 	var data = JSON.parse_string(FileAccess.get_file_as_string(checkpoint_path))
 	if not data is Dictionary or data.get("schema",0) != 1:
-		message("The checkpoint could not be read. Start a new game.")
+		message("The checkpoint could not be read. Your file has been left unchanged.")
 		return
 	apply_save(data)
 
@@ -1198,6 +1209,8 @@ func run_qa() -> void:
 		var test = load("res://scripts/hands_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
 		await test.run(self);return
 	var path := "res://scripts/input_isolation_qa.gd" if "--input-isolation-qa" in OS.get_cmdline_user_args() else "res://scripts/exterior_views.gd" if "--exterior-views" in OS.get_cmdline_user_args() else "res://scripts/exterior_qa.gd" if "--exterior-qa" in OS.get_cmdline_user_args() else "res://scripts/door_repair_qa.gd" if "--door-repair-qa" in OS.get_cmdline_user_args() else "res://scripts/recording_repair_qa.gd" if "--recording-repair-qa" in OS.get_cmdline_user_args() else "res://scripts/polish_qa.gd" if "--polish-qa" in OS.get_cmdline_user_args() else "res://scripts/systems_qa.gd" if "--systems-qa" in OS.get_cmdline_user_args() else "res://scripts/threat_qa.gd" if "--threat-qa" in OS.get_cmdline_user_args() else "res://scripts/milestone_qa.gd" if "--milestone-qa" in OS.get_cmdline_user_args() else "res://scripts/presentation_qa.gd" if "--presentation-qa" in OS.get_cmdline_user_args() else "res://scripts/runtime_qa.gd"
+	if "--arrival-qa" in OS.get_cmdline_user_args():path="res://scripts/arrival_qa.gd"
+	if "--ambient-qa" in OS.get_cmdline_user_args():path="res://scripts/ambient_qa.gd"
 	if "--director-qa" in OS.get_cmdline_user_args():path="res://scripts/director_qa.gd"
 	if "--production-views" in OS.get_cmdline_user_args():path="res://scripts/production_views.gd"
 	if "--maintenance-qa" in OS.get_cmdline_user_args():path="res://scripts/maintenance_qa.gd"

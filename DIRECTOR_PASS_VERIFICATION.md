@@ -30,3 +30,12 @@ Master bus signal in the integrated route: peak -8.27 dBFS, RMS -43.49 dBFS, zer
 ## Remaining work
 
 Every rare/legacy string still needs final continuity sign-off. Whole-property multi-corner support/layout/audio audit, controlled weighted ambient events and seeded distributions, lightning/window staging, deeper AI visibility/retirement, asset-first character art, broader useful props, richer material/audio variation and stronger cinematic endings remain. The mirror's silhouette and absent full-body reflection need refinement. Current art is still alpha. Normal human shutdown/resource-warning and historical driver risk are not proven fixed by QA's explicit audio teardown.
+
+
+## New continuation / focused acceptance before integration
+
+- Atmosphere_03: ambient 38/0, mirror 10/0, threat 56/0. Actual lounge and mirror views reviewed. Scheduling simulations are distinct from native event playback.
+- Arrival_04: 22/0 prototype arrival; Arrival_05 final targeted input/pause/recovery/legacy fixture: 23/0.
+- Arrival_05 integrated route and broader Windows acceptance pending at this checkpoint. No new public playable release claimed.
+- Atmosphere_01's unsupported lower shelf query was rejected; no invalid geometry promoted. Atmosphere_02 mirror artifacts corrected and inspected in 03. Earlier evidence preserved.
+- Atmosphere_03 route stopped deliberately for the requested arrival change, not a gameplay assertion failure.
