@@ -13,6 +13,7 @@ var film: ColorRect
 var cover_amount:=0.0
 var shade: TextureRect
 var body: VBoxContainer
+var normal_panel: StyleBox
 var card: PanelContainer
 var card_body: VBoxContainer
 var tabs: HBoxContainer
@@ -145,6 +146,7 @@ func build_screen() -> void:
 	background.content_margin_right = 38
 	background.content_margin_top = 25
 	background.content_margin_bottom = 25
+	normal_panel=background
 	card.add_theme_stylebox_override("panel",background)
 	card_body = VBoxContainer.new()
 	card_body.add_theme_constant_override("separation",12)
@@ -401,6 +403,8 @@ func complete_intro() -> void:
 	game.new_game()
 
 func clear_card() -> void:
+	card.add_theme_stylebox_override("panel",normal_panel)
+	note.remove_theme_color_override("default_color");note.remove_theme_font_override("normal_font")
 	status.visible = false
 	for child in card_body.get_children():
 		if child == note:note.visible = false;continue
@@ -567,8 +571,11 @@ func inspect_document(title_: String, text: String) -> void:
 	pause_world()
 	section = "document"
 	clear_card()
-	label(card_body,"PROPERTY SERVICES  /  RECOVERED RECORD",14,"Meta")
-	label(card_body,title_,27,"Title")
+	var paper: StyleBoxFlat=normal_panel.duplicate();paper.bg_color=Color("beb69b");paper.border_color=Color("655e49");card.add_theme_stylebox_override("panel",paper)
+	label(card_body,"PROPERTY SERVICES  /  RECOVERED RECORD",14,"Meta").modulate=Color("464e41")
+	label(card_body,title_,27,"Title").modulate=Color("2d382f")
+	note.add_theme_color_override("default_color",Color("29362e"))
+	if "SIMON" in title_.to_upper():note.add_theme_font_override("normal_font",load("res://assets/fonts/Kalam-Regular.ttf"))
 	rule(card_body)
 	note.visible = true
 	note.text = text

@@ -50,6 +50,7 @@ var lounge_contents: Node3D
 var impossible_room: Node3D
 var recount: Node3D
 var investigation: Node3D
+var maintenance: Node3D
 var chapter: Node3D
 var hint_until := 0.0
 var tv_light: OmniLight3D
@@ -128,6 +129,7 @@ func _ready() -> void:
 	recount.game=self;add_child(recount)
 	investigation=load("res://scripts/investigation.gd").new();investigation.game=self;add_child(investigation)
 	chapter=load("res://scripts/missing_minute.gd").new();chapter.game=self;add_child(chapter)
+	maintenance=load("res://scripts/maintenance_store.gd").new();maintenance.game=self;add_child(maintenance)
 	set_volume(volume)
 	show_menu("UNLISTED", true)
 	if dev_mode:
@@ -587,7 +589,10 @@ func build_basement() -> void:
 	wall(Vector3(5,-3,-19.5),9,PI/2)
 	wall(Vector3(0,-3,-24),10)
 	wall(Vector3(-3.25,-3,-15),3.5)
-	wall(Vector3(3.25,-3,-15),3.5)
+	# Original north pier now has a real low service opening beside the ramp.
+	wall(Vector3(1.95,-3,-15),.9)
+	wall(Vector3(4.55,-3,-15),.9)
+	box(self,Vector3(3.25,-.95,-15),Vector3(1.7,1.5,.18),Color("606457"),true)
 	var repair := REPAIR.new()
 	repair.g = self
 	repair.relay_room()
@@ -709,6 +714,7 @@ func new_game() -> void:
 	events.case_v2=true
 	events.case_v3=true
 	if is_instance_valid(chapter):chapter.restore()
+	if is_instance_valid(maintenance):maintenance.restore()
 	if is_instance_valid(investigation):investigation.restore()
 	if is_instance_valid(recount):recount.restore_state()
 	physical.restore()
@@ -793,6 +799,9 @@ func open_casebook() -> void:
 	presentation.inspect_document("FIELD NOTES / RECORDS EXAMINED",text_)
 
 func interaction_name(id: String) -> String:
+	if id=="archive_rack":return "Move shelving"
+	if id=="underfloor_sheet":return "Read test sheet"
+	if id=="test_joist":return "Tap timber"
 	if id=="carbon_return":return "Examine impressions" if events.get("field_return_read",false) else "Inspect writing mat"
 	if id=="return_receiver":return "Tune receiver"
 	if id=="memory_drawer":return "Close drawer" if chapter.drawer_open else "Open drawer"
@@ -818,6 +827,9 @@ func interact(id: String) -> void:
 	if id=="return_receiver":chapter.open_receiver();return
 	if id=="memory_drawer":chapter.use_drawer();return
 	if id=="memory_page":chapter.take_page();return
+	if id=="archive_rack":maintenance.push_rack();return
+	if id=="underfloor_sheet":maintenance.read_sheet();return
+	if id=="test_joist":maintenance.tap_joist();return
 	if id=="record" and events.get("case_v3",false):inspect_text("BRIAR LANE / TEMPORARY OFFICE",NOTES.SITE);save_game();return
 	if id in ["audition_source","audition_return","exclude_return"]:
 		if stage<3:message("No power. The empty kitchen carrier supplies this desk.",2.5);return
@@ -903,7 +915,7 @@ func interact(id: String) -> void:
 				sound("relay",targets[id].global_position,-21)
 				message("The catch kicked back. The wheels have reset.")
 			else:
-				message("Feed isolated. " + str(valve_order.size()) + " / 3")
+				message("The line closes.",2)
 				var v: Node3D = valve_visuals[id]
 				var t := create_tween()
 				t.tween_property(v,"rotation:z",v.rotation.z+PI/2,0.45)
@@ -1011,7 +1023,7 @@ func door_swing_states() -> Dictionary:
 
 func save_data() -> Dictionary:
 	if is_instance_valid(physical):events["props"] = physical.snapshot()
-	return {"schema":1,"stage":stage,"fuse":fuse,"key":brass_key,"report":report_read,"shed":shed_read,"isolated":isolated,"events":events,"valves":valve_order,"pos":[player.position.x,player.position.y,player.position.z],"yaw":player.rotation.y,"pitch":player.camera.rotation.x,"ended":ended,"doors":door_save_states(),"door_swing":door_swing_states()}
+	return {"schema":1,"crouched":player.crouched,"stage":stage,"fuse":fuse,"key":brass_key,"report":report_read,"shed":shed_read,"isolated":isolated,"events":events,"valves":valve_order,"pos":[player.position.x,player.position.y,player.position.z],"yaw":player.rotation.y,"pitch":player.camera.rotation.x,"ended":ended,"doors":door_save_states(),"door_swing":door_swing_states()}
 
 func door_save_states() -> Dictionary:
 	var result := {}
@@ -1049,6 +1061,7 @@ func apply_save(data: Dictionary) -> void:
 	for i in range(3): valve_visuals["valve"+str(i)].rotation.z = PI/2 if valve_order.has(i) else 0
 	var p: Array = data.get("pos",[0,0.1,9])
 	player.position = Vector3(p[0],p[1],p[2])
+	player.restore_stance(bool(data.get("crouched",false)))
 	player.rotation.y = data.get("yaw",0.0)
 	player.camera.rotation.x = data.get("pitch",0.0)
 	player.velocity = Vector3.ZERO
@@ -1072,6 +1085,7 @@ func apply_save(data: Dictionary) -> void:
 	if is_instance_valid(recount):recount.restore_state()
 	if is_instance_valid(investigation):investigation.restore()
 	if is_instance_valid(chapter):chapter.restore()
+	if is_instance_valid(maintenance):maintenance.restore()
 
 func save_game() -> void:
 	if is_instance_valid(capture_director) and capture_director.active:return

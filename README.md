@@ -27,3 +27,7 @@ Actual exported Windows checks cover mouse rubbing, tuning, physical drawer/page
 64-bit Windows and a Vulkan-capable graphics driver for Godot Forward+. Public source deliberately omits licensed media, private logs, saves and private Git history. Rebuilding requires the complete licensed local checkout. Original code is source-available under LICENSE.txt; third-party rights remain intact. The Windows ZIP includes notices. See THIRD_PARTY.md and ThirdPartyNotices.
 
 [Report a bug](https://github.com/SneakiiCROWN/UNLISTED/issues) with the version and reproduction steps. Keep personal saves/private logs out of public reports. Owner vocal slots remain replaceable; see OWNER_RECORDING_CUES.md.
+
+## Recovered work after 0.6.0
+
+The current source includes unfinished home/evidence and maintenance-store work recovered after interruption. It is not a newly verified playable release. The download above remains 0.6.0. Read UNDERFLOOR_PROGRESS.md for current validation limits.

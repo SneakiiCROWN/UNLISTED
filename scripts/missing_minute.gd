@@ -17,7 +17,7 @@ var watch_clock:=-1.0
 var unseen:=0.0
 var watch_seen:=false
 var watch_walk:=0.0
-const LAST_PAGE:="23:18 / Simon Ward\n\nThat is Eli's drawing on the cupboard. BACK FOR TEA. He put it in my toolbox this morning.\n\nHe is not here. I rang home. He answered and asked when I was coming back.\n\nThe radio in the office is playing the same station we leave on in the kitchen. Through the other door I can hear someone getting out of his bed.\n\nThey want an empty-house return. I won't sign it. There is someone still inside, even if it isn't my son.\n\nIf this gets home: Eli, I didn't leave you. I was trying to make sure nobody got left here.\n\nThe rest of the page is blank."
+const LAST_PAGE:="23:18 / Simon Ward\n\nI rang home. Eli is all right. He answered himself and asked when I'd be back for tea.\n\nThen I opened the lounge door. His bed is in there. His books, his school chair. Even the drawing he left in my toolbox this morning. This isn't our house. None of it should be here.\n\nThe office radio was playing our kitchen station. I wrote the number down before I forgot it. The clock still says 23:18. It hasn't moved since I came downstairs.\n\nI can hear someone moving in that room. I know it isn't Eli. I can't sign a paper saying this place is empty until I've checked.\n\nIf this gets home: Eli, I didn't leave you. I was trying to make sure nobody got left here."
 func _ready() -> void:
 	name="TheMissingMinute"
 	build_work_surface();build_room();restore()
@@ -29,7 +29,7 @@ func _ready() -> void:
 	for i in range(chain.size()-1):game.threat.graph.connect_points(chain[i],chain[i+1])
 	game.threat.graph.connect_points(chain[-1],9)
 func model(name_: String,pos: Vector3,size_: Vector3,angle:=0.0,solid:=true) -> Node3D:
-	var result: Node3D=game.model("res://assets/interiors/"+name_+".glb",room,pos,size_,angle,solid)
+	var result: Node3D=game.model("res://assets/interiors/home/"+name_+".glb",room,pos,size_,angle,solid)
 	finish_materials(result)
 	return result
 func finish_materials(root: Node3D) -> void:
@@ -41,9 +41,11 @@ func finish_materials(root: Node3D) -> void:
 			if "metal" in kind:texture="res://assets/dusk/psx_house_steel_01.png";tint=Color("4c514a")
 			elif "carpet" in kind or "plant" in kind:texture="res://assets/original/work_canvas.png";tint=Color("8e978a") if "white" in kind else Color("4f675c")
 			elif "lamp" in kind:texture="res://assets/original/work_canvas.png";tint=Color("c2b995")
-			mesh.set_surface_override_material(i,game.texture_mat(texture,tint))
+			if kind=="memory_wool":
+				var cloth:=ShaderMaterial.new();cloth.shader=load("res://shaders/memory_wool.gdshader");cloth.set_shader_parameter("weave",load("res://assets/original/work_canvas.png"));mesh.set_surface_override_material(i,cloth)
+			else:mesh.set_surface_override_material(i,game.texture_mat(texture,tint))
 func build_work_surface() -> void:
-	radio=game.model("res://assets/interiors/radio.glb",self,Vector3(4.88,.81,-8.56),Vector3(.36,.25,.20))
+	radio=game.model("res://assets/interiors/home/radio.glb",self,Vector3(4.88,.81,-8.56),Vector3(.36,.25,.20))
 	radio.name="ArchiveReturnReceiver";finish_materials(radio)
 	game.collision(self,Vector3(4.88,.95,-8.55),Vector3(.38,.26,.22),"return_receiver")
 	var mat: MeshInstance3D=game.box(self,Vector3(6.27,.809,-8.56),Vector3(.38,.012,.36),Color("3b3d34"));mat.name="CarbonWritingMat"
@@ -52,13 +54,13 @@ func build_work_surface() -> void:
 	var pencil: MeshInstance3D=game.box(self,Vector3(6.50,.821,-8.55),Vector3(.012,.012,.24),Color("8e7650"));pencil.rotation.y=.15
 func build_room() -> void:
 	room=Node3D.new();room.name="RememberedBedroom";add_child(room)
-	var bed=model("bedSingle",Vector3(6.3,0,1.0),Vector3(1.20,.72,2.25))
+	var bed=model("bedSingle",Vector3(6.35,0,-1.65),Vector3(1.16,.72,2.15))
 	bed.name="ChildhoodBed"
 	# Keep the licensed fabric readable as cloth, instead of recolouring it as wood.
 	for mesh in game.all_meshes(bed):
-		if mesh.name.to_lower().contains("cover") or mesh.name.to_lower().contains("pillow"):
+		if mesh.name.to_lower().contains("pillow"):
 			mesh.material_override=game.texture_mat("res://assets/original/work_canvas.png",Color("6b7368"))
-	cabinet=model("cabinetBedDrawer",Vector3(4.95,0,1.85),Vector3(.65,.64,.55))
+	cabinet=model("cabinetBedDrawer",Vector3(5.15,0,-2.28),Vector3(.65,.64,.55))
 	cabinet.name="MemoryBedsideCabinet"
 	var found=cabinet.find_children("*drawer*","Node3D",true,false)
 	if not found.is_empty():drawer=found[0]
@@ -73,16 +75,28 @@ func build_room() -> void:
 			page.material_override=game.texture_mat("res://assets/original/aged_paper.png",Color("b0a68c"))
 			game.collision(drawer,paper_pos+Vector3.UP*.01,Vector3(bounds.size.x*.70,.02,bounds.size.z*.65),"memory_page")
 	# The whole cabinet bounds remain solid: the storage interaction never clips a player inside it.
-	game.collision(room,Vector3(4.95,.43,2.15),Vector3(.54,.28,.12),"memory_drawer")
-	model("lampRoundTable",Vector3(4.97,.65,1.88),Vector3(.25,.34,.25),0,false)
-	model("books",Vector3(4.95,.65,1.66),Vector3(.27,.12,.15),0,false)
-	var shelf=model("bookcaseClosedDoors",Vector3(6.3,0,-2.48),Vector3(1.25,1.85,.56))
+	game.collision(room,Vector3(5.15,.43,-1.98),Vector3(.54,.28,.12),"memory_drawer")
+	model("lampRoundTable",Vector3(5.12,.65,-2.29),Vector3(.25,.34,.25),0,false)
+	model("books",Vector3(5.17,.65,-2.43),Vector3(.27,.12,.15),0,false)
+	var wallpaper=game.box(room,Vector3(4.48,1.39,-2.902),Vector3(5.84,2.60,.004),Color.WHITE)
+	var wall_mat: StandardMaterial3D=game.texture_mat("res://assets/dusk/psx_house_wallpaper_01.png",Color("9a9b80")).duplicate();wall_mat.uv1_scale=Vector3(4,1.6,1);wallpaper.material_override=wall_mat
+	var shelf=model("bookcaseClosedDoors",Vector3(3.05,0,-2.58),Vector3(1.25,1.85,.56))
 	shelf.name="RememberedStorage"
-	room_lamp=OmniLight3D.new();room.add_child(room_lamp);room_lamp.position=Vector3(4.97,.95,1.88)
-	room_lamp.light_color=Color(.83,.68,.43);room_lamp.light_energy=.55;room_lamp.omni_range=4;room_lamp.shadow_enabled=true
+	room_lamp=OmniLight3D.new();room.add_child(room_lamp);room_lamp.position=Vector3(5.12,.95,-2.29)
+	room_lamp.light_color=Color(.83,.68,.43);room_lamp.light_energy=.8;room_lamp.omni_range=4;room_lamp.shadow_enabled=true
 	# The same childhood plan is remembered here, without inventing a new photograph.
-	var paper: MeshInstance3D=game.box(room,Vector3(6.28,1.22,-2.188),Vector3(.29,.33,.006),Color("9b947a"))
-	var ink: Label3D=game.label3(room,"FOR DAD\nBACK FOR TEA\n\nELI / 7",Vector3(6.28,1.22,-2.18),0,14,Color("303730"));ink.pixel_size=.0022
+	var paper: MeshInstance3D=game.box(room,Vector3(3.05,1.22,-2.288),Vector3(.29,.33,.006),Color("9b947a"))
+	var ink: Label3D=game.label3(room,"FOR DAD\nBACK FOR TEA\n\nELI / 7",Vector3(3.05,1.22,-2.28),0,14,Color("303730"));ink.pixel_size=.0022
+	# Child-sized work corner and a worn bedside rug leave the centre aisle open.
+	model("desk",Vector3(7.05,0,.10),Vector3(1.3,.70,.58),PI/2,true)
+	model("chairDesk",Vector3(6.15,0,.10),Vector3(.48,.83,.48),-PI/2,true)
+	var rug=model("rugRectangle",Vector3(4.65,.012,-.65),Vector3(1.0,.014,1.75),0,false)
+	for mesh in game.all_meshes(rug):
+		var wool:=ShaderMaterial.new();wool.shader=load("res://shaders/memory_wool.gdshader");wool.set_shader_parameter("weave",load("res://assets/original/work_canvas.png"));wool.set_shader_parameter("rug",true);mesh.material_override=wool
+	model("books",Vector3(7.03,.705,.42),Vector3(.27,.12,.19),PI/2,false)
+	var drawing=game.box(room,Vector3(7.02,.705,-.18),Vector3(.29,.003,.21),Color("b3ac90"))
+	drawing.material_override=game.texture_mat("res://assets/original/eli_bedroom_sketch.svg",Color.WHITE)
+	ink.font=load("res://assets/fonts/Kalam-Regular.ttf");ink.text="Dad, back for tea?\nEli";ink.font_size=28;ink.pixel_size=.0013
 	room.visible=false;set_collisions(room,false)
 func set_collisions(root: Node,on: bool) -> void:
 	for body in root.find_children("*","CollisionObject3D",true,false):
@@ -108,17 +122,17 @@ func open_carbon() -> void:
 	if not game.events.get("field_return_read",false):
 		game.inspect_text("WRITING MAT","A soft pencil and a sheet of tracing paper. The mat is marked with old graphite.");return
 	var p=game.presentation;p.pause_world();p.clear_transients();p.clear_card();p.section="document"
-	p.label(p.card_body,"ORIGINAL RETURN / PRESSURE MARKS",15,"Meta")
-	p.label(p.card_body,"THE TORN PAGE",30,"Title")
-	p.label(p.card_body,"Drag the pencil across the backing sheet to bring out the impressions.",18)
+	var backing: StyleBoxFlat=p.normal_panel.duplicate();backing.bg_color=Color(0,0,0,0);backing.border_width_left=0;backing.border_width_top=0;p.card.add_theme_stylebox_override("panel",backing)
+	p.label(p.card_body,"Hold and move the pencil over the paper.",17).modulate=Color("b2b7a9")
 	var rubbing=load("res://scripts/carbon_rubbing.gd").new();rubbing.game=game;p.card_body.add_child(rubbing)
-	p.add_button("Complete rubbing / motor assistance",rubbing.complete_accessibly,true,p.card_body)
-	p.add_button("Keep sheet",func():game.save_game();p.resume_game(),true,p.card_body)
+	var actions:=HBoxContainer.new();p.card_body.add_child(actions)
+	p.add_button("Rub for me",rubbing.complete_accessibly,true,actions)
+	p.add_button("Put sheet down",func():game.save_game();p.resume_game(),true,actions)
 	p.entrance_animation(p.card)
 func complete_rubbing() -> void:
 	game.events.carbon_read=true
 	game.events.notes=game.events.get("notes",{})
-	game.events.notes["TORN PAGE / IMPRESSIONS"]="104.6 / HOME\nELI IS AT HOME. I RANG.\nTHE DOOR WAS SHUT WHEN IT CHANGED.\n\nDad's pencil pressed through the missing page onto its backing sheet."
+	game.events.notes["TORN PAGE / IMPRESSIONS"]="Kitchen radio: 104.6.\nI phoned home. Eli answered. He's safe.\nI shut the lounge door. Now it's his room.\n\nDad's writing pressed through the missing page. The room he described wasn't part of this house."
 	game.save_game()
 func open_receiver() -> void:
 	if game.stage<3:game.message("The receiver is silent. Its supply light is out.",3);return
@@ -139,7 +153,7 @@ func use_drawer() -> void:
 	if is_instance_valid(drawer):
 		if not drawer.has_meta("rest_z"):drawer.set_meta("rest_z",drawer.position.z)
 		create_tween().tween_property(drawer,"position:z",float(drawer.get_meta("rest_z"))+(.22 if drawer_open else 0),.45)
-	game.sound("door",Vector3(4.95,.4,1.85),-34)
+	game.sound("door",Vector3(5.15,.4,-2.28),-34)
 	sync_page();game.save_game()
 func take_page() -> void:
 	if not active or not drawer_open or game.events.get("last_page_read",false):return
@@ -185,7 +199,7 @@ func watcher_process(delta: float) -> void:
 		watch_clock=-1;game.events.memory_watch_done=true;game.save_game()
 func room_observed() -> bool:
 	if not active:return game.impossible_room.can_see_changed_room()
-	for point in [Vector3(6.3,.55,1),Vector3(4.95,.55,1.85),Vector3(6.3,1.4,-2.4),Vector3(4,.15,1)]:
+	for point in [Vector3(6.35,.55,-1.65),Vector3(5.15,.55,-2.28),Vector3(3.05,1.4,-2.4),Vector3(4,.15,1)]:
 		if game.player.camera.is_position_behind(point):continue
 		if not game.get_viewport().get_visible_rect().has_point(game.player.camera.unproject_position(point)):continue
 		var q:=PhysicsRayQueryParameters3D.create(game.player.camera.global_position,point,1);q.exclude=game.impossible_room.sight_exclusions

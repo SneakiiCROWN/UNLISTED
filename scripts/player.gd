@@ -26,6 +26,13 @@ func can_stand() -> bool:
 	query.collision_mask=1|16|32;query.exclude=[get_rid()]
 	return get_world_3d().direct_space_state.intersect_shape(query).is_empty()
 
+func restore_stance(saved: bool) -> void:
+	crouched=saved or not can_stand()
+	var capsule: CapsuleShape3D=body_shape.shape
+	capsule.height=1.04 if crouched else 1.72
+	body_shape.position.y=capsule.height*.5
+	camera.position.y=.94 if crouched else 1.62
+
 func _ready() -> void:
 	collision_layer = 2
 	collision_mask = 1|16|32

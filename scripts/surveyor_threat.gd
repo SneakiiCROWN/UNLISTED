@@ -174,7 +174,7 @@ func closest(point: Vector3) -> int:
 	return graph.get_closest_point(point) if best < 0 else best
 
 func route_clear(from: Vector3,to: Vector3) -> bool:
-	if from.z < -15 and to.z < -15 and absf(from.y+3)<.2 and absf(to.y+3)<.2:
+	if absf(from.y+3)<.2 and absf(to.y+3)<.2:
 		# Reuse the actual 2.05 m / .38 m capsule. Lift a few centimetres solely
 		# for a horizontal query above the floor; movement/gravity stay unchanged.
 		return not game.presence.test_move(Transform3D(Basis.IDENTITY,from+Vector3.UP*.035),to-from)

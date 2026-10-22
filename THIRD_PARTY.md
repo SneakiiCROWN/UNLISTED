@@ -63,3 +63,8 @@ No reference screenshots are used as textures. No paid assets or software purcha
 - Surveyor presence: existing CC0 Quaternius worker topology/rig and seven retargeted UAL clips, with original fitted thick hood, damp hair, facial sculpt and coat-fold changes. Active source tools/Surveyor_Presence.blend and refine_surveyor_presence.py. Earlier sources/models remain preserved. Provenance assets/original/surveyor_presence_provenance.json. Existing Sonniss temporary vocal/cloth cues remain unchanged and replaceable.
 
 - Isolated Erasure character study (not the default Surveyor): existing CC0 Quaternius base/UAL clips plus Hair_Long from Universal Base Characters Standard, licence reread from the preserved archive. Original continuous weighted coat, facial sculpt, vertex wear and fitting. Existing skin/work-canvas textures retained. Packed editable study: tools/Surveyor_ErasureStudy.blend. No rejected Hollow/Return design was promoted.
+
+
+## Recovered home / underfloor work
+
+Kalam Regular by Indian Type Foundry (2014), unmodified SIL OFL 1.1. Source: https://github.com/google/fonts/tree/main/ofl/kalam ; licence assets/fonts/Kalam_OFL.txt. Kenney CC0 furniture derivatives add UVs and fitted bedding; provenance in assets/interiors/home/provenance.json, originals and Blender sources preserved locally. Quiet paper handling derives from the already licensed SONNISS GDC 2026 antique-book recording; provenance in assets/audio/foley/paper_provenance.json. Original Eli sketch and cloth shader are authored game material. Raw media is not included in public source.
