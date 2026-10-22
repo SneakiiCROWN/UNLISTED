@@ -1,3 +1,7 @@
+# Current: 0.9.0 Inspection published and independently verified
+
+Read INSPECTION_PUBLICATION.md and INSPECTION_VERIFICATION.md. Earlier candidate stages below are preserved history. The full major directive remains unfinished.
+
 # Expansion / active development after 0.8.1
 
 Authoritative complete project remains local Game. Published 0.8.1 is preserved, not replaced. Start recovery: clean d96e17b, local tag recovery/before-inspection-expansion-d96e17b; receipt in Checkpoints/20261022_expansion_start_d96e17b. Do not restore incomplete public source over this project.
@@ -51,3 +55,6 @@ The second physical hiding interaction is now implemented and targeted-tested, s
 ## Final Inspection candidate acceptance
 
 Inspection_11 earned fresh investigation and both endings 284/0; chapter56, systems33, threat56, underfloor42 and impossible43 passed. Final Inspection_12 differs only by one comparison status sentence; equipment/UV79 at ultrawide, prerequisite edges15 and story/layout156 passed. Read INSPECTION_VERIFICATION.md for exact scopes and preserved rejected edge fixture. No more full-route repetition is required for documentation/package changes. Packaging and independent download verification are the remaining release steps. All broader remaining production work stays open.
+
+
+Release secured: public571f1db / complete private archive703d08b. All six public downloads independently hash-match; WindowsZIP CRC/extraction/native arrival23/0, source fresh import and72/0 script preflight verified. Owner profile/settings unchanged. Continue production from the latest complete local source; do not redo accepted routes for documentation-only updates.

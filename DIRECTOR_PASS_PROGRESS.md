@@ -1,3 +1,7 @@
+# Newer milestone: 0.9.0 Inspection published
+
+See INSPECTION_PUBLICATION.md, INSPECTION_VERIFICATION.md and EXPANSION_PROGRESS.md before using the older director-pass stages below. Complete local source remains authoritative.
+
 # Latest / accepted 0.8.1 candidate
 
 Arrival_07 acceptance complete; read the final table in DIRECTOR_PASS_VERIFICATION.md. Runtime matches the recorded 05 route. Both endings completed; one obsolete test-title failure is retained and separately resolved by native physical rereading. Published and anonymously downloaded: see SPARE_PLACE_PUBLICATION.md. Native downloaded arrival23/0; complete archived source freshly imports.

@@ -1,3 +1,15 @@
+# UNLISTED 0.9.0 / Inspection
+
+Battery packs and backup winding; discoverable inspection head; local mouse-driven UV paper investigation; saved radio/service-role variants; fitted physical cupboard cover and a post-discovery search. The existing original report, copied bedroom and ending conditions remain connected to those changes.
+
+Opening motivation and the live-playback question are clearer. An unpowered terminal no longer reveals its file. The work mat is clear, paper labels fit their backing and the window watcher faces the window. Old saves migrate with their prior answers and knowledge; copy your profile before switching back to older executables.
+
+Actual fresh exported gameplay completes the investigation and both departures. Targeted evidence covers UV/batteries, physical hiding/noise/death/retry, legacy systems, pursuit, underfloor rack, impossible room and three render sizes. All six public assets independently hash-match; the downloaded Windows package runs. Read INSPECTION_VERIFICATION.md and INSPECTION_PUBLICATION.md for exact boundaries.
+
+This does not complete the larger story/middle-act expansion or professional Surveyor redesign. Human fear, writing comprehension, art, listening, hardware-controller use and first-play duration remain pending. No 30-60-minute claim. Earlier release history follows unchanged.
+
+---
+
 # UNLISTED 0.8.1 / The Spare Place
 
 A new optional investigation follows the disconnected counter's impossible arrival. An empty utility cot, a birthday that never happened and a contradictory reflection lead into a physical search encounter. Eli's recollection and the 1998 paperwork disagree; neither proves Simon returned.
