@@ -19,7 +19,7 @@ const PANEL:=Vector3(4.8,1.28,-3.20)
 const NOTE:="Continuity test / S. Ward\n\nThe feed switch stops the motor. Pulling the return plug separates the line from the rest of the property. Test the striker before and after. Don't mistake a sound in the house for a sound from the box.\n\nThe timber marks below the office are mine. I used the same rhythm so I could recognise it upstairs.\n\nThe counter printed another arrival after I disconnected both leads. It put the name down before anyone came through the door. I checked the register myself. No one had arrived.\n\nKeep the strip with the handwritten entry. The counter isn't a witness."
 func _ready() -> void:
 	name="DeadLineInvestigation";build()
-	motor=game.sound("hum",PANEL,-80,true);motor.max_distance=5;motor.unit_size=1.25
+	motor=game.sound("hum",PANEL,-35,true);motor.max_distance=5;motor.unit_size=1.25
 	restore()
 func plate(pos: Vector3,size_: Vector3,color: Color) -> MeshInstance3D:
 	var mesh: MeshInstance3D=game.box(panel,pos,size_,color)
@@ -48,7 +48,7 @@ func build() -> void:
 	plug=Node3D.new();panel.add_child(plug);plug.position=Vector3(.16,.035,.073)
 	game.box(plug,Vector3.ZERO,Vector3(.050,.045,.055),Color("3c3a30"))
 	return_cable=repair.tube(Vector3(.16,-.005,.083),Vector3(.22,-.17,.09),.009,Color("292d28"),panel)
-	repair.tube(Vector3(.22,-.17,.09),Vector3(.22,-.40,.04),.009,Color("292d28"),panel)
+	repair.tube(Vector3(.30,-.17,.09),Vector3(.30,-.40,.04),.009,Color("292d28"),panel)
 	game.collision(panel,Vector3(.16,.035,.11),Vector3(.11,.13,.14),"line_return")
 	tag("RETURN",Vector3(.16,-.085,.05),14)
 	plate(Vector3(0,.005,.055),Vector3(.055,.055,.030),Color("a19876"))
@@ -82,11 +82,11 @@ func restore() -> void:
 	plug.position.y=-.09 if game.events.get("line_return_out",false) else .035
 	plug.position.z=.15 if game.events.get("line_return_out",false) else .073
 	var start: Vector3=plug.position+Vector3(0,-.0225,.015)
-	var end:=Vector3(.22,-.17,.09)
+	var end:=Vector3(.30,-.17,.09)
 	return_cable.position=(start+end)*.5;return_cable.mesh.height=start.distance_to(end)
 	return_cable.quaternion=Quaternion(Vector3.UP,(end-start).normalized())
 	pilot.visible=game.stage>=3 and not game.events.get("line_feed_off",false)
-	motor.volume_db=-35 if pilot.visible and game.started and not game.ended else -80
+	motor.stream_paused=not (pilot.visible and game.started and not game.ended)
 	strip.visible=game.events.get("line_printed",false)
 	game.targets.line_strip.collision_layer=1 if strip.visible else 0
 	strip_ink.text="17 BRIAR LANE\n\nWARD, ELI\nARRIVED 23:17\n1998\n\nEXIT / --"
@@ -122,7 +122,10 @@ func queue_pattern(where: Vector3,start: float,house: bool) -> void:
 	for i in mini(pattern.size(),6):sequence.append({"at":start+float(pattern[i]),"where":where,"house":house})
 func station_visible() -> bool:
 	var camera: Camera3D=game.player.camera
-	for offset in [Vector3.ZERO,Vector3.DOWN*.62,Vector3.UP*.3]:
+	var samples: Array[Vector3]=[]
+	for x in [-.30,0.0,.30]:
+		for y in [-.73,-.45,0.0,.30]:samples.append(Vector3(x,y,0))
+	for offset in samples:
 		var point: Vector3=PANEL+offset
 		if camera.is_position_behind(point):continue
 		if not game.get_viewport().get_visible_rect().has_point(camera.unproject_position(point)):continue
@@ -134,7 +137,7 @@ func _physics_process(delta: float) -> void:
 	if not game.started or game.menu_open or game.ended:return
 	cooldown=maxf(0,cooldown-delta)
 	pilot.visible=game.stage>=3 and not game.events.get("line_feed_off",false)
-	motor.volume_db=-35 if pilot.visible else -80
+	motor.stream_paused=not pilot.visible
 	if game.threat.active() or game.horror.beat!="" or game.horror.audition!="" or game.chapter.active:
 		stop_sources();sequence.clear();quiet=0
 		if not game.events.get("line_response_complete",false):game.events.line_response_started=false

@@ -12,7 +12,7 @@ func layouts() -> void:
 	check("visual fixture / evidence introduced only outside view",g.dead_line.strip.visible)
 	await use("line_note",false);await shot("D11_annotation_layout");await action("ui_cancel")
 	await use("line_strip",false);await shot("D12_evidence_layout");await action("ui_cancel")
-	check("layout fixture / isolated motor stays silent",g.dead_line.motor.volume_db<=-80)
+	check("layout fixture / isolated motor stays silent",g.dead_line.motor.stream_paused,"armed="+str(g.events.get("line_test_armed",false))+" pilot="+str(g.dead_line.pilot.visible)+" motor_paused="+str(g.dead_line.motor.stream_paused))
 func upstairs_test() -> void:
 	await travel(Vector2(0,-7),"climb original ramp with test evidence")
 	if g.impossible_room.active:
@@ -36,7 +36,7 @@ func upstairs_test() -> void:
 	await wait(2)
 	await use("line_feed")
 	await use("line_strike")
-	check("feed disconnected alone cannot arm house response",not g.events.get("line_test_armed",false) and not g.dead_line.pilot.visible and g.dead_line.motor.volume_db<=-80)
+	check("feed disconnected alone cannot arm house response",not g.events.get("line_test_armed",false) and not g.dead_line.pilot.visible and g.dead_line.motor.stream_paused,"armed="+str(g.events.get("line_test_armed",false))+" pilot="+str(g.dead_line.pilot.visible)+" motor_paused="+str(g.dead_line.motor.stream_paused))
 	await use("line_return")
 	await use("line_strike")
 	check("both physical disconnects arm isolated experiment",g.events.get("line_test_armed",false) and g.dead_line.isolated())
@@ -88,6 +88,11 @@ func run(current: Node) -> void:
 	g.events.chair=true;g.events["return"]=true;g.events.impossible_room_resolved=true;g.events.threat_resolved=true;g.threat.enabled=false;g.threat.reset()
 	g.player.position=Vector3(0,.04,-8.3);g.doors.basement.locked=false;g.presentation.clear_transients()
 	for light in g.lamps:light.light_energy=.6
+	if "--line-power-only" in OS.get_cmdline_user_args():
+		g.events.underfloor_read=true;g.events.underfloor_taps=3;g.player.position=Vector3(4.8,.04,-4.6)
+		await wait(.2);await use("line_strike");await use("line_feed");await use("line_strike")
+		check("power probe",not g.events.get("line_test_armed",false) and not g.dead_line.pilot.visible and g.dead_line.motor.stream_paused,"armed="+str(g.events.get("line_test_armed",false))+" pilot="+str(g.dead_line.pilot.visible)+" motor_paused="+str(g.dead_line.motor.stream_paused))
+		await finish();return
 	if "--line-layouts-only" in OS.get_cmdline_user_args():await layouts();await finish();return
 	await wait(.3);await use("basement");await travel(Vector2(0,-18),"actual ramp descent")
 	await play_store();await upstairs_test()
