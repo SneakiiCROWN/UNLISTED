@@ -60,7 +60,7 @@ func restore_state() -> void:
 
 func update_archive() -> void:
 	var returned: bool=game.events.get("return_request",false)
-	archive.text="CARRIER RESTORED\nWORK ORDER 017\nPRIOR CALL OPEN" if returned else archive_text
+	archive.text="POWER RESTORED\nWORK ORDER 017\n1998 JOB: NOT CLOSED" if returned else archive_text
 	archive.font_size=12 if returned else archive_font
 	archive.pixel_size=.0035 if returned else archive_pixels
 
@@ -74,19 +74,19 @@ func update_sheet() -> void:
 
 func request() -> bool:
 	if game.events.get("case_v2",false) and not game.events.get("field_return_read",false):
-		game.inspect_text("FIELD RETURN MISSING","This is the office copy. Dad said he left his own report in the service drawer. I haven't found that.")
+		game.inspect_text("FIELD RETURN MISSING","I only have the office record. Dad's note says his original report is in the service cabinet downstairs.")
 		return false
 	if game.events.get("case_v3",false) and not game.events.get("bedroom_left",false):
 		game.inspect_text("THE UNFINISHED RETURN",game.NOTES.unfinished_return(game.events))
 		return false
 	if game.events.get("case_v4",false) and not game.events.get("call_complete",false):
-		game.inspect_text("DAD'S LAST TEST","I have his report, but I haven't finished checking the line he was testing.\n\n"+game.last_call.hint());return false
+		game.inspect_text("DAD'S LAST TEST","Dad's later notes describe another test. I want to check what happened before I close this job.\n\n"+game.last_call.hint());return false
 	if active:return false
 	if game.events.get("recount_complete",false):return true
 	# A retained room-memory is scenery, not a live encounter. It must never
 	# prevent the porch close-out after the player has escaped the Surveyor.
 	if game.threat.active() or game.events.get("threat_pending",false):
-		game.inspect_text("ATTENDANCE / STILL OPEN","Simon Ward / 1998 / IN\nEli Ward / tonight / IN\n\nNeither entry has a witnessed departure.")
+		game.inspect_text("ATTENDANCE / STILL OPEN","Simon Ward / 1998 / IN\nEli Ward / tonight / IN\n\nNeither of us has been recorded leaving. I can't stop here while he's nearby.")
 		return false
 	active=true;clock=0;cue_index=0
 	game.events.recount_started=true;game.events.recount_elapsed=0.0

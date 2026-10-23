@@ -65,6 +65,6 @@ func build(g: Node3D) -> void:
 			for index in [i,i+7,i+1,i+1,i+7,i+8]:cloth.add_vertex(points[index])
 	cloth.generate_normals()
 	var blanket:=MeshInstance3D.new();blanket.mesh=cloth.commit();g.add_child(blanket)
-	blanket.position=Vector3(-6.6,.52,-4.88);blanket.name="FoldedRestBlanket"
+	blanket.position=Vector3(mattress.position.x,.52,-4.88);blanket.name="FoldedRestBlanket"
 	var canvas: StandardMaterial3D=g.texture_mat("res://assets/original/work_canvas.png",Color(.83,.8,.67)).duplicate()
 	canvas.cull_mode=BaseMaterial3D.CULL_DISABLED;blanket.material_override=canvas

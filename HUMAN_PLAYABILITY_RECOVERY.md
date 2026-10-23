@@ -1,5 +1,7 @@
 # UNLISTED human-playability continuation / 0.10.1-dev
 
+Newer UNTESTED development follows the verified checkpoint below. Read DEVELOPMENT_PAUSED_TESTS.md first. The verification results here apply to the preserved builds, not the newer language/object edits.
+
 Public Windows release remains v0.10.0 The Last Call. Preserve its release, tag, complete source, saves and all older builds. The source below is newer, unreleased work; never replace it with the public release source.
 
 ## Secured recovery points

@@ -787,7 +787,7 @@ func new_game() -> void:
 	events.case_v3=true
 	events.case_v4=true
 	events.arrival_check=true
-	events.notes={"WHY I CAME":"Dad never came home from 17 Briar Lane. Tonight someone reported a television playing there, even though the house should have no power. I asked for the job. I want to find his old work report before I sign anything."}
+	events.notes={"WHY I CAME":NOTES.WHY_I_CAME}
 	PUZZLES.generate(events)
 	for arg in OS.get_cmdline_user_args():
 		if automated_qa and arg.begins_with("--puzzle-seed="):PUZZLES.generate(events,int(arg.trim_prefix("--puzzle-seed=")))
@@ -881,8 +881,8 @@ func open_casebook() -> void:
 	var text_ := "WORK ORDER 017 / ELI WARD\n17 BRIAR LANE\n\n"
 	if isolated:
 		text_ += "The service circuit is isolated.\n"
-		if events.get("case_v2",false):text_ += "Dad left an original field return in the service cabinet.\n" if not events.get("field_return_read",false) else "I have Dad's original. The office file contradicts it.\n"
-		text_ += "Comparing the two recordings could give me evidence to keep his case open.\n\n"
+		if events.get("case_v2",false):text_ += "Dad left his original report in the service cabinet.\n" if not events.get("field_return_read",false) else "I have Dad's original. The office file contradicts it.\n"
+		text_ += "Comparing my recorded footsteps with what I heard in the room could give dispatch a reason to investigate.\n\n"
 	if brass_key:text_ += "KEYS HELD / brass service-yard key"+("; small cellar key" if shed_read else "")+"\n\n"
 	if notes.is_empty():text_ += "No records examined.\n"
 	for title_ in notes:text_ += title_+"\n"+str(notes[title_])+"\n\n"
@@ -890,6 +890,7 @@ func open_casebook() -> void:
 	presentation.inspect_document("FIELD NOTES / RECORDS EXAMINED",text_)
 
 func interaction_name(id: String) -> String:
+	if id=="hall_microphone":return "Inspect microphone"
 	if id=="call_lightbox":return "Compare plans"
 	if id=="call_niche":return "Close lining door" if doors.call_niche.opened else "Lift recessed latch"
 	if id=="call_bridge":return "Disconnect speaker link"
@@ -918,10 +919,10 @@ func interaction_name(id: String) -> String:
 	if id=="underfloor_sheet":return "Read test sheet"
 	if id=="test_joist":return "Tap timber"
 	if id=="carbon_return":return "Inspect report sleeve"
-	if id=="return_receiver":return "Tune receiver"
+	if id=="return_receiver":return "Tune radio"
 	if id=="memory_drawer":return "Close drawer" if chapter.drawer_open else "Open drawer"
 	if id=="memory_page":return "Take folded page"
-	if id=="record" and events.get("case_v3",false):return "Read works-office record"
+	if id=="record" and events.get("case_v3",false):return "Read site-office notice"
 	if id=="field_notebook":return "Take Simon's report"
 	if id=="relay_record":return "Read field return"
 	if id=="order" and isolated and recount.active:return "Listen"
@@ -929,8 +930,9 @@ func interaction_name(id: String) -> String:
 	if id in ["audition_source","audition_return","exclude_return"] and stage<3:return "Inspect tape recorder"
 	if id=="front" and events.get("arrival_check",false) and not events.get("front_checked",false):return "Knock"
 	if id=="front_gate":return "Close gate" if doors[id].opened else "Open gate"
+	if id=="front" and events.get("arrival_check",false) and not events.get("front_checked",false):return "Knock"
 	if doors.has(id): return "Try door" if doors[id].locked else ("Close door" if doors[id].opened else "Open door")
-	return {"audition_source":"Review hall recording","audition_return":"Replay and listen","exclude_return":"Compare last footstep","order":"Read attendance register" if isolated else "Read call sheet", "television":"Inspect television", "fuse":"Take spare fuse", "breaker":"Restore power", "security":"Review security archive", "record":"Read occupancy record", "shed_record":"Read manual override", "isolate":"Isolate occupancy relay", "valve0":"Turn RED valve", "valve1":"Turn BLUE valve", "valve2":"Turn WHITE valve"}.get(id,"Inspect")
+	return {"audition_source":"Review hall recording","audition_return":"Replay and listen","exclude_return":"Compare last footstep","order":"Read attendance register" if isolated else "Read call sheet", "television":"Inspect television", "fuse":"Take spare fuse", "breaker":"Restore power", "security":"Review security archive", "record":"Read occupancy record", "shed_record":"Read Simon's service note", "isolate":"Pull isolator", "valve0":"Turn RED valve", "valve1":"Turn BLUE valve", "valve2":"Turn WHITE valve"}.get(id,"Inspect")
 
 func try_interact() -> void:
 	if menu_open: return
@@ -948,6 +950,7 @@ func interact(id: String) -> void:
 	if id.begins_with("spare_"):spare_place.use(id);return
 	if id in ["test_reel","test_reel_deck"]:field_tape.use(id);return
 	if id.begins_with("line_"):dead_line.use(id);return
+	if id=="hall_microphone":inspect_text("HALL MICROPHONE",NOTES.HALL_MICROPHONE);save_game(true);return
 	if id=="carbon_return":chapter.open_carbon();return
 	if id=="return_receiver":chapter.open_receiver();return
 	if id=="memory_drawer":chapter.use_drawer();return
@@ -963,7 +966,7 @@ func interact(id: String) -> void:
 		return
 	if doors.has(id):
 		if id == "basement" and not shed_read:
-			message("The stairwell door is locked. Its keyway is smaller than the service lock.")
+			message("Locked. The brass key doesn't fit this one.")
 			return
 		doors[id].use()
 		return
@@ -986,7 +989,7 @@ func interact(id: String) -> void:
 			else:
 				var observation := "A worker stands beside the office door."
 				if events.get("memory_echo",false):
-					observation = "He follows my route. Stops where I stopped. Turns his head a moment too late."
+					observation = "He's walking the same route I took. Stopping where I stopped."
 					events.memory_reviewed = true
 				inspect_text("CAM 02 / HALL","That's the hall I just left. "+observation+"\n\nThe clock on the picture is stuck. There's no camera in that corner.\n\nMy drawing is beside the set. ELI / AGE 7.")
 
@@ -996,10 +999,10 @@ func interact(id: String) -> void:
 				fuse_mesh.visible = false
 				stage = maxi(stage,2)
 				targets["fuse"].collision_layer = 0
-				message("13A ceramic cartridge.",3)
+				message("A spare 13A fuse.",3)
 				sound("latch",targets["fuse"].global_position,-23)
 		"breaker":
-			if not fuse: message("The carrier is empty. BS1362 / 13A.")
+			if not fuse: message("The fuse holder is empty. It takes a 13A fuse.")
 			elif stage < 3:
 				stage = 3
 				for l in lamps: l.light_energy = 1.1
@@ -1007,10 +1010,10 @@ func interact(id: String) -> void:
 				horror.house_responds()
 				sound_caption("A relay clicks shut.",3,"KITCHEN PANEL",relay_sound)
 				sound("relay",targets.security.global_position,-28)
-				events.notes["THE OFFICE SUPPLY"]="The file terminal across the hall came on with the supply. Dad's last job was here. I want to see what they kept."
+				events.notes["THE OFFICE SUPPLY"]=NOTES.OFFICE_POWER
 				message("The file terminal's come on across the hall.",3)
 				save_game()
-			else: message("The supply is on. The service circuit is isolated." if isolated else "The meter is running. There shouldn't be anything connected downstairs.",3)
+			else: message("The supply is on. The service circuit is isolated." if isolated else "The meter is turning. Something downstairs is still drawing power.",3)
 		"security", "record":
 			if stage < 3: message("No power. I can't read the file while the house supply is off.")
 			else:
@@ -1031,7 +1034,7 @@ func interact(id: String) -> void:
 		"valve0", "valve1", "valve2":
 			if isolated:message("The wheels won't turn any further.",3);return
 			if not shed_read:
-				message("A warning on the manifold: loaded feeds must be closed in sequence.")
+				message("The three service lines have to be shut in the right order. There's a procedure sheet by the wheels.")
 				return
 			var index := int(id.right(1))
 			valve_order.append(index)
@@ -1041,13 +1044,13 @@ func interact(id: String) -> void:
 				valve_order.clear()
 				for wheel in valve_visuals.values():wheel.rotation.z = 0
 				sound("relay",targets[id].global_position,-21)
-				message("The catch kicked back. The wheels have reset.")
+				message("The catch snapped back. All three wheels have reset.")
 			else:
 				var v: Node3D = valve_visuals[id]
 				var t := create_tween()
 				t.tween_property(v,"rotation:z",v.rotation.z+PI/2,0.45)
 		"isolate":
-			if valve_order != PUZZLES.sequence(events): message("The handle won't move while the lines are under pressure.")
+			if valve_order != PUZZLES.sequence(events): message("The isolator won't move until all three service lines are closed.")
 			elif not isolated:
 				isolated = true
 				for l in lamps: l.light_energy = 0.15
@@ -1155,7 +1158,7 @@ func door_swing_states() -> Dictionary:
 func save_data() -> Dictionary:
 	if is_instance_valid(maintenance):events.archive_rack_x=maintenance.rack.position.x
 	if is_instance_valid(physical):events["props"] = physical.snapshot()
-	return {"schema":1,"stamina":player.stamina,"crouched":player.crouched,"stage":stage,"fuse":fuse,"key":brass_key,"report":report_read,"shed":shed_read,"isolated":isolated,"events":events,"valves":valve_order,"pos":[player.position.x,player.position.y,player.position.z],"yaw":player.rotation.y,"pitch":player.camera.rotation.x,"ended":ended,"doors":door_save_states(),"door_swing":door_swing_states()}
+	return {"schema":1,"stamina":player.stamina,"sprint_exhausted":player.exhausted,"stamina_delay":player.stamina_delay,"crouched":player.crouched,"stage":stage,"fuse":fuse,"key":brass_key,"report":report_read,"shed":shed_read,"isolated":isolated,"events":events,"valves":valve_order,"pos":[player.position.x,player.position.y,player.position.z],"yaw":player.rotation.y,"pitch":player.camera.rotation.x,"ended":ended,"doors":door_save_states(),"door_swing":door_swing_states()}
 
 func door_save_states() -> Dictionary:
 	var result := {}
@@ -1198,7 +1201,7 @@ func apply_save(data: Dictionary) -> void:
 	var p: Array = data.get("pos",[0,0.1,9])
 	player.position = Vector3(p[0],p[1],p[2])
 	player.restore_stance(bool(data.get("crouched",false)))
-	player.stamina=clampf(float(data.get("stamina",1.0)),0,1);player.sprint_latched=false;player.sprinting=false;player.exhausted=player.stamina<.01;player.stamina_delay=.4
+	player.stamina=clampf(float(data.get("stamina",1.0)),0,1);player.sprint_latched=false;player.sprinting=false;player.exhausted=bool(data.get("sprint_exhausted",player.stamina<.01));player.stamina_delay=clampf(float(data.get("stamina_delay",.4)),0,.8)
 	player.rotation.y = data.get("yaw",0.0)
 	player.camera.rotation.x = data.get("pitch",0.0)
 	player.velocity = Vector3.ZERO

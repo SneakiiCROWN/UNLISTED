@@ -414,7 +414,7 @@ func begin_new_game() -> void:
 	intro_tween.tween_interval(0.8)
 	intro_tween.tween_property(fade,"color:a",1.0,0.7)
 	intro_tween.tween_callback(complete_intro)
-	toast.text = "SPACE / E / ESC  SKIP"
+	toast.text = "A / B / START  SKIP" if game.controller.used else "SPACE / E / ESC  SKIP"
 	toast.modulate.a = 0.65
 
 func complete_intro() -> void:
@@ -533,7 +533,7 @@ func fill_settings(tab: String) -> void:
 			toggle("torch_contacts","Occasional loose torch contact")
 			label(rows,"Standard play includes lethal, escapable encounters.\nStory mode keeps the encounter but prevents death.\nShort sprints help you gain distance. Doors and corners break sight;\nquiet movement gives it less to follow.",18)
 		"Audio":
-			for pair in [["master","Master volume"],["music","Music / tonal score"],["sfx","Sound effects"],["ambience","Environmental ambience"]]:slider(pair[0],pair[1],0,1,0.01)
+			for pair in [["master","Master volume"],["music","Music"],["sfx","Sound effects"],["ambience","Environmental ambience"]]:slider(pair[0],pair[1],0,1,0.01)
 			label(rows,"The house is quiet by design. Listen before you move.",15,"Meta").modulate = Color("839b98")
 		"Input":
 			slider("sensitivity","Mouse sensitivity",0.0005,0.006,0.0001,false)
@@ -541,7 +541,7 @@ func fill_settings(tab: String) -> void:
 			slider("pad_sensitivity","Controller look speed",.5,3.5,.1,false,1.0)
 			slider("pad_deadzone","Controller stick deadzone",.10,.35,.01)
 			toggle("reminders","Brief first-use reminders")
-			var legend: String="STICKS MOVE / LOOK / X USE / B CROUCH / L3 SPRINT\nRB LIGHT / Y PACK / D-PAD UP CHARGE / DOWN TAP\nBACK NOTES / LEFT HINT / START PAUSE / B BACK IN MENUS\nCARRY: X RELEASE / RT THROW / LT + RIGHT STICK ROTATE" if is_instance_valid(game.controller) and game.controller.used else "WASD MOVE / SHIFT SPRINT / CTRL CROUCH / E USE\nF LIGHT / T PACK / B CHARGE / V TAP TORCH\nJ NOTES / H OPTIONAL HINT / ESC PAUSE\nCARRY: E RELEASE / LEFT MOUSE THROW / R + MOUSE ROTATE"
+			var legend: String="STICKS MOVE / LOOK / X USE / B CROUCH / L3 SPRINT\nRB LIGHT / Y BATTERY / D-PAD UP CHARGE / DOWN TAP\nBACK NOTES / LEFT HINT / START PAUSE / B BACK IN MENUS\nCARRY: X RELEASE / RT THROW / LT + RIGHT STICK ROTATE" if is_instance_valid(game.controller) and game.controller.used else "WASD MOVE / SHIFT SPRINT / CTRL CROUCH / E USE\nF LIGHT / T BATTERY / B CHARGE / V TAP TORCH\nJ NOTES / H OPTIONAL HINT / ESC PAUSE\nCARRY: E RELEASE / LEFT MOUSE THROW / R + MOUSE ROTATE"
 			label(rows,legend,16,"Meta")
 		"Display":
 			var row := setting_row("Display mode")
@@ -574,9 +574,9 @@ func fill_settings(tab: String) -> void:
 			slider("retro","Colour depth effect",0.0,1.0,0.01)
 			label(rows,"World pixels and colour depth change; interface text stays sharp.",15,"Meta")
 		"Captions":
-			toggle("subtitles","Spoken dialogue subtitles")
+			toggle("subtitles","Dialogue subtitles")
 			toggle("sound_captions","Environmental sound captions")
-			toggle("observations","Observation text")
+			toggle("observations","Eli's observations")
 			slider("subtitle_scale","Caption text size",0.8,1.4,0.1)
 			toggle("caption_backing","Caption background")
 			label(rows,"Sound captions identify audible events. Observations are Eli's own thoughts.\nRecorded material is labelled separately from a live voice.",16)
@@ -618,7 +618,9 @@ func inspect_document(title_: String, text: String) -> void:
 	note.bbcode_enabled = false
 	note.custom_minimum_size = Vector2(800,385)
 	card_body.move_child(note,card_body.get_child_count()-1)
-	add_button("Close record  /  ESC",resume_game,true,card_body).grab_focus()
+	var close_record: Button=add_button("Close record  /  ESC",resume_game,true,card_body)
+	close_record.text="Put away  /  B" if game.controller.used else "Put away  /  ESC"
+	close_record.grab_focus()
 	entrance_animation(card)
 
 func show_exclusion() -> void:
@@ -631,7 +633,7 @@ func show_exclusion() -> void:
 	label(card_body,"FIELD TEST / HALL MICROPHONE",15,"Meta")
 	label(card_body,"THE LAST FOOTSTEP",32,"Title")
 	var heard_both: bool=game.events.get("audition_A",false) and game.events.get("audition_B",false)
-	var explanation: Label=label(card_body,"A / TONIGHT'S RECORDING     B / REPLAY + ROOM\n\n"+("I stood still after playback stopped. There was one more step.\nDid it come from the recording, or the room?" if heard_both else "A reviews the hall microphone: my footsteps tonight.\nB replays that same recording. Stand still and keep listening after it stops.\nThe 1998 service reel is a separate recording."),20)
+	var explanation: Label=label(card_body,"A / TONIGHT'S RECORDING     B / REPLAY + ROOM\n\n"+("I stood still after playback stopped. There was one more step.\nDid it come from the recording, or the room?" if heard_both else "A plays my footsteps from the hall microphone.\nB plays the same tape again. Stand still and listen after it stops.\nThe 1998 service reel is a separate recording."),20)
 	explanation.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	var state_a := "heard" if game.events.get("audition_A",false) else "not heard"
 	var state_b := "heard" if game.events.get("audition_B",false) else "not heard"
@@ -643,7 +645,7 @@ func show_exclusion() -> void:
 	var ready_: bool = game.events.get("audition_A",false) and game.events.get("audition_B",false)
 	var exclude_a:=add_button("Exclude channel A",func():game.horror.exclude_channel("A"),ready_,card_body);exclude_a.text="From the recording"
 	var exclude_b:=add_button("Exclude channel B",func():game.horror.exclude_channel("B"),ready_,card_body);exclude_b.text="From the room"
-	add_button("Leave transport",resume_game,true,card_body).grab_focus()
+	add_button("Leave recorder",resume_game,true,card_body).grab_focus()
 	entrance_animation(card)
 
 func show_register() -> void:
@@ -653,22 +655,22 @@ func show_register() -> void:
 	clear_card()
 	section = "register"
 	label(card_body,"PROPERTY 17 / ATTENDANCE REGISTER",16,"Meta")
-	label(card_body,"UNCLOSED CALL / 1998",32,"Title")
-	var final_line:="and leave the fault open. Take the receipt out to the lane." if game.events.get("case_v2",false) else "and leave the fault open for dispatch."
+	label(card_body,"SIMON WARD / NO EXIT RECORDED",32,"Title")
+	var final_line:="and ask dispatch to investigate the house. I need to take the receipt out to the lane." if game.events.get("case_v2",false) else "and ask dispatch to investigate the house."
 	var context:="Simon was still inside when the office marked him absent."
 	if game.events.get("case_v3",false):context="Dad knew I was at home. He found my room here anyway.\nHe went back to check whether someone was trapped."
 	if game.events.get("witness_carbon_read",false):context="Dad never signed the clearance. The machine filed it while he was inside.\nI have the unsigned carbon and his account of what happened."
 	if game.events.get("exit_receipt_read",false):context="The service exit printed my departure before I crossed it.\nDad's EMPTY entry doesn't prove he left either. I have his report."
-	if game.events.get("call_complete",false):context="Dad checked that I was safe at home. The house played his call back.\nHe knew it was copying us. He was trying to get past the man at the stairs.\nI have his last page and tonight's disconnected-line test."
-	label(card_body,"SIMON WARD    1998 / MARKED ABSENT / NO EXIT\nELI WARD          TONIGHT / ARRIVAL RECORDED\n\n"+context+"\n\nCorrecting his entry means he was here in 1998, not that I found him.\nI can close my call-out with that correction, or submit the evidence\n"+final_line,20)
+	if game.events.get("call_complete",false):context="Dad's later page says he called home, then heard the speaker repeat our conversation.\nHe used the recorder to get past the man at the stairs.\nI found that page and repeated his test with the speaker disconnected."
+	label(card_body,"SIMON WARD    1998 / MARKED ABSENT / NO EXIT\nELI WARD          TONIGHT / ARRIVAL RECORDED\n\n"+context+"\n\nCorrecting his entry means he was here in 1998, not that I found him.\nI can close tonight's job with that correction, or submit the evidence\n"+final_line,20)
 	var close_call:=add_button("Simon Ward / PRESENT",func():game.finish_attendance("accounted_for"),true,card_body)
-	close_call.text="Correct his entry / close my call-out";close_call.grab_focus()
+	close_call.text="Correct the 1998 entry / close tonight's job";close_call.grab_focus()
 	if not game.events.get("case_v2",false):add_button("Eli Ward / PRESENT",func():resume_game();game.sound("relay",Vector3(0,1.5,4),-26);game.message("Your arrival is already entered. Simon's departure is still blank.",5),true,card_body)
 	if game.events.get("memory_confirmed",false):
 		label(card_body,"Submit both accounts to request an investigation. Dad remains missing.",16,"Meta")
 		var keep_case:=add_button("Attach original / keep Simon's case open",func():game.finish_attendance("on_record"),true,card_body)
-		keep_case.text="Submit both reports / leave the fault open"
-	add_button("Leave the sheet",resume_game,true,card_body)
+		keep_case.text="Submit the evidence / request investigation"
+	add_button("Leave register",resume_game,true,card_body)
 	entrance_animation(card)
 
 func show_death(already_black := false) -> void:
@@ -687,7 +689,7 @@ func show_death(already_black := false) -> void:
 	label(card_body,"PROPERTY 17 / ATTENDANCE LOST",15,"Meta")
 	label(card_body,"NO DEPARTURE RECORDED",34,"Title")
 	rule(card_body)
-	label(card_body,"The house remembers where you stopped.\nYour last checkpoint is intact.",21)
+	label(card_body,"Your last checkpoint is intact.",21)
 	add_button("Retry Checkpoint",restart_checkpoint,has_checkpoint(),card_body).grab_focus()
 	add_button("Main Menu",return_to_title,true,card_body)
 	add_button("Quit to Desktop",quit_game,true,card_body)
@@ -720,10 +722,10 @@ func show_ending() -> void:
 	rule(body)
 	if retained:
 		label(body,"1998 / Simon Ward     STILL MISSING\nTonight / Eli Ward      WITNESS RECORDED",21)
-		label(body,"I left Dad's report with mine. His account, and what happened to me tonight.\n\nHe is still missing. But there are two reports now.\nSomeone has to come back and check this house." if game.events.get("case_v3",false) else "I sent the comparison with Dad's report. The fault stays open.\n\nHe is still missing. But his account is on record now, and so is mine.",19)
+		label(body,"I left Dad's report with mine. His account, and what happened to me tonight.\n\nHe is still missing. But there are two reports now.\nThis time I want someone to check the house, not just the paperwork." if game.events.get("case_v3",false) else "I sent the comparison with Dad's report. The fault stays open.\n\nHe is still missing. But his account is on record now, and so is mine.",19)
 	else:
 		label(body,"1998 / Simon Ward     PRESENT\nTonight / Eli Ward      DEPARTURE RECORDED\nSimon is still missing.",21)
-		label(body,"I corrected Dad's entry. He was here. He never signed out.\n\nI closed my call-out and kept his last page.\nI still don't know where he went. He was trying to get home." if game.events.get("case_v3",false) else "I corrected Dad's entry and closed my call-out.\nHe was here. He never signed out.\n\nI still have his service key. I still don't know where he went.",19)
+		label(body,"I corrected Dad's entry. He was here. He never signed out.\n\nI closed tonight's job and kept the pages he left.\nI still don't know where he went. He was trying to get home." if game.events.get("case_v3",false) else "I corrected Dad's entry and closed my call-out.\nHe was here. He never signed out.\n\nI still have his service key. I still don't know where he went.",19)
 	add_button("Credits",show_credits)
 	add_button("Main Menu",func():game.started = false;show_menu(true))
 	add_button("Quit to Desktop",func():get_tree().quit())

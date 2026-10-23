@@ -8,7 +8,9 @@ Eli Ward takes a night call at 17 Briar Lane, the address on his father Simon's 
 
 ## Unreleased playability work
 
-The current source includes the tested B/Start correction, brief torch meter with an optional persistent setting, and targeted interaction wording. These changes are **not in the v0.10.0 download**. See [recovery and remaining work](HUMAN_PLAYABILITY_RECOVERY.md). The next verified source checkpoint adds Hold/Toggle sprint, finite stamina, a fading bar and clearer office-machine language; live Surveyor escape and earned ending continuations pass. The latest checkpoint also fits a matching D cell to the existing reload animation and both physical pickups; native pickup/save and reload-interruption tests pass, with poses reviewed at all three resolutions. Human art, balance and controller-hardware approval remain pending.
+The preserved verified 0.10.1-dev checkpoint adds the B/Start correction, fading torch meter, Hold/Toggle sprint with stamina, clearer office controls and a fitted D-cell reload. These changes are not in the v0.10.0 Windows download. See [the verified recovery record](HUMAN_PLAYABILITY_RECOVERY.md).
+
+**Newer source is untested development.** At the owner's request, gameplay testing and Windows exports are paused. This pass revises player-facing writing and ending context, gives the hall microphone a physical presence, brings recorder functions into one inspection screen, adjusts a few supported props and preserves more of stamina's saved state. No new build is published. See [changed systems and deferred checks](DEVELOPMENT_PAUSED_TESTS.md).
 
 ## Play
 

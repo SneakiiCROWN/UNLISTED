@@ -20,8 +20,8 @@ const SPAWNS:=[Vector3(2.8,-2.99,-18.3),Vector3(0,-2.99,-22)]
 const TITLE:="SIMON / AFTER THE LOUNGE"
 const PLAN_TITLE:="THE TWO CELLAR PLANS"
 const PLAN_NOTE:="The printed sheet is the site-office plan issued in 1998. Dad's tracing was folded into the test-reel sleeve. It's marked 'measured in cellar / after the lounge'.\n\nThe stairs, walls and service line match. His tracing adds a doorway beside the lower landing, on the west side. The printed plan shows solid wall there.\n\nHe either found an alteration they hadn't recorded, or this place showed him a different layout. I can check the wall myself."
-const AFTER:="17 BRIAR LANE / S. WARD / 1998\nAfter the lounge inspection\n\nI rang home again. Eli was there. I could hear the kettle behind him.\n\nThen the monitor in this bay played our first call back. Every word. Even the kettle, in the same place. The line to it was already disconnected.\n\nI don't think there was a child in that room. It had my call, his room and the drawing from my toolbox. It was using things I knew.\n\nI nearly left it for the next contractor. Then the transport started again and the man was at the landing. I played the test reel in the office. He went towards it. I got back into this bay.\n\nI haven't signed the clearance. If anyone comes after me, please check the rooms. Don't follow a voice just because you recognise it.\n\n[The page ends here. The drawing and disconnected bridge are still in the bay.]"
-const OBSERVATION:="Dad's tracing led to a real doorway. Inside were the drawing from his toolbox, his test connections and a page written after he saw my room.\n\nHe checked that I was safe at home. Then this monitor repeated the call. He knew it was copying us.\n\nI pulled out the metal link connecting the speaker. It still answered the old recording. The switch here can run the office recorder without reconnecting the speaker.\n\nDad wasn't choosing this place over me. He was trying to work out what it was doing, then trying to get past the man at the stairs. I still don't know how far he got."
+const AFTER:="17 BRIAR LANE / S. WARD / 1998\nAfter the lounge inspection\n\nI rang home again. Eli was there. I could hear the kettle behind him.\n\nThen the speaker in this bay played our first call back. Every word. Even the kettle, in the same place. The line to it was already disconnected.\n\nI don't think there was a child in that room. It had my call, his room and the drawing from my toolbox. It was using things I knew.\n\nI nearly left it for the next contractor. Then the recorder started again and the man was at the landing. I played the test reel in the office. He went towards it. I got back into this bay.\n\nI haven't signed the clearance. If anyone comes after me, please check the rooms. Don't follow a voice just because you recognise it.\n\n[The page ends here.]"
+const OBSERVATION:="Dad's tracing led to a doorway missing from the printed plan. His toolbox drawing and another page of his report were inside.\n\nHe wrote that he phoned home to check on me. The speaker in this room played that call back to him, even though he'd disconnected it.\n\nI pulled out the metal link connecting the speaker. It still answered the old recording. The switch here can run the office recorder without reconnecting the speaker.\n\nHis page says he used the recorder to draw the man away from the stairs. He was trying to get out. I still don't know what happened after he hid here."
 func _ready() -> void:
 	name="TheLastCall";build();restore()
 	var previous:=24
@@ -67,11 +67,11 @@ func build() -> void:
 		repair.tube(pair[0],pair[1],.009,Color("a18b60"),jumper)
 	retainer=repair.tube(Vector3(-.12,-.02,.04),Vector3(-.065,.055,.055),.0025,Color("777a65"),plate)
 	game.collision(plate,Vector3(0,.015,.058),Vector3(.19,.14,.09),"call_bridge")
-	tag(plate,"SIGNAL",Vector3(0,-.085,.025),11)
+	tag(plate,"SPEAKER LINK",Vector3(0,-.085,.025),11)
 	var remote: Node3D=surface(bay,REMOTE,Vector3(.24,.13,.09),steel,Color("585746"));remote.rotation.y=PI
 	game.box(remote,Vector3(0,0,.065),Vector3(.08,.04,.055),Color("a89a77"))
 	game.collision(remote,Vector3(0,0,.07),Vector3(.21,.14,.11),"call_remote")
-	tag(remote,"DECK REMOTE",Vector3(0,-.05,.050),9)
+	tag(remote,"OFFICE REPLAY",Vector3(0,-.05,.050),9)
 	for points in [[Vector3(-3.92,-1.65,-12.96),Vector3(-4.08,-1.65,-12.96),Vector3(-4.08,-.45,-12.96),Vector3(-3.25,-.45,-12.96)],[Vector3(-2.57,-1.66,-12.94),Vector3(-2.57,-1.18,-12.94),Vector3(-3.92,-1.18,-12.94),Vector3(-3.92,-1.42,-12.94)]]:
 		for i in range(points.size()-1):repair.tube(points[i],points[i+1],.008,Color("272e26"),bay)
 	folded_page=surface(bay,Vector3(-3.25,-1.881,-13.08),Vector3(.35,.004,.28),"res://assets/original/aged_paper.png",Color("b8ad8b"))
@@ -114,7 +114,7 @@ func open_plans() -> void:
 		button.custom_minimum_size.x=0;button.size_flags_horizontal=Control.SIZE_EXPAND_FILL;button.add_theme_font_size_override("font_size",18)
 	widget.focus_neighbor_bottom=widget.get_path_to(actions.get_child(0))
 	actions.get_child(0).focus_neighbor_top=actions.get_child(0).get_path_to(widget)
-	var guidance: Label=p.label(p.card_body,"Drag / scroll to turn. Arrows or right stick move; D-pad selects controls. Match shared landmarks.",15,"Meta");guidance.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	var guidance: Label=p.label(p.card_body,"Right stick moves the tracing; D-pad selects buttons. Match the stairs, walls and service line." if game.controller.used else "Drag the tracing; scroll to turn it. Match the stairs, walls and service line.",15,"Meta");guidance.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	widget.grab_focus()
 func busy() -> bool:
 	return game.events.get("call_test_running",false) or game.events.get("call_search_running",false) or reply_clock>=0
@@ -185,12 +185,12 @@ func finish_if_ready() -> void:
 	if game.events.get("call_test_complete",false) and game.events.get("call_note_read",false) and game.events.get("call_search_done",false):
 		game.events.call_complete=true;game.events.notes["ELI / THE LAST CALL"]=OBSERVATION
 func hint() -> String:
-	if game.events.get("call_search_running",false):return "The deck is upstairs. Its remote still works from the bay. If he can't see me, the recording might draw him away."
+	if game.events.get("call_search_running",false):return "The recorder is upstairs. This switch can start it from here. If he loses sight of me, he might go towards the sound."
 	if game.events.get("call_test_complete",false) and not game.events.get("call_note_read",false):return "There is a folded page beside the drawing in the bay."
-	if game.events.get("call_disconnected",false):return "The speaker link is out. The switch here starts Dad's recording upstairs. I can listen for an answer."
+	if game.events.get("call_disconnected",false):return "The metal link is out, so the speaker should be silent. The separate switch starts Dad's recording upstairs. I can listen here while it plays."
 	if game.events.get("call_plan_aligned",false):return "Dad marked a doorway west of the bottom landing. The issued plan shows wall."
 	if not game.events.get("test_reel_found",false):return "Dad kept his test reel and measured tracing in the records store. The access is beside the cellar ramp."
-	if not game.events.get("test_reel_loaded",false):return "The reel fits the office deck. Its folded tracing belongs over the issued plan in the wall cabinet."
+	if not game.events.get("test_reel_loaded",false):return "The reel fits the office recorder. Dad folded a tracing into its sleeve. I can compare it with the plan in the lightbox."
 	return "The site plan and Dad's tracing share the same stairs and service line. I can compare them on the office lightbox."
 func _physics_process(delta: float) -> void:
 	if not game.started or game.menu_open or game.ended:return
@@ -199,7 +199,7 @@ func _physics_process(delta: float) -> void:
 		reply_clock+=delta
 		if reply_index<3 and reply_clock>1.2+reply_index*.65:
 			var cue: AudioStreamPlayer3D=game.sound("prop_impact",SPEAKER,-29);cue.pitch_scale=.82;cue.max_distance=7;cue.unit_size=1;sources.append(cue)
-			if reply_index==0:game.sound_caption("The taps answer from the disconnected monitor.",3,"RETURN BAY",cue)
+			if reply_index==0:game.sound_caption("Taps from the disconnected speaker.",3,"RETURN BAY",cue)
 			reply_index+=1
 		if reply_index==3:
 			reply_clock=-1;game.events.call_test_running=false;game.events.call_test_complete=true

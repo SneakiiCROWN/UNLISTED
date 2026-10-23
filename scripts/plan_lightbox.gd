@@ -83,7 +83,7 @@ func plan(marked: bool) -> void:
 		draw_arc(Vector2(-157,22),54,PI*1.5,TAU,22,Color("775541"),2,true)
 		draw_line(Vector2(-157,22),Vector2(-157,-32),Color("775541"),2,true)
 		draw_string(HAND,Vector2(-230,63),"Door here. Not on plan.",HORIZONTAL_ALIGNMENT_LEFT,-1,17,Color("654b3c"))
-		draw_string(HAND,Vector2(-166,-18),"return bay",HORIZONTAL_ALIGNMENT_LEFT,-1,15,Color("654b3c"))
+		draw_string(HAND,Vector2(-166,-18),"recess",HORIZONTAL_ALIGNMENT_LEFT,-1,15,Color("654b3c"))
 func _draw() -> void:
 	var aligned: bool=game.events.get("call_plan_aligned",false)
 	draw_rect(Rect2(8,5,784,386),Color("353c35"));draw_rect(Rect2(19,16,762,363),Color("d0c8a0"))
@@ -96,5 +96,5 @@ func _draw() -> void:
 		plan(true)
 		draw_string(HAND,Vector2(-230,-99),"S. WARD / measured in cellar / after the lounge",HORIZONTAL_ALIGNMENT_LEFT,-1,18,Color("4c594a"))
 	draw_set_transform(Vector2.ZERO)
-	var text_: String="The stairwell walls line up. His sketch adds a door on the west side." if aligned else ("Place the tracing and match the stairs, walls and service line." if ready_for_match else "The issued site plan is here. Simon's tracing is folded inside the test-reel sleeve.")
+	var text_: String="The stairwell walls line up. His sketch adds a door on the west side." if aligned else ("Place the tracing and match the stairs, walls and service line." if ready_for_match else "The printed 1998 plan is already here. Dad kept his measured tracing in the old reel sleeve.")
 	draw_string(ThemeDB.fallback_font,Vector2(22,410),text_,HORIZONTAL_ALIGNMENT_LEFT,756,17,Color("bbc1ae"))

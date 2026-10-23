@@ -57,3 +57,8 @@ The real bay holds Eli's childhood drawing from Simon's toolbox, a captive remov
 A separate page is explicitly headed S. Ward / 1998 / After the lounge inspection. Simon checked that Eli was safe at home, heard the bay monitor repeat the first phone conversation, and understood the room was copying familiar material. He tried to leave; an unidentified man blocked the stairs. He used the test reel to get past him and hid in the bay. The page stops there. This supplies a later account of his decision, not a resolution of his disappearance or the Surveyor's identity. His earlier report and torn page are not overwritten.
 
 The porch remains the only final register. Eli's new knowledge informs its context: he can correct an unreliable absence and close his own work order, or submit both reports and leave the fault open. Neither choice closes the missing-person case. Human comprehension and emotional payoff remain untested.
+
+
+## 23 October / language development, testing paused
+
+Simon's bay page describes a phone conversation being replayed in 1998. Eli has read that claim; tonight he hears the disconnected speaker answer the mechanical test reel. His journal and register must not imply he personally heard Simon's phone conversation. The historical reel and tonight's hall-microphone comparison remain separate uses of the office recorder. The newly visible hall microphone explains existing recording behaviour; it is not a new quest. Door-counter totals must be checked against people and the paper sign-in book. Correcting the 1998 entry closes tonight's service job, while submitting evidence requests investigation; neither establishes Simon's whereabouts. New wording is untested; see DEVELOPMENT_PAUSED_TESTS.md.

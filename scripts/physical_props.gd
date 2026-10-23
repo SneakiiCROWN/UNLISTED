@@ -20,6 +20,9 @@ func _ready() -> void:
 	for i in 3:
 		make_prop("can"+str(i),"food tin","res://assets/dusk/psx_prop_single_tin.glb",Vector3(-3.6-i*.15,.956,3.32 if i==0 else 3.53),Vector3(.12,.19,.12),.32)
 	make_prop("archive_mug","office mug","res://assets/dusk/psx_prop_mug_01.glb",Vector3(3.76,1.32,-9.45),Vector3(.14,.16,.14),.24)
+	# Reuse the existing wash-pan asset, away from the service doorway and rack.
+	# Legacy saves lack this optional body and fall back to its authored home.
+	make_prop("wash_pan","wash pan","res://assets/dusk/psx_prop_cooking_pot_01.glb",Vector3(-5.90,.112,-9.40),Vector3(.42,.22,.40),.60)
 	build_support()
 
 func build_support() -> void:
@@ -108,7 +111,7 @@ func use() -> bool:
 	held.add_collision_exception_with(game.player)
 	if body==props.spare and not game.events.get("scrap_examined",false):
 		game.events.scrap_examined = true
-		game.presentation.notify("An old valve fitting. Heavy enough to knock something loose.")
+		game.presentation.notify("An old valve fitting. Heavier than it looks.")
 	if body==props.cup and not game.events.has("remembered_cup"):
 		game.events.remembered_cup = [body.position.x,body.position.y,body.position.z]
 	if not reminded and game.presentation.prefs.data.reminders:

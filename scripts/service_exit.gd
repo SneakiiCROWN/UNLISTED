@@ -64,7 +64,7 @@ func build() -> void:
 	# Reuse the existing underfloor terminal instead of duplicating equipment or
 	# making the player move the records rack again to reach another paper.
 	repair.tube(slope.to_global(Vector3(1.3,.69,-.73)),Vector3(5.85,-1.65,-9.7),.012,Color("8b7655"),self)
-	game.label3(self,"EXIT CONTACT\nRETURN DISCONNECTED",Vector3(5.77,-1.58,-9.7),-PI/2,13,Color("b7b79c")).pixel_size=.0013
+	game.label3(self,"EXIT CONTACT\nWIRE DISCONNECTED",Vector3(5.77,-1.58,-9.7),-PI/2,13,Color("b7b79c")).pixel_size=.0013
 	surface(self,Vector3(5.785,-1.58,-9.7),Vector3(.015,.18,.36),steel,Color("343d34"))
 	game.collision(self,Vector3(5.765,-1.69,-9.7),Vector3(.045,.22,.38),"exit_terminal")
 	receipt=Node3D.new();add_child(receipt);receipt.position=Vector3(5.775,-1.91,-9.7);receipt.rotation.y=-PI/2
@@ -86,10 +86,10 @@ func in_passage(p: Vector3) -> bool:
 func use(id: String) -> void:
 	if id=="exit_terminal":
 		if game.events.get("exit_false_departure",false) and not game.events.get("exit_receipt_read",false):use("exit_receipt");return
-		var text_: String="The cable runs to the grille at the top of the service passage. The return wire is disconnected."
-		if game.stage<3:text_+=" There is no supply here."
+		var text_: String="The cable runs to the grille at the top of the service passage. The contact wire is disconnected."
+		if game.stage<3:text_+=" The power is off."
 		elif game.events.get("exit_receipt_read",false):text_+=" It printed my departure before I went through. The strip is in my field notes."
-		else:text_+=" The feed is live. This box used to record the exit contact; it shouldn't receive anything with that wire loose."
+		else:text_+=" This box has power. The loose wire is meant to tell it when the grille opens. With that disconnected, it shouldn't record anyone leaving."
 		game.inspect_text("SERVICE EXIT / CONTACT RECORDER",text_);return
 	if id=="exit_receipt":
 		if not game.events.get("exit_false_departure",false) or game.events.get("exit_receipt_read",false):return

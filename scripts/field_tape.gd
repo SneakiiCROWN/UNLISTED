@@ -11,8 +11,8 @@ var motor: AudioStreamPlayer3D
 var sources: Array[AudioStreamPlayer3D]=[]
 const DECK:=Vector3(3.3,.98,-8.52)
 const NOTE_TITLE:="SIMON / SERVICE TEST REEL"
-const LABEL:="S. WARD / 1998\nOFFICE LINE TEST\n\nFeed on. Return connected.\nThen both disconnected.\nKeep listening after the motor stops.\n\nFolded in the sleeve: S. Ward / measured cellar tracing. The issued site plan is in the office lightbox."
-const RESULT:="The reel is labelled 1998, in Dad's handwriting.\n\nFirst the motor runs and the test box answers three taps. Then there is a switch click. The motor stops. After a long pause, the same taps come back.\n\nDad wrote 'both disconnected' on the sleeve. That is what he was testing: whether the sound could still come back with no working line.\n\nI can try it on the office box. A noise isn't proof that somebody came back."
+const LABEL:="S. WARD / 1998\nOFFICE LINE TEST\n\nFirst: power on, cable plugged in.\nThen: power off, cable unplugged.\nKeep listening after the motor stops.\n\nFolded in the sleeve: S. Ward / measured cellar tracing. The issued site plan is in the office lightbox."
+const RESULT:="The reel is labelled 1998, in Dad's handwriting.\n\nFirst the motor runs and the test box answers three taps. Then there is a switch click. The motor stops. After a long pause, the same taps come back.\n\nThe sleeve says to switch the box off and unplug its cable. He was checking whether the taps would still come back.\n\nThe test box is still in the office. I can try it myself."
 const CUES:=[.45,1.1,1.7,2.55,3.1,3.7,5.2,10.0,10.6,11.45]
 func _ready() -> void:
 	name="HistoricalTestReel";build();restore()
@@ -49,23 +49,29 @@ func stop() -> void:
 func restore() -> void:
 	stop();reel.visible=not game.events.get("test_reel_found",false);game.targets.test_reel.collision_layer=1 if reel.visible else 0
 	stored_reel.visible=game.events.get("test_reel_loaded",false)
+	var notes: Dictionary=game.events.get("notes",{})
+	if notes.has(NOTE_TITLE):notes[NOTE_TITLE]=RESULT if game.events.get("test_reel_heard",false) else LABEL
 func use(id: String) -> void:
 	if id=="test_reel":
 		game.events.test_reel_found=true;game.events.notes[NOTE_TITLE]=LABEL
-		restore();game.presentation.notify("1998 test reel taken. It fits the office deck.");game.save_game(true);return
+		restore();game.presentation.notify("Dad's test reel. I'll keep the tracing folded inside its sleeve.");game.save_game(true);return
 	if game.threat.active():game.presentation.notify("Movement nearby. Not a good time to listen.");return
 	game.presentation.pause_world();game.presentation.clear_card();game.presentation.section="document"
 	game.presentation.label(game.presentation.card_body,"OFFICE / TAPE DECK",15,"Meta")
-	game.presentation.label(game.presentation.card_body,"SERVICE TEST / 1998",30,"Title")
-	var body: String=LABEL if game.events.get("test_reel_found",false) else "The deck is already threaded for the hall microphone. A handwritten card beside it says: '1998 line-test reel kept with the service records below.'\n\nThe A/B controls compare my own footsteps tonight. The old test recording is separate."
+	game.presentation.label(game.presentation.card_body,"TAPE RECORDER",30,"Title")
+	var body: String=LABEL if game.events.get("test_reel_found",false) else "The recorder is connected to the hall microphone. A card beside it says: 'S. Ward / 1998 test reel: records store below the cellar.'\n\nA plays the hall microphone recording. B plays it again so I can listen from the room. Dad's old reel loads separately."
 	if game.events.get("test_reel_heard",false):body=RESULT
 	var explanation: Label=game.presentation.label(game.presentation.card_body,body,19)
 	explanation.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;explanation.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	# Keep the two uses together: an old reel is not the recording made tonight.
+	var actions:=HBoxContainer.new();game.presentation.card_body.add_child(actions)
+	game.presentation.add_button("Listen to hall recording",func():game.presentation.resume_game();game.horror.audition_channel("A"),game.stage>=3,actions)
+	game.presentation.add_button("Compare footsteps",game.presentation.show_exclusion,game.stage>=3,actions)
 	if game.events.get("test_reel_found",false):
 		var caption: String="Replay service test" if game.events.get("test_reel_loaded",false) else "Load reel and listen"
 		game.presentation.add_button(caption,func():game.presentation.resume_game();play(),game.stage>=3,game.presentation.card_body)
-	if game.stage<3:game.presentation.label(game.presentation.card_body,"The supply light is out.",17,"Meta")
-	game.presentation.add_button("Leave deck",game.presentation.resume_game,true,game.presentation.card_body).grab_focus()
+	if game.stage<3:game.presentation.label(game.presentation.card_body,"The recorder has no power.",17,"Meta")
+	game.presentation.add_button("Leave recorder",game.presentation.resume_game,true,game.presentation.card_body).grab_focus()
 func play(from_remote:=false) -> void:
 	if game.stage<3 or (game.threat.active() and not from_remote) or not game.events.get("test_reel_found",false):return
 	if from_remote and (not is_instance_valid(game.last_call) or not game.events.get("call_disconnected",false)):return
@@ -100,4 +106,4 @@ func _physics_process(delta: float) -> void:
 	if clock>=14:
 		game.events.test_reel_heard=true;game.events.notes[NOTE_TITLE]=RESULT
 		var was_remote:=remote;stop();game.save_game(true)
-		if not was_remote:game.presentation.notify("Test reel finished / observation kept in field notes.")
+		if not was_remote:game.presentation.notify("The reel has ended. I've noted what I heard.")

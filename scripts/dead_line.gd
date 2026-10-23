@@ -113,7 +113,7 @@ func use(id: String) -> void:
 	if not isolated():
 		# Calibration only works through both connected leads; a dead or open circuit cannot answer.
 		if game.events.get("line_feed_off",false) or game.events.get("line_return_out",false):
-			game.presentation.notify("The power switch and cable both need checking. Dad's note is pinned below.");return
+			game.presentation.notify("The switch is off, but the cable is still connected." if game.events.get("line_feed_off",false) else "The cable is out, but the power is still on.");return
 		game.events.line_calibrated=true;queue_pattern(PANEL,.4,false)
 	elif game.events.get("line_calibrated",false):
 		game.events.line_test_armed=true
@@ -152,7 +152,7 @@ func _physics_process(delta: float) -> void:
 		var item: Dictionary=sequence[i];sequence.remove_at(i)
 		var cue: AudioStreamPlayer3D=game.sound("prop_impact",item.where,-28 if item.house else -34)
 		cue.pitch_scale=.78 if item.house else 1.1;sources.append(cue)
-		game.sound_caption("The knock pattern comes from the lounge." if item.house else "The striker answers through the line.",2,"LOUNGE" if item.house else "LINE TEST",cue)
+		game.sound_caption("The same taps from the lounge." if item.house else "Three taps from the test box.",2,"LOUNGE" if item.house else "LINE TEST",cue)
 		if sequence.is_empty() and item.house:
 			game.events.line_response_complete=true;game.save_game(true)
 	if not available() or not isolated() or not game.events.get("line_test_armed",false):return

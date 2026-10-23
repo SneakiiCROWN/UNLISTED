@@ -60,7 +60,7 @@ func _draw() -> void:
 			if light>.005:draw_string(HAND,Vector2(x,118+row*74+sin(i*1.73+row)*.8),text[i],HORIZONTAL_ALIGNMENT_LEFT,-1,28,Color(.45,.95,.74,light*.95))
 			x+=width
 	if uv and sheet.has_point(beam):draw_arc(beam,74,0,TAU,50,Color(.46,.5,.9,.12),1,true)
-	draw_string(ThemeDB.fallback_font,Vector2(45,383),"Recorded in field notes" if game.events.get("carbon_read",false) else "Inspection light reveals only the area under the beam",HORIZONTAL_ALIGNMENT_LEFT,-1,15,Color("a6aea7"))
+	draw_string(ThemeDB.fallback_font,Vector2(45,383),"Recorded in field notes" if game.events.get("carbon_read",false) else "Move the UV beam over the sleeve to reveal the ink",HORIZONTAL_ALIGNMENT_LEFT,-1,15,Color("a6aea7"))
 func scan(point: Vector2) -> void:
 	if not game.equipment.is_uv():return
 	if not Rect2(Vector2(40,85),Vector2(705,220)).has_point(point):previous=point;return
@@ -91,7 +91,7 @@ func rub(point: Vector2) -> void:
 	# Legacy tooling entry, now subject to real UV state and movement.
 	beam=point;scan(point)
 func complete_accessibly() -> void:
-	if not game.equipment.is_uv():game.presentation.notify("Switch to inspection light first.");return
+	if not game.equipment.is_uv():game.presentation.notify("Switch the torch to UV light first.");return
 	auto_clock=0;previous=Vector2(-200,-200)
 func _input(event: InputEvent) -> void:
 	if not is_visible_in_tree() or game.presentation.section!="document":return

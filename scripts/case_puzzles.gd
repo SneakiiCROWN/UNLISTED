@@ -26,4 +26,4 @@ static func sequence(events: Dictionary) -> Array[int]:
 static func plate(events: Dictionary,index: int) -> String:
 	return ["R / RED","B / BLUE","W / WHITE"][index]+"\n"+ROLES[int(roles(events)[index])]
 static func lines(events: Dictionary) -> Array[String]:
-	return ["Kitchen radio: %.1f."%station(events),"I phoned home. Eli answered. He's safe.","I shut the lounge door. Now it's his room."]
+	return ["Kitchen radio: %.1f."%station(events),"I rang home. Eli answered. He's safe.","I shut the lounge door. Now it's his room."]

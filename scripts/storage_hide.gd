@@ -37,7 +37,7 @@ func set_open(value: bool,by_actor:=false) -> void:
 	if opened==value:return
 	if not value:
 		var p:=to_local(game.player.global_position)
-		if held_open>0:game.message("He's holding the doors.",1.5);return
+		if held_open>0:game.message("He's holding them open.",1.5);return
 		if absf(p.x)<.8 and p.z>.18 and p.z<.9:game.message("I need to step clear of the doors.",1.5);return
 		if inside() and game.threat.active() and game.threat.can_see_player():suspected=true
 	opened=value;game.events.storage_open=value;game.events.storage_suspected=suspected

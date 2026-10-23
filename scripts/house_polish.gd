@@ -52,6 +52,9 @@ func build(game: Node3D) -> void:
 		var id: String = ["audition_source","audition_return","exclude_return"][i]
 		g.collision(g,transport.position+Vector3(x,0.1,0.13),Vector3(0.17,0.12,0.13),id)
 		var tag: Label3D = g.label3(transport,["A","B","COMPARE"][i],Vector3(x,0.092,0.14),0,15,Color("b0ab91"));tag.rotation.x = -PI/2;tag.pixel_size = 0.001
+	# An ordinary engraved input plate grounds the recorder's role in the room.
+	var input_plate: Label3D=g.label3(transport,"HALL MIC",Vector3(0,.054,-.165),0,11,Color("b0ab91"));input_plate.rotation.x=-PI/2;input_plate.pixel_size=.0008
+	build_hall_microphone()
 	var receipt := Node3D.new();receipt.name = "TransportReceipt";transport.add_child(receipt);receipt.position = Vector3(0,0.025,0.21);receipt.visible = false;g.memory_receipt = receipt
 	g.box(receipt,Vector3(0,0,0.08),Vector3(0.24,0.003,0.16),Color("9e967d"))
 	var tail: MeshInstance3D = g.box(receipt,Vector3(0,-0.025,0.235),Vector3(0.24,0.003,0.16),Color("9e967d"));tail.rotation.x = 0.32
@@ -59,7 +62,8 @@ func build(game: Node3D) -> void:
 	var source_copy: StaticBody3D=g.collision(g,transport.position+Vector3(0,.032,.29),Vector3(.25,.035,.13),"source_copy")
 	source_copy.name="ReadableTransportCopy";source_copy.collision_layer=0
 	# Warm desk pool and cold perimeter give the room depth, with real shade/arm supports.
-	repair.tube(Vector3(6.4,0.82,-8.96),Vector3(6.4,1.33,-8.96),0.016)
+	var task_base: MeshInstance3D=g.box(g,Vector3(6.4,.8075,-8.96),Vector3(.16,.015,.15),Color("37423a"));task_base.name="OfficeTaskLampFoot"
+	repair.tube(Vector3(6.4,0.815,-8.96),Vector3(6.4,1.33,-8.96),0.016)
 	g.box(g,Vector3(6.4,1.32,-8.87),Vector3(0.22,0.055,0.24),Color("37423a"))
 	var task: OmniLight3D = g.lamp(Vector3(6.4,1.22,-8.84),Color(0.91,0.70,0.43),0.48,2.0);task.shadow_enabled = true
 	# Kitchen: used place setting, worn runner and a second tucked-in chair.
@@ -71,7 +75,8 @@ func build(game: Node3D) -> void:
 	for z in [-7.4,-6.2]:g.box(g,Vector3(-7.34,1.58,z),Vector3(0.13,0.045,0.06),Color("3c443d"))
 	for z in [-7.3,-6.8,-6.3]:
 		var ring := MeshInstance3D.new();var torus := TorusMesh.new();torus.inner_radius = 0.11;torus.outer_radius = 0.145;torus.rings = 16;torus.ring_segments = 6;ring.mesh = torus;ring.material_override = g.mat(Color("333b33"));g.add_child(ring);ring.position = Vector3(-7.25,1.40,z);ring.rotation.z = PI/2
-	g.model("res://assets/dusk/psx_prop_cooking_pot_01.glb",g,Vector3(-5.3,0,-9.35),Vector3(0.42,0.22,0.40))
+	# The wash pan is now a shared physical object at the wall-side work corner.
+	# It is not left beside the service door's opening arc.
 	# Lounge: frayed runner and neglected reading corner, away from collision routes.
 	var lounge_before: Array=g.get_children()
 	surface(Vector3(4.8,0.012,0.35),Vector3(2.6,0.012,2.0),Color("3b4038"),"res://assets/original/work_canvas.png")
@@ -82,3 +87,18 @@ func build(game: Node3D) -> void:
 	repair.tube(Vector3(-19.85,0.05,-16.5),Vector3(-19.85,2.8,-16.5),0.055)
 	for y in [0.5,1.6,2.4]:g.box(g,Vector3(-19.89,y,-16.5),Vector3(0.10,0.05,0.14),Color("42483d"))
 	surface(Vector3(-19.905,1.2,-14),Vector3(0.008,2.1,5.7),Color("40483c"))
+
+func build_hall_microphone() -> void:
+	# Solid pier between the lounge and office openings: inner face x=1.41.
+	# No floor stand or collider protrudes into the hall's escape route.
+	var mic:=Node3D.new();mic.name="HallRecordingMicrophone";g.add_child(mic)
+	mic.position=Vector3(1.405,1.62,-3.05);mic.rotation.y=-PI/2
+	var mount: MeshInstance3D=g.box(mic,Vector3(0,0,.004),Vector3(.105,.15,.014),Color("4a5045"));mount.material_override=g.texture_mat("res://assets/dusk/psx_house_steel_01.png",Color("4a5045"))
+	g.box(mic,Vector3(0,.01,.024),Vector3(.070,.092,.028),Color("252b26"))
+	for y in [-.022,-.008,.006,.020,.034]:g.box(mic,Vector3(0,y,.039),Vector3(.052,.004,.002),Color("707360"))
+	for y in [-.061,.061]:g.box(mic,Vector3(0,y,.013),Vector3(.009,.009,.005),Color("8b8770"))
+	g.collision(mic,Vector3(0,0,.025),Vector3(.12,.17,.055),"hall_microphone")
+	# Surface-clipped cable rises over both door heads before entering the office.
+	var points: Array[Vector3]=[Vector3(1.395,1.54,-3.05),Vector3(1.395,2.69,-3.05),Vector3(1.395,2.69,-8.90),Vector3(2.02,2.69,-8.90),Vector3(2.02,2.69,-9.855),Vector3(4.15,2.69,-9.855),Vector3(4.15,.055,-9.855),Vector3(4.08,.055,-9.0)]
+	for i in range(points.size()-1):repair.tube(points[i],points[i+1],.005,Color("252c28"))
+	for y in [1.89,2.35]:g.box(g,Vector3(1.398,y,-3.05),Vector3(.018,.018,.027),Color("737562"))

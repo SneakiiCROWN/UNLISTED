@@ -39,7 +39,7 @@ func is_uv() -> bool:
 	return data.get("uv",false) and int(data.get("mode",1))==2 and float(data.get("charge",0))>0 and winding<=0 and not data.get("contact_fault",false) and not game.player.viewmodel.replacing_pack()
 func cycle() -> void:
 	data.mode=(int(data.mode)+1)%(3 if data.uv else 2);apply_light()
-	game.presentation.notify(["Torch off","White light","Inspection light"][int(data.mode)])
+	game.presentation.notify(["Torch off","White light","UV light"][int(data.mode)])
 func status() -> void:
 	game.presentation.show_battery_status()
 	if data.get("contact_fault",false):game.presentation.notify("Loose contact. "+tap_instruction())
@@ -58,8 +58,8 @@ func collect(id: String) -> void:
 		if data.uv:return
 		data.uv=true;data.mode=2;kit.visible=false;game.targets.inspection_kit.collision_layer=0
 		game.events.notes=game.events.get("notes",{})
-		game.events.notes["INSPECTION KIT"]="The case is stamped 2018. The house was taken off the service list in 1999. I don't know who left it here.\n\n365nm head: reveals fluorescent security ink. The spare head fits my work torch. F / RB changes mode. B / D-pad Up checks charge. T / Y changes the battery. With no spares, hold it to wind the backup cap.\n\nA label inside the case says the office report sleeves use the same security ink."
-		game.presentation.notify("UV head fitted. RB changes light; check report sleeves for fluorescent ink." if game.controller.used else "UV head fitted. F changes light; check report sleeves for fluorescent ink.")
+		game.events.notes["INSPECTION KIT"]=game.NOTES.INSPECTION_KIT
+		game.presentation.notify("UV head fitted. RB switches between white and UV light." if game.controller.used else "UV head fitted. F switches between white and UV light.")
 	else:
 		if id in data.packs:return
 		data.packs.append(id);data.spares=int(data.spares)+1;pickups[id].visible=false;game.targets[id].collision_layer=0

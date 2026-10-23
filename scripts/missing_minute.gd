@@ -119,12 +119,12 @@ func sync_page() -> void:
 	game.targets.memory_page.collision_layer=1 if active and drawer_open and page.visible else 0
 func open_carbon() -> void:
 	if not game.events.get("field_return_read",false):
-		game.inspect_text("REPORT SLEEVE","A note on the sleeve: inspection ink / check reverse. Dad's original report should tell me what belongs here.");return
+		game.inspect_text("REPORT SLEEVE","The sleeve is marked UV / check reverse. Dad's report belongs inside it, but I haven't found the original yet.");return
 	if not game.equipment.data.uv:
-		game.inspect_text("REPORT SLEEVE","The sleeve says UV / inspect reverse. The inspection case is in the service shed.");return
+		game.inspect_text("REPORT SLEEVE","The sleeve is marked UV / check reverse. I need a UV attachment for the torch.");return
 	var p=game.presentation;p.pause_world();p.clear_transients();p.clear_card();p.section="document"
 	var backing: StyleBoxFlat=p.normal_panel.duplicate();backing.bg_color=Color(0,0,0,0);backing.border_width_left=0;backing.border_width_top=0;p.card.add_theme_stylebox_override("panel",backing)
-	p.label(p.card_body,"Inspection ink / F or RB changes light. Hold and sweep over the sleeve.",17).modulate=Color("b2b7a9")
+	p.label(p.card_body,"RB switches light. Move the UV beam with the right stick." if game.controller.used else "F switches light. Hold the left mouse button and sweep over the sleeve.",17).modulate=Color("b2b7a9")
 	var rubbing=load("res://scripts/carbon_rubbing.gd").new();rubbing.game=game;p.card_body.add_child(rubbing)
 	var actions:=HBoxContainer.new();p.card_body.add_child(actions)
 	p.add_button("Slow automatic scan",rubbing.complete_accessibly,true,actions)
@@ -142,7 +142,7 @@ func open_receiver() -> void:
 	var p=game.presentation;p.pause_world();p.clear_transients();p.clear_card();p.section="document"
 	p.label(p.card_body,"OFFICE RADIO",15,"Meta")
 	var widget=load("res://scripts/return_receiver.gd").new();widget.game=game;p.card_body.add_child(widget)
-	p.add_button("Leave receiver",func():game.save_game();p.resume_game(),true,p.card_body)
+	p.add_button("Leave radio",func():game.save_game();p.resume_game(),true,p.card_body)
 	p.entrance_animation(p.card)
 func receive_return() -> void:
 	# Knowing the frequency is enough. Never require a journal flag as a magic key.

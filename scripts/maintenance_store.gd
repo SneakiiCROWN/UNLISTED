@@ -152,7 +152,7 @@ func _physics_process(delta: float) -> void:
 		answers[i].left-=delta
 		if answers[i].left<=0:
 			var cue=game.sound("prop_impact",answers[i].position,-33);cue.pitch_scale=.73
-			game.sound_caption("A knock answers from the passage.",2,"SERVICE VOID",cue)
+			game.sound_caption("A knock answers from the passage.",2,"UNDERFLOOR PASSAGE",cue)
 			if answers[i].extra:answers.append({"left":1.1,"position":Vector3(4.8,-.3,-7.6),"extra":false})
 			answers.remove_at(i)
 	if surprise_armed and not (is_instance_valid(game.last_call) and game.last_call.busy()) and game.events.get("underfloor_read",false) and inside(game.player.position) and not game.threat.active():

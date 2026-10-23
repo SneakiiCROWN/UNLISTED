@@ -10,8 +10,8 @@ func _ready() -> void:
 	p.label(self,"FM   88 -------------------- 108",17,"Meta")
 	dial=HSlider.new();dial.min_value=88;dial.max_value=108;dial.step=.1;dial.value=float(game.events.get("receiver_frequency",98.0));dial.custom_minimum_size.y=65;add_child(dial)
 	dial.value_changed.connect(tune)
-	p.label(self,"Tune the receiver, then listen. Left / right also move the dial.",17)
-	p.add_button("Listen to receiver",listen,true,self)
+	p.label(self,"Turn the dial, then listen. Left / right also adjusts the station.",17)
+	p.add_button("Listen",listen,true,self)
 	hiss=AudioStreamPlayer.new();hiss.stream=load("res://assets/audio/wind.wav");hiss.bus="SFX";hiss.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(hiss)
 	hiss.finished.connect(func():if is_visible_in_tree():hiss.play())
 	tune(dial.value);hiss.play();dial.grab_focus()
@@ -25,7 +25,7 @@ func tune(value: float) -> void:
 func listen() -> void:
 	game.save_game()
 	if not game.isolated:
-		display.text="Too much interference. The service circuit is still running.";return
+		display.text="I can only hear interference while the service equipment is running.";return
 	if absf(dial.value-game.PUZZLES.station(game.events))>.051:
 		game.sound("latch",game.chapter.radio.global_position,-35)
 		return

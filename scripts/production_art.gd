@@ -20,13 +20,15 @@ func fuse(g: Node) -> Node3D:
 	var part := Node3D.new()
 	g.add_child(part)
 	part.name = "Ceramic13AFuse"
-	part.position = Vector3(-3.5,0.847,-8.8)
-	cylinder(g,part,Vector3.ZERO,0.018,0.11,Color(0.74,0.72,0.60),true)
-	for x in [-0.05,0.05]:cylinder(g,part,Vector3(x,0,0),0.0195,0.021,Color(0.43,0.42,0.34),true)
-	cylinder(g,part,Vector3(0.013,0,0),0.0184,0.012,Color(0.30,0.08,0.055),true)
-	var legend: Label3D = g.label3(part,"13A",Vector3(-0.013,0.019,0),0,24,Color(0.12,0.10,0.08))
+	# Small ceramic fuse in the existing labelled tray, not an oversized cylinder
+	# suspended above it. Keep the generous interaction proxy unchanged.
+	part.position = Vector3(-3.5,0.8309,-8.8)
+	cylinder(g,part,Vector3.ZERO,0.0032,0.025,Color(0.74,0.72,0.60),true)
+	for x in [-0.010,0.010]:cylinder(g,part,Vector3(x,0,0),0.0034,0.005,Color(0.43,0.42,0.34),true)
+	cylinder(g,part,Vector3(0.003,0,0),0.0033,0.003,Color(0.30,0.08,0.055),true)
+	var legend: Label3D = g.label3(part,"13A",Vector3(0,0.0035,0),0,16,Color(0.12,0.10,0.08))
 	legend.rotation.x = -PI/2
-	legend.pixel_size = 0.00075
+	legend.pixel_size = 0.00022
 	# The inventory hit area is deliberately more generous than this small physical part.
 	g.collision(g,Vector3(-3.5,0.89,-8.8),Vector3(0.44,0.17,0.33),"fuse")
 	g.box(g,Vector3(-3.5,0.76,-8.40),Vector3(0.42,0.11,0.018),Color(0.44,0.41,0.31))
