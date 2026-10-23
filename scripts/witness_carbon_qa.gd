@@ -20,7 +20,9 @@ func play_store() -> void:
 	check("physical unsigned carbon is retained",g.events.get("witness_carbon_read",false) and g.events.notes.has(g.NOTES.WITNESS_TITLE) and g.presentation.note.text.contains("Witness signature: [blank]"))
 	check("reading does not play an unseen event during pause",g.witness.emitted.is_empty() and g.events.get("witness_echo_pending",false))
 	await shot("W03_clearance_evidence");await action("ui_cancel")
+	var remote_memory: bool=g.impossible_room.active
 	await travel(Vector2(3.25,-11.5),"footstep follows physical crawl",false,true)
+	if remote_memory:check("upstairs room memory does not suppress below-ground event",g.impossible_room.active and g.witness.emitted.size()>0)
 	check("movement produces a real overhead cue",g.witness.emitted.size()>0 and int(g.events.get("witness_steps",0))>0)
 	await action("ui_cancel");var count: int=int(g.events.get("witness_steps",0));await wait(.5)
 	check("pause freezes following sounds",int(g.events.get("witness_steps",0))==count)

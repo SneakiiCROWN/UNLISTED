@@ -80,7 +80,10 @@ func _physics_process(delta: float) -> void:
 	game.events.witness_slide=cover.position.x;sync()
 	var p: Vector3=game.player.position
 	var movement: float=Vector2(p.x-last_position.x,p.z-last_position.z).length();last_position=p
-	if game.threat.active() or game.horror.beat!="" or game.horror.audition!="" or game.chapter.active or game.impossible_room.active or game.recount.active or not game.dead_line.sequence.is_empty() or game.maintenance.surprise_armed:return
+	# The reversed lounge can remain active until it is revisited. It is scenery,
+	# not a running sequence elsewhere in the property; only defer in that room.
+	var room_overlap: bool=game.impossible_room.active and game.impossible_room.inside(p,.65)
+	if game.threat.active() or game.horror.beat!="" or game.horror.audition!="" or game.chapter.active or room_overlap or game.recount.active or not game.dead_line.sequence.is_empty() or game.maintenance.surprise_armed:return
 	if game.events.get("witness_close_pending",false) and not cover_in_frame():
 		game.events.witness_close_pending=false;game.events.witness_open=false;game.sound("latch",global_position,-32);game.save_game(true)
 	if not game.events.get("witness_echo_pending",false):return
