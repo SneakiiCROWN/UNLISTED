@@ -12,6 +12,7 @@ func run(current: Node) -> void:
 		if arg.begins_with("--evidence="):output=arg.trim_prefix("--evidence=")
 	DirAccess.make_dir_recursive_absolute(output);g.checkpoint_path=output.path_join("checkpoint.json")
 	await exact_resolution()
+	if "--reload-only" in OS.get_cmdline_user_args():await reload_run();return
 	if "--tape-only" in OS.get_cmdline_user_args():await tape_run();return
 	if "--field-layouts-only" in OS.get_cmdline_user_args():await field_layouts();return
 	g.new_game();g.presentation.clear_transients();g.threat.enabled=false;g.threat.reset()
@@ -54,6 +55,7 @@ func run(current: Node) -> void:
 	check("low charge warning uses current pad control",g.presentation.toast.text.contains("Y fits"))
 	await shot("F01_low_pack_warning");await tap(JOY_BUTTON_Y)
 	check("Y fits one spare pack",g.equipment.data.charge>99 and int(g.equipment.data.spares)==0)
+	await wait(1.6) # Finish the physical exchange before staging a separate empty-pack case.
 	g.equipment.data.charge=0;g.equipment.data.mode=2;g.equipment.apply_light();await pad(JOY_BUTTON_Y);await wait(3.4);await pad(JOY_BUTTON_Y,false)
 	check("pad hold winds real emergency backup",g.equipment.data.charge>24 and g.equipment.is_uv())
 	g.equipment.data.mode=1;g.equipment.data.charge=70.0;g.equipment.data.contact_wait=.01;g.presentation.prefs.data.torch_contacts=true
@@ -190,3 +192,77 @@ func field_layouts() -> void:
 		if not c.passed:failed+=1
 	var f:=FileAccess.open(output.path_join("report.json"),FileAccess.WRITE);f.store_string(JSON.stringify({"scope":"Explicit native UI and hint fixtures; not a gameplay route","passed":checks.size()-failed,"failed":failed,"checks":checks},"\t"));f.close()
 	print("FIELD_LAYOUT_COMPLETE passed=",checks.size()-failed," failed=",failed);g.qa_exit(0 if failed==0 else 1)
+
+func reload_run() -> void:
+	g.new_game();await wait(2);g.presentation.clear_transients();g.threat.enabled=false;g.threat.reset()
+	g.player.position=Vector3(0,.04,7.6);g.player.camera.look_at(Vector3(0,1.5,4.2));await wait(.3)
+	g.equipment.data.charge=40.0;g.equipment.data.spares=3;g.equipment.data.mode=1;g.equipment.data.contact_wait=500.0;g.equipment.apply_light()
+	var service: Node=g.player.viewmodel.service
+	await shot("P00_original_held_pose")
+	await action("battery_replace")
+	check("real replacement begins supported animation",service.running and int(g.equipment.data.spares)==2 and not g.player.torch.visible)
+	service.animation.pause()
+	for spec in [[.28,"P01_cap_contact"],[.50,"P02_open_compartment"],[.67,"P03_old_pack_extracted"],[.87,"P04_new_pack_approach"],[1.02,"P05_new_pack_seating"],[1.29,"P06_cap_secured"]]:
+		service.animation.seek(float(spec[0]),true,true);await wait(.1);await shot(spec[1])
+	service.animation.play();await wait(.5)
+	if "--reload-poses-only" in OS.get_cmdline_user_args():
+		check("closed cap returns to original fitted pose",not service.running and service.hinge.rotation.is_zero_approx() and not service.hand.visible)
+		var pose_file:=FileAccess.open(output.path_join("report.json"),FileAccess.WRITE);pose_file.store_string(JSON.stringify({"scope":"Staged native reload poses and viewport fit; not a gameplay route","passed":checks.size(),"failed":0,"checks":checks},"\t"));pose_file.close();g.qa_exit(0);return
+	check("normal pose and beam return after cap closes",not service.running and g.player.torch.visible and service.hinge.rotation.is_equal_approx(Vector3.ZERO) and not service.hand.visible)
+	# Live sequence records actual timing; staged poses above are for geometry review.
+	var audio_at: float=seconds()
+	recorder=AudioEffectRecord.new();recorder.format=AudioStreamWAV.FORMAT_16_BITS;AudioServer.add_bus_effect(0,recorder);recorder.set_recording_active(true);recording=true
+	g.equipment.data.charge=40.0;await action("battery_replace");var packs_: int=g.equipment.data.spares
+	await action("battery_replace");await action("battery_replace")
+	check("rapid input cannot consume another pack during exchange",service.running and int(g.equipment.data.spares)==packs_)
+	await action("ui_cancel");var pose: Transform3D=service.hinge.transform;var time_: float=service.animation.current_animation_position;await wait(.4)
+	check("pause freezes cap and animation without capture",g.menu_open and service.hinge.transform.is_equal_approx(pose) and is_equal_approx(service.animation.current_animation_position,time_))
+	await action("ui_cancel");g.save_game();g.load_game();await wait(.2)
+	check("mid-reload save restores one committed pack and closed torch",not service.running and int(g.equipment.data.spares)==packs_ and g.equipment.data.charge>99 and service.hinge.rotation==Vector3.ZERO and g.player.torch.visible)
+	g.equipment.data.charge=40.0;await action("battery_replace");var start: Vector3=g.player.position
+	Input.action_press("back");await wait(.35);Input.action_release("back")
+	check("reload does not lock player movement",g.player.position.distance_to(start)>.3)
+	await action("flashlight");await wait(1.4)
+	check("changing light mode during reload stays off after closure",not service.running and int(g.equipment.data.mode)==0 and not g.player.torch.visible)
+	g.presentation.prefs.data.reduced_motion=true;g.equipment.data.charge=40.0;g.equipment.data.spares=1;g.equipment.data.mode=1
+	await action("battery_replace");await wait(.3)
+	check("reduced motion uses no torch roll or camera movement",service.running and service.animation.current_animation=="exchange_reduced" and service.rotation.is_zero_approx())
+	await shot("P07_reduced_motion");await wait(1.5)
+	check("final pack consumes exactly once",int(g.equipment.data.spares)==0 and not service.running and g.player.torch.visible)
+	# Put an actual carried object down before servicing; never silently drop it.
+	g.presentation.prefs.data.reduced_motion=false;g.player.position=Vector3(-3.2,.04,-8.1);await wait(.3)
+	var tin: RigidBody3D=g.physical.props.tin;g.player.camera.look_at(tin.global_position);await tap(JOY_BUTTON_X)
+	g.equipment.data.charge=40.0;g.equipment.data.spares=2;await tap(JOY_BUTTON_Y)
+	check("occupied hand rejects replacement without loss or forced drop",g.physical.held==tin and int(g.equipment.data.spares)==2 and not service.running)
+	await tap(JOY_BUTTON_X);await tap(JOY_BUTTON_Y)
+	check("controller starts the same physical pack exchange",g.physical.held==null and service.running and int(g.equipment.data.spares)==1)
+	await wait(1.5)
+	# Picking something up during service must not leave two overlapping left hands.
+	g.player.camera.look_at(tin.global_position);g.equipment.data.charge=40.0;g.equipment.data.spares=2;await tap(JOY_BUTTON_Y);await tap(JOY_BUTTON_X)
+	check("real pickup cancels cosmetic exchange without duplicating inventory",g.physical.held==tin and not service.running and not service.hand.visible and int(g.equipment.data.spares)==1)
+	await tap(JOY_BUTTON_X)
+	g.presentation.prefs.data.viewmodel=false;g.equipment.data.charge=40.0;g.equipment.data.spares=2;await tap(JOY_BUTTON_Y)
+	check("hidden viewmodel still replaces one pack with a usable light",not service.running and int(g.equipment.data.spares)==1 and g.player.torch.visible)
+	g.presentation.prefs.data.viewmodel=true
+	# Actual lethal contact interrupts the visual; inventory was committed once before it.
+	g.player.position=Vector3(0,.04,-7);g.player.rotation.y=PI;g.player.camera.rotation=Vector3.ZERO;g.presentation.prefs.data.story_mode=false
+	g.threat.enabled=true;g.events.threat_resolved=false;g.threat.begin(false,Vector3(0,.04,-6.0))
+	var until: float=seconds()+12
+	while g.threat.state!="attack" and seconds()<until:await wait(.03)
+	check("fixture reaches actual warned attack",g.threat.state=="attack")
+	g.equipment.data.charge=40.0;g.equipment.data.spares=2;await tap(JOY_BUTTON_Y)
+	check("player can service during an actual attack warning",service.running)
+	until=seconds()+8
+	while g.presentation.section!="dead" and seconds()<until:await wait(.05)
+	check("real capture/death leaves no open cap or detached service hand",g.presentation.section=="dead" and not service.running and not service.hand.visible and service.hinge.rotation==Vector3.ZERO)
+	if g.presentation.section=="dead":
+		g.presentation.buttons["Retry Checkpoint"].pressed.emit();await wait(.4)
+		check("retry restores exactly one consumed pack and stable equipment",g.player.active and not service.running and int(g.equipment.data.spares)==1 and g.equipment.data.charge>99 and g.player.torch.visible)
+	g.threat.enabled=false;g.threat.reset()
+
+	recording=false;recorder.set_recording_active(false);recorder.get_recording().save_to_wav(output.path_join("game_bus.wav"))
+	var failed:=0
+	for c in checks:
+		if not c.passed:failed+=1
+	var f:=FileAccess.open(output.path_join("report.json"),FileAccess.WRITE);f.store_string(JSON.stringify({"scope":"Native staged replacement, supported AnimationPlayer poses, actual input/pack transaction and interruption fixtures. Human animation approval pending.","passed":checks.size()-failed,"failed":failed,"checks":checks,"frames":frames,"audio_start_seconds":audio_at,"duration_seconds":seconds()},"\t"));f.close()
+	print("RELOAD_QA_COMPLETE passed=",checks.size()-failed," failed=",failed);g.qa_exit(0 if failed==0 else 1)

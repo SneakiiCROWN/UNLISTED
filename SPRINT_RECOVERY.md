@@ -1,3 +1,7 @@
+# Latest continuation: torch service / 23 October 2026
+
+Read TORCH_SERVICE_PROGRESS.md first. Published 0.9.2 Field Test is independently verified and preserved. The physical reload candidate is Builds/UNLISTED_TorchService_03; all five focused suites passed, including actual death/retry. No full-route rerun is required for this cosmetic-only delta. Parked arrival-car authoring is isolated unfinished work; do not overwrite it.
+
 # Latest published recovery point / 0.9.2 Field Test
 
 Published and independently verified: https://github.com/SneakiiCROWN/UNLISTED/releases/tag/unlisted-v0.9.2-field-test-public-test-20261023

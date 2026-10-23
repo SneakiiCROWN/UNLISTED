@@ -19,6 +19,7 @@ func restore() -> void:
 	var legacy: bool=not game.events.has("torch")
 	data=game.events.get("torch",{"version":1,"charge":100.0,"spares":1,"mode":1,"uv":legacy and (game.shed_read or game.events.get("carbon_read",false)),"packs":[]})
 	if game.events.get("carbon_read",false):data.uv=true
+	game.player.viewmodel.cancel_pack_change()
 	game.events.torch=data;winding=0;notified_low=false;fault_fade=0
 	data.contact_fault=data.get("contact_fault",false);data.contact_count=data.get("contact_count",0);data.contact_wait=data.get("contact_wait",randf_range(240,420))
 	kit.visible=not data.uv;game.targets.inspection_kit.collision_layer=1 if kit.visible else 0
@@ -28,14 +29,14 @@ func restore() -> void:
 func apply_light() -> void:
 	var torch: SpotLight3D=game.player.torch
 	var uv: bool=int(data.get("mode",1))==2 and data.get("uv",false) and float(data.get("charge",100))>0
-	torch.visible=int(data.get("mode",1))!=0 and winding<=0
+	torch.visible=int(data.get("mode",1))!=0 and winding<=0 and not game.player.viewmodel.replacing_pack()
 	torch.light_color=Color(.48,.29,1.0) if uv else Color(.82,.88,1)
 	torch.light_energy=.70 if uv else (.27 if float(data.get("charge",100))<=0 else 1.10)
 	if data.get("contact_fault",false):
 		torch.light_energy*=fault_fade
 	torch.spot_range=8 if float(data.get("charge",100))<=0 else (11 if uv else 17)
 func is_uv() -> bool:
-	return data.get("uv",false) and int(data.get("mode",1))==2 and float(data.get("charge",0))>0 and winding<=0 and not data.get("contact_fault",false)
+	return data.get("uv",false) and int(data.get("mode",1))==2 and float(data.get("charge",0))>0 and winding<=0 and not data.get("contact_fault",false) and not game.player.viewmodel.replacing_pack()
 func cycle() -> void:
 	data.mode=(int(data.mode)+1)%(3 if data.uv else 2);apply_light()
 	game.presentation.notify(["Torch off","White light","Inspection light"][int(data.mode)])
@@ -43,10 +44,15 @@ func status() -> void:
 	var controls: String="Y replaces a pack; hold with no spares to wind the backup." if game.controller.used else "T replaces a pack; hold with no spares to wind the backup."
 	game.presentation.notify("Torch %d%% / %d spare packs. "%[ceili(float(data.charge)),int(data.spares)]+("Loose contact. "+tap_instruction() if data.get("contact_fault",false) else controls))
 func replace_pack() -> void:
+	if game.player.viewmodel.replacing_pack():return
+	if is_instance_valid(game.physical.held):game.presentation.notify("I need a free hand to change the pack.");return
 	if int(data.spares)<=0:
 		game.presentation.notify("No spare packs. Hold to wind the backup." if float(data.charge)<20 else "No spare packs. The backup can be wound when charge is low.");return
 	if float(data.charge)>95:game.presentation.notify("Battery is still full.");return
-	data.spares=int(data.spares)-1;data.charge=100.0;data.contact_fault=false;notified_low=false;game.sound("latch",game.player.position,-32);apply_light();game.save_game(true);status()
+	data.spares=int(data.spares)-1;data.charge=100.0;data.contact_fault=false;notified_low=false
+	if game.player.active and game.presentation.prefs.data.viewmodel:game.player.viewmodel.start_pack_change()
+	else:game.sound("latch",game.player.position,-32)
+	apply_light();game.save_game(true);status()
 func collect(id: String) -> void:
 	if id=="inspection_kit":
 		if data.uv:return
@@ -81,7 +87,7 @@ func step_power(delta: float,drain:=true) -> void:
 func tap_instruction() -> String:
 	return "D-pad Down taps the torch." if game.controller.used else "V taps the torch."
 func safe_contact_window() -> bool:
-	return game.started and not game.menu_open and not game.ended and not game.threat.active() and not game.recount.active and not game.capture_director.active and game.horror.beat=="" and not game.chapter.active and not (game.impossible_room.active and game.impossible_room.inside(game.player.position)) and not game.events.get("exit_blackout_running",false)
+	return game.started and not game.menu_open and not game.ended and not game.threat.active() and not game.recount.active and not game.capture_director.active and not game.player.viewmodel.replacing_pack() and game.horror.beat=="" and not game.chapter.active and not (game.impossible_room.active and game.impossible_room.inside(game.player.position)) and not game.events.get("exit_blackout_running",false)
 func start_contact_fault() -> bool:
 	if not safe_contact_window() or not game.presentation.prefs.data.get("torch_contacts",true) or int(data.mode)!=1 or float(data.charge)<25 or int(data.contact_count)>=2 or data.contact_fault:return false
 	data.contact_fault=true;data.contact_count=int(data.contact_count)+1;fault_fade=1

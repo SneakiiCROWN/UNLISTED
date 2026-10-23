@@ -3,6 +3,7 @@ extends Node3D
 var player: CharacterBody3D
 var clock := 0.0
 var tap_clock:=0.0
+var service: Node3D
 var home := Vector3(0.23,-0.205,-0.43)
 var obstruction := 0.0
 var inspection_rim: MeshInstance3D
@@ -18,11 +19,12 @@ func prepare_meshes(root: Node) -> void:
 func _ready() -> void:
 	name = "HandheldTorch"
 	position = home
-	var model: Node3D = preload("res://assets/first_person/work_torch.glb").instantiate()
+	var model: Node3D = preload("res://assets/first_person/work_torch_service.glb").instantiate()
 	add_child(model)
 	prepare_meshes(model)
 	for mesh in player.game.all_meshes(model):
 		if "Bezel wear" in mesh.name or "Bezel_wear" in mesh.name:inspection_rim=mesh
+	service=load("res://scripts/torch_service.gd").new();service.player=player;service.geometry=model;add_child(service)
 	inspection_material=StandardMaterial3D.new();inspection_material.albedo_color=Color("62627c");inspection_material.roughness=.65
 
 	# Restrained bounce on the hands only; no extra light reaches the house.
@@ -52,7 +54,14 @@ func _process(delta: float) -> void:
 	clock += delta*minf(moving*2.5,8.0)
 	var sway := Vector3.ZERO
 	if not prefs.reduced_motion:sway = Vector3(sin(clock)*0.006,cos(clock*2)*0.004,0)*minf(moving,1)
-	var lowered := Vector3(0,-0.10,0.035) if not player.torch.visible else Vector3.ZERO
+	var lowered := Vector3(0,-0.10,0.035) if not player.torch.visible and not replacing_pack() else Vector3.ZERO
 	tap_clock=maxf(0,tap_clock-delta)
 	var tap:=Vector3(0,sin(tap_clock/.32*PI)*.045,0) if not prefs.reduced_motion else Vector3.ZERO
 	position = position.lerp(home+sway+lowered+tap+Vector3(0,-0.13,0.16)*obstruction,1.0-exp(-delta*15))
+
+func replacing_pack() -> bool:
+	return is_instance_valid(service) and service.running
+func start_pack_change() -> void:
+	if is_instance_valid(service):service.start()
+func cancel_pack_change() -> void:
+	if is_instance_valid(service):service.finish(false)
