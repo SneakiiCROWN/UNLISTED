@@ -1,3 +1,9 @@
+# Latest continuation: Night Arrival / 23 October 2026
+
+The physical torch reload is safely checkpointed privately at 2232560 and public a33b6f4. Complete source archive is Checkpoints/20261023_torch_service. Verified public rollback is **0.9.2 Field Test**, all six assets independently downloaded.
+
+The newer 0.9.3 Night Arrival candidate is Builds/UNLISTED_NightArrival_03. It adds the requested licensed parked station wagon at the gate and the configurable modern PSX world pass. Read NIGHT_ARRIVAL_VERIFICATION.md and current native reports/logs before repeating tests. Pending publication must be independently downloaded/checked before claiming success. Preserve the rejected TorchService_01 and forced-teardown NightArrival_02 evidence. No new Surveyor art or progression gate is introduced. Full-route baseline remains the accepted Field Test investigation; only relevant focused suites are required here.
+
 # Latest continuation: torch service / 23 October 2026
 
 Read TORCH_SERVICE_PROGRESS.md first. Published 0.9.2 Field Test is independently verified and preserved. The physical reload candidate is Builds/UNLISTED_TorchService_03; all five focused suites passed, including actual death/retry. No full-route rerun is required for this cosmetic-only delta. Parked arrival-car authoring is isolated unfinished work; do not overwrite it.

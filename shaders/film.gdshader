@@ -1,22 +1,27 @@
 shader_type canvas_item;
 uniform sampler2D screen_texture : hint_screen_texture, filter_nearest;
 uniform float visibility = 1.0;
-uniform float retro = 0.18;
-uniform float pixel_stride = 1.35;
+uniform float retro = 0.32;
+uniform float raster_height = 540.0;
 uniform float cover = 0.0;
+float bayer2(vec2 p) {
+    vec2 q = mod(floor(p), 2.0);
+    return mod(2.0*q.x+3.0*q.y,4.0);
+}
 void fragment() {
-    vec2 step_uv = SCREEN_PIXEL_SIZE * max(pixel_stride, 1.0);
-    vec2 sampled_uv = pixel_stride > 1.01 ? (floor(SCREEN_UV / step_uv)+0.5)*step_uv : SCREEN_UV;
-    vec3 c = texture(screen_texture, sampled_uv).rgb;
-    c *= visibility;
-    vec2 p = SCREEN_UV * 2.0 - 1.0;
-    float vignette = smoothstep(0.32, 1.65, length(p));
-    c *= 1.0 - vignette * (0.28 + cover * 0.18);
-    float pattern = mod(FRAGCOORD.x,2.0) + 2.0*mod(FRAGCOORD.y,2.0);
-    float dither = (pattern/4.0-0.375)/40.0;
-    vec3 poster = floor((c+dither) * 40.0 + 0.5) / 40.0;
-    c = mix(c, poster, retro * 0.5);
-    float grain = fract(sin(dot(FRAGCOORD.xy,vec2(12.9898,78.233)))*43758.5453)-0.5;
-    c += grain * 0.009 * retro;
-    COLOR = vec4(c, 1.0);
+    // Square world pixels keep a consistent apparent size across resolutions.
+    // UI is drawn afterwards, at native resolution. No blur, temporal noise or wobble.
+    float stride = raster_height > 1.0 ? max(1.0,1.0/(SCREEN_PIXEL_SIZE.y*raster_height)) : 1.0;
+    vec2 step_uv = SCREEN_PIXEL_SIZE * stride;
+    vec2 sampled_uv = (floor(SCREEN_UV/step_uv)+0.5)*step_uv;
+    vec3 c = texture(screen_texture,sampled_uv).rgb * visibility;
+    vec2 p = SCREEN_UV*2.0-1.0;
+    float vignette = smoothstep(0.32,1.65,length(p));
+    c *= 1.0-vignette*(0.28+cover*0.18);
+    vec2 cell = floor(FRAGCOORD.xy/stride);
+    float pattern = (4.0*bayer2(cell)+bayer2(floor(cell/2.0)))/16.0-0.46875;
+    // Restrained RGB555-style colour steps with stationary ordered dithering.
+    vec3 poster = floor(clamp(c+pattern/31.0,0.0,1.0)*31.0+0.5)/31.0;
+    c = mix(c,poster,clamp(retro*1.25,0.0,1.0));
+    COLOR = vec4(c,1.0);
 }

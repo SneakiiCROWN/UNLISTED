@@ -14,7 +14,11 @@ Extract into a new folder and open **UNLISTED.exe**. Preserve older builds and y
 
 [0.9.0 Inspection rollback](https://github.com/SneakiiCROWN/UNLISTED/releases/tag/unlisted-v0.9.0-inspection-public-test-20261023) and all earlier releases remain preserved.
 
-## This milestone
+## New source candidate: Night Arrival
+
+The newer source adds a physically animated torch-pack exchange, Eli's parked car at the gate, and configurable world pixels/colour depth with sharp UI. The current verified Windows download above remains Field Test until the new numbered package is independently checked. See [Night Arrival verification](NIGHT_ARRIVAL_VERIFICATION.md).
+
+## Field Test milestone
 
 - A recoverable historical service-test reel gives the office tape deck and line machine a connected investigation.
 - Useful six-minute white / four-minute UV battery budgets, low-charge warning and rare optional loose contacts.

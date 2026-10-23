@@ -7,6 +7,7 @@ func run(current: Node) -> void:
 		if arg.begins_with("--evidence="):output=arg.trim_prefix("--evidence=")
 	DirAccess.make_dir_recursive_absolute(output);g.checkpoint_path=output.path_join("checkpoint.json")
 	await exact_resolution()
+	if "--car-presentation" in OS.get_cmdline_user_args():await car_presentation();return
 	if "--comparison-reread-only" in OS.get_cmdline_user_args():
 		var source:=""
 		for arg in OS.get_cmdline_user_args():
@@ -60,5 +61,48 @@ func finish_arrival() -> void:
 	var file=FileAccess.open(output.path_join("repair_report.json"),FileAccess.WRITE)
 	file.store_string(JSON.stringify({"checks":checks,"passed":checks.size()-failed,"failed":failed,"elapsed_seconds":seconds()},"\t"));file.close()
 	print("ARRIVAL_QA_COMPLETE passed=",checks.size()-failed," failed=",failed)
-	get_tree().quit(0 if failed==0 else 1)
+	g.qa_exit(0 if failed==0 else 1)
 
+
+func car_presentation() -> void:
+	g.new_game();await wait(2);g.presentation.clear_transients();g.threat.enabled=false;g.threat.reset();g.events.chair=true
+	var car: Node3D=g.get_node("BriarLaneExterior/EliArrivalCar")
+	var bounds:=AABB();var first:=true
+	for mesh in g.all_meshes(car):
+		var actual: AABB=mesh.global_transform*mesh.get_aabb();bounds=actual if first else bounds.merge(actual);first=false
+	check("arrival car has human scale and grounded wheels",bounds.size.x>4.3 and bounds.size.x<4.7 and bounds.size.y>1.4 and bounds.size.y<1.7 and bounds.position.y>-.05 and bounds.position.y<.03,str(bounds))
+	g.player.camera.look_at(Vector3(-4.5,1.0,21.6));await wait(.3);await shot("C01_car_from_arrival")
+	g.player.position=Vector3(-2,.04,18.8);g.player.camera.look_at(Vector3(-5.6,.85,21.6));await wait(.3)
+	for spec in [[0,0.0,"C02_clean_world"],[1,.32,"C03_modern_psx"],[2,.65,"C04_stronger_retro"]]:
+		g.presentation.prefs.data.visual_preset=spec[0];g.presentation.prefs.data.retro=spec[1];g.presentation.apply_preferences(false);await wait(.2);await shot(spec[2])
+	g.presentation.prefs.data.visual_preset=1;g.presentation.prefs.data.retro=.32;g.presentation.apply_preferences(false)
+	if not "--car-layouts-only" in OS.get_cmdline_user_args():
+		await travel(Vector2(-5.6,19.4),"approach parked driver side")
+		g.player.rotation.y=PI;Input.action_press("forward");await wait(1);Input.action_release("forward");await wait(.2)
+		check("real movement meets car surface without passing through",g.player.position.z>19.8 and g.player.position.z<20.95,str(g.player.position))
+		await shot("C05_fitted_collision")
+		await travel(Vector2(-5.6,19.3),"step back from driver side")
+		await travel(Vector2(-2.8,19.3),"walk around front of parked car")
+		await travel(Vector2(-2.8,24),"walk around nose to open lane")
+		await travel(Vector2(-8.4,24),"walk behind parked car along lane")
+		await travel(Vector2(-8.4,19.3),"walk around rear of car")
+		await travel(Vector2(0,19.3),"return to gate approach")
+		g.player.camera.look_at(Vector3(-5.6,1,21.6));await shot("C06_gate_car_context")
+		g.save_game();g.load_game();await wait(.2)
+		check("car survives load without changing arrival or gate",is_instance_valid(car) and not g.doors.front_gate.opened and not g.events.get("front_checked",false))
+	# Same-eye-height interior comparison, no UI pixelation.
+	g.player.position=Vector3(0,.04,-4);g.player.camera.look_at(Vector3(0,1.4,-9));await wait(.2)
+	for spec in [[0,0.0,"C07_hall_clean"],[1,.32,"C08_hall_modern_psx"]]:
+		g.presentation.prefs.data.visual_preset=spec[0];g.presentation.prefs.data.retro=spec[1];g.presentation.apply_preferences(false);await wait(.2);await shot(spec[2])
+	g.presentation.show_settings();g.presentation.fill_settings("Display");await wait(.3)
+	g.presentation.controls.visual_preset.item_selected.emit(2);await wait(.1)
+	var actual_cfg=load("res://scripts/preferences.gd").new();actual_cfg.path=g.presentation.prefs.path;actual_cfg.load_file()
+	check("actual graphics preset updates shader and persists",actual_cfg.data.visual_preset==2 and is_equal_approx(g.presentation.film.material.get_shader_parameter("raster_height"),360.0))
+	g.presentation.controls.visual_preset.item_selected.emit(1);g.presentation.controls.retro.value=.28;await wait(.1);actual_cfg.load_file()
+	check("comfort intensity slider is functional and saved",is_equal_approx(actual_cfg.data.retro,.28) and is_equal_approx(g.presentation.film.material.get_shader_parameter("retro"),.28))
+	check("Display Back remains visible",g.get_viewport().get_visible_rect().encloses(g.presentation.buttons.Back.get_global_rect()))
+	# Settings retain the owner's selection; defaults only affect new settings files.
+	var cfg=load("res://scripts/preferences.gd").new();cfg.path=output.path_join("visual_settings.cfg");cfg.data.visual_preset=0;cfg.data.retro=.11;cfg.save_file();cfg.load_file()
+	check("existing clean and custom intensity persist",cfg.data.visual_preset==0 and is_equal_approx(cfg.data.retro,.11))
+	check("world filter precedes all readable UI",g.presentation.film.get_index()<g.presentation.card.get_index())
+	await shot("C09_readable_settings");await finish_arrival()

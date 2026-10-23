@@ -542,7 +542,8 @@ func fill_settings(tab: String) -> void:
 			row.add_child(preset)
 			controls.visual_preset = preset
 			preset.item_selected.connect(func(idx):prefs.data.visual_preset = idx;prefs.data.retro = [0.0,0.32,0.65][idx];apply_preferences(false);persist())
-			label(rows,"Fullscreen uses your desktop resolution. Text remains crisp.",15,"Meta")
+			slider("retro","Colour depth effect",0.0,1.0,0.01)
+			label(rows,"World pixels and colour depth change; interface text stays sharp.",15,"Meta")
 		"Captions":
 			toggle("subtitles","Spoken dialogue subtitles")
 			toggle("sound_captions","Environmental sound captions")
@@ -731,7 +732,7 @@ func apply_preferences(display := false) -> void:
 	stage.reduce_flash = prefs.data.reduced_flash
 	film.material.set_shader_parameter("visibility",prefs.data.visibility)
 	film.material.set_shader_parameter("retro",prefs.data.retro)
-	film.material.set_shader_parameter("pixel_stride",[1.0,1.35,2.2][prefs.data.visual_preset])
+	film.material.set_shader_parameter("raster_height",[0.0,540.0,360.0][prefs.data.visual_preset])
 	if display:apply_display()
 
 func apply_display() -> void:

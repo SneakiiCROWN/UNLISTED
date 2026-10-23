@@ -74,3 +74,7 @@ The underfloor rack movement cue derives from 344 Audio / Extreme Winds Vol. 1, 
 The experimental utility inspection glass uses Kenney Furniture Kit's bathroomMirror.glb (CC0), from the user's preserved archive. Licence: assets/interiors/Kenney_CC0.txt; source entry/hash: assets/interiors/spare_mirror_provenance.json. Its render texture, off-axis camera and contradictory cloth layer are original code. Raw GLB remains in the complete private source, not the public code checkout.
 
 The Inspection milestone's walk-in office cupboard derives from Kenney Furniture Kit 2.0 bookcaseClosedDoors (CC0). Internal shelves/base are removed and the existing hinged doors extended; frame, back, top and handles are retained. The original approved model, Blender derivative and SHA-256 provenance stay in the complete local project. The inspection case reuses the approved Kenney cardboardBoxOpen. The small fluorescent sleeve seal is an original SVG; battery sleeves/cells and inspection-head fitting are original game geometry. No new third-party media download or Surveyor artwork is introduced in this milestone.
+
+## Arrival station wagon
+
+GGBotNet, PSX Style Cars, Car 01 / grey texture, CC0 as posted by the author at https://opengameart.org/content/psx-style-cars . Exact download/page and original files preserved locally. Converted to glTF at 4.45 m length with wet material response. Provenance and licence in assets/exterior/arrival/. Raw media remains excluded from public source.
