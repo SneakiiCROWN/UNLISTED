@@ -122,6 +122,7 @@ func use(id: String) -> void:
 func queue_pattern(where: Vector3,start: float,house: bool) -> void:
 	stop_sources();sequence.clear();clock=0
 	var pattern: Array=game.events.get("underfloor_pattern",[0.0,.52,1.36])
+	if pattern.size()<3:pattern=[0.0,.52,1.36] # A partly tried joist must not reduce the documented three-tap test.
 	for i in mini(pattern.size(),6):sequence.append({"at":start+float(pattern[i]),"where":where,"house":house})
 func station_visible() -> bool:
 	var camera: Camera3D=game.player.camera

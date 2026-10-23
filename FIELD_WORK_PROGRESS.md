@@ -1,3 +1,9 @@
+# Latest acceptance / 0.9.2 Field Test
+
+FieldTest_04 fresh gate-through-both-endings Windows route passed 362/0, including physical reel pickup/playback and an actually depleted battery replaced from collected stock. Final FieldTest_05 passed field 38/0, reel 29/0, and three native layouts 9/0 each, verifying the four documented minor edge deltas. Ready for sealing and independent download verification. Exact source reconstruction proof is in Builds/UNLISTED_FieldTest_05/FINAL_DELTA_PROOF.json. No further artistic or gameplay changes before sealing.
+
+Next requested connected task AFTER release: a visible physical battery-change animation using the existing work torch, hands and rear cap. It is not in 0.9.2. Preserve the verified mechanics and do a targeted native visual/interrupt review.
+
 # Field controls and office evidence / development candidate
 
 Published 0.9.1 remains untouched. Recovered complete private source a6933e4; public release target a029a59. Anonymous Windows download passed native arrival 23/0, all seven asset hashes matched; previous release preserved.
@@ -15,3 +21,7 @@ FieldControls_04 tape: 28/0. Actual supported shelf pickup, physical crawl/ramp 
 FieldTest_02 is the final integrated candidate, version 0.9.2. A new fresh gate-through-both-endings route includes actual rack reel pickup, the existing service-exit branch, carrying the recording to the deck and full historical playback. It is running now, followed by final controller/settings layouts at three resolutions. Do not publish until these checks and native screenshots are reviewed.
 
 The 1998 reel has mechanical test sounds, no generated/claimed Simon dialogue. The evidence explicitly distinguishes its historical label from tonight's hall-microphone experiment. Existing ending conditions and Simon's unresolved disappearance are unchanged.
+
+## Candidate fixture corrections before final acceptance
+
+FieldTest_02 stopped after real screenshot evidence showed an unwrapped reel explanation. FieldTest_03 fixes wrapping and all three layouts pass 9/0 each. The full route's naturally saved battery reached zero with two genuinely collected spare packs, confirming the new budget matters. The old route helper assumed its previous long UV life and never replaced a pack. It was stopped before consuming more route time on that stale assumption. No runtime refill, inventory award, checkpoint edit or movement bypass was added: the updated helper presses the actual battery-replace action and verifies one collected pack was consumed. FieldTest_04 has identical gameplay runtime to 03; only QA helper battery use and waiting for the initial fade in layout screenshots change. These incomplete runs remain separately preserved.

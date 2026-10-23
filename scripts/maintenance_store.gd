@@ -138,7 +138,7 @@ func _physics_process(delta: float) -> void:
 	tap_clock+=delta
 	if game.player.position.y< -2.8 and game.player.position.distance_to(Vector3(3.25,-3,-15.8))<2 and not game.events.get("service_crouch_hint",false):
 		game.events.service_crouch_hint=true
-		if game.presentation.prefs.data.reminders:game.presentation.notify("Hold CTRL to crouch")
+		if game.presentation.prefs.data.reminders:game.presentation.notify("Hold LB to crouch" if game.controller.used else "Hold CTRL to crouch")
 	game.targets.underfloor_sheet.collision_layer=1 if game.events.get("archive_rack_open",false) and not moving else 0
 	if moving:
 		var next:=move_toward(rack.position.x,goal,delta*.45)

@@ -43,6 +43,7 @@ var transition: Tween
 var moment_tween: Tween
 var arrival_fade: Tween
 var arrival_lens: Tween
+var menu_navigation: Label
 var footer: Label
 var last_tab := "Audio"
 var display_resolution := Vector2i(1280,720)
@@ -298,7 +299,7 @@ func show_menu(main: bool) -> void:
 		add_button("Main Menu",return_to_title)
 		add_button("Quit to Desktop",quit_game)
 	rule(body)
-	label(body,"ENTER  SELECT     UP / DOWN  NAVIGATE     ESC  BACK",12,"Meta").modulate = Color("728988")
+	menu_navigation=label(body,"ENTER SELECT / UP-DOWN NAVIGATE / ESC BACK",12,"Meta");menu_navigation.modulate=Color("728988")
 	if main:buttons["New Game"].grab_focus()
 	else:buttons["Resume"].grab_focus()
 	entrance_animation(body)
@@ -599,7 +600,8 @@ func show_exclusion() -> void:
 	label(card_body,"FIELD TEST / HALL MICROPHONE",15,"Meta")
 	label(card_body,"THE LAST FOOTSTEP",32,"Title")
 	var heard_both: bool=game.events.get("audition_A",false) and game.events.get("audition_B",false)
-	label(card_body,"A / TONIGHT'S RECORDING     B / REPLAY + ROOM\n\n"+("I stood still after playback stopped. There was one more step.\nDid it come from the recording, or the room?" if heard_both else "A reviews the hall microphone: my footsteps tonight.\nB replays that same recording. Stand still and keep listening after it stops.\nThe 1998 service reel is a separate recording."),20)
+	var explanation: Label=label(card_body,"A / TONIGHT'S RECORDING     B / REPLAY + ROOM\n\n"+("I stood still after playback stopped. There was one more step.\nDid it come from the recording, or the room?" if heard_both else "A reviews the hall microphone: my footsteps tonight.\nB replays that same recording. Stand still and keep listening after it stops.\nThe 1998 service reel is a separate recording."),20)
+	explanation.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	var state_a := "heard" if game.events.get("audition_A",false) else "not heard"
 	var state_b := "heard" if game.events.get("audition_B",false) else "not heard"
 	var available: bool = game.stage>=3 and not game.threat.active()
@@ -794,6 +796,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	if not is_instance_valid(game):return
+	if is_instance_valid(menu_navigation):menu_navigation.text="A SELECT / D-PAD NAVIGATE / B BACK" if is_instance_valid(game.controller) and game.controller.used else "ENTER SELECT / UP-DOWN NAVIGATE / ESC BACK"
 	var covered: bool=section=="game" and game.player.crouched and game.player.near_cover() and (not game.threat.active() or not game.threat.can_see_player())
 	cover_amount=move_toward(cover_amount,1.0 if covered else 0.0,delta*3)
 	film.material.set_shader_parameter("cover",cover_amount)

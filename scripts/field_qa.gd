@@ -13,6 +13,7 @@ func run(current: Node) -> void:
 	DirAccess.make_dir_recursive_absolute(output);g.checkpoint_path=output.path_join("checkpoint.json")
 	await exact_resolution()
 	if "--tape-only" in OS.get_cmdline_user_args():await tape_run();return
+	if "--field-layouts-only" in OS.get_cmdline_user_args():await field_layouts();return
 	g.new_game();g.presentation.clear_transients();g.threat.enabled=false;g.threat.reset()
 	g.stage=2;g.events.chair=true;g.events.yard=true;g.events["return"]=true;g.player.position=Vector3(0,.04,9);await wait(.4)
 	var origin: Vector3=g.player.position
@@ -33,6 +34,7 @@ func run(current: Node) -> void:
 	await tap(JOY_BUTTON_START);var pos: Vector3=g.player.position
 	await axis(JOY_AXIS_LEFT_Y,-1);await wait(.2);await axis(JOY_AXIS_LEFT_Y,0)
 	check("Start pauses physics and releases controls",g.menu_open and pos.distance_to(g.player.position)<.001)
+	check("pause navigation legend follows real pad input",g.presentation.menu_navigation.text.contains("A SELECT"))
 	var focus: Control=g.get_viewport().gui_get_focus_owner()
 	await tap(JOY_BUTTON_DPAD_DOWN)
 	check("pad D-pad navigates actual pause focus",g.get_viewport().gui_get_focus_owner()!=focus)
@@ -146,10 +148,11 @@ func tape_run() -> void:
 	g.save_game();g.load_game();await wait(.2)
 	check("listened reel and natural observation persist",g.events.get("test_reel_heard",false) and g.events.notes[g.field_tape.NOTE_TITLE].contains("no working line"))
 	# No hidden underfloor prerequisite: the physical office box answers after supply.
-	g.events.erase("underfloor_read");g.events.erase("underfloor_taps");g.events.erase("line_calibrated");g.events.line_feed_off=false;g.events.line_return_out=false;g.dead_line.restore()
+	g.events.erase("underfloor_read");g.events.erase("underfloor_taps");g.events.erase("line_calibrated");g.events.line_feed_off=false;g.events.line_return_out=false;g.events.underfloor_pattern=[0.0];g.dead_line.restore()
 	await travel(Vector2(4.8,-4.6),"investigate wall test after historical recording")
 	await use("line_note",false);await shot("T05_machine_context");await tap(JOY_BUTTON_B)
 	await use("line_strike");check("powered connected machine responds without hidden note gate",g.events.get("line_calibrated",false))
+	check("partly tried joist still produces documented three-tap reference",g.dead_line.sources.size()+g.dead_line.sequence.size()==3)
 	await use("line_feed");await use("line_return");await use("line_strike")
 	check("both disconnected controls arm observable experiment",g.dead_line.isolated() and g.events.get("line_test_armed",false))
 	recording=false;recorder.set_recording_active(false);recorder.get_recording().save_to_wav(output.path_join("game_bus.wav"))
@@ -159,3 +162,31 @@ func tape_run() -> void:
 	var f:=FileAccess.open(output.path_join("report.json"),FileAccess.WRITE);f.store_string(JSON.stringify({"scope":"Native staged reel pickup, physical return, pad loading, positional playback, pause/save recovery and actual machine controls; no subjective listening claim","passed":checks.size()-failed,"failed":failed,"checks":checks},"\t"));f.close()
 	print("TAPE_QA_COMPLETE passed=",checks.size()-failed," failed=",failed)
 	g.qa_exit(0 if failed==0 else 1)
+
+func check_card(label_: String) -> void:
+	await wait(.2)
+	var rect: Rect2=g.presentation.card.get_global_rect();var view: Rect2=g.get_viewport().get_visible_rect()
+	check(label_+" fits native viewport",view.encloses(rect),str(rect)+" in "+str(view))
+	for child in g.presentation.card_body.get_children():
+		if child is Label and child.text.length()>100:check(label_+" text wraps inside card",child.autowrap_mode!=TextServer.AUTOWRAP_OFF and child.get_global_rect().end.x<=rect.end.x)
+func field_layouts() -> void:
+	g.new_game();await wait(2.2);g.presentation.clear_transients();g.stage=3;g.threat.enabled=false;g.threat.reset();g.events.chair=true;g.events["return"]=true;g.controller.used=true
+	g.events.test_reel_found=true;g.events.test_reel_loaded=true;g.events.test_reel_heard=true;g.field_tape.restore()
+	g.field_tape.use("test_reel_deck");await check_card("historical observation");await shot("FL01_reel_observation")
+	g.presentation.resume_game();await wait(.1);g.presentation.show_exclusion();await check_card("tonight comparison");await shot("FL02_tonight_comparison")
+	g.presentation.show_settings();g.presentation.fill_settings("Input");await wait(.2)
+	var back: Button=g.presentation.buttons.Back
+	check("Input settings Back is visible",g.get_viewport().get_visible_rect().encloses(back.get_global_rect()))
+	await shot("FL03_pad_settings")
+	g.presentation.fill_settings("Gameplay");await wait(.2)
+	check("contact setting exists and is real",g.presentation.controls.has("torch_contacts"));g.presentation.controls.torch_contacts.button_pressed=false
+	var cfg=load("res://scripts/preferences.gd").new();cfg.path=g.presentation.prefs.path;cfg.load_file()
+	check("contact setting persists",not cfg.data.torch_contacts);await shot("FL04_contact_setting")
+	g.presentation.settings_back();g.presentation.resume_game();await wait(.2)
+	g.events.test_reel_heard=true;g.events.erase("underfloor_read");g.events.line_test_armed=true;g.player.position=Vector3(4.8,.04,-4.6)
+	check("optional guidance follows test arming without underfloor prerequisite",g.NOTES.clue(g).contains("Both leads"))
+	var failed:=0
+	for c in checks:
+		if not c.passed:failed+=1
+	var f:=FileAccess.open(output.path_join("report.json"),FileAccess.WRITE);f.store_string(JSON.stringify({"scope":"Explicit native UI and hint fixtures; not a gameplay route","passed":checks.size()-failed,"failed":failed,"checks":checks},"\t"));f.close()
+	print("FIELD_LAYOUT_COMPLETE passed=",checks.size()-failed," failed=",failed);g.qa_exit(0 if failed==0 else 1)

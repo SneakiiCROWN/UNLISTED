@@ -58,7 +58,8 @@ func use(id: String) -> void:
 	game.presentation.label(game.presentation.card_body,"SERVICE TEST / 1998",30,"Title")
 	var body: String=LABEL if game.events.get("test_reel_found",false) else "The deck is already threaded for the hall microphone. A handwritten card beside it says: '1998 line-test reel kept with the service records below.'\n\nThe A/B controls compare my own footsteps tonight. The old test recording is separate."
 	if game.events.get("test_reel_heard",false):body=RESULT
-	game.presentation.label(game.presentation.card_body,body,19)
+	var explanation: Label=game.presentation.label(game.presentation.card_body,body,19)
+	explanation.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;explanation.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	if game.events.get("test_reel_found",false):
 		var caption: String="Replay service test" if game.events.get("test_reel_loaded",false) else "Load reel and listen"
 		game.presentation.add_button(caption,func():game.presentation.resume_game();play(),game.stage>=3,game.presentation.card_body)

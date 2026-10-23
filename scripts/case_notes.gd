@@ -46,7 +46,7 @@ static func missing_page(events: Dictionary) -> String:
 
 
 static func clue(game: Node) -> String:
-	if game.events.get("underfloor_read",false) and not game.events.get("line_strip_read",false) and not game.isolated and game.player.position.y>-.2 and ((game.player.position.x>1.6 and game.player.position.z< -3) or game.events.get("line_test_armed",false)):
+	if (game.events.get("underfloor_read",false) or game.events.get("test_reel_heard",false) or game.events.get("line_calibrated",false) or game.events.get("line_test_armed",false)) and not game.events.get("line_strip_read",false) and not game.isolated and game.player.position.y>-.2 and ((game.player.position.x>1.6 and game.player.position.z< -3) or game.events.get("line_test_armed",false)):
 		if game.events.get("line_response_complete",false):return "The sound came from the lounge after I disconnected the office test box. I should check what the counter did."
 		if game.events.get("line_test_armed",false):return "Both leads are disconnected. Dad listened from the hall, with the lounge shut."
 		return "Dad tested the timber below the office, then the continuity box upstairs. His annotation is still pinned there."

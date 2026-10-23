@@ -38,3 +38,10 @@ New cases can attract a real office search after examining the report sleeve. It
 ## Service exit / tonight
 
 The low return from the existing records store reaches the real east yard. Its grille contact is visibly disconnected. With power restored, opening it from below can file Eli OUT before he crosses it; opening it from the outside does not establish this contradiction. The strip is produced at the existing underfloor terminal. If Eli has not read the office record, his observation says only what he witnessed tonight. Once he knows the EMPTY entry, he can recognise that a printed departure cannot prove Simon left. Neither finding resolves Simon's whereabouts or identifies the Surveyor. Both porch choices and their eligibility remain intact; this optional experiment does not replace Simon's report or tonight's A/B comparison.
+
+
+## Historical service reel / field test
+
+A physical reel, labelled S. Ward / 1998, is stored on the records rack. Finding it and carrying it to the office deck permits a mechanical line-test recording: connected taps and a reply, the motor cut, a pause, and further taps. This is an authored reconstruction using existing licensed sound cues, not a claim to have found Simon's recorded voice. The label supplies the disconnected-lead context; it is not independent proof of every written claim. Completing playback earns an observation; merely picking up/loading it does not. Interrupted playback can be replayed.
+
+The original deck A/B experiment remains Eli's footsteps tonight followed by a live step from the office doorway. It is separate from the 1998 reel and remains the evidence used by the existing alternative ending. The historical reel explains why Simon tested the circuit and invites Eli to repeat the physical experiment. It is optional, creates no fetch gate and does not identify the Surveyor or resolve Simon's disappearance. The office test works once power is restored; a prior underfloor tap flag is no longer a hidden control prerequisite. Calibration and disconnecting BOTH leads still matter.

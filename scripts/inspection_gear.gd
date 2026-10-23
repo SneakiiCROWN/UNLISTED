@@ -75,7 +75,8 @@ func step_power(delta: float,drain:=true) -> void:
 	if drain and int(data.mode)!=0 and not data.get("contact_fault",false):
 		data.charge=maxf(0,float(data.charge)-delta*(UV_DRAIN if is_uv() else WHITE_DRAIN))
 		if float(data.charge)<=20 and not notified_low:
-			notified_low=true;game.presentation.notify("Torch battery low. Y fits a spare pack." if game.controller.used else "Torch battery low. T fits a spare pack.")
+			notified_low=true;var control: String="Y" if game.controller.used else "T"
+			game.presentation.notify("Torch battery low. "+control+" fits a spare pack." if int(data.spares)>0 else "Torch battery low. Hold "+control+" to wind the backup.")
 		apply_light()
 func tap_instruction() -> String:
 	return "D-pad Down taps the torch." if game.controller.used else "V taps the torch."

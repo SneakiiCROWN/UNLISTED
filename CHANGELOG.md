@@ -1,3 +1,7 @@
+# 0.9.2 / Field Test
+
+Meaningful battery budgets and optional contact repair; real controller movement, look, menus and object handling; recovered 1998 service-test reel; clearer responsive office experiment and linked evidence. Preserve both endings and all previous releases. See FIELD_TEST_VERIFICATION.md for native evidence and remaining human/hardware/listening limits.
+
 # UNLISTED changelog
 
 ## 0.9.1 The Other Way Out / 23 October 2026 / verified Windows candidate
