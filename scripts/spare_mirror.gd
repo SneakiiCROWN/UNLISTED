@@ -54,8 +54,10 @@ func cot_in_glass() -> bool:
 func touch() -> void:
 	game.sound("prop_impact",center,-37)
 	if not game.events.get("spare_uncovered",false) or not cot_in_glass():return
+	var first_look: bool=not game.events.get("spare_glass_seen",false)
 	game.events.spare_glass_seen=true;game.events.notes=game.events.get("notes",{})
 	game.events.notes["THE UTILITY GLASS"]=game.NOTES.SPARE_GLASS_NOTE
+	if first_look and game.presentation.prefs.data.observations:game.presentation.notify("There's nothing on the cot. Why does the mirror still show someone there?")
 	game.save_game(true)
 func _process(delta: float) -> void:
 	if not game.started or game.menu_open:return

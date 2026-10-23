@@ -108,7 +108,7 @@ func use() -> bool:
 	held.add_collision_exception_with(game.player)
 	if body==props.spare and not game.events.get("scrap_examined",false):
 		game.events.scrap_examined = true
-		game.presentation.notify("Iron fitting / heavy")
+		game.presentation.notify("An old valve fitting. Heavy enough to knock something loose.")
 	if body==props.cup and not game.events.has("remembered_cup"):
 		game.events.remembered_cup = [body.position.x,body.position.y,body.position.z]
 	if not reminded and game.presentation.prefs.data.reminders:

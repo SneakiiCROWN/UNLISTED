@@ -185,7 +185,7 @@ func _ready() -> void:
 	if qa_mode and not "--visual-probe" in OS.get_cmdline_user_args(): call_deferred("run_qa")
 
 func configure_input() -> void:
-	var keys := {"forward":KEY_W, "back":KEY_S, "left":KEY_A, "right":KEY_D, "sprint":KEY_SHIFT, "crouch":KEY_CTRL, "interact":KEY_E, "flashlight":KEY_F,"journal":KEY_J,"hint":KEY_H,"battery_status":KEY_B,"battery_replace":KEY_T,"torch_tap":KEY_V,"throw_prop":KEY_NONE}
+	var keys := {"forward":KEY_W, "back":KEY_S, "left":KEY_A, "right":KEY_D, "sprint":KEY_SHIFT, "crouch":KEY_CTRL, "interact":KEY_E, "flashlight":KEY_F,"journal":KEY_J,"hint":KEY_H,"battery_status":KEY_B,"battery_replace":KEY_T,"torch_tap":KEY_V,"throw_prop":KEY_NONE,"pause":KEY_NONE,"crouch_toggle":KEY_NONE}
 	for action in keys:
 		if not InputMap.has_action(action): InputMap.add_action(action)
 		var event := InputEventKey.new()
@@ -817,6 +817,7 @@ func new_game() -> void:
 	chair.position = Vector3(3.6,0,2.7)
 	presence.visible = false
 	for l in lamps: l.light_energy = 0
+	player.crouch_latched=false
 	player.position = Vector3(0,0.06,19.4)
 	player.rotation = Vector3.ZERO
 	player.camera.rotation = Vector3.ZERO
@@ -885,27 +886,27 @@ func open_casebook() -> void:
 	if brass_key:text_ += "KEYS HELD / brass service-yard key"+("; small cellar key" if shed_read else "")+"\n\n"
 	if notes.is_empty():text_ += "No records examined.\n"
 	for title_ in notes:text_ += title_+"\n"+str(notes[title_])+"\n\n"
-	text_ += "H requests an optional hint while exploring."
+	text_ += "D-pad Left asks for a hint while exploring." if controller.used else "H asks for a hint while exploring."
 	presentation.inspect_document("FIELD NOTES / RECORDS EXAMINED",text_)
 
 func interaction_name(id: String) -> String:
 	if id=="call_lightbox":return "Compare plans"
 	if id=="call_niche":return "Close lining door" if doors.call_niche.opened else "Lift recessed latch"
-	if id=="call_bridge":return "Remove signal bridge"
-	if id=="call_remote":return "Run remote playback"
+	if id=="call_bridge":return "Disconnect speaker link"
+	if id=="call_remote":return "Play upstairs recorder"
 	if id=="call_page":return "Take folded page"
 	if id=="test_reel":return "Take labelled reel"
 	if id=="test_reel_deck":return "Use tape deck"
 	if id=="exit_terminal":return "Inspect exit recorder"
-	if id=="exit_receipt":return "Take contact strip"
+	if id=="exit_receipt":return "Take printed slip"
 	if id in ["exit_grille","exit_catch","exit_outer_handle"]:return "Close grille" if events.get("exit_open",false) else ("Try catch" if not events.get("exit_catch_free",false) else "Open grille")
 	if id=="witness_cover":return "Close inspection cover" if events.get("witness_open",false) else "Slide inspection cover"
-	if id=="witness_carbon":return "Take clearance carbon"
+	if id=="witness_carbon":return "Take clearance copy"
 	if id.begins_with("witness_fastener"):return "Turn fastener"
 	if id=="storage_door":return "Close cupboard" if storage_hide.opened else "Open cupboard"
-	if id=="inspection_kit":return "Fit inspection head"
+	if id=="inspection_kit":return "Fit UV torch attachment"
 	if id.begins_with("battery_"):return "Take battery pack"
-	if id=="spare_mirror":return "Touch glass"
+	if id=="spare_mirror":return "Inspect reflection"
 	if id=="spare_cover":return "Pull back blanket"
 	if id=="spare_card":return "Turn birthday card"
 	if id=="line_feed":return "Connect feed" if events.get("line_feed_off",false) else "Disconnect feed"

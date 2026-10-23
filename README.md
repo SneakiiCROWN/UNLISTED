@@ -6,6 +6,10 @@ Eli Ward takes a night call at 17 Briar Lane, the address on his father Simon's 
 
 **0.10.0 / The Last Call - Windows alpha.** A connected plan investigation, real cellar bay, disconnected monitor experiment and sound-based escape deepen Simon's last investigation. The larger game and 30-60 minute human first-play target remain unfinished.
 
+## Unreleased playability work
+
+The current source includes the tested B/Start correction, brief torch meter with an optional persistent setting, and targeted interaction wording. These changes are **not in the v0.10.0 download**. See [recovery and remaining work](HUMAN_PLAYABILITY_RECOVERY.md). Sprint/stamina and D-cell art remain pending at this checkpoint.
+
 ## Play
 
 [Download the Windows ZIP](https://github.com/SneakiiCROWN/UNLISTED/releases/download/unlisted-v0.10.0-last-call-public-test-20261023/UNLISTED-Windows-The-Last-Call-v0.10.0.zip) / [prerelease and visual evidence](https://github.com/SneakiiCROWN/UNLISTED/releases/tag/unlisted-v0.10.0-last-call-public-test-20261023). Extract into a NEW folder and run **UNLISTED.exe**. Preserve previous builds and `%APPDATA%/UNLISTED`. Older saves retain their earned progression; new cases investigate the bay before the original porch recount.

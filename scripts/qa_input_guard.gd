@@ -12,7 +12,7 @@ func attach(current: Node) -> void:
 	window.set_flag(Window.FLAG_NO_FOCUS,true)
 	window.set_flag(Window.FLAG_MOUSE_PASSTHROUGH,true)
 	window.position=Vector2i(-16000,-16000)
-	for id in ["forward","back","left","right","sprint","crouch","interact","flashlight","journal","hint","battery_status","battery_replace","torch_tap","throw_prop","inspect_left","inspect_right","inspect_up","inspect_down"]:
+	for id in ["pause","crouch_toggle","forward","back","left","right","sprint","crouch","interact","flashlight","journal","hint","battery_status","battery_replace","torch_tap","throw_prop","inspect_left","inspect_right","inspect_up","inspect_down"]:
 		Input.action_release(id);InputMap.action_erase_events(id)
 	target=SubViewport.new();target.name="IsolatedAutomatedViewport"
 	target.audio_listener_enable_3d=true;target.size=Vector2i(1280,720)

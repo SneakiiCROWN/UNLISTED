@@ -1,8 +1,8 @@
 {
-  "version": "0.10.0",
-  "title": "The Last Call",
-  "private_source_commit": "3410f90",
+  "version": "0.10.1-dev",
+  "private_source_commit": "6a000282bdf4b77a1f476f64d15cff0c707adfe4",
+  "public_playable_release": "0.10.0 The Last Call",
   "complete_source_local_only": true,
   "human_playtested": false,
-  "verification": "LAST_CALL_VERIFICATION.md"
+  "verification": "HUMAN_PLAYABILITY_RECOVERY.md"
 }

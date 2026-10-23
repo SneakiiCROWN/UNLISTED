@@ -19,6 +19,11 @@ var card_body: VBoxContainer
 var tabs: HBoxContainer
 var rows: VBoxContainer
 var note: RichTextLabel
+var battery_root: VBoxContainer
+var battery_bar: ProgressBar
+var battery_caption: Label
+var battery_detail: Label
+var battery_status_time:=0.0
 var hud: Control
 var objective: Label
 var reticle: Label
@@ -180,6 +185,14 @@ func build_screen() -> void:
 	reticle = label(hud,"+",18)
 	anchored(reticle,Control.PRESET_CENTER,Rect2(-3,-10,6,20))
 	reticle.modulate = Color(0.7,0.8,0.77,0.45)
+	battery_root=VBoxContainer.new();hud.add_child(battery_root)
+	anchored(battery_root,Control.PRESET_BOTTOM_RIGHT,Rect2(-210,-101,170,62));battery_root.mouse_filter=Control.MOUSE_FILTER_IGNORE
+	battery_caption=label(battery_root,"",16,"Meta")
+	battery_bar=ProgressBar.new();battery_bar.custom_minimum_size=Vector2(170,7);battery_bar.show_percentage=false;battery_bar.mouse_filter=Control.MOUSE_FILTER_IGNORE;battery_root.add_child(battery_bar)
+	var backing:=StyleBoxFlat.new();backing.bg_color=Color("252f2e");battery_bar.add_theme_stylebox_override("background",backing)
+	var fill:=StyleBoxFlat.new();fill.bg_color=Color("a8b6a3");battery_bar.add_theme_stylebox_override("fill",fill)
+	battery_detail=label(battery_root,"",13,"Meta");battery_root.visible=false
+
 	subtitle = label(hud,"",21)
 	anchored(subtitle,Control.PRESET_CENTER_BOTTOM,Rect2(-410,-220,820,125))
 	subtitle.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -516,7 +529,7 @@ func fill_settings(tab: String) -> void:
 			slider("pad_sensitivity","Controller look speed",.5,3.5,.1,false,1.0)
 			slider("pad_deadzone","Controller stick deadzone",.10,.35,.01)
 			toggle("reminders","Brief first-use reminders")
-			var legend: String="STICKS MOVE / LOOK / X USE / LB CROUCH / L3 SPRINT\nRB LIGHT / Y PACK / D-PAD UP CHARGE / DOWN TAP\nBACK NOTES / LEFT HINT / START PAUSE / B BACK\nCARRY: X RELEASE / RT THROW / LT + RIGHT STICK ROTATE" if is_instance_valid(game.controller) and game.controller.used else "WASD MOVE / SHIFT SPRINT / CTRL CROUCH / E USE\nF LIGHT / T PACK / B CHARGE / V TAP TORCH\nJ NOTES / H OPTIONAL HINT / ESC PAUSE\nCARRY: E RELEASE / LEFT MOUSE THROW / R + MOUSE ROTATE"
+			var legend: String="STICKS MOVE / LOOK / X USE / B CROUCH / L3 SPRINT\nRB LIGHT / Y PACK / D-PAD UP CHARGE / DOWN TAP\nBACK NOTES / LEFT HINT / START PAUSE / B BACK IN MENUS\nCARRY: X RELEASE / RT THROW / LT + RIGHT STICK ROTATE" if is_instance_valid(game.controller) and game.controller.used else "WASD MOVE / SHIFT SPRINT / CTRL CROUCH / E USE\nF LIGHT / T PACK / B CHARGE / V TAP TORCH\nJ NOTES / H OPTIONAL HINT / ESC PAUSE\nCARRY: E RELEASE / LEFT MOUSE THROW / R + MOUSE ROTATE"
 			label(rows,legend,16,"Meta")
 		"Display":
 			var row := setting_row("Display mode")
@@ -559,6 +572,7 @@ func fill_settings(tab: String) -> void:
 			toggle("reduced_flash","Reduce light flicker")
 			toggle("reduced_motion","Reduce camera motion")
 			toggle("viewmodel","Visible handheld torch")
+			toggle("battery_persistent","Always show torch battery")
 			label(rows,"Interaction prompts and readable records stay legible.\nMotion reduction also steadies the handheld torch.",16)
 
 func settings_back() -> void:
@@ -789,6 +803,12 @@ func moment(id: String) -> void:
 			arrival_lens.tween_property(game.player.camera,"fov",77.0,3.0)
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("pause"):
+		get_viewport().set_input_as_handled()
+		if section=="intro":complete_intro()
+		elif section=="pause":resume_game()
+		elif game.started and not game.ended and section!="dead":show_menu(false)
+		return
 	if section == "intro" and ((event is InputEventKey and event.pressed and not event.echo and event.keycode in [KEY_SPACE,KEY_E,KEY_ESCAPE]) or event.is_action_pressed("ui_accept") or event.is_action_pressed("ui_cancel")):
 		get_viewport().set_input_as_handled()
 		complete_intro()
@@ -800,6 +820,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			"pause","document","register":resume_game()
 			"settings","credits":settings_back()
 
+func show_battery_status(duration:=3.5) -> void:
+	battery_status_time=maxf(battery_status_time,duration)
 func _process(delta: float) -> void:
 	if not is_instance_valid(game):return
 	if is_instance_valid(menu_navigation):menu_navigation.text="A SELECT / D-PAD NAVIGATE / B BACK" if is_instance_valid(game.controller) and game.controller.used else "ENTER SELECT / UP-DOWN NAVIGATE / ESC BACK"
@@ -818,6 +840,13 @@ func _process(delta: float) -> void:
 		ambience.volume_db = move_toward(ambience.volume_db,-80,delta*35)
 		menu_drone.volume_db = move_toward(menu_drone.volume_db,-80,delta*35)
 	if section == "game":
+		battery_status_time=maxf(0,battery_status_time-delta)
+		var charge: float=game.equipment.data.get("charge",100.0)
+		battery_root.visible=battery_status_time>0 or prefs.data.get("battery_persistent",false)
+		battery_root.modulate.a=1.0 if prefs.data.get("battery_persistent",false) else clampf(battery_status_time/.65,0,1)
+		battery_bar.value=charge;battery_caption.text="TORCH %d%%"%ceili(charge)
+		battery_caption.modulate=Color("d3a785") if charge<=20 else Color("b8c3b3")
+		battery_detail.text=["OFF","WHITE","UV"][clampi(int(game.equipment.data.get("mode",1)),0,2)]+" / %d spare"%int(game.equipment.data.get("spares",0))
 		# Fit the backing to the actual wrapped caption instead of reserving a
 		# large black panel when only two short lines are shown.
 		subtitle.offset_bottom=-104

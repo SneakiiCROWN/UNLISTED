@@ -41,8 +41,8 @@ func cycle() -> void:
 	data.mode=(int(data.mode)+1)%(3 if data.uv else 2);apply_light()
 	game.presentation.notify(["Torch off","White light","Inspection light"][int(data.mode)])
 func status() -> void:
-	var controls: String="Y replaces a pack; hold with no spares to wind the backup." if game.controller.used else "T replaces a pack; hold with no spares to wind the backup."
-	game.presentation.notify("Torch %d%% / %d spare packs. "%[ceili(float(data.charge)),int(data.spares)]+("Loose contact. "+tap_instruction() if data.get("contact_fault",false) else controls))
+	game.presentation.show_battery_status()
+	if data.get("contact_fault",false):game.presentation.notify("Loose contact. "+tap_instruction())
 func replace_pack() -> void:
 	if game.player.viewmodel.replacing_pack():return
 	if is_instance_valid(game.physical.held):game.presentation.notify("I need a free hand to change the pack.");return
@@ -81,7 +81,7 @@ func step_power(delta: float,drain:=true) -> void:
 	if drain and int(data.mode)!=0 and not data.get("contact_fault",false):
 		data.charge=maxf(0,float(data.charge)-delta*(UV_DRAIN if is_uv() else WHITE_DRAIN))
 		if float(data.charge)<=20 and not notified_low:
-			notified_low=true;var control: String="Y" if game.controller.used else "T"
+			notified_low=true;game.presentation.show_battery_status(5.0);var control: String="Y" if game.controller.used else "T"
 			game.presentation.notify("Torch battery low. "+control+" fits a spare pack." if int(data.spares)>0 else "Torch battery low. Hold "+control+" to wind the backup.")
 		apply_light()
 func tap_instruction() -> String:

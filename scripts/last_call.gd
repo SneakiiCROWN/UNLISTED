@@ -21,7 +21,7 @@ const TITLE:="SIMON / AFTER THE LOUNGE"
 const PLAN_TITLE:="THE TWO CELLAR PLANS"
 const PLAN_NOTE:="The printed sheet is the site-office plan issued in 1998. Dad's tracing was folded into the test-reel sleeve. It's marked 'measured in cellar / after the lounge'.\n\nThe stairs, walls and service line match. His tracing adds a doorway beside the lower landing, on the west side. The printed plan shows solid wall there.\n\nHe either found an alteration they hadn't recorded, or this place showed him a different layout. I can check the wall myself."
 const AFTER:="17 BRIAR LANE / S. WARD / 1998\nAfter the lounge inspection\n\nI rang home again. Eli was there. I could hear the kettle behind him.\n\nThen the monitor in this bay played our first call back. Every word. Even the kettle, in the same place. The line to it was already disconnected.\n\nI don't think there was a child in that room. It had my call, his room and the drawing from my toolbox. It was using things I knew.\n\nI nearly left it for the next contractor. Then the transport started again and the man was at the landing. I played the test reel in the office. He went towards it. I got back into this bay.\n\nI haven't signed the clearance. If anyone comes after me, please check the rooms. Don't follow a voice just because you recognise it.\n\n[The page ends here. The drawing and disconnected bridge are still in the bay.]"
-const OBSERVATION:="Dad's tracing led to a real doorway. Inside were the drawing from his toolbox, his test connections and a page written after he saw my room.\n\nHe checked that I was safe at home. Then this monitor repeated the call. He knew it was copying us.\n\nI removed the signal bridge myself. The monitor still answered the old test recording. The office deck can still be run from here, without reconnecting the signal bridge.\n\nDad wasn't choosing this place over me. He was trying to work out what it was doing, then trying to get past the man at the stairs. I still don't know how far he got."
+const OBSERVATION:="Dad's tracing led to a real doorway. Inside were the drawing from his toolbox, his test connections and a page written after he saw my room.\n\nHe checked that I was safe at home. Then this monitor repeated the call. He knew it was copying us.\n\nI pulled out the metal link connecting the speaker. It still answered the old recording. The switch here can run the office recorder without reconnecting the speaker.\n\nDad wasn't choosing this place over me. He was trying to work out what it was doing, then trying to get past the man at the stairs. I still don't know how far he got."
 func _ready() -> void:
 	name="TheLastCall";build();restore()
 	var previous:=24
@@ -100,7 +100,7 @@ func align_plans() -> void:
 	game.events.notes[PLAN_TITLE]=PLAN_NOTE
 	var paper_audio:=AudioStreamPlayer3D.new();paper_audio.stream=preload("res://assets/audio/foley/paper_handling.ogg");paper_audio.bus="SFX";paper_audio.volume_db=-32;paper_audio.max_distance=4;add_child(paper_audio);paper_audio.global_position=lightbox.global_position;paper_audio.finished.connect(paper_audio.queue_free);paper_audio.play();game.save_game(true)
 func open_plans() -> void:
-	if game.threat.active():game.presentation.notify("I can't lay these out with him nearby.");return
+	if game.threat.active():game.presentation.notify("He's too close. I can't stop here.");return
 	var p=game.presentation;p.pause_world();p.clear_transients();p.clear_card();p.section="document"
 	p.label(p.card_body,"PROPERTY SERVICES / TRACING CABINET",15,"Meta")
 	var widget=load("res://scripts/plan_lightbox.gd").new();widget.game=game;p.card_body.add_child(widget)
@@ -127,8 +127,8 @@ func use(id: String) -> void:
 		game.events.call_disconnected=true;sync();game.sound("latch",jumper.global_position,-30);game.save_game(true);return
 	if id=="call_remote":
 		if cooldown>0 or game.field_tape.playing:return
-		if not game.events.get("test_reel_loaded",false):game.presentation.notify("The remote clicks. No reel is loaded upstairs.");return
-		if not game.events.get("call_disconnected",false):game.presentation.notify("The signal bridge is still in place.");return
+		if not game.events.get("test_reel_loaded",false):game.presentation.notify("There's no tape in the office recorder.");return
+		if not game.events.get("call_disconnected",false):game.presentation.notify("The speaker is still connected. I need to pull the metal link out before I test it.");return
 		cooldown=18
 		game.events.call_test_running=not game.events.get("call_test_complete",false)
 		game.field_tape.play(true);game.sound("latch",REMOTE,-31);game.save_game(true);return
@@ -183,7 +183,7 @@ func finish_if_ready() -> void:
 func hint() -> String:
 	if game.events.get("call_search_running",false):return "The deck is upstairs. Its remote still works from the bay. If he can't see me, the recording might draw him away."
 	if game.events.get("call_test_complete",false) and not game.events.get("call_note_read",false):return "There is a folded page beside the drawing in the bay."
-	if game.events.get("call_disconnected",false):return "The signal bridge is out. I can listen at the monitor while the remote runs Dad's test reel upstairs."
+	if game.events.get("call_disconnected",false):return "The speaker link is out. The switch here starts Dad's recording upstairs. I can listen for an answer."
 	if game.events.get("call_plan_aligned",false):return "Dad marked a doorway west of the bottom landing. The issued plan shows wall."
 	if not game.events.get("test_reel_found",false):return "Dad kept his test reel and measured tracing in the records store. The access is beside the cellar ramp."
 	if not game.events.get("test_reel_loaded",false):return "The reel fits the office deck. Its folded tracing belongs over the issued plan in the wall cabinet."

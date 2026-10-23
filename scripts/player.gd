@@ -10,6 +10,7 @@ var invert_y := false
 var moved_distance := 0.0
 var viewmodel: Node3D
 var crouched:=false
+var crouch_latched:=false
 var body_shape: CollisionShape3D
 
 func near_cover() -> bool:
@@ -27,6 +28,7 @@ func can_stand() -> bool:
 	return get_world_3d().direct_space_state.intersect_shape(query).is_empty()
 
 func restore_stance(saved: bool) -> void:
+	crouch_latched=false
 	crouched=saved or not can_stand()
 	var capsule: CapsuleShape3D=body_shape.shape
 	capsule.height=1.04 if crouched else 1.72
@@ -77,6 +79,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and (Input.mouse_mode == Input.MOUSE_MODE_CAPTURED or (game.automated_qa and event.get_meta("unlisted_qa_input",false))):
 		rotate_y(-event.relative.x * sensitivity)
 		camera.rotation.x = clampf(camera.rotation.x - event.relative.y * sensitivity * (-1 if invert_y else 1), -1.4, 1.4)
+	if event.is_action_pressed("crouch_toggle"):crouch_latched=not crouch_latched;return
 	if event.is_action_pressed("throw_prop") and game.physical.held:game.physical.release(true);return
 	if event.is_action_pressed("torch_tap"):game.equipment.tap_contact();return
 	if event.is_action_pressed("journal"):game.open_casebook();return
@@ -91,7 +94,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _physics_process(delta: float) -> void:
 	if not active: return
-	crouched=Input.is_action_pressed("crouch") or (crouched and not can_stand())
+	crouched=crouch_latched or Input.is_action_pressed("crouch") or (crouched and not can_stand())
 	var capsule: CapsuleShape3D=body_shape.shape
 	capsule.height=1.04 if crouched else 1.72
 	body_shape.position.y=capsule.height*.5

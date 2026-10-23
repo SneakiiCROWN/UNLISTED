@@ -96,7 +96,7 @@ func use(id: String) -> void:
 		game.events.exit_receipt_read=true;game.events.exit_blackout_pending=true
 		game.inspect_text(TITLE,PAPER if game.report_read else EARLY_PAPER);game.save_game(true);sync();return
 	if id=="exit_outer_handle":release_catch()
-	if not game.events.get("exit_catch_free",false):game.message("Rust has bound the catch. It needs a sharp knock.",2.5);return
+	if not game.events.get("exit_catch_free",false):game.message("Gate's jammed. Maybe something heavy could knock the latch loose.",2.5);return
 	obstruction_announced=false
 	game.events.exit_open=not game.events.get("exit_open",false)
 	game.sound("door",grille.global_position,-28)

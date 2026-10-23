@@ -31,7 +31,7 @@ const DEAD_LINE_RESULT := "17 BRIAR LANE / COUNTER STRIP\nWARD, ELI / IN 23:17 /
 
 const SPARE_CARD_NOTE := "The cover was moving. There was nobody underneath it.\n\nAn eighth-birthday card. Signed Dad. Dated 1999. He missed that birthday. He missed every one after it.\n\nI don't know where this came from. It isn't how it happened."
 
-const SPARE_GLASS_NOTE := "The cot was empty when I pulled the cover back. In the mirror, something was still underneath it.\n\nFirst the strip. Now the card. This house keeps getting my life wrong."
+const SPARE_GLASS_NOTE := "The cot was empty when I pulled the cover back. But in the mirror, someone still seemed to be lying under it.\n\nI looked back at the cot. There was nothing there."
 
 static func rubbing_note(events: Dictionary={}) -> String:
 	var lines: Array[String]=preload("res://scripts/case_puzzles.gd").lines(events)

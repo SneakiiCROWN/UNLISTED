@@ -12,6 +12,7 @@ func run(current: Node) -> void:
 		if arg.begins_with("--evidence="):output=arg.trim_prefix("--evidence=")
 	DirAccess.make_dir_recursive_absolute(output);g.checkpoint_path=output.path_join("checkpoint.json")
 	await exact_resolution()
+	if "--human-polish" in OS.get_cmdline_user_args():await human_polish_run();return
 	if "--reload-only" in OS.get_cmdline_user_args():await reload_run();return
 	if "--tape-only" in OS.get_cmdline_user_args():await tape_run();return
 	if "--field-layouts-only" in OS.get_cmdline_user_args():await field_layouts();return
@@ -266,3 +267,58 @@ func reload_run() -> void:
 		if not c.passed:failed+=1
 	var f:=FileAccess.open(output.path_join("report.json"),FileAccess.WRITE);f.store_string(JSON.stringify({"scope":"Native staged replacement, supported AnimationPlayer poses, actual input/pack transaction and interruption fixtures. Human animation approval pending.","passed":checks.size()-failed,"failed":failed,"checks":checks,"frames":frames,"audio_start_seconds":audio_at,"duration_seconds":seconds()},"\t"));f.close()
 	print("RELOAD_QA_COMPLETE passed=",checks.size()-failed," failed=",failed);g.qa_exit(0 if failed==0 else 1)
+
+func human_polish_run() -> void:
+	g.new_game();await wait(1);g.presentation.clear_transients();g.threat.enabled=false;g.threat.reset()
+	g.stage=3;g.events.chair=true;g.events.yard=true;g.events["return"]=true;g.player.position=Vector3(0,.04,9);await wait(.3)
+	await tap(JOY_BUTTON_B);await wait(.2)
+	check("B crouches in gameplay without opening a menu",g.player.crouched and not g.menu_open and g.presentation.section=="game")
+	await tap(JOY_BUTTON_B);await wait(.2)
+	check("B stands in clear space",not g.player.crouched and not g.menu_open)
+	await tap(JOY_BUTTON_START)
+	check("Start opens Pause",g.menu_open and g.presentation.section=="pause")
+	await tap(JOY_BUTTON_B);await wait(.2)
+	check("B backs out of Pause without crouching or opening title",not g.menu_open and not g.player.crouched and g.presentation.section=="game" and not Input.is_action_pressed("ui_cancel"))
+	await tap(JOY_BUTTON_BACK)
+	check("Back opens journal",g.menu_open and g.presentation.section=="document")
+	await tap(JOY_BUTTON_B)
+	check("B closes journal and releases original action",not g.menu_open and not Input.is_action_pressed("crouch_toggle"))
+	g.inspect_text("CONTROL FIXTURE","An isolated inspection record.");await wait(.2);await tap(JOY_BUTTON_START)
+	check("Start from an inspection opens Pause",g.presentation.section=="pause" and g.menu_open)
+	await tap(JOY_BUTTON_B);await tap(JOY_BUTTON_START);g.presentation.show_settings("pause");g.presentation.fill_settings("Input");await wait(.2)
+	await shot("H01_controller_settings")
+	await tap(JOY_BUTTON_B)
+	check("B returns settings to Pause",g.presentation.section=="pause")
+	await tap(JOY_BUTTON_START)
+	check("Start resumes from Pause",g.presentation.section=="game" and g.player.active)
+	await tap(JOY_BUTTON_DPAD_UP);await wait(.1)
+	check("battery status uses unobtrusive live meter",g.presentation.battery_root.visible and g.presentation.battery_bar.value>90 and not g.menu_open)
+	await shot("H02_quick_battery_meter");await wait(4)
+	check("quick battery meter fades away",not g.presentation.battery_root.visible)
+	await tap(JOY_BUTTON_START);g.presentation.show_settings("pause");g.presentation.fill_settings("Accessibility");await wait(.2)
+	g.presentation.controls.battery_persistent.button_pressed=true;await wait(.2)
+	var cfg=load("res://scripts/preferences.gd").new();cfg.path=g.presentation.prefs.path;cfg.load_file()
+	check("persistent meter option really saves",cfg.data.get("battery_persistent",false))
+	g.presentation.resume_game();await wait(.3)
+	check("persistent meter remains visible without polling",g.presentation.battery_root.visible)
+	g.presentation.prefs.data.battery_persistent=false;g.presentation.persist();g.equipment.data.charge=19;g.equipment.notified_low=false;await wait(.2)
+	check("low charge briefly shows meter with restrained warning",g.presentation.battery_root.visible and g.presentation.battery_bar.value<=20)
+	await shot("H03_low_battery_meter")
+	for size_ in [Vector2i(1920,1080),Vector2i(2560,1440),Vector2i(3440,1440)]:
+		exact_target.size=size_;exact_target.size_2d_override=Vector2i(roundi(720.0*size_.x/size_.y),720);g.equipment.status();await wait(.2)
+		check("battery meter fits "+str(size_),g.get_viewport().get_visible_rect().encloses(g.presentation.battery_root.get_global_rect()))
+		await shot("H04_meter_"+str(size_.x))
+	check("contextual prompts use ordinary object names",g.interaction_name("spare_mirror")=="Inspect reflection" and g.interaction_name("inspection_kit")=="Fit UV torch attachment" and g.interaction_name("call_remote")=="Play upstairs recorder")
+	# Low ceiling fixture; actual B toggles and physics still obey standing clearance.
+	g.player.position=Vector3(3.25,-2.99,-12.8);g.player.restore_stance(true);await wait(.3)
+	await tap(JOY_BUTTON_B);await tap(JOY_BUTTON_B)
+	check("B cannot force a standing capsule through low ceiling",g.player.crouched and not g.player.can_stand())
+	await travel(Vector2(3.25,-16.1),"crouch exit recovers standing naturally")
+	check("standing recovers once clear",not g.player.crouched and g.player.can_stand())
+	g.player.crouch_latched=true;g.new_game();await wait(.3)
+	check("New Game clears prior controller crouch latch",not g.player.crouch_latched and not g.player.crouched)
+	var failed:=0
+	for item in checks:
+		if not item.passed:failed+=1
+	var file:=FileAccess.open(output.path_join("report.json"),FileAccess.WRITE);file.store_string(JSON.stringify({"passed":checks.size()-failed,"failed":failed,"checks":checks,"scope":"Seeded native Windows control, screen transitions, battery UI/settings, low-clearance fixtures. No full story or human comprehension claim."},"\t"));file.close()
+	print("HUMAN_POLISH_QA passed=",checks.size()-failed," failed=",failed);await g.qa_exit(0 if failed==0 else 1)
