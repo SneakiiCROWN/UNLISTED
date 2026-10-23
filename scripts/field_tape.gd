@@ -5,12 +5,13 @@ var reel: Node3D
 var stored_reel: Node3D
 var clock:=0.0
 var playing:=false
+var remote:=false
 var next:=0
 var motor: AudioStreamPlayer3D
 var sources: Array[AudioStreamPlayer3D]=[]
 const DECK:=Vector3(3.3,.98,-8.52)
 const NOTE_TITLE:="SIMON / SERVICE TEST REEL"
-const LABEL:="S. WARD / 1998\nOFFICE LINE TEST\n\nFeed on. Return connected.\nThen both disconnected.\nKeep listening after the motor stops."
+const LABEL:="S. WARD / 1998\nOFFICE LINE TEST\n\nFeed on. Return connected.\nThen both disconnected.\nKeep listening after the motor stops.\n\nFolded in the sleeve: S. Ward / measured cellar tracing. The issued site plan is in the office lightbox."
 const RESULT:="The reel is labelled 1998, in Dad's handwriting.\n\nFirst the motor runs and the test box answers three taps. Then there is a switch click. The motor stops. After a long pause, the same taps come back.\n\nDad wrote 'both disconnected' on the sleeve. That is what he was testing: whether the sound could still come back with no working line.\n\nI can try it on the office box. A noise isn't proof that somebody came back."
 const CUES:=[.45,1.1,1.7,2.55,3.1,3.7,5.2,10.0,10.6,11.45]
 func _ready() -> void:
@@ -40,7 +41,7 @@ func build() -> void:
 	game.box(deck,Vector3(-.34,.055,-.04),Vector3(.22,.005,.23),Color("786f59"))
 	var tag: Label3D=game.label3(deck,"REEL / 1998",Vector3(-.34,.058,.057),0,11,Color("c3bba1"));tag.rotation.x=-PI/2;tag.pixel_size=.001
 func stop() -> void:
-	playing=false;clock=0;next=0
+	playing=false;remote=false;clock=0;next=0
 	for source in sources:
 		if is_instance_valid(source):source.stop();source.queue_free()
 	sources.clear();motor=null
@@ -65,28 +66,34 @@ func use(id: String) -> void:
 		game.presentation.add_button(caption,func():game.presentation.resume_game();play(),game.stage>=3,game.presentation.card_body)
 	if game.stage<3:game.presentation.label(game.presentation.card_body,"The supply light is out.",17,"Meta")
 	game.presentation.add_button("Leave deck",game.presentation.resume_game,true,game.presentation.card_body).grab_focus()
-func play() -> void:
-	if game.stage<3 or game.threat.active() or not game.events.get("test_reel_found",false):return
+func play(from_remote:=false) -> void:
+	if game.stage<3 or (game.threat.active() and not from_remote) or not game.events.get("test_reel_found",false):return
+	if from_remote and (not is_instance_valid(game.last_call) or not game.events.get("call_disconnected",false)):return
 	game.horror.stop_audition();stop();game.horror.audition="FIELD"
 	game.events.test_reel_loaded=true;stored_reel.visible=true;game.save_game(true)
-	playing=true;clock=0;next=0
+	playing=true;remote=from_remote;clock=0;next=0
 	motor=game.sound("hum",DECK,-32,true);motor.unit_size=1;motor.max_distance=7;sources.append(motor)
 	game.sound_caption("Motor running on the recording.",2.5,"1998 TEST REEL",motor,true)
 func cue(index: int) -> void:
+	if remote:
+		game.last_call.reel_cue(index)
+		# An audible source can redirect a search, never erase a sighted pursuit.
+		if game.threat.active() and not game.threat.can_see_player():game.threat.hear(DECK,28.0)
 	if index==6:
 		if is_instance_valid(motor):motor.stop()
 		var click=game.sound("latch",DECK,-29);sources.append(click)
 		game.sound_caption("A switch clicks. The motor stops.",2.5,"1998 TEST REEL",click,true);return
 	var audio=game.sound("prop_impact",DECK,-27 if index>=7 else -31);sources.append(audio)
-	audio.unit_size=1;audio.max_distance=9;audio.pitch_scale=.82 if index>=7 else 1.12
+	audio.unit_size=1.5 if remote else 1.0;audio.max_distance=24 if remote else 9;audio.pitch_scale=.82 if index>=7 else 1.12
 	if index==0:game.sound_caption("Three taps, then a reply.",3.2,"1998 TEST REEL",audio,true)
 	if index==7:game.sound_caption("The same taps, with the motor silent.",3,"1998 TEST REEL",audio,true)
 func _physics_process(delta: float) -> void:
 	if not playing:return
-	if game.horror.audition!="FIELD" or game.ended or game.threat.active():stop();return
+	if game.ended or (not remote and (game.horror.audition!="FIELD" or game.threat.active())):stop();return
 	clock+=delta
 	for r in get_tree().get_nodes_in_group("archive_reels"):r.rotation.y+=delta*1.8
 	while next<CUES.size() and clock>=CUES[next]:cue(next);next+=1
 	if clock>=14:
 		game.events.test_reel_heard=true;game.events.notes[NOTE_TITLE]=RESULT
-		stop();game.save_game(true);game.presentation.notify("Test reel finished / observation kept in field notes.")
+		var was_remote:=remote;stop();game.save_game(true)
+		if not was_remote:game.presentation.notify("Test reel finished / observation kept in field notes.")

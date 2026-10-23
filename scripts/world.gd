@@ -55,6 +55,7 @@ var investigation: Node3D
 var witness: Node3D
 var service_exit: Node3D
 var maintenance: Node3D
+var last_call: Node3D
 var field_tape: Node3D
 var dead_line: Node3D
 var spare_place: Node3D
@@ -97,6 +98,7 @@ func _ready() -> void:
 	qa_mode = qa_mode or "--production-views" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--witness-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--field-qa" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--last-call-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--exit-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--storage-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--inspection-qa" in OS.get_cmdline_user_args()
@@ -168,6 +170,7 @@ func _ready() -> void:
 	inspection_search=load("res://scripts/inspection_search.gd").new();inspection_search.game=self;add_child(inspection_search)
 	service_exit=load("res://scripts/service_exit.gd").new();service_exit.game=self;add_child(service_exit)
 	field_tape=load("res://scripts/field_tape.gd").new();field_tape.game=self;add_child(field_tape)
+	last_call=load("res://scripts/last_call.gd").new();last_call.game=self;add_child(last_call)
 	set_volume(volume)
 	show_menu("UNLISTED", true)
 	if dev_mode:
@@ -657,7 +660,7 @@ func build_basement() -> void:
 	wall(Vector3(-5,-3,-19.5),9,PI/2)
 	wall(Vector3(5,-3,-19.5),9,PI/2)
 	wall(Vector3(0,-3,-24),10)
-	wall(Vector3(-3.25,-3,-15),3.5)
+	opening_wall(Vector3(-3.25,-3,-15),3.5) # Real doorway beside the lower landing; new bay is fully backed.
 	# Original north pier now has a real low service opening beside the ramp.
 	wall(Vector3(1.95,-3,-15),.9)
 	wall(Vector3(4.55,-3,-15),.9)
@@ -782,6 +785,7 @@ func new_game() -> void:
 	events.clear()
 	events.case_v2=true
 	events.case_v3=true
+	events.case_v4=true
 	events.arrival_check=true
 	events.notes={"WHY I CAME":"Dad never came home from 17 Briar Lane. Tonight someone reported a television playing there, even though the house should have no power. I asked for the job. I want to find his old work report before I sign anything."}
 	PUZZLES.generate(events)
@@ -794,6 +798,7 @@ func new_game() -> void:
 	if is_instance_valid(witness):witness.restore()
 	if is_instance_valid(service_exit):service_exit.restore()
 	if is_instance_valid(field_tape):field_tape.restore()
+	if is_instance_valid(last_call):last_call.restore()
 	if is_instance_valid(maintenance):maintenance.restore()
 	if is_instance_valid(dead_line):dead_line.restore()
 	if is_instance_valid(spare_place):spare_place.restore()
@@ -884,6 +889,11 @@ func open_casebook() -> void:
 	presentation.inspect_document("FIELD NOTES / RECORDS EXAMINED",text_)
 
 func interaction_name(id: String) -> String:
+	if id=="call_lightbox":return "Compare plans"
+	if id=="call_niche":return "Close lining door" if doors.call_niche.opened else "Lift recessed latch"
+	if id=="call_bridge":return "Remove signal bridge"
+	if id=="call_remote":return "Run remote playback"
+	if id=="call_page":return "Take folded page"
 	if id=="test_reel":return "Take labelled reel"
 	if id=="test_reel_deck":return "Use tape deck"
 	if id=="exit_terminal":return "Inspect exit recorder"
@@ -928,6 +938,7 @@ func try_interact() -> void:
 		interact(str(hit.collider.get_meta("interaction")))
 
 func interact(id: String) -> void:
+	if id.begins_with("call_"):last_call.use(id);return
 	if id.begins_with("exit_"):service_exit.use(id);return
 	if id.begins_with("witness_"):witness.use(id);return
 	if id=="storage_door":storage_hide.use();return
@@ -1175,7 +1186,7 @@ func apply_save(data: Dictionary) -> void:
 	PUZZLES.ensure(events)
 	refresh_puzzle_labels()
 	NOTES.refresh_collected(events)
-	if isolated and not events.get("return",false) and not events.get("threat_resolved",false):
+	if isolated and not events.get("return",false) and not events.get("threat_resolved",false) and not events.get("call_search_running",false):
 		events.threat_pending = true
 		events.threat_origin = "basement"
 	physical.restore(events.get("props",{}))
@@ -1212,6 +1223,7 @@ func apply_save(data: Dictionary) -> void:
 	if is_instance_valid(witness):witness.restore()
 	if is_instance_valid(service_exit):service_exit.restore()
 	if is_instance_valid(field_tape):field_tape.restore()
+	if is_instance_valid(last_call):last_call.restore()
 	if is_instance_valid(maintenance):maintenance.restore()
 	if is_instance_valid(dead_line):dead_line.restore()
 	if is_instance_valid(spare_place):spare_place.restore()
@@ -1285,6 +1297,7 @@ func run_qa() -> void:
 	if "--storage-qa" in OS.get_cmdline_user_args():path="res://scripts/storage_hide_qa.gd"
 	if "--inspection-qa" in OS.get_cmdline_user_args():path="res://scripts/inspection_qa.gd"
 	if "--witness-qa" in OS.get_cmdline_user_args():path="res://scripts/witness_carbon_qa.gd"
+	if "--last-call-qa" in OS.get_cmdline_user_args():path="res://scripts/last_call_qa.gd"
 	if "--field-qa" in OS.get_cmdline_user_args():path="res://scripts/field_qa.gd"
 	if "--exit-qa" in OS.get_cmdline_user_args():path="res://scripts/service_exit_qa.gd"
 	if "--arrival-qa" in OS.get_cmdline_user_args():path="res://scripts/arrival_qa.gd"

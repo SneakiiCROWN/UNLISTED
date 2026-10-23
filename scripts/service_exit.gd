@@ -126,7 +126,7 @@ func restore() -> void:
 		game.player.position.z=-6.95;game.player.velocity=Vector3.ZERO
 	game.events.exit_version=1
 func blocked() -> bool:
-	return game.threat.active() or game.horror.beat!="" or game.horror.audition!="" or game.chapter.active or game.recount.active or not game.dead_line.sequence.is_empty() or game.maintenance.surprise_armed or game.events.get("witness_echo_pending",false)
+	return (is_instance_valid(game.last_call) and game.last_call.busy()) or game.threat.active() or game.horror.beat!="" or game.horror.audition!="" or game.chapter.active or game.recount.active or not game.dead_line.sequence.is_empty() or game.maintenance.surprise_armed or game.events.get("witness_echo_pending",false)
 func start_blackout() -> bool:
 	if blocked() or not game.threat.enabled:return false
 	if (not resumed and not game.maintenance.inside(game.player.position)) or game.player.position.distance_to(SPAWN)<4:return false

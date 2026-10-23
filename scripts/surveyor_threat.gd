@@ -270,7 +270,7 @@ func _physics_process(delta: float) -> void:
 	if state=="capture":return
 	if state == "dormant":
 		if game.events.get("threat_pending",false):
-			if game.events.get("threat_origin","") in ["window","inspection"] and game.events.get("threat_spawn",[]).size()==3:
+			if game.events.get("threat_origin","") in ["window","inspection","last_call"] and game.events.get("threat_spawn",[]).size()==3:
 				var p: Array=game.events.threat_spawn;begin(false,Vector3(p[0],p[1],p[2]))
 			elif game.events.get("threat_origin","")=="basement" and game.horror.beat!="wrong_direction":begin(true)
 			elif game.player.position.y > -0.3 and game.player.position.z > -8.2:begin()

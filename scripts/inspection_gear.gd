@@ -87,7 +87,7 @@ func step_power(delta: float,drain:=true) -> void:
 func tap_instruction() -> String:
 	return "D-pad Down taps the torch." if game.controller.used else "V taps the torch."
 func safe_contact_window() -> bool:
-	return game.started and not game.menu_open and not game.ended and not game.threat.active() and not game.recount.active and not game.capture_director.active and not game.player.viewmodel.replacing_pack() and game.horror.beat=="" and not game.chapter.active and not (game.impossible_room.active and game.impossible_room.inside(game.player.position)) and not game.events.get("exit_blackout_running",false)
+	return not (is_instance_valid(game.last_call) and game.last_call.busy()) and game.started and not game.menu_open and not game.ended and not game.threat.active() and not game.recount.active and not game.capture_director.active and not game.player.viewmodel.replacing_pack() and game.horror.beat=="" and not game.chapter.active and not (game.impossible_room.active and game.impossible_room.inside(game.player.position)) and not game.events.get("exit_blackout_running",false)
 func start_contact_fault() -> bool:
 	if not safe_contact_window() or not game.presentation.prefs.data.get("torch_contacts",true) or int(data.mode)!=1 or float(data.charge)<25 or int(data.contact_count)>=2 or data.contact_fault:return false
 	data.contact_fault=true;data.contact_count=int(data.contact_count)+1;fault_fade=1

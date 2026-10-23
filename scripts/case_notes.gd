@@ -5,7 +5,7 @@ const TRANSPORT_LEADER := "HALL MICROPHONE / NO RECORDING YET\n\nPencil note: Wa
 const RUBBING_LINES := ["Kitchen radio: 104.6.","I phoned home. Eli answered. He's safe.","I shut the lounge door. Now it's his room."]
 
 const WITNESS_TITLE := "THE UNSIGNED CLEARANCE"
-const WITNESS_CARBON := "17 BRIAR LANE / CLEARANCE CARBON / 1998\n\nMachine entry: EMPTY / 23:18.\nInspection completed: [blank]\nWitness signature: [blank]\n\nSimon's handwriting: I haven't finished checking the building. I haven't signed this. The counter filed it anyway. Keep the carbon with my report. My line-test notes are in the store beyond this passage.\n\nMy note: Nobody witnessed Dad leaving. The machine closed his job while he was still inside. Correcting his entry won't bring him back. It stops this sheet being treated as proof that the house was empty."
+const WITNESS_CARBON := "17 BRIAR LANE / CLEARANCE CARBON / 1998\n\nMachine entry: EMPTY / 23:18.\nInspection completed: [blank]\nWitness signature: [blank]\n\nSimon's handwriting: I haven't finished checking the building. I haven't signed this. The counter filed it anyway. Keep the carbon with my report. My line-test notes are in the store beyond this passage.\n\nMy note: Nobody witnessed Dad leaving. The machine closed his job while he was still inside. Correcting his entry won't tell me where he went. It stops this sheet being treated as proof that the house was empty."
 
 const INSPECTION_TITLE := "REPORT SLEEVE / INSPECTION"
 
@@ -46,6 +46,7 @@ static func missing_page(events: Dictionary) -> String:
 
 
 static func clue(game: Node) -> String:
+	if is_instance_valid(game.last_call) and not game.events.get("call_complete",false) and (game.events.get("bedroom_left",false) or game.last_call.busy() or game.events.get("call_bay_found",false)):return game.last_call.hint()
 	if (game.events.get("underfloor_read",false) or game.events.get("test_reel_heard",false) or game.events.get("line_calibrated",false) or game.events.get("line_test_armed",false)) and not game.events.get("line_strip_read",false) and not game.isolated and game.player.position.y>-.2 and ((game.player.position.x>1.6 and game.player.position.z< -3) or game.events.get("line_test_armed",false)):
 		if game.events.get("line_response_complete",false):return "The sound came from the lounge after I disconnected the office test box. I should check what the counter did."
 		if game.events.get("line_test_armed",false):return "Both leads are disconnected. Dad listened from the hall, with the lounge shut."

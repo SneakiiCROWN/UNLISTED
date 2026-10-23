@@ -155,7 +155,7 @@ func _physics_process(delta: float) -> void:
 			game.sound_caption("A knock answers from the passage.",2,"SERVICE VOID",cue)
 			if answers[i].extra:answers.append({"left":1.1,"position":Vector3(4.8,-.3,-7.6),"extra":false})
 			answers.remove_at(i)
-	if surprise_armed and game.events.get("underfloor_read",false) and inside(game.player.position) and not game.threat.active():
+	if surprise_armed and not (is_instance_valid(game.last_call) and game.last_call.busy()) and game.events.get("underfloor_read",false) and inside(game.player.position) and not game.threat.active():
 		surprise_clock+=delta
 		if surprise_clock>2 and not moving:
 			var center: Vector3=rack.position+Vector3.UP
