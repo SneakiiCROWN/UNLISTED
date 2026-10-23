@@ -905,7 +905,7 @@ func interaction_name(id: String) -> String:
 	if id.begins_with("witness_fastener"):return "Turn fastener"
 	if id=="storage_door":return "Close cupboard" if storage_hide.opened else "Open cupboard"
 	if id=="inspection_kit":return "Fit UV torch attachment"
-	if id.begins_with("battery_"):return "Take battery pack"
+	if id.begins_with("battery_"):return "Take torch battery"
 	if id=="spare_mirror":return "Inspect reflection"
 	if id=="spare_cover":return "Pull back blanket"
 	if id=="spare_card":return "Turn birthday card"

@@ -13,6 +13,7 @@ func run(current: Node) -> void:
 	DirAccess.make_dir_recursive_absolute(output);g.checkpoint_path=output.path_join("checkpoint.json")
 	await exact_resolution()
 	if "--stamina-polish" in OS.get_cmdline_user_args():await stamina_polish_run();return
+	if "--cell-pickups-only" in OS.get_cmdline_user_args():await cell_pickups_run();return
 	if "--human-polish" in OS.get_cmdline_user_args():await human_polish_run();return
 	if "--reload-only" in OS.get_cmdline_user_args():await reload_run();return
 	if "--tape-only" in OS.get_cmdline_user_args():await tape_run();return
@@ -195,6 +196,21 @@ func field_layouts() -> void:
 	var f:=FileAccess.open(output.path_join("report.json"),FileAccess.WRITE);f.store_string(JSON.stringify({"scope":"Explicit native UI and hint fixtures; not a gameplay route","passed":checks.size()-failed,"failed":failed,"checks":checks},"\t"));f.close()
 	print("FIELD_LAYOUT_COMPLETE passed=",checks.size()-failed," failed=",failed);g.qa_exit(0 if failed==0 else 1)
 
+func cell_pickups_run() -> void:
+	g.new_game();await wait(1);g.presentation.clear_transients();g.threat.enabled=false;g.threat.reset()
+	for id in ["battery_shed","battery_office"]:
+		var pickup: Node3D=g.equipment.pickups[id]
+		g.player.position=Vector3(pickup.global_position.x,.04,pickup.global_position.z+.8);await wait(.3)
+		g.player.camera.look_at(pickup.global_position+Vector3(0,.027,0));await wait(.2)
+		await shot("D_"+id+"_supported_cell")
+		var count_: int=g.equipment.data.spares;await tap(JOY_BUTTON_X)
+		check(id+" actual focused pickup consumes once",not pickup.visible and int(g.equipment.data.spares)==count_+1)
+		g.save_game();g.load_game();await wait(.2)
+		check(id+" collected state persists",not pickup.visible and int(g.equipment.data.spares)==count_+1)
+	var failed:=0
+	for c in checks:
+		if not c.passed:failed+=1
+	var f:=FileAccess.open(output.path_join("report.json"),FileAccess.WRITE);f.store_string(JSON.stringify({"scope":"Native focused D-cell pickups and saved inventory; staged player positions, visual support review separate","passed":checks.size()-failed,"failed":failed,"checks":checks},"\t"));f.close();g.qa_exit(0 if failed==0 else 1)
 func reload_run() -> void:
 	g.new_game();await wait(2);g.presentation.clear_transients();g.threat.enabled=false;g.threat.reset()
 	g.player.position=Vector3(0,.04,7.6);g.player.camera.look_at(Vector3(0,1.5,4.2));await wait(.3)

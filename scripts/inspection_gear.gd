@@ -45,9 +45,9 @@ func status() -> void:
 	if data.get("contact_fault",false):game.presentation.notify("Loose contact. "+tap_instruction())
 func replace_pack() -> void:
 	if game.player.viewmodel.replacing_pack():return
-	if is_instance_valid(game.physical.held):game.presentation.notify("I need a free hand to change the pack.");return
+	if is_instance_valid(game.physical.held):game.presentation.notify("I need a free hand to change the battery.");return
 	if int(data.spares)<=0:
-		game.presentation.notify("No spare packs. Hold to wind the backup." if float(data.charge)<20 else "No spare packs. The backup can be wound when charge is low.");return
+		game.presentation.notify("No spare batteries. Hold to wind the backup." if float(data.charge)<20 else "No spare batteries. The backup can be wound when charge is low.");return
 	if float(data.charge)>95:game.presentation.notify("Battery is still full.");return
 	data.spares=int(data.spares)-1;data.charge=100.0;data.contact_fault=false;notified_low=false
 	if game.player.active and game.presentation.prefs.data.viewmodel:game.player.viewmodel.start_pack_change()
@@ -58,12 +58,12 @@ func collect(id: String) -> void:
 		if data.uv:return
 		data.uv=true;data.mode=2;kit.visible=false;game.targets.inspection_kit.collision_layer=0
 		game.events.notes=game.events.get("notes",{})
-		game.events.notes["INSPECTION KIT"]="The case is stamped 2018. The house was taken off the service list in 1999. I don't know who left it here.\n\n365nm head: reveals fluorescent security ink. The spare head fits my work torch. F / RB changes mode. B / D-pad Up checks charge. T / Y changes the battery pack. With no spares, hold it to wind the backup cap.\n\nA label inside the case says the office report sleeves use the same security ink."
+		game.events.notes["INSPECTION KIT"]="The case is stamped 2018. The house was taken off the service list in 1999. I don't know who left it here.\n\n365nm head: reveals fluorescent security ink. The spare head fits my work torch. F / RB changes mode. B / D-pad Up checks charge. T / Y changes the battery. With no spares, hold it to wind the backup cap.\n\nA label inside the case says the office report sleeves use the same security ink."
 		game.presentation.notify("UV head fitted. RB changes light; check report sleeves for fluorescent ink." if game.controller.used else "UV head fitted. F changes light; check report sleeves for fluorescent ink.")
 	else:
 		if id in data.packs:return
 		data.packs.append(id);data.spares=int(data.spares)+1;pickups[id].visible=false;game.targets[id].collision_layer=0
-		game.presentation.notify("Battery pack taken / %d spare"%int(data.spares))
+		game.presentation.notify("Battery taken / %d spare"%int(data.spares))
 	apply_light();game.sound("latch",game.player.position,-32);game.save_game(true)
 func _physics_process(delta: float) -> void:
 	if not game.started or game.menu_open or game.ended:return
@@ -82,7 +82,7 @@ func step_power(delta: float,drain:=true) -> void:
 		data.charge=maxf(0,float(data.charge)-delta*(UV_DRAIN if is_uv() else WHITE_DRAIN))
 		if float(data.charge)<=20 and not notified_low:
 			notified_low=true;game.presentation.show_battery_status(5.0);var control: String="Y" if game.controller.used else "T"
-			game.presentation.notify("Torch battery low. "+control+" fits a spare pack." if int(data.spares)>0 else "Torch battery low. Hold "+control+" to wind the backup.")
+			game.presentation.notify("Torch battery low. "+control+" fits a spare battery." if int(data.spares)>0 else "Torch battery low. Hold "+control+" to wind the backup.")
 		apply_light()
 func tap_instruction() -> String:
 	return "D-pad Down taps the torch." if game.controller.used else "V taps the torch."
@@ -121,8 +121,7 @@ func build() -> void:
 		var support: Node3D=game.get_node("ShedEquipmentBench" if spec[0]=="battery_shed" else "ArchiveWorkDesk")
 		var top: float=game.surface_height(support,body.position,1.2)
 		if is_finite(top):body.position.y=top
-		# Four cells in a dark reusable sleeve, not a floating pickup icon.
-		game.box(body,Vector3(0,.035,0),Vector3(.10,.07,.075),Color("444d46"))
-		for offset in [Vector2(-.011,-.011),Vector2(.011,-.011),Vector2(-.011,.011),Vector2(.011,.011)]:
-			var cell:=MeshInstance3D.new();var cylinder:=CylinderMesh.new();cylinder.top_radius=.009;cylinder.bottom_radius=.009;cylinder.height=.068;cylinder.radial_segments=8;cell.mesh=cylinder;cell.material_override=game.mat(Color("8f927b"));body.add_child(cell);cell.position=Vector3(offset.x,.04,offset.y)
+		# A matching single D cell rests in a shallow tray on the measured surface.
+		game.box(body,Vector3(0,.005,0),Vector3(.046,.010,.078),Color("393e35"))
+		var cell: Node3D=preload("res://scripts/d_cell.gd").make(game);body.add_child(cell);cell.position=Vector3(0,.0271,0);cell.rotation.z=PI
 		game.collision(body,Vector3(0,.05,0),Vector3(.15,.12,.13),spec[0])

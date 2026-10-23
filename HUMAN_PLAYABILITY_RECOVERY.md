@@ -1,35 +1,41 @@
-# Human playability / active 0.10.1-dev continuation
+# UNLISTED human-playability continuation / 0.10.1-dev
 
-Base preserved: v0.10.0 The Last Call; private 84aa3ae, recovery/before-human-playability-84aa3ae. Public playable release is still v0.10.0. No release/tag is overwritten.
+Public Windows release remains v0.10.0 The Last Call. Preserve its release, tag, complete source, saves and all older builds. The source below is newer, unreleased work; never replace it with the public release source.
 
-## Completed and tested
+## Secured recovery points
 
-B toggles crouch during gameplay, backs out of menus, and does not open Pause/the title. Start opens Pause, including from inspections, and resumes Pause. Releases return to the action that received the press, even across screen changes. LB remains a compatible held-crouch alias; hints advertise B. New Game clears an old crouch latch. Keyboard crouch and movement speeds are unchanged.
+- Initial clean private checkpoint: 84aa3ae; tag recovery/before-human-playability-84aa3ae.
+- Controls/meter: private 6a00028, public a14922c; complete private archive in Checkpoints/20261023_human_playability_01.
+- Sprint/office language: private 273b65c, public 600bb24; complete private archive in Checkpoints/20261023_human_playability_02.
+- Newest cell presentation: this checkpoint; complete private archive and exact commit/hash receipt in Checkpoints/20261023_human_playability_03/RECOVERY.json. No restricted raw media is published.
 
-Charge check (keyboard B / D-pad Up) shows a small meter for 3.5 seconds, then fades. Low charge shows it briefly. Accessibility has a saved always-visible option, off by default. The existing charge, UV, spare inventory, cap exchange and backup semantics are unchanged.
+## Implemented
 
-Targeted wording: jammed service gate/latch, Inspect reflection, UV attachment, upstairs recorder, speaker link, printed slip and clearance copy. Mirror reaction respects observation settings. This is NOT a complete dialogue/rare-string audit.
+B toggles crouch in gameplay and backs out in menus; Start pauses/resumes, including from inspections. Button releases return to the action that received the original press. Low ceilings preserve crouch; New Game clears the latch. LB remains a held-crouch compatibility alias. Isolated native input keeps the owner's normal PC input out of QA.
 
-Native Windows build: Builds/UNLISTED_HumanPolish_02/UNLISTED.exe. Focused human fixture 23/0; existing field/controller/battery/contact fixture 38/0; controller plan fixture 8/0. Actual B/Start/journal/inspection/settings transitions, low-ceiling/standing recovery, New Game reset, battery UI and saved preference pass. Screenshots at 1080p, 1440p and 3440x1440. Owner checkpoint/settings hashes unchanged. Human artistic/controller-hardware approval remains pending. No full-route repeat was needed for this checkpoint; sprint speed/endurance was unchanged.
+Charge check shows a small bottom-right meter for 3.5 seconds, then fades. Low charge shows it briefly. A saved Accessibility preference allows a permanent meter, off by default.
 
-## Identified objects / remaining work
+Saved Hold/Toggle sprint preference, roughly 7.5 seconds of running, a short recovery delay and roughly five seconds of recovery. A small stamina bar fades at full recovery. Pause/crouch cancel toggle sprint. Numeric fatigue survives saves; old saves start full. Existing walking/sprint/crouch speeds remain unchanged. These are initial tuning values, not human-approved balance.
 
-The shed loose object is props.spare: approved pipe_valve.glb, displayed as an iron fitting, 0.26 x 0.22 x 0.26 m, 1.1 kg. It is separate from the essential UV inspection attachment. The existing physics impact can already knock the service-exit latch loose. No arbitrary attachment/fetch gate was invented.
+Targeted human-language repairs: service gate/latch, mirror, UV attachment, recorder/speaker link, office power/cable/tap controls and Simon's dependent note/hint, printed clearance evidence. Existing collected Last Call notes refresh known text without awarding evidence. This is not a complete rare-dialogue audit.
 
-The torch still uses four small 18 mm diameter x 52 mm cylinders in a 2x2 pack. Actual service GLB rear-bore mesh bounds are about 58 x 58 x 112 mm; body bounds about 58 x 58 x 173 mm. These are mesh bounds, NOT a proven internal usable volume. Inspect actual inner clearance before deciding D-cell count and fitting a convincing carrier; preserve inventory semantics and excellent cap/hand animation.
+One original unbranded D cell replaces the four small cylinders in the service animation and both physical pickups. It has a jacket, bands, insulated positive shoulder and metal contacts. A shallow tray rests on the measured support mesh. Cell envelope about 34.2 x 61 mm; size reference: https://data.energizer.com/pdfs/en95.pdf . Actual service GLB rear-bore mesh bounds are about 58 x 58 x 112 mm; these bounds are not a proof of all internal clearance. Native opened-cap/extraction/seating views were reviewed against the existing bore and supporting fingers. Cap, hand and sleeve AnimationPlayer paths/timing, battery charge/drain, UV, backup and saved spare counts are unchanged. Existing pack identifiers remain internally for save compatibility; no manufacturer artwork is copied.
 
-Originally pending at the first checkpoint (see verified continuation below): hold/toggle sprint, stamina, D-cell art, complete human-language/rare-condition review, broader physical-clutter and furniture audit. No keyboard/pad rebinding editor currently exists. Car arrival cinematic remains explicitly later, after high-priority repairs.
+The shed iron fitting is already a physics weight that can strike the service-exit latch. It is separate from the essential UV attachment; no arbitrary extra fetch gate was added.
 
-## Exact next start
+## Windows verification / evidence
 
-Preserve this checkpoint/backup first. Continue natural writing and control consistency, then implement hold/toggle sprint and balanced stamina as one tested slice. Retest actual Surveyor escapes, crouch/cover, pause, retry and save handling if movement changes. Do not insert rejected Surveyor art or promise a complete 30-60 minute game. Use existing isolated native QA; the owner can keep using the PC. Publish no rushed Windows prerelease.
+Latest local executable: Builds/UNLISTED_HumanPolish_07/UNLISTED.exe.
 
-## Verified continuation / newer than the first controller checkpoint
+- Final cell build: focused actual ray/controller pickups and saved inventory 5/0; reload/input/pause/movement/reduced-motion/occupied-hand/death/retry 18/0; staged native poses at 1440p and 3440x1440 3/0 each. Check actual report totals if continuing; screenshots in QA/cells, QA/reload, QA/poses1440 and QA/posesuw. Cell build changes are cosmetic and text-only after the earlier integrated movement verification.
+- Build 05: stamina/real live cellar pursuit escape/save 23/0; B/Start/meter/low ceiling/New Game 23/0; office labels/documents 7/0 at each of 1080p, 1440p and 3440x1440; naturally earned saved-bay escape and both original endings 48/0.
+- Build 02 baseline: original field/controller/battery/contact 38/0; controller-plan 8/0.
+- Owner checkpoint/settings hashes unchanged. Final native logs contain no runtime script errors.
 
-Builds/UNLISTED_HumanPolish_05/UNLISTED.exe adds a saved Hold/Toggle sprint choice, about 7.5 seconds of running, a short recovery delay and five seconds of natural recovery, plus a fading stamina bar above the temporary torch meter. Pause and crouching cancel toggle sprint. Save data carries stamina; legacy saves default to full. Human endurance/balance approval remains pending. These are tuning values, not a claimed final balance.
+Earlier failed evidence stays in place. Build 03's distance fixture started off the curved lane and failed; the corrected fixture follows actual lane/ground coordinates. Its live cellar escape had passed. No terrain was changed to satisfy that fixture. Builds 06 and 07 retain the intermediate/final cell screenshots.
 
-Final exported tests: stamina/control/save/live cellar pursuit escape 23/0; B/Start/battery/low-ceiling/New Game 23/0; office labels/documents 7/0 each at 1080p/1440p/3440x1440; naturally earned saved-bay escape through both endings 48/0. Owner data unchanged. Native screenshots reviewed. Earlier HumanPolish_03's distance fixture was placed off the curved lane and failed; it is preserved, and the final fixture follows the real lane and terrain height. Its actual cellar escape had passed. No map geometry was changed to make a test pass.
+## Honest remaining work / next continuation
 
-Office controls and prompts now use power, cable and tap button. Simon's note and dependent optional hint explain their purpose in ordinary language. Known collected Last Call notes refresh wording without adding evidence or changing progression. This is still a targeted writing pass, not a whole-game rare-string audit.
+Whole-game rare-condition writing, broader physical furniture/prop review and later car-arrival cinematic remain unfinished. Human controller-hardware testing, endurance/balance, subjective art/story comprehension and listening approval remain pending. No claim of 30-60 minutes, a finished Surveyor redesign or a polished complete game is made.
 
-Remaining: D-cell model/carrier with actual clearance/hand/cap review; broader writing, prop/furniture review; later car arrival cinematic. The first controller-only full private archive is Checkpoints/20261023_human_playability_01/UNLISTED_Human_Playability_Complete_Source.zip (6a00028). Preserve it. Continue from this newer source, not that earlier snapshot.
+Continue from the newest clean private source and receipt, not an older archive. Preserve rejected Surveyor studies outside ordinary gameplay. Use targeted isolated Windows tests for changed systems; avoid repeating passed full routes unless a relevant gameplay change warrants it. No new public Windows prerelease is made by this checkpoint.

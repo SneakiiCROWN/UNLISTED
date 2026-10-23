@@ -31,9 +31,7 @@ func _ready() -> void:
 	finish(false)
 func pack(id: String) -> Node3D:
 	var root:=Node3D.new();root.name=id;geometry.add_child(root);root.position=PACK_HOME
-	for xy in [Vector2(-.0105,-.0105),Vector2(.0105,-.0105),Vector2(-.0105,.0105),Vector2(.0105,.0105)]:
-		var cell:=MeshInstance3D.new();var shape:=CylinderMesh.new();shape.top_radius=.009;shape.bottom_radius=.009;shape.height=.052;shape.radial_segments=12;cell.mesh=shape;cell.material_override=player.game.mat(Color("777c66"));root.add_child(cell);cell.position=Vector3(xy.x,xy.y,0);cell.rotation.x=PI/2
-		var terminal:=MeshInstance3D.new();var end:=CylinderMesh.new();end.top_radius=.006;end.bottom_radius=.006;end.height=.003;end.radial_segments=12;terminal.mesh=end;terminal.material_override=player.game.mat(Color("b1ac86"));root.add_child(terminal);terminal.position=Vector3(xy.x,xy.y,.027);terminal.rotation.x=PI/2
+	root.add_child(preload("res://scripts/d_cell.gd").make(player.game))
 	return root
 func track(anim: Animation,path: String,times: Array,values: Array,discrete:=false) -> void:
 	var id:=anim.add_track(Animation.TYPE_VALUE);anim.track_set_path(id,NodePath(path))
