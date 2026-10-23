@@ -42,7 +42,7 @@ func build() -> void:
 	feed_handle=Node3D.new();panel.add_child(feed_handle);feed_handle.position=Vector3(-.17,.035,.055)
 	var lever: MeshInstance3D=game.box(feed_handle,Vector3(0,.035,.015),Vector3(.025,.085,.035),Color("8f8d72"))
 	game.collision(panel,Vector3(-.17,.035,.073),Vector3(.105,.13,.10),"line_feed")
-	tag("FEED",Vector3(-.17,-.085,.05),14)
+	tag("POWER",Vector3(-.17,-.085,.05),14)
 	# A real socket and short captive cable; it cannot be lost as a loose puzzle item.
 	plate(Vector3(.16,.035,.052),Vector3(.082,.082,.025),Color("212923"))
 	plug=Node3D.new();panel.add_child(plug);plug.position=Vector3(.16,.035,.073)
@@ -50,17 +50,17 @@ func build() -> void:
 	return_cable=repair.tube(Vector3(.16,-.005,.083),Vector3(.22,-.17,.09),.009,Color("292d28"),panel)
 	repair.tube(Vector3(.30,-.17,.09),Vector3(.30,-.40,.04),.009,Color("292d28"),panel)
 	game.collision(panel,Vector3(.16,.035,.11),Vector3(.11,.13,.14),"line_return")
-	tag("RETURN",Vector3(.16,-.085,.05),14)
+	tag("CABLE",Vector3(.16,-.085,.05),14)
 	plate(Vector3(0,.005,.055),Vector3(.055,.055,.030),Color("a19876"))
 	game.collision(panel,Vector3(0,.005,.08),Vector3(.07,.08,.08),"line_strike")
-	tag("STRIKER",Vector3(0,-.085,.05),12)
+	tag("TAP",Vector3(0,-.085,.05),12)
 	pilot=game.box(panel,Vector3(0,.115,.056),Vector3(.025,.015,.008),Color("a4a16b"),false,true)
 	# Supply/return lines follow the wall to the existing underfloor terminal.
 	for x in [-.23,.23]:repair.tube(Vector3(x,.24,-.035),Vector3(x,1.48,-.035),.013,Color("57594a"),panel)
 	game.collision(panel,Vector3(0,-.36,.07),Vector3(.43,.16,.08),"line_note")
 	var note: MeshInstance3D=game.box(panel,Vector3(0,-.36,.039),Vector3(.43,.16,.004),Color("b4ad8d"))
 	note.material_override=game.texture_mat("res://assets/original/aged_paper.png",Color("b4ad8d"))
-	var ink: Label3D=tag("S. WARD / CONTINUITY TEST\nFEED OFF + RETURN REMOVED",Vector3(0,-.36,.044),10);ink.modulate=Color("44493a")
+	var ink: Label3D=tag("S. WARD / 1998\nSWITCH OFF + UNPLUG",Vector3(0,-.36,.044),10);ink.modulate=Color("44493a")
 	strip=Node3D.new();panel.add_child(strip);strip.position=Vector3(0,-.57,.055)
 	var paper: MeshInstance3D=game.box(strip,Vector3.ZERO,Vector3(.21,.27,.004),Color("b7b08c"))
 	paper.material_override=game.texture_mat("res://assets/original/aged_paper.png",Color("b7b08c"))
@@ -109,15 +109,15 @@ func use(id: String) -> void:
 	if id!="line_strike" or cooldown>0:return
 	cooldown=.3;game.sound("prop_impact",PANEL,-31)
 	if not available():
-		game.presentation.notify("No supply. The feed light is out.");return
+		game.presentation.notify("There's no power to the test box.");return
 	if not isolated():
 		# Calibration only works through both connected leads; a dead or open circuit cannot answer.
 		if game.events.get("line_feed_off",false) or game.events.get("line_return_out",false):
-			game.presentation.notify("Only one lead is disconnected.");return
+			game.presentation.notify("The power switch and cable both need checking. Dad's note is pinned below.");return
 		game.events.line_calibrated=true;queue_pattern(PANEL,.4,false)
 	elif game.events.get("line_calibrated",false):
 		game.events.line_test_armed=true
-	elif isolated():game.presentation.notify("No reference pattern yet. The note describes the connected test.")
+	elif isolated():game.presentation.notify("I haven't heard it working yet. Dad tested it with the power on and cable plugged in first.")
 	game.save_game(true)
 func queue_pattern(where: Vector3,start: float,house: bool) -> void:
 	stop_sources();sequence.clear();clock=0

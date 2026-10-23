@@ -18,8 +18,18 @@ The shed loose object is props.spare: approved pipe_valve.glb, displayed as an i
 
 The torch still uses four small 18 mm diameter x 52 mm cylinders in a 2x2 pack. Actual service GLB rear-bore mesh bounds are about 58 x 58 x 112 mm; body bounds about 58 x 58 x 173 mm. These are mesh bounds, NOT a proven internal usable volume. Inspect actual inner clearance before deciding D-cell count and fitting a convincing carrier; preserve inventory semantics and excellent cap/hand animation.
 
-Not implemented yet: hold/toggle sprint preference, stamina with natural recovery and fading bar, D-cell art, complete human-language/rare-condition review, broader physical-clutter and furniture audit. No keyboard/pad rebinding editor currently exists. Car arrival cinematic remains explicitly later, after high-priority repairs.
+Originally pending at the first checkpoint (see verified continuation below): hold/toggle sprint, stamina, D-cell art, complete human-language/rare-condition review, broader physical-clutter and furniture audit. No keyboard/pad rebinding editor currently exists. Car arrival cinematic remains explicitly later, after high-priority repairs.
 
 ## Exact next start
 
 Preserve this checkpoint/backup first. Continue natural writing and control consistency, then implement hold/toggle sprint and balanced stamina as one tested slice. Retest actual Surveyor escapes, crouch/cover, pause, retry and save handling if movement changes. Do not insert rejected Surveyor art or promise a complete 30-60 minute game. Use existing isolated native QA; the owner can keep using the PC. Publish no rushed Windows prerelease.
+
+## Verified continuation / newer than the first controller checkpoint
+
+Builds/UNLISTED_HumanPolish_05/UNLISTED.exe adds a saved Hold/Toggle sprint choice, about 7.5 seconds of running, a short recovery delay and five seconds of natural recovery, plus a fading stamina bar above the temporary torch meter. Pause and crouching cancel toggle sprint. Save data carries stamina; legacy saves default to full. Human endurance/balance approval remains pending. These are tuning values, not a claimed final balance.
+
+Final exported tests: stamina/control/save/live cellar pursuit escape 23/0; B/Start/battery/low-ceiling/New Game 23/0; office labels/documents 7/0 each at 1080p/1440p/3440x1440; naturally earned saved-bay escape through both endings 48/0. Owner data unchanged. Native screenshots reviewed. Earlier HumanPolish_03's distance fixture was placed off the curved lane and failed; it is preserved, and the final fixture follows the real lane and terrain height. Its actual cellar escape had passed. No map geometry was changed to make a test pass.
+
+Office controls and prompts now use power, cable and tap button. Simon's note and dependent optional hint explain their purpose in ordinary language. Known collected Last Call notes refresh wording without adding evidence or changing progression. This is still a targeted writing pass, not a whole-game rare-string audit.
+
+Remaining: D-cell model/carrier with actual clearance/hand/cap review; broader writing, prop/furniture review; later car arrival cinematic. The first controller-only full private archive is Checkpoints/20261023_human_playability_01/UNLISTED_Human_Playability_Complete_Source.zip (6a00028). Preserve it. Continue from this newer source, not that earlier snapshot.

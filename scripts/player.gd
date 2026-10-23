@@ -11,6 +11,11 @@ var moved_distance := 0.0
 var viewmodel: Node3D
 var crouched:=false
 var crouch_latched:=false
+var stamina:=1.0
+var sprint_latched:=false
+var sprinting:=false
+var stamina_delay:=0.0
+var exhausted:=false
 var body_shape: CollisionShape3D
 
 func near_cover() -> bool:
@@ -79,6 +84,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and (Input.mouse_mode == Input.MOUSE_MODE_CAPTURED or (game.automated_qa and event.get_meta("unlisted_qa_input",false))):
 		rotate_y(-event.relative.x * sensitivity)
 		camera.rotation.x = clampf(camera.rotation.x - event.relative.y * sensitivity * (-1 if invert_y else 1), -1.4, 1.4)
+	if event.is_action_pressed("sprint") and int(game.presentation.prefs.data.get("sprint_mode",0))==1:sprint_latched=not sprint_latched
 	if event.is_action_pressed("crouch_toggle"):crouch_latched=not crouch_latched;return
 	if event.is_action_pressed("throw_prop") and game.physical.held:game.physical.release(true);return
 	if event.is_action_pressed("torch_tap"):game.equipment.tap_contact();return
@@ -109,7 +115,16 @@ func _physics_process(delta: float) -> void:
 			camera.rotation.x=clampf(camera.rotation.x-turn.y*delta*rate*(-1 if invert_y else 1),-1.4,1.4)
 	var direction := global_basis * Vector3(input.x, 0, input.y)
 	var speed := 2.15
-	if Input.is_action_pressed("sprint"): speed = 3.65
+	if input.length()<.1 or crouched:sprint_latched=false
+	var requested: bool=sprint_latched if int(game.presentation.prefs.data.get("sprint_mode",0))==1 else Input.is_action_pressed("sprint")
+	if exhausted and stamina>=.35:exhausted=false
+	sprinting=requested and input.length()>.15 and not crouched and not exhausted and stamina>0 and is_on_floor()
+	if sprinting:
+		speed=3.65;stamina=maxf(0,stamina-delta/7.5);stamina_delay=.8
+		if stamina<=0:exhausted=true;sprint_latched=false
+	else:
+		stamina_delay=maxf(0,stamina_delay-delta)
+		if stamina_delay<=0:stamina=minf(1,stamina+delta/5.0)
 	if crouched: speed = 1.15
 	velocity.x = move_toward(velocity.x, direction.x * speed, delta * 12)
 	velocity.z = move_toward(velocity.z, direction.z * speed, delta * 12)

@@ -817,7 +817,7 @@ func new_game() -> void:
 	chair.position = Vector3(3.6,0,2.7)
 	presence.visible = false
 	for l in lamps: l.light_energy = 0
-	player.crouch_latched=false
+	player.crouch_latched=false;player.stamina=1.0;player.sprint_latched=false;player.sprinting=false;player.exhausted=false;player.stamina_delay=0
 	player.position = Vector3(0,0.06,19.4)
 	player.rotation = Vector3.ZERO
 	player.camera.rotation = Vector3.ZERO
@@ -909,11 +909,11 @@ func interaction_name(id: String) -> String:
 	if id=="spare_mirror":return "Inspect reflection"
 	if id=="spare_cover":return "Pull back blanket"
 	if id=="spare_card":return "Turn birthday card"
-	if id=="line_feed":return "Connect feed" if events.get("line_feed_off",false) else "Disconnect feed"
-	if id=="line_return":return "Plug in return" if events.get("line_return_out",false) else "Unplug return"
-	if id=="line_strike":return "Test striker"
+	if id=="line_feed":return "Switch test box on" if events.get("line_feed_off",false) else "Switch test box off"
+	if id=="line_return":return "Plug in test cable" if events.get("line_return_out",false) else "Unplug test cable"
+	if id=="line_strike":return "Tap test button"
 	if id=="line_note":return "Read test note"
-	if id=="line_strip":return "Read counter strip"
+	if id=="line_strip":return "Read printed slip"
 	if id=="archive_rack":return "Move shelving"
 	if id=="underfloor_sheet":return "Read test sheet"
 	if id=="test_joist":return "Tap timber"
@@ -922,15 +922,15 @@ func interaction_name(id: String) -> String:
 	if id=="memory_drawer":return "Close drawer" if chapter.drawer_open else "Open drawer"
 	if id=="memory_page":return "Take folded page"
 	if id=="record" and events.get("case_v3",false):return "Read works-office record"
-	if id=="field_notebook":return "Take original field return"
+	if id=="field_notebook":return "Take Simon's report"
 	if id=="relay_record":return "Read field return"
 	if id=="order" and isolated and recount.active:return "Listen"
 	if id=="source_copy":return "Read comparison slip"
-	if id in ["audition_source","audition_return","exclude_return"] and stage<3:return "Inspect unpowered transport"
+	if id in ["audition_source","audition_return","exclude_return"] and stage<3:return "Inspect tape recorder"
 	if id=="front" and events.get("arrival_check",false) and not events.get("front_checked",false):return "Knock"
 	if id=="front_gate":return "Close gate" if doors[id].opened else "Open gate"
 	if doors.has(id): return "Try door" if doors[id].locked else ("Close door" if doors[id].opened else "Open door")
-	return {"audition_source":"Review hall recording","audition_return":"Replay and listen","exclude_return":"Compare last footstep","order":"Correct attendance register" if isolated else "Read call sheet", "television":"Inspect television", "fuse":"Take spare fuse", "breaker":"Restore supply", "security":"Review security archive", "record":"Read occupancy record", "shed_record":"Read manual override", "isolate":"Isolate occupancy relay", "valve0":"Turn RED valve", "valve1":"Turn BLUE valve", "valve2":"Turn WHITE valve"}.get(id,"Inspect")
+	return {"audition_source":"Review hall recording","audition_return":"Replay and listen","exclude_return":"Compare last footstep","order":"Read attendance register" if isolated else "Read call sheet", "television":"Inspect television", "fuse":"Take spare fuse", "breaker":"Restore power", "security":"Review security archive", "record":"Read occupancy record", "shed_record":"Read manual override", "isolate":"Isolate occupancy relay", "valve0":"Turn RED valve", "valve1":"Turn BLUE valve", "valve2":"Turn WHITE valve"}.get(id,"Inspect")
 
 func try_interact() -> void:
 	if menu_open: return
@@ -1155,7 +1155,7 @@ func door_swing_states() -> Dictionary:
 func save_data() -> Dictionary:
 	if is_instance_valid(maintenance):events.archive_rack_x=maintenance.rack.position.x
 	if is_instance_valid(physical):events["props"] = physical.snapshot()
-	return {"schema":1,"crouched":player.crouched,"stage":stage,"fuse":fuse,"key":brass_key,"report":report_read,"shed":shed_read,"isolated":isolated,"events":events,"valves":valve_order,"pos":[player.position.x,player.position.y,player.position.z],"yaw":player.rotation.y,"pitch":player.camera.rotation.x,"ended":ended,"doors":door_save_states(),"door_swing":door_swing_states()}
+	return {"schema":1,"stamina":player.stamina,"crouched":player.crouched,"stage":stage,"fuse":fuse,"key":brass_key,"report":report_read,"shed":shed_read,"isolated":isolated,"events":events,"valves":valve_order,"pos":[player.position.x,player.position.y,player.position.z],"yaw":player.rotation.y,"pitch":player.camera.rotation.x,"ended":ended,"doors":door_save_states(),"door_swing":door_swing_states()}
 
 func door_save_states() -> Dictionary:
 	var result := {}
@@ -1198,6 +1198,7 @@ func apply_save(data: Dictionary) -> void:
 	var p: Array = data.get("pos",[0,0.1,9])
 	player.position = Vector3(p[0],p[1],p[2])
 	player.restore_stance(bool(data.get("crouched",false)))
+	player.stamina=clampf(float(data.get("stamina",1.0)),0,1);player.sprint_latched=false;player.sprinting=false;player.exhausted=player.stamina<.01;player.stamina_delay=.4
 	player.rotation.y = data.get("yaw",0.0)
 	player.camera.rotation.x = data.get("pitch",0.0)
 	player.velocity = Vector3.ZERO

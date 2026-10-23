@@ -8,7 +8,7 @@ Eli Ward takes a night call at 17 Briar Lane, the address on his father Simon's 
 
 ## Unreleased playability work
 
-The current source includes the tested B/Start correction, brief torch meter with an optional persistent setting, and targeted interaction wording. These changes are **not in the v0.10.0 download**. See [recovery and remaining work](HUMAN_PLAYABILITY_RECOVERY.md). Sprint/stamina and D-cell art remain pending at this checkpoint.
+The current source includes the tested B/Start correction, brief torch meter with an optional persistent setting, and targeted interaction wording. These changes are **not in the v0.10.0 download**. See [recovery and remaining work](HUMAN_PLAYABILITY_RECOVERY.md). The next verified source checkpoint adds Hold/Toggle sprint, finite stamina, a fading bar and clearer office-machine language; live Surveyor escape and earned ending continuations pass. D-cell art remains pending.
 
 ## Play
 

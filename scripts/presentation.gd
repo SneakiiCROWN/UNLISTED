@@ -19,6 +19,9 @@ var card_body: VBoxContainer
 var tabs: HBoxContainer
 var rows: VBoxContainer
 var note: RichTextLabel
+var stamina_root: VBoxContainer
+var stamina_bar: ProgressBar
+var stamina_alpha:=0.0
 var battery_root: VBoxContainer
 var battery_bar: ProgressBar
 var battery_caption: Label
@@ -192,6 +195,10 @@ func build_screen() -> void:
 	var backing:=StyleBoxFlat.new();backing.bg_color=Color("252f2e");battery_bar.add_theme_stylebox_override("background",backing)
 	var fill:=StyleBoxFlat.new();fill.bg_color=Color("a8b6a3");battery_bar.add_theme_stylebox_override("fill",fill)
 	battery_detail=label(battery_root,"",13,"Meta");battery_root.visible=false
+	stamina_root=VBoxContainer.new();hud.add_child(stamina_root);anchored(stamina_root,Control.PRESET_BOTTOM_RIGHT,Rect2(-185,-139,145,28));stamina_root.mouse_filter=Control.MOUSE_FILTER_IGNORE
+	label(stamina_root,"STAMINA",12,"Meta")
+	stamina_bar=ProgressBar.new();stamina_root.add_child(stamina_bar);stamina_bar.custom_minimum_size=Vector2(145,5);stamina_bar.show_percentage=false;stamina_bar.mouse_filter=Control.MOUSE_FILTER_IGNORE
+	stamina_bar.add_theme_stylebox_override("background",backing.duplicate());stamina_bar.add_theme_stylebox_override("fill",fill.duplicate());stamina_root.visible=false
 
 	subtitle = label(hud,"",21)
 	anchored(subtitle,Control.PRESET_CENTER_BOTTOM,Rect2(-410,-220,820,125))
@@ -265,6 +272,7 @@ func pause_world() -> void:
 	resume_requested = false
 	game.menu_open = true
 	game.player.active = false
+	game.player.sprint_latched=false;game.player.sprinting=false
 	game.player.velocity = Vector3.ZERO
 	get_tree().paused = true
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -517,9 +525,13 @@ func fill_settings(tab: String) -> void:
 		if b.text == tab:b.grab_focus()
 	match tab:
 		"Gameplay":
+			var sprint_row:=setting_row("Sprint control")
+			var sprint_option:=OptionButton.new();sprint_option.add_item("Hold to sprint");sprint_option.add_item("Toggle sprint");sprint_option.selected=prefs.data.sprint_mode;sprint_option.size_flags_horizontal=Control.SIZE_EXPAND_FILL;sprint_row.add_child(sprint_option);controls.sprint_mode=sprint_option
+			sprint_option.item_selected.connect(func(index):prefs.data.sprint_mode=index;game.player.sprint_latched=false;persist())
+			label(rows,"Run in short bursts. Walking lets you catch your breath.",16,"Meta")
 			toggle("story_mode","Story mode / survive capture")
 			toggle("torch_contacts","Occasional loose torch contact")
-			label(rows,"Standard play includes lethal, escapable encounters.\nStory mode keeps the encounter but prevents death.\nYou can outrun the Surveyor. Doors and corners break sight;\nquiet movement gives it less to follow.",18)
+			label(rows,"Standard play includes lethal, escapable encounters.\nStory mode keeps the encounter but prevents death.\nShort sprints help you gain distance. Doors and corners break sight;\nquiet movement gives it less to follow.",18)
 		"Audio":
 			for pair in [["master","Master volume"],["music","Music / tonal score"],["sfx","Sound effects"],["ambience","Environmental ambience"]]:slider(pair[0],pair[1],0,1,0.01)
 			label(rows,"The house is quiet by design. Listen before you move.",15,"Meta").modulate = Color("839b98")
@@ -840,6 +852,8 @@ func _process(delta: float) -> void:
 		ambience.volume_db = move_toward(ambience.volume_db,-80,delta*35)
 		menu_drone.volume_db = move_toward(menu_drone.volume_db,-80,delta*35)
 	if section == "game":
+		stamina_alpha=move_toward(stamina_alpha,1.0 if game.player.sprinting or game.player.stamina<.999 else 0.0,delta*2.5)
+		stamina_root.visible=stamina_alpha>.001;stamina_root.modulate.a=stamina_alpha;stamina_bar.value=game.player.stamina*100.0
 		battery_status_time=maxf(0,battery_status_time-delta)
 		var charge: float=game.equipment.data.get("charge",100.0)
 		battery_root.visible=battery_status_time>0 or prefs.data.get("battery_persistent",false)

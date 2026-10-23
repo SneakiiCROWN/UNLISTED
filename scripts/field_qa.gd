@@ -12,6 +12,7 @@ func run(current: Node) -> void:
 		if arg.begins_with("--evidence="):output=arg.trim_prefix("--evidence=")
 	DirAccess.make_dir_recursive_absolute(output);g.checkpoint_path=output.path_join("checkpoint.json")
 	await exact_resolution()
+	if "--stamina-polish" in OS.get_cmdline_user_args():await stamina_polish_run();return
 	if "--human-polish" in OS.get_cmdline_user_args():await human_polish_run();return
 	if "--reload-only" in OS.get_cmdline_user_args():await reload_run();return
 	if "--tape-only" in OS.get_cmdline_user_args():await tape_run();return
@@ -187,7 +188,7 @@ func field_layouts() -> void:
 	check("contact setting persists",not cfg.data.torch_contacts);await shot("FL04_contact_setting")
 	g.presentation.settings_back();g.presentation.resume_game();await wait(.2)
 	g.events.test_reel_heard=true;g.events.erase("underfloor_read");g.events.line_test_armed=true;g.player.position=Vector3(4.8,.04,-4.6)
-	check("optional guidance follows test arming without underfloor prerequisite",g.NOTES.clue(g).contains("Both leads"))
+	check("optional guidance follows test arming without underfloor prerequisite",g.NOTES.clue(g).contains("power is off"))
 	var failed:=0
 	for c in checks:
 		if not c.passed:failed+=1
@@ -322,3 +323,62 @@ func human_polish_run() -> void:
 		if not item.passed:failed+=1
 	var file:=FileAccess.open(output.path_join("report.json"),FileAccess.WRITE);file.store_string(JSON.stringify({"passed":checks.size()-failed,"failed":failed,"checks":checks,"scope":"Seeded native Windows control, screen transitions, battery UI/settings, low-clearance fixtures. No full story or human comprehension claim."},"\t"));file.close()
 	print("HUMAN_POLISH_QA passed=",checks.size()-failed," failed=",failed);await g.qa_exit(0 if failed==0 else 1)
+
+func stamina_polish_run() -> void:
+	g.new_game();await wait(.5);g.threat.enabled=false;g.threat.reset();g.presentation.clear_transients()
+	var exterior=g.get_node("BriarLaneExterior")
+	g.player.position=Vector3(-30,exterior.ground_height(-30,exterior.lane_z(-30))+.04,exterior.lane_z(-30));g.player.rotation.y=-PI/2;await wait(.3)
+	g.presentation.prefs.data.sprint_mode=0
+	Input.action_press("forward");await pad(JOY_BUTTON_LEFT_STICK);var start: Vector3=g.player.position
+	var until_: float=seconds()+8
+	while seconds()<until_:
+		var next_x: float=g.player.position.x+2.0;var diff:=Vector2(next_x,exterior.lane_z(next_x))-Vector2(g.player.position.x,g.player.position.z)
+		g.player.rotation.y=atan2(-diff.x,-diff.y);await get_tree().physics_frame
+	await pad(JOY_BUTTON_LEFT_STICK,false);Input.action_release("forward");await wait(.1)
+	check("held L3 gives a limited physical sprint burst",g.player.position.distance_to(start)>25 and g.player.position.distance_to(start)<31 and g.player.stamina<.1 and not g.player.sprinting,str(g.player.position.distance_to(start))+" / "+str(g.player.stamina))
+	check("depleted stamina bar is visible",g.presentation.stamina_root.visible)
+	await shot("S01_depleted_stamina");await wait(5.8)
+	check("walking/rest naturally recovers stamina and fades bar",g.player.stamina>.999 and not g.presentation.stamina_root.visible)
+	await tap(JOY_BUTTON_START);g.presentation.show_settings("pause");g.presentation.fill_settings("Gameplay");await wait(.2)
+	g.presentation.controls.sprint_mode.select(1);g.presentation.controls.sprint_mode.item_selected.emit(1)
+	var cfg=load("res://scripts/preferences.gd").new();cfg.path=g.presentation.prefs.path;cfg.load_file()
+	check("Hold/Toggle sprint choice persists",int(cfg.data.sprint_mode)==1)
+	for size_ in [Vector2i(1920,1080),Vector2i(2560,1440),Vector2i(3440,1440)]:
+		exact_target.size=size_;exact_target.size_2d_override=Vector2i(roundi(720.0*size_.x/size_.y),720);await wait(.2)
+		check("sprint settings fit "+str(size_),g.get_viewport().get_visible_rect().encloses(g.presentation.card.get_global_rect()))
+		await shot("S02_sprint_settings_"+str(size_.x))
+	g.presentation.resume_game();await wait(.2);g.player.position=Vector3(-10,exterior.ground_height(-10,exterior.lane_z(-10))+.04,exterior.lane_z(-10));g.player.rotation.y=-PI/2
+	Input.action_press("forward");await wait(.1);await tap(JOY_BUTTON_LEFT_STICK);await wait(1)
+	check("one L3 click toggles sprint after button release",g.player.sprinting and g.player.sprint_latched and not Input.is_action_pressed("sprint") and g.player.stamina<.9)
+	await tap(JOY_BUTTON_START);var charge: float=g.player.stamina;var position_: Vector3=g.player.position;await wait(.5)
+	check("pause freezes fatigue and position",is_equal_approx(charge,g.player.stamina) and g.player.position.distance_to(position_)<.001)
+	await tap(JOY_BUTTON_START);await wait(.3)
+	check("resuming cancels a latched sprint",not g.player.sprint_latched and not g.player.sprinting)
+	await tap(JOY_BUTTON_LEFT_STICK);await wait(.5);await tap(JOY_BUTTON_B);await wait(.3)
+	check("crouching cancels toggle sprint",g.player.crouched and not g.player.sprinting and not g.player.sprint_latched)
+	Input.action_release("forward");await tap(JOY_BUTTON_B)
+	g.save_game();var saved: float=g.player.stamina;g.load_game();await wait(.15)
+	check("saved fatigue survives load without stale sprint",absf(g.player.stamina-saved)<.05 and not g.player.sprinting and not g.player.sprint_latched)
+	var legacy: Dictionary=g.save_data().duplicate(true);legacy.erase("stamina");g.apply_save(legacy);await wait(.1)
+	check("older saves default safely to full stamina",g.player.stamina>.99)
+	# Explicit live cellar pursuit fixture; no scripted resolve or player teleport during escape.
+	g.new_game();g.stage=3;g.shed_read=true;g.isolated=true;g.events.chair=true;g.events.yard=true;g.events["return"]=true;g.events.threat_resolved=false;g.threat.enabled=true;g.threat.reset();g.presentation.prefs.data.sprint_mode=0;g.presentation.prefs.data.story_mode=false
+	for id in ["basement","utility","service"]:g.doors[id].locked=false;g.doors[id].set_open(true,.01)
+	g.player.position=Vector3(0,-2.99,-21);g.player.velocity=Vector3.ZERO;await wait(.3);g.threat.begin_basement();g.save_game(true);await wait(3.2)
+	await travel(Vector2(0,-18),"live pursuit crosses real cellar aisle")
+	check("actual Surveyor acquires the moving player",g.threat.active() and g.threat.state in ["pursue","stalk","attack"],g.threat.state)
+	await shot("S03_live_cellar_pursuit")
+	await travel(Vector2(0,-9),"finite sprint climbs actual cellar ramp",true)
+	await travel(Vector2(0,-7),"finite sprint clears cellar door",true)
+	await travel(Vector2(-3.1,-7),"finite sprint turns through utility",true)
+	await travel(Vector2(-4.5,-8.6),"finite sprint reaches service threshold",true)
+	await travel(Vector2(-4.5,-12.1),"finite sprint escapes into real yard",true)
+	await wait(3)
+	check("finite stamina preserves physical Surveyor escape",g.player.active and not g.menu_open and g.events.get("threat_resolved",false) and g.presentation.section!="dead")
+	check("escape leaves recoverable fatigue",g.player.stamina>.1 and g.player.stamina<=1)
+	await shot("S04_escaped_with_stamina")
+	var failed:=0
+	for item in checks:
+		if not item.passed:failed+=1
+	var f:=FileAccess.open(output.path_join("report.json"),FileAccess.WRITE);f.store_string(JSON.stringify({"passed":checks.size()-failed,"failed":failed,"checks":checks,"scope":"Seeded exported real movement, raw pad Hold/Toggle stamina, saves/pause/legacy and live warned Surveyor escape. Not a fresh investigation or human balance approval."},"\t"));f.close()
+	print("STAMINA_POLISH_QA passed=",checks.size()-failed," failed=",failed);await g.qa_exit(0 if failed==0 else 1)

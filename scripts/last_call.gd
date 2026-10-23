@@ -149,6 +149,10 @@ func restore() -> void:
 		if is_instance_valid(source):source.stop();source.queue_free()
 	sources.clear();reply_clock=-1;reply_index=0;cooldown=0;lamp_levels.clear()
 	game.events.call_test_running=false # Rewind an interrupted test, never award unheard evidence.
+	var notes: Dictionary=game.events.get("notes",{})
+	for pair in [[TITLE,AFTER],[PLAN_TITLE,PLAN_NOTE],["ELI / THE LAST CALL",OBSERVATION]]:
+		if notes.has(pair[0]):notes[pair[0]]=pair[1] # Refresh wording only; never grant evidence on load.
+
 	if game.events.get("call_search_running",false):
 		var target_: Array=game.events.get("call_search_target",[-3.25,-3.0,-15.7])
 		if target_.size()==3:game.threat.last_known=Vector3(float(target_[0]),float(target_[1]),float(target_[2]))
