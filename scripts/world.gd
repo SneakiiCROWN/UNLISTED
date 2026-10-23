@@ -53,6 +53,7 @@ var impossible_room: Node3D
 var recount: Node3D
 var investigation: Node3D
 var witness: Node3D
+var service_exit: Node3D
 var maintenance: Node3D
 var dead_line: Node3D
 var spare_place: Node3D
@@ -93,6 +94,7 @@ func _ready() -> void:
 	qa_mode = "--door-repair-qa" in OS.get_cmdline_user_args() or "--recording-repair-qa" in OS.get_cmdline_user_args() or "--qa" in OS.get_cmdline_user_args() or "--presentation-qa" in OS.get_cmdline_user_args() or "--milestone-qa" in OS.get_cmdline_user_args() or "--threat-qa" in OS.get_cmdline_user_args() or "--systems-qa" in OS.get_cmdline_user_args() or "--polish-qa" in OS.get_cmdline_user_args() or "--visual-probe" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--production-views" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--witness-qa" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--exit-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--storage-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--inspection-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--arrival-qa" in OS.get_cmdline_user_args()
@@ -160,6 +162,7 @@ func _ready() -> void:
 	equipment=load("res://scripts/inspection_gear.gd").new();equipment.game=self;add_child(equipment)
 	storage_hide=load("res://scripts/storage_hide.gd").new();storage_hide.game=self;add_child(storage_hide)
 	inspection_search=load("res://scripts/inspection_search.gd").new();inspection_search.game=self;add_child(inspection_search)
+	service_exit=load("res://scripts/service_exit.gd").new();service_exit.game=self;add_child(service_exit)
 	set_volume(volume)
 	show_menu("UNLISTED", true)
 	if dev_mode:
@@ -788,6 +791,7 @@ func new_game() -> void:
 	storage_hide.restore()
 	if is_instance_valid(chapter):chapter.restore()
 	if is_instance_valid(witness):witness.restore()
+	if is_instance_valid(service_exit):service_exit.restore()
 	if is_instance_valid(maintenance):maintenance.restore()
 	if is_instance_valid(dead_line):dead_line.restore()
 	if is_instance_valid(spare_place):spare_place.restore()
@@ -877,6 +881,8 @@ func open_casebook() -> void:
 	presentation.inspect_document("FIELD NOTES / RECORDS EXAMINED",text_)
 
 func interaction_name(id: String) -> String:
+	if id=="exit_receipt":return "Take contact strip"
+	if id in ["exit_grille","exit_catch","exit_outer_handle"]:return "Close grille" if events.get("exit_open",false) else ("Try catch" if not events.get("exit_catch_free",false) else "Open grille")
 	if id=="witness_cover":return "Close inspection cover" if events.get("witness_open",false) else "Slide inspection cover"
 	if id=="witness_carbon":return "Take clearance carbon"
 	if id.begins_with("witness_fastener"):return "Turn fastener"
@@ -916,6 +922,7 @@ func try_interact() -> void:
 		interact(str(hit.collider.get_meta("interaction")))
 
 func interact(id: String) -> void:
+	if id.begins_with("exit_"):service_exit.use(id);return
 	if id.begins_with("witness_"):witness.use(id);return
 	if id=="storage_door":storage_hide.use();return
 	if id=="inspection_kit" or id.begins_with("battery_"):equipment.collect(id);return
@@ -1196,6 +1203,7 @@ func apply_save(data: Dictionary) -> void:
 	if is_instance_valid(investigation):investigation.restore()
 	if is_instance_valid(chapter):chapter.restore()
 	if is_instance_valid(witness):witness.restore()
+	if is_instance_valid(service_exit):service_exit.restore()
 	if is_instance_valid(maintenance):maintenance.restore()
 	if is_instance_valid(dead_line):dead_line.restore()
 	if is_instance_valid(spare_place):spare_place.restore()
@@ -1269,6 +1277,7 @@ func run_qa() -> void:
 	if "--storage-qa" in OS.get_cmdline_user_args():path="res://scripts/storage_hide_qa.gd"
 	if "--inspection-qa" in OS.get_cmdline_user_args():path="res://scripts/inspection_qa.gd"
 	if "--witness-qa" in OS.get_cmdline_user_args():path="res://scripts/witness_carbon_qa.gd"
+	if "--exit-qa" in OS.get_cmdline_user_args():path="res://scripts/service_exit_qa.gd"
 	if "--arrival-qa" in OS.get_cmdline_user_args():path="res://scripts/arrival_qa.gd"
 	if "--ambient-qa" in OS.get_cmdline_user_args():path="res://scripts/ambient_qa.gd"
 	if "--director-qa" in OS.get_cmdline_user_args():path="res://scripts/director_qa.gd"

@@ -104,6 +104,7 @@ func _process(delta: float) -> void:
 	var shed:=p.x>-20.1 and p.x< -13.9 and p.z>-17.1 and p.z< -10.9
 	var roof:=absf(p.x)<1.8 and p.z>4 and p.z<6.5
 	var cellar:=p.y< -0.5 or (absf(p.x)<1.9 and p.z< -10 and p.z> -16)
+	if is_instance_valid(game.service_exit) and game.service_exit.in_passage(p):cellar=true
 	mix_level=move_toward(mix_level,1.0 if inside or shed or roof or cellar else 0.0,delta*1.1)
 	outside.volume_db=lerpf(-24,-65,mix_level)
 	sheltered.volume_db=lerpf(-65,-40 if inside else (-37 if not cellar else -48),mix_level)

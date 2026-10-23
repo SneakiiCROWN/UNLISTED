@@ -84,13 +84,14 @@ func ground_material(hardstanding:=false) -> ShaderMaterial:
 func build_terrain() -> void:
 	var xs: Array[float]=[];var zs: Array[float]=[]
 	for i in range(-64,65):xs.append(float(i)*2);zs.append(float(i)*2)
-	xs.append_array([-1.6,1.6]);zs.append(-15.1);xs.sort();zs.sort()
+	xs.append_array([-1.6,1.6,5.8,11.66]);zs.append_array([-15.1,-9.32,-7.38]);xs.sort();zs.sort()
 	var st:=SurfaceTool.new();st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	for ix in xs.size()-1:
 		for iz in zs.size()-1:
 			var x0:=xs[ix];var x1:=xs[ix+1];var z0:=zs[iz];var z1:=zs[iz+1]
 			# Exact hole through the enclosed access: no hidden plane across the ramp.
 			if (x0+x1)*0.5>-1.6 and (x0+x1)*0.5<1.6 and (z0+z1)*0.5>-15.1 and (z0+z1)*0.5< -10:continue
+			if (x0+x1)*.5>5.8 and (x0+x1)*.5<11.66 and (z0+z1)*.5>-9.32 and (z0+z1)*.5<-7.38:continue
 			var points:=[Vector3(x0,ground_height(x0,z0),z0),Vector3(x0,ground_height(x0,z1),z1),Vector3(x1,ground_height(x1,z1),z1),Vector3(x1,ground_height(x1,z0),z0)]
 			for index in [0,2,1,0,3,2]:st.set_uv(Vector2(points[index].x,points[index].z)/2.8);st.add_vertex(points[index])
 	st.generate_normals();st.index()
@@ -164,6 +165,7 @@ func place(id: String,pos: Vector3,height: float,yaw: float,rng: RandomNumberGen
 		grounded_model_collision(id,xf)
 
 func protected_property(p: Vector2) -> bool:
+	if p.x>5.7 and p.x<12.7 and p.y>-10 and p.y<-6.5:return true
 	if p.x>-8.1 and p.x<8.1 and p.y>-10.6 and p.y<4.8:return true
 	if p.x>-22.0 and p.x< -2.5 and p.y>-19.0 and p.y< -9.5:return true
 	if absf(p.x)<3.2 and p.y>3.8 and p.y<24:return true

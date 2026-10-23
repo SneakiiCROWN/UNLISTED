@@ -100,7 +100,11 @@ func backdrop() -> void:
 	# Continuous ground outside the enclosed basement/ramp footprint.
 	ground(Vector3(0,-0.3,17),Vector3(64,0.4,25.6))
 	ground(Vector3(-20,-0.3,-10),Vector3(24,0.4,54))
-	ground(Vector3(20,-0.3,-10),Vector3(24,0.4,54))
+	# Retain the established east-yard grade, with an exact opening for the
+	# enclosed service incline. Hidden legacy collision must not bridge its roof.
+	ground(Vector3(21.83,-0.3,-10),Vector3(20.34,0.4,54))
+	ground(Vector3(9.83,-0.3,-23.16),Vector3(3.66,0.4,27.68))
+	ground(Vector3(9.83,-0.3,4.81),Vector3(3.66,0.4,24.38))
 	ground(Vector3(0,-0.3,-27),Vector3(16,0.4,24))
 	ground(Vector3(-4.8,-0.3,-12.5),Vector3(6.4,0.4,5))
 	ground(Vector3(4.8,-0.3,-12.5),Vector3(6.4,0.4,5))

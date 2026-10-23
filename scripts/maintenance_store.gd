@@ -35,7 +35,8 @@ func build() -> void:
 	# Below the existing office, entirely inside the property's footprint.
 	game.floor_area(2.1,6.0,-10.4,-6.3,-3)
 	game.ceiling(2.1,6.0,-10.4,-6.3,-.2)
-	for x in [2.1,6.0]:game.wall(Vector3(x,-3,-8.35),4.1,PI/2)
+	game.wall(Vector3(2.1,-3,-8.35),4.1,PI/2)
+	game.opening_wall(Vector3(6.0,-3,-8.35),4.1,PI/2)
 	game.wall(Vector3(4.05,-3,-6.3),3.9)
 	game.wall(Vector3(2.275,-3,-10.4),.35)
 	game.wall(Vector3(5.025,-3,-10.4),1.95)
@@ -76,9 +77,9 @@ func build() -> void:
 	game.collision(self,Vector3(4.95,-1.59,-6.43),Vector3(.4,.56,.04),"underfloor_sheet")
 	var ink=game.label3(self,"23:18 / Simon\nMotor stopped.\nStill two sets\nof feet.",Vector3(4.95,-1.59,-6.418),PI,14,Color("313b31"));ink.shaded=true;ink.pixel_size=.0017;ink.font=load("res://assets/fonts/Kalam-Regular.ttf");ink.font_size=22
 	# A capped terminal box and the disconnected return lead substantiate the test note.
-	game.model("res://assets/machinery/circuit_breaker.glb",self,Vector3(5.86,-1.86,-8.8),Vector3(.40,.52,.14),-PI/2)
-	repair.tube(Vector3(5.85,-1.37,-8.8),Vector3(5.85,-.63,-8.8),.024,Color("5b594b"),self)
-	repair.tube(Vector3(5.85,-.63,-8.8),Vector3(2.7,-.63,-8.8),.024,Color("5b594b"),self)
+	game.model("res://assets/machinery/circuit_breaker.glb",self,Vector3(5.86,-1.86,-9.7),Vector3(.40,.52,.14),-PI/2)
+	repair.tube(Vector3(5.85,-1.37,-9.7),Vector3(5.85,-.63,-9.7),.024,Color("5b594b"),self)
+	repair.tube(Vector3(5.85,-.63,-9.7),Vector3(2.7,-.63,-9.7),.024,Color("5b594b"),self)
 	game.collision(self,Vector3(3.85,-.57,-8.65),Vector3(.5,.24,.2),"test_joist")
 	for x in [3.74,3.82,3.90]:surface(Vector3(x,-.56,-8.718),Vector3(.025,.035,.002),wood,Color("a39b7b"))
 	game.model("res://assets/dusk/psx_prop_ceiling_lamp_01.glb",self,Vector3(4.5,-.65,-8.5),Vector3(.38,.25,.38))

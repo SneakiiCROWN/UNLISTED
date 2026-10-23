@@ -192,7 +192,8 @@ func run(game: Node) -> void:
 	await travel(Vector2(0,-8.4),"stair door approach");await use("basement")
 	await travel(Vector2(0,-18),"physical basement descent")
 	if "--underfloor-route" in OS.get_cmdline_user_args():
-		var store_test=load("res://scripts/witness_carbon_qa.gd" if "--witness-route" in OS.get_cmdline_user_args() else "res://scripts/maintenance_qa.gd").new();add_child(store_test)
+		var store_path:="res://scripts/service_exit_route_qa.gd" if "--exit-route" in OS.get_cmdline_user_args() else ("res://scripts/witness_carbon_qa.gd" if "--witness-route" in OS.get_cmdline_user_args() else "res://scripts/maintenance_qa.gd")
+		var store_test=load(store_path).new();add_child(store_test)
 		store_test.g=g;store_test.output=output;store_test.started_at=started_at;store_test.exact_target=exact_target
 		await store_test.play_store();checks.append_array(store_test.checks);store_test.queue_free()
 	if "--dead-line-route" in OS.get_cmdline_user_args():

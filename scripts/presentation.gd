@@ -621,6 +621,7 @@ func show_register() -> void:
 	var context:="Simon was still inside when the office marked him absent."
 	if game.events.get("case_v3",false):context="Dad knew I was at home. He found my room here anyway.\nHe went back to check whether someone was trapped."
 	if game.events.get("witness_carbon_read",false):context="Dad never signed the clearance. The machine filed it while he was inside.\nI have the unsigned carbon and his account of what happened."
+	if game.events.get("exit_receipt_read",false):context="The service exit printed my departure before I crossed it.\nDad's EMPTY entry doesn't prove he left either. I have his report."
 	label(card_body,"SIMON WARD    1998 / MARKED ABSENT / NO EXIT\nELI WARD          TONIGHT / ARRIVAL RECORDED\n\n"+context+"\n\nCorrecting his entry means he was here in 1998, not that I found him.\nI can close my call-out with that correction, or submit the evidence\n"+final_line,20)
 	var close_call:=add_button("Simon Ward / PRESENT",func():game.finish_attendance("accounted_for"),true,card_body)
 	close_call.text="Correct his entry / close my call-out";close_call.grab_focus()
