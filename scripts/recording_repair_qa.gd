@@ -203,6 +203,17 @@ func run(game: Node) -> void:
 		var line_test=load("res://scripts/dead_line_qa.gd").new();add_child(line_test)
 		line_test.g=g;line_test.output=output;line_test.started_at=started_at;line_test.exact_target=exact_target
 		await line_test.upstairs_test();checks.append_array(line_test.checks);line_test.queue_free()
+		if "--tape-route" in OS.get_cmdline_user_args():
+			await travel(Vector2(3.3,-7.3),"bring recovered reel to office deck")
+			await use("test_reel_deck",false)
+			check("fresh route carries found reel to matching recorder",g.events.get("test_reel_found",false) and g.presentation.buttons.has("Load reel and listen"))
+			if not g.presentation.buttons.has("Load reel and listen"):await finish_run(false);return
+			g.presentation.buttons["Load reel and listen"].pressed.emit();await wait(14.6)
+			check("fresh route completes historical playback without awarding comparison",g.events.get("test_reel_heard",false) and not g.events.get("memory_confirmed",false))
+			g.save_game();g.load_game();await wait(.2)
+			check("fresh route preserves listened evidence through load",g.events.get("test_reel_loaded",false) and g.events.get("test_reel_heard",false))
+			await use("test_reel_deck",false);await shot("T04_recovered_test_observation");await action("ui_cancel")
+			await travel(Vector2(0,-7),"historical recording rejoins main investigation")
 		if "--spare-place-route" in OS.get_cmdline_user_args():
 			var place_test=load("res://scripts/spare_place_qa.gd").new();add_child(place_test)
 			place_test.g=g;place_test.output=output;place_test.started_at=started_at;place_test.exact_target=exact_target

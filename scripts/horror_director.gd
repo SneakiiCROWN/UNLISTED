@@ -111,6 +111,7 @@ func record_step(point: Vector3,sample := "step",pitch := 1.0) -> void:
 		game.events.memory_hall = hall
 
 func memory_process(delta: float) -> void:
+	if audition=="FIELD":return # Historical playback owns its short listening window.
 	process_audition(delta)
 	if game.events.get("memory_reviewed",false) and not game.impossible_room.active:game.physical.repeat_placement()
 	archive_clock += delta
@@ -178,7 +179,7 @@ func audition_channel(channel: String) -> void:
 	game.sound_caption("The transport engages.",2,"TRANSPORT "+channel,motor)
 
 func process_audition(delta: float) -> void:
-	if audition=="":return
+	if audition=="" or audition=="FIELD":return
 	for reel in get_tree().get_nodes_in_group("archive_reels"):reel.rotation.y += delta*1.8
 	audition_clock += delta
 	if audition_clock<0:return

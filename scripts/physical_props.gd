@@ -113,7 +113,7 @@ func use() -> bool:
 		game.events.remembered_cup = [body.position.x,body.position.y,body.position.z]
 	if not reminded and game.presentation.prefs.data.reminders:
 		reminded = true
-		game.presentation.notify("E  RELEASE   /   LEFT MOUSE  THROW   /   HOLD R  ROTATE")
+		game.presentation.notify("X RELEASE / RT THROW / HOLD LT + RIGHT STICK TO ROTATE" if game.controller.used else "E RELEASE / LEFT MOUSE THROW / HOLD R TO ROTATE")
 	return true
 
 func release(throw_: bool) -> void:

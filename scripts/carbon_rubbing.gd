@@ -28,7 +28,7 @@ func _ready() -> void:
 	grab_focus();queue_redraw()
 func _process(delta: float) -> void:
 	if not is_visible_in_tree() or game.presentation.section!="document":return
-	game.equipment.step_power(delta)
+	game.equipment.step_power(delta,false)
 	var stick:=Input.get_vector("inspect_left","inspect_right","inspect_up","inspect_down")
 	if stick.length()>.1:
 		auto_clock=-1
@@ -97,6 +97,7 @@ func _input(event: InputEvent) -> void:
 	if not is_visible_in_tree() or game.presentation.section!="document":return
 	if event.is_action_pressed("flashlight"):
 		game.equipment.cycle();queue_redraw();accept_event()
+	elif event.is_action_pressed("torch_tap"):game.equipment.tap_contact();accept_event()
 	elif event.is_action_pressed("battery_status"):game.equipment.status();accept_event()
 	elif event.is_action_pressed("battery_replace"):game.equipment.replace_pack();accept_event()
 func _gui_input(event: InputEvent) -> void:

@@ -1,3 +1,9 @@
+# Published recovery point / 2026-10-23
+
+0.9.1 The Other Way Out is public at tag unlisted-v0.9.1-other-way-out-public-test-20261023, target a029a590c4d0fcea0f17807d10d34c14db0c7866. Complete private source: a6933e4. All seven anonymous downloads match; downloaded Windows arrival 23/0, final source import 77/0. Original 0.9.0 asset IDs/digests unchanged. Receipt: ../Checkpoints/20261023_other_way_out_release_final/PUBLICATION_RECEIPT.json.
+
+Next user steer: torch purpose, battery feedback, rare fair contact fault, complete controller controls, contextual wall terminal interaction and natural evidence writing. The published 0.9.1 already drains batteries and uses UV for fluorescent evidence; no random torch fault exists in that release. Full controller traversal is not yet supported. Preserve the release while developing this next branch.
+
 # Newer continuation / 0.9.1 The Other Way Out
 
 **Latest:** ServiceExit_11 integrated Windows acceptance finished **352/0**, with both earned departures. Gameplay matches 09/10; the final helper uses the intended inside-first physical tool solution. See OTHER_WAY_OUT_VERIFICATION.md and OTHER_WAY_OUT_RELEASE_NOTES.md. Native video/gallery assembly and guarded package/publication follow; inspect their receipts before repeating anything. The older running/failed-path entries below are historical.

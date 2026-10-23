@@ -457,7 +457,7 @@ func setting_row(text: String) -> HBoxContainer:
 	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	return row
 
-func slider(key: String, text: String, min_: float, max_: float, step_: float, percent := true) -> void:
+func slider(key: String, text: String, min_: float, max_: float, step_: float, percent := true,scale_:=1000.0) -> void:
 	var row := setting_row(text)
 	var s := HSlider.new()
 	s.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -472,11 +472,11 @@ func slider(key: String, text: String, min_: float, max_: float, step_: float, p
 	value_label.custom_minimum_size.x = 65
 	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	value_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	value_label.text = str(roundi(s.value*100))+"%" if percent else str(snappedf(s.value*1000,0.1))
+	value_label.text = str(roundi(s.value*100))+"%" if percent else str(snappedf(s.value*scale_,0.1))
 	controls[key] = s
 	s.value_changed.connect(func(value):
 		prefs.data[key] = value
-		value_label.text = str(roundi(value*100))+"%" if percent else str(snappedf(value*1000,0.1))
+		value_label.text = str(roundi(value*100))+"%" if percent else str(snappedf(value*scale_,0.1))
 		apply_preferences(false)
 		persist())
 
@@ -500,15 +500,19 @@ func fill_settings(tab: String) -> void:
 	match tab:
 		"Gameplay":
 			toggle("story_mode","Story mode / survive capture")
-			label(rows,"Standard play includes one lethal, escapable encounter.\nStory mode keeps the encounter but prevents death.\nYou can outrun the Surveyor. Doors and corners break sight;\nquiet movement gives it less to follow.",18)
+			toggle("torch_contacts","Occasional loose torch contact")
+			label(rows,"Standard play includes lethal, escapable encounters.\nStory mode keeps the encounter but prevents death.\nYou can outrun the Surveyor. Doors and corners break sight;\nquiet movement gives it less to follow.",18)
 		"Audio":
 			for pair in [["master","Master volume"],["music","Music / tonal score"],["sfx","Sound effects"],["ambience","Environmental ambience"]]:slider(pair[0],pair[1],0,1,0.01)
 			label(rows,"The house is quiet by design. Listen before you move.",15,"Meta").modulate = Color("839b98")
 		"Input":
 			slider("sensitivity","Mouse sensitivity",0.0005,0.006,0.0001,false)
 			toggle("invert_y","Invert vertical look")
+			slider("pad_sensitivity","Controller look speed",.5,3.5,.1,false,1.0)
+			slider("pad_deadzone","Controller stick deadzone",.10,.35,.01)
 			toggle("reminders","Brief first-use reminders")
-			label(rows,"WASD  MOVE    SHIFT  SPRINT    CTRL  CROUCH\nE  INTERACT    F  FLASHLIGHT    ESC  PAUSE\nJ  FIELD NOTES    H  OPTIONAL HINT\nCARRIED PROPS: E RELEASE / LEFT MOUSE THROW / R ROTATE",17,"Meta")
+			var legend: String="STICKS MOVE / LOOK / X USE / LB CROUCH / L3 SPRINT\nRB LIGHT / Y PACK / D-PAD UP CHARGE / DOWN TAP\nBACK NOTES / LEFT HINT / START PAUSE / B BACK\nCARRY: X RELEASE / RT THROW / LT + RIGHT STICK ROTATE" if is_instance_valid(game.controller) and game.controller.used else "WASD MOVE / SHIFT SPRINT / CTRL CROUCH / E USE\nF LIGHT / T PACK / B CHARGE / V TAP TORCH\nJ NOTES / H OPTIONAL HINT / ESC PAUSE\nCARRY: E RELEASE / LEFT MOUSE THROW / R + MOUSE ROTATE"
+			label(rows,legend,16,"Meta")
 		"Display":
 			var row := setting_row("Display mode")
 			var mode := OptionButton.new()
@@ -595,7 +599,7 @@ func show_exclusion() -> void:
 	label(card_body,"FIELD TEST / HALL MICROPHONE",15,"Meta")
 	label(card_body,"THE LAST FOOTSTEP",32,"Title")
 	var heard_both: bool=game.events.get("audition_A",false) and game.events.get("audition_B",false)
-	label(card_body,"A / HALL MICROPHONE     B / PLAYBACK\n\n"+("I stood still after playback stopped. There was one more step.\nDid it come from the recording, or the room?" if heard_both else "A records the hall. B plays it back. Compare them while standing still."),20)
+	label(card_body,"A / TONIGHT'S RECORDING     B / REPLAY + ROOM\n\n"+("I stood still after playback stopped. There was one more step.\nDid it come from the recording, or the room?" if heard_both else "A reviews the hall microphone: my footsteps tonight.\nB replays that same recording. Stand still and keep listening after it stops.\nThe 1998 service reel is a separate recording."),20)
 	var state_a := "heard" if game.events.get("audition_A",false) else "not heard"
 	var state_b := "heard" if game.events.get("audition_B",false) else "not heard"
 	var available: bool = game.stage>=3 and not game.threat.active()
@@ -777,7 +781,7 @@ func moment(id: String) -> void:
 			arrival_lens.tween_property(game.player.camera,"fov",77.0,3.0)
 
 func _unhandled_input(event: InputEvent) -> void:
-	if section == "intro" and event is InputEventKey and event.pressed and not event.echo and event.keycode in [KEY_SPACE,KEY_E,KEY_ESCAPE]:
+	if section == "intro" and ((event is InputEventKey and event.pressed and not event.echo and event.keycode in [KEY_SPACE,KEY_E,KEY_ESCAPE]) or event.is_action_pressed("ui_accept") or event.is_action_pressed("ui_cancel")):
 		get_viewport().set_input_as_handled()
 		complete_intro()
 		return

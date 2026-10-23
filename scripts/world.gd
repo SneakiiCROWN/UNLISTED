@@ -55,10 +55,12 @@ var investigation: Node3D
 var witness: Node3D
 var service_exit: Node3D
 var maintenance: Node3D
+var field_tape: Node3D
 var dead_line: Node3D
 var spare_place: Node3D
 var storage_hide: Node3D
 var inspection_search: Node3D
+var controller: Node
 var equipment: Node3D
 var ambient_director: Node3D
 var spare_mirror: Node3D
@@ -94,6 +96,7 @@ func _ready() -> void:
 	qa_mode = "--door-repair-qa" in OS.get_cmdline_user_args() or "--recording-repair-qa" in OS.get_cmdline_user_args() or "--qa" in OS.get_cmdline_user_args() or "--presentation-qa" in OS.get_cmdline_user_args() or "--milestone-qa" in OS.get_cmdline_user_args() or "--threat-qa" in OS.get_cmdline_user_args() or "--systems-qa" in OS.get_cmdline_user_args() or "--polish-qa" in OS.get_cmdline_user_args() or "--visual-probe" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--production-views" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--witness-qa" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--field-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--exit-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--storage-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--inspection-qa" in OS.get_cmdline_user_args()
@@ -131,6 +134,7 @@ func _ready() -> void:
 	player.position = Vector3(0, 0.08, 9)
 	player.sensitivity = sensitivity
 	build_ui()
+	controller=load("res://scripts/field_controller.gd").new();controller.game=self;presentation.add_child(controller)
 	horror = Node3D.new()
 	horror.set_script(load("res://scripts/horror_director.gd"))
 	horror.game = self
@@ -163,6 +167,7 @@ func _ready() -> void:
 	storage_hide=load("res://scripts/storage_hide.gd").new();storage_hide.game=self;add_child(storage_hide)
 	inspection_search=load("res://scripts/inspection_search.gd").new();inspection_search.game=self;add_child(inspection_search)
 	service_exit=load("res://scripts/service_exit.gd").new();service_exit.game=self;add_child(service_exit)
+	field_tape=load("res://scripts/field_tape.gd").new();field_tape.game=self;add_child(field_tape)
 	set_volume(volume)
 	show_menu("UNLISTED", true)
 	if dev_mode:
@@ -177,18 +182,14 @@ func _ready() -> void:
 	if qa_mode and not "--visual-probe" in OS.get_cmdline_user_args(): call_deferred("run_qa")
 
 func configure_input() -> void:
-	var keys := {"forward":KEY_W, "back":KEY_S, "left":KEY_A, "right":KEY_D, "sprint":KEY_SHIFT, "crouch":KEY_CTRL, "interact":KEY_E, "flashlight":KEY_F,"journal":KEY_J,"hint":KEY_H,"battery_status":KEY_B,"battery_replace":KEY_T}
+	var keys := {"forward":KEY_W, "back":KEY_S, "left":KEY_A, "right":KEY_D, "sprint":KEY_SHIFT, "crouch":KEY_CTRL, "interact":KEY_E, "flashlight":KEY_F,"journal":KEY_J,"hint":KEY_H,"battery_status":KEY_B,"battery_replace":KEY_T,"torch_tap":KEY_V,"throw_prop":KEY_NONE}
 	for action in keys:
 		if not InputMap.has_action(action): InputMap.add_action(action)
 		var event := InputEventKey.new()
 		event.physical_keycode = keys[action]
 		InputMap.action_add_event(action, event)
-	for pair in [["flashlight",JOY_BUTTON_RIGHT_SHOULDER],["battery_status",JOY_BUTTON_DPAD_UP],["battery_replace",JOY_BUTTON_Y]]:
-		var button:=InputEventJoypadButton.new();button.button_index=pair[1];InputMap.action_add_event(pair[0],button)
-
-	for axis in [["inspect_left",JOY_AXIS_RIGHT_X,-1.0],["inspect_right",JOY_AXIS_RIGHT_X,1.0],["inspect_up",JOY_AXIS_RIGHT_Y,-1.0],["inspect_down",JOY_AXIS_RIGHT_Y,1.0]]:
-		InputMap.add_action(axis[0],.20)
-		var motion:=InputEventJoypadMotion.new();motion.axis=axis[1];motion.axis_value=axis[2];InputMap.action_add_event(axis[0],motion)
+	for id in ["inspect_left","inspect_right","inspect_up","inspect_down"]:
+		if not InputMap.has_action(id):InputMap.add_action(id,.20)
 
 func mat(color: Color, emission := false) -> StandardMaterial3D:
 	var key := str(color) + str(emission)
@@ -792,6 +793,7 @@ func new_game() -> void:
 	if is_instance_valid(chapter):chapter.restore()
 	if is_instance_valid(witness):witness.restore()
 	if is_instance_valid(service_exit):service_exit.restore()
+	if is_instance_valid(field_tape):field_tape.restore()
 	if is_instance_valid(maintenance):maintenance.restore()
 	if is_instance_valid(dead_line):dead_line.restore()
 	if is_instance_valid(spare_place):spare_place.restore()
@@ -848,6 +850,7 @@ func _process(delta: float) -> void:
 	elif not hit.is_empty() and hit.collider.has_meta("interaction"):
 		var id: String = hit.collider.get_meta("interaction")
 		prompt.text = "[ E ]  " + interaction_name(id)
+	if is_instance_valid(controller) and controller.used:prompt.text=prompt.text.replace("[ E ]","[ X ]")
 	if time_in_game > caption_until: subtitle.text = ""
 	if stage >= 3 and not events.has("chair") and player.position.x < 1.1 and player.position.z < 1:
 		chair_event()
@@ -881,6 +884,9 @@ func open_casebook() -> void:
 	presentation.inspect_document("FIELD NOTES / RECORDS EXAMINED",text_)
 
 func interaction_name(id: String) -> String:
+	if id=="test_reel":return "Take labelled reel"
+	if id=="test_reel_deck":return "Use tape deck"
+	if id=="exit_terminal":return "Inspect exit recorder"
 	if id=="exit_receipt":return "Take contact strip"
 	if id in ["exit_grille","exit_catch","exit_outer_handle"]:return "Close grille" if events.get("exit_open",false) else ("Try catch" if not events.get("exit_catch_free",false) else "Open grille")
 	if id=="witness_cover":return "Close inspection cover" if events.get("witness_open",false) else "Slide inspection cover"
@@ -913,7 +919,7 @@ func interaction_name(id: String) -> String:
 	if id=="front" and events.get("arrival_check",false) and not events.get("front_checked",false):return "Knock"
 	if id=="front_gate":return "Close gate" if doors[id].opened else "Open gate"
 	if doors.has(id): return "Try door" if doors[id].locked else ("Close door" if doors[id].opened else "Open door")
-	return {"audition_source":"Play A","audition_return":"Play B","exclude_return":"Compare playback","order":"Correct attendance register" if isolated else "Read call sheet", "television":"Inspect television", "fuse":"Take spare fuse", "breaker":"Restore supply", "security":"Review security archive", "record":"Read occupancy record", "shed_record":"Read manual override", "isolate":"Isolate occupancy relay", "valve0":"Turn RED valve", "valve1":"Turn BLUE valve", "valve2":"Turn WHITE valve"}.get(id,"Inspect")
+	return {"audition_source":"Review hall recording","audition_return":"Replay and listen","exclude_return":"Compare last footstep","order":"Correct attendance register" if isolated else "Read call sheet", "television":"Inspect television", "fuse":"Take spare fuse", "breaker":"Restore supply", "security":"Review security archive", "record":"Read occupancy record", "shed_record":"Read manual override", "isolate":"Isolate occupancy relay", "valve0":"Turn RED valve", "valve1":"Turn BLUE valve", "valve2":"Turn WHITE valve"}.get(id,"Inspect")
 
 func try_interact() -> void:
 	if menu_open: return
@@ -928,6 +934,7 @@ func interact(id: String) -> void:
 	if id=="inspection_kit" or id.begins_with("battery_"):equipment.collect(id);return
 	if id=="spare_mirror":spare_mirror.touch();return
 	if id.begins_with("spare_"):spare_place.use(id);return
+	if id in ["test_reel","test_reel_deck"]:field_tape.use(id);return
 	if id.begins_with("line_"):dead_line.use(id);return
 	if id=="carbon_return":chapter.open_carbon();return
 	if id=="return_receiver":chapter.open_receiver();return
@@ -1204,6 +1211,7 @@ func apply_save(data: Dictionary) -> void:
 	if is_instance_valid(chapter):chapter.restore()
 	if is_instance_valid(witness):witness.restore()
 	if is_instance_valid(service_exit):service_exit.restore()
+	if is_instance_valid(field_tape):field_tape.restore()
 	if is_instance_valid(maintenance):maintenance.restore()
 	if is_instance_valid(dead_line):dead_line.restore()
 	if is_instance_valid(spare_place):spare_place.restore()
@@ -1277,6 +1285,7 @@ func run_qa() -> void:
 	if "--storage-qa" in OS.get_cmdline_user_args():path="res://scripts/storage_hide_qa.gd"
 	if "--inspection-qa" in OS.get_cmdline_user_args():path="res://scripts/inspection_qa.gd"
 	if "--witness-qa" in OS.get_cmdline_user_args():path="res://scripts/witness_carbon_qa.gd"
+	if "--field-qa" in OS.get_cmdline_user_args():path="res://scripts/field_qa.gd"
 	if "--exit-qa" in OS.get_cmdline_user_args():path="res://scripts/service_exit_qa.gd"
 	if "--arrival-qa" in OS.get_cmdline_user_args():path="res://scripts/arrival_qa.gd"
 	if "--ambient-qa" in OS.get_cmdline_user_args():path="res://scripts/ambient_qa.gd"

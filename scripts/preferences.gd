@@ -1,6 +1,6 @@
 extends RefCounted
 
-const DEFAULTS := {"master":0.7,"music":0.65,"sfx":0.8,"ambience":0.7,"sensitivity":0.0022,"invert_y":false,"display_mode":0,"resolution":Vector2i(1280,720),"visibility":1.0,"subtitles":true,"reduced_flash":true,"reduced_motion":false,"retro":0.18,"visual_preset":1,"viewmodel":true,"reminders":true,"story_mode":false,"sound_captions":true,"observations":true,"subtitle_scale":1.0,"caption_backing":true}
+const DEFAULTS := {"master":0.7,"music":0.65,"sfx":0.8,"ambience":0.7,"sensitivity":0.0022,"invert_y":false,"display_mode":0,"resolution":Vector2i(1280,720),"visibility":1.0,"subtitles":true,"reduced_flash":true,"reduced_motion":false,"retro":0.18,"visual_preset":1,"viewmodel":true,"reminders":true,"story_mode":false,"sound_captions":true,"observations":true,"subtitle_scale":1.0,"caption_backing":true,"pad_sensitivity":1.8,"pad_deadzone":0.20,"torch_contacts":true}
 var data: Dictionary = DEFAULTS.duplicate()
 var path := "user://settings.cfg"
 
@@ -15,6 +15,8 @@ func load_file() -> void:
 		data.reduced_flash = cfg.get_value("accessibility","reduced_flash",true)
 	for key in ["master","music","sfx","ambience","retro"]: data[key] = clampf(float(data[key]),0,1)
 	data.sensitivity = clampf(float(data.sensitivity),0.0005,0.006)
+	data.pad_sensitivity=clampf(float(data.pad_sensitivity),.5,3.5)
+	data.pad_deadzone=clampf(float(data.pad_deadzone),.10,.35)
 	data.visibility = clampf(float(data.visibility),0.8,1.5)
 	if not data.resolution is Vector2i: data.resolution = Vector2i(1280,720)
 	data.visual_preset = clampi(int(data.visual_preset),0,2)

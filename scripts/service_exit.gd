@@ -66,6 +66,7 @@ func build() -> void:
 	repair.tube(slope.to_global(Vector3(1.3,.69,-.73)),Vector3(5.85,-1.65,-9.7),.012,Color("8b7655"),self)
 	game.label3(self,"EXIT CONTACT\nRETURN DISCONNECTED",Vector3(5.77,-1.58,-9.7),-PI/2,13,Color("b7b79c")).pixel_size=.0013
 	surface(self,Vector3(5.785,-1.58,-9.7),Vector3(.015,.18,.36),steel,Color("343d34"))
+	game.collision(self,Vector3(5.765,-1.69,-9.7),Vector3(.045,.22,.38),"exit_terminal")
 	receipt=Node3D.new();add_child(receipt);receipt.position=Vector3(5.775,-1.91,-9.7);receipt.rotation.y=-PI/2
 	surface(receipt,Vector3.ZERO,Vector3(.22,.30,.006),"res://assets/original/aged_paper.png",Color("c5bea6"))
 	game.label3(receipt,"WARD, ELI\nOUT / TONIGHT",Vector3(0,0,.007),0,13,Color("343b30")).pixel_size=.0013
@@ -83,6 +84,13 @@ func in_passage(p: Vector3) -> bool:
 	var local: Vector3=slope.to_local(p)
 	return local.x>-.2 and local.x<length_+.4 and absf(local.z)<.75 and local.y<1.4
 func use(id: String) -> void:
+	if id=="exit_terminal":
+		if game.events.get("exit_false_departure",false) and not game.events.get("exit_receipt_read",false):use("exit_receipt");return
+		var text_: String="The cable runs to the grille at the top of the service passage. The return wire is disconnected."
+		if game.stage<3:text_+=" There is no supply here."
+		elif game.events.get("exit_receipt_read",false):text_+=" It printed my departure before I went through. The strip is in my field notes."
+		else:text_+=" The feed is live. This box used to record the exit contact; it shouldn't receive anything with that wire loose."
+		game.inspect_text("SERVICE EXIT / CONTACT RECORDER",text_);return
 	if id=="exit_receipt":
 		if not game.events.get("exit_false_departure",false) or game.events.get("exit_receipt_read",false):return
 		game.events.exit_receipt_read=true;game.events.exit_blackout_pending=true

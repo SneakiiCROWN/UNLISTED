@@ -71,7 +71,7 @@ func build() -> void:
 func isolated() -> bool:
 	return game.events.get("line_feed_off",false) and game.events.get("line_return_out",false)
 func available() -> bool:
-	return game.stage>=3 and game.events.get("underfloor_read",false) and int(game.events.get("underfloor_taps",0))>=3
+	return game.stage>=3
 func stop_sources() -> void:
 	for source in sources:
 		if is_instance_valid(source):source.stop();source.queue_free()
@@ -108,13 +108,16 @@ func use(id: String) -> void:
 		restore();game.save_game(true);return
 	if id!="line_strike" or cooldown>0:return
 	cooldown=.3;game.sound("prop_impact",PANEL,-31)
-	if not available():return
+	if not available():
+		game.presentation.notify("No supply. The feed light is out.");return
 	if not isolated():
 		# Calibration only works through both connected leads; a dead or open circuit cannot answer.
-		if game.events.get("line_feed_off",false) or game.events.get("line_return_out",false):return
+		if game.events.get("line_feed_off",false) or game.events.get("line_return_out",false):
+			game.presentation.notify("Only one lead is disconnected.");return
 		game.events.line_calibrated=true;queue_pattern(PANEL,.4,false)
 	elif game.events.get("line_calibrated",false):
 		game.events.line_test_armed=true
+	elif isolated():game.presentation.notify("No reference pattern yet. The note describes the connected test.")
 	game.save_game(true)
 func queue_pattern(where: Vector3,start: float,house: bool) -> void:
 	stop_sources();sequence.clear();clock=0

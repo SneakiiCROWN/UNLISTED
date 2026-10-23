@@ -4,11 +4,11 @@
 
 Eli Ward takes a night call at 17 Briar Lane, the address on his father Simon's last work slip from 1998. The house has kept records of things nobody witnessed.
 
-**0.9.1 / The Other Way Out â€” verified Windows alpha candidate.** The complete game and its 30-60 minute first-play target remain unfinished.
+**0.9.1 / The Other Way Out - verified Windows alpha.** The complete game and its 30-60 minute first-play target remain unfinished.
 
 ## Play
 
-[Windows ZIP](https://github.com/SneakiiCROWN/UNLISTED/releases/download/unlisted-v0.9.1-other-way-out-public-test-20261023/UNLISTED-Windows-Other-Way-Out-v0.9.1.zip) / [numbered prerelease and evidence](https://github.com/SneakiiCROWN/UNLISTED/releases/tag/unlisted-v0.9.1-other-way-out-public-test-20261023). These candidate links become available when publication completes; the publication receipt records independent download verification.
+[Windows ZIP](https://github.com/SneakiiCROWN/UNLISTED/releases/download/unlisted-v0.9.1-other-way-out-public-test-20261023/UNLISTED-Windows-Other-Way-Out-v0.9.1.zip) / [numbered prerelease and evidence](https://github.com/SneakiiCROWN/UNLISTED/releases/tag/unlisted-v0.9.1-other-way-out-public-test-20261023). Published and independently downloaded: all seven assets match local SHA-256 hashes, both ZIPs pass CRC checks, and the downloaded executable passes the 23-check native arrival/door test.
 
 Extract into a new folder and open **UNLISTED.exe**. Preserve older builds and your `%APPDATA%/UNLISTED` profile. Existing saves keep their discoveries and puzzle answers. Start New Game for the full new investigation sequence. Earlier executables do not understand every newer save field.
 

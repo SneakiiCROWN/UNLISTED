@@ -77,6 +77,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and (Input.mouse_mode == Input.MOUSE_MODE_CAPTURED or (game.automated_qa and event.get_meta("unlisted_qa_input",false))):
 		rotate_y(-event.relative.x * sensitivity)
 		camera.rotation.x = clampf(camera.rotation.x - event.relative.y * sensitivity * (-1 if invert_y else 1), -1.4, 1.4)
+	if event.is_action_pressed("throw_prop") and game.physical.held:game.physical.release(true);return
+	if event.is_action_pressed("torch_tap"):game.equipment.tap_contact();return
 	if event.is_action_pressed("journal"):game.open_casebook();return
 	if event.is_action_pressed("hint"):game.request_hint();return
 	if event.is_action_pressed("flashlight"):
@@ -94,6 +96,14 @@ func _physics_process(delta: float) -> void:
 	capsule.height=1.04 if crouched else 1.72
 	body_shape.position.y=capsule.height*.5
 	var input := Input.get_vector("left", "right", "forward", "back")
+	if is_instance_valid(game.controller):
+		input=(input+game.controller.stick(game.controller.move)).limit_length(1)
+		var turn: Vector2=game.controller.stick(game.controller.look)
+		if game.controller.rotating and game.physical.held:game.physical.rotate_held(turn*delta*180)
+		else:
+			var rate: float=game.presentation.prefs.data.get("pad_sensitivity",1.8)
+			rotate_y(-turn.x*delta*rate)
+			camera.rotation.x=clampf(camera.rotation.x-turn.y*delta*rate*(-1 if invert_y else 1),-1.4,1.4)
 	var direction := global_basis * Vector3(input.x, 0, input.y)
 	var speed := 2.15
 	if Input.is_action_pressed("sprint"): speed = 3.65

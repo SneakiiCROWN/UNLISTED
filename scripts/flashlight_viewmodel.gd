@@ -2,6 +2,7 @@ extends Node3D
 # Cosmetic only. The gameplay SpotLight3D and interaction ray remain owned by player.gd.
 var player: CharacterBody3D
 var clock := 0.0
+var tap_clock:=0.0
 var home := Vector3(0.23,-0.205,-0.43)
 var obstruction := 0.0
 var inspection_rim: MeshInstance3D
@@ -52,4 +53,6 @@ func _process(delta: float) -> void:
 	var sway := Vector3.ZERO
 	if not prefs.reduced_motion:sway = Vector3(sin(clock)*0.006,cos(clock*2)*0.004,0)*minf(moving,1)
 	var lowered := Vector3(0,-0.10,0.035) if not player.torch.visible else Vector3.ZERO
-	position = position.lerp(home+sway+lowered+Vector3(0,-0.13,0.16)*obstruction,1.0-exp(-delta*15))
+	tap_clock=maxf(0,tap_clock-delta)
+	var tap:=Vector3(0,sin(tap_clock/.32*PI)*.045,0) if not prefs.reduced_motion else Vector3.ZERO
+	position = position.lerp(home+sway+lowered+tap+Vector3(0,-0.13,0.16)*obstruction,1.0-exp(-delta*15))
