@@ -4,11 +4,11 @@
 
 Eli Ward takes a night call at 17 Briar Lane, the address on his father Simon's last work slip from 1998. The house has kept records of things nobody witnessed.
 
-**0.9.2 / Field Test - verified Windows alpha candidate.** The complete game and its 30-60 minute first-play target remain unfinished.
+**0.9.2 / Field Test - verified Windows alpha.** The complete game and its 30-60 minute first-play target remain unfinished.
 
 ## Play
 
-[Windows ZIP](https://github.com/SneakiiCROWN/UNLISTED/releases/download/unlisted-v0.9.2-field-test-public-test-20261023/UNLISTED-Windows-Field-Test-v0.9.2.zip) / [numbered prerelease and evidence](https://github.com/SneakiiCROWN/UNLISTED/releases/tag/unlisted-v0.9.2-field-test-public-test-20261023). Candidate links become available after publication; independent download verification is recorded in the release receipt. [0.9.1 verified rollback](https://github.com/SneakiiCROWN/UNLISTED/releases/tag/unlisted-v0.9.1-other-way-out-public-test-20261023) remains available.
+[Windows ZIP](https://github.com/SneakiiCROWN/UNLISTED/releases/download/unlisted-v0.9.2-field-test-public-test-20261023/UNLISTED-Windows-Field-Test-v0.9.2.zip) / [numbered prerelease and evidence](https://github.com/SneakiiCROWN/UNLISTED/releases/tag/unlisted-v0.9.2-field-test-public-test-20261023). Published and independently downloaded: all six asset hashes match, ZIPs pass extraction checks, and the downloaded executable passes native arrival/door verification. [0.9.1 verified rollback](https://github.com/SneakiiCROWN/UNLISTED/releases/tag/unlisted-v0.9.1-other-way-out-public-test-20261023) remains available.
 
 Extract into a new folder and open **UNLISTED.exe**. Preserve older builds and your `%APPDATA%/UNLISTED` profile. Existing saves keep their discoveries and puzzle answers. Start New Game for the full new investigation sequence. Earlier executables do not understand every newer save field.
 

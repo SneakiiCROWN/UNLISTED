@@ -1,3 +1,15 @@
+# Latest published recovery point / 0.9.2 Field Test
+
+Published and independently verified: https://github.com/SneakiiCROWN/UNLISTED/releases/tag/unlisted-v0.9.2-field-test-public-test-20261023
+
+Windows: UNLISTED-Windows-Field-Test-v0.9.2.zip. SHA256 006207157ec29259cf32b1565ab19ac6471e1833422b91dfc8ee401a41fb220a. Public release target e3a1f29857700cab2d14d30de0f4c4ff8da2e161. Complete private source b3ed8fd901ac59045d3174a145c9263cece1513f, archived in ../Checkpoints/20261023_field_test_release/UNLISTED_Field_Test_Complete_Source.zip (SHA256 6e45a355349d481a518810cf0c608b99c795f94f8f8a12ef3f8d9eeeea689677).
+
+All six anonymous asset downloads match local hashes. Downloaded/extracted Windows exe: arrival/door 23/0. Final complete source freshly imports and all 80 dynamic scripts load. Previous 0.9.1 asset IDs and digests unchanged. Owner settings and checkpoint hashes unchanged. PUBLICATION_RECEIPT.json in that checkpoint records evidence. First video encode crashed; failed output remains under FieldTest_05/FailedEncoding_01. Serial decoder/two encoder threads succeeded. Do not mistake that encoder crash for a gameplay crash.
+
+Acceptance: fresh FieldTest_04 route 362/0 (605.86s automated, not human game length), final FieldTest_05 field 38/0, reel 29/0, three layouts 9/0 each. No need to repeat that complete route for a cosmetic torch animation. See FIELD_TEST_VERIFICATION.md for exact final deltas/scopes.
+
+Next active task: physical battery replacement using existing torch/hands. Read the latest pasted directive 35cb7f05 if needed. A read-only/model study is preserved in ../Checkpoints/20261023_torch_reload_study: deployed GLB imported into Blender, only rear barrel cap faces opened and a dark inner bore added, original cap/hands retained. It is NOT yet in the published game. Implement brief, supported animation with actual cap, old/new pack and believable support hand; preserve mechanics, avoid duplicate consumption, test pause/load/death/equipment interruptions/reduced motion and inspect native visuals. Do not claim the study is finished art. Further coherent director work remains approved after this is stable.
+
 # Published recovery point / 2026-10-23
 
 0.9.1 The Other Way Out is public at tag unlisted-v0.9.1-other-way-out-public-test-20261023, target a029a590c4d0fcea0f17807d10d34c14db0c7866. Complete private source: a6933e4. All seven anonymous downloads match; downloaded Windows arrival 23/0, final source import 77/0. Original 0.9.0 asset IDs/digests unchanged. Receipt: ../Checkpoints/20261023_other_way_out_release_final/PUBLICATION_RECEIPT.json.

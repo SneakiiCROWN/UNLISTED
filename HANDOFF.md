@@ -1,3 +1,7 @@
+# Current handoff / Field Test published
+
+Read SPRINT_RECOVERY.md first. 0.9.2 is independently downloaded/verified; complete source b3ed8fd and public tag e3a1f29 preserved. Next task is the physical battery reload, followed by connected director work. Do not rerun passing 362-check full route for cosmetic-only work.
+
 # Latest verified continuation / 0.9.1 The Other Way Out
 
 Complete local Game remains authoritative. Read OTHER_WAY_OUT_VERIFICATION.md, SERVICE_EXIT_PROGRESS.md and SPRINT_RECOVERY.md before older entries. ServiceExit_11 native fresh route passed 352/0 through the unsigned carbon, real thrown-tool service exit, false-departure evidence, local blackout/search, same-tool retrieval/reuse, original investigation and both earned departures. Focused branch death/retry/story 48/0; new layouts 9/0 each at all three target resolutions. Runtime gameplay checkpoint aac3951; later commits preserve QA, recovery and delivery notes. Package/publication receipts identify actual archives and release status. Do not repeat these passing suites without a relevant change. No 30-60 minute or human art/fear/listening approval; Surveyor mesh remains unfinished. Continue substantial coherent middle-act/art/pacing work after securing the package, not another rejected model reshaping loop.
