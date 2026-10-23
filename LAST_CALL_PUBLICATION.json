@@ -1,0 +1,22 @@
+{
+  "private_checkpoint": "3410f90158514dd498f5290018d8ef41b43a77d9",
+  "source_sha256": "9743dbfa78459d81170749b9f9b8250c3fee35ef3cf405e63432a3b061e61543",
+  "windows_sha256": "280227251021abd7f10fa1bd8c3b1a23ba71769fc3213759dd207c397617badb",
+  "published": true,
+  "public_source_commit": "6506cdd853cc747d6c102ef095b4a7d5ee0b0b49",
+  "release_url": "https://github.com/SneakiiCROWN/UNLISTED/releases/tag/unlisted-v0.10.0-last-call-public-test-20261023",
+  "anonymous_downloads_verified": true,
+  "downloaded_native_tests": {
+    "downloaded_controller": {
+      "passed": 8,
+      "failed": 0
+    },
+    "downloaded_cold_risk": {
+      "passed": 8,
+      "failed": 0
+    }
+  },
+  "previous_releases_preserved": true,
+  "complete_source_local_only": true,
+  "windows_url": "https://github.com/SneakiiCROWN/UNLISTED/releases/download/unlisted-v0.10.0-last-call-public-test-20261023/UNLISTED-Windows-The-Last-Call-v0.10.0.zip"
+}
