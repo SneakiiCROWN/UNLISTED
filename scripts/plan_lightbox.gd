@@ -42,7 +42,7 @@ func assist() -> void:
 func _process(delta: float) -> void:
 	if not is_visible_in_tree() or game.presentation.section!="document":return
 	if ready_for_match and not game.events.get("call_plan_aligned",false):
-		var arrows:=Input.get_vector("ui_left","ui_right","ui_up","ui_down") if has_focus() else Vector2.ZERO
+		var arrows:=Input.get_vector("ui_left","ui_right","ui_up","ui_down") if has_focus() and not game.controller.used else Vector2.ZERO
 		var stick:=Input.get_vector("inspect_left","inspect_right","inspect_up","inspect_down")
 		if placed and (arrows+stick).length()>.1:
 			offset+=(arrows+stick).limit_length()*delta*155;try_register();remember(false)
@@ -65,7 +65,7 @@ func _gui_input(event: InputEvent) -> void:
 	elif event is InputEventMouseMotion and dragging:
 		offset=(event.position-grab).clamp(Vector2(-200,-105),Vector2(200,105));try_register();queue_redraw();accept_event()
 	elif event.is_action_pressed("ui_accept"):place_sheet();accept_event()
-	elif has_focus() and (event.is_action("ui_left") or event.is_action("ui_right") or event.is_action("ui_up") or event.is_action("ui_down")):accept_event()
+	elif has_focus() and not game.controller.used and (event.is_action("ui_left") or event.is_action("ui_right") or event.is_action("ui_up") or event.is_action("ui_down")):accept_event()
 func plan(marked: bool) -> void:
 	var ink:=Color(.28,.26,.19,.85) if not marked else Color(.18,.30,.28,.78)
 	# Surveyed arrangement: stairwell enters the cellar at the lower landing;

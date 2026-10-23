@@ -1,9 +1,8 @@
 {
-  "milestone": "Director pass working checkpoint / unreleased",
-  "complete_private_checkpoint": "e96f6a98995bff72eaf299a634098edd3de19aaf",
-  "integrated_route": "Director_06 / 288 passing checks, earned alternate from shared route",
-  "final_targeted_candidate": "Director_08",
-  "last_public_playable": "0.8.0 Dead Line",
-  "human_approval": "pending",
-  "completion": "Full director pass unfinished. Read DIRECTOR_PASS_PROGRESS.md and DIRECTOR_PASS_VERIFICATION.md."
+  "version": "0.10.0",
+  "title": "The Last Call",
+  "private_source_commit": "3410f90",
+  "complete_source_local_only": true,
+  "human_playtested": false,
+  "verification": "LAST_CALL_VERIFICATION.md"
 }

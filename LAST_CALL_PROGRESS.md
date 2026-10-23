@@ -1,9 +1,5 @@
-# The Last Call - unreleased development checkpoint
+# The Last Call / 0.10.0 source checkpoint
 
-Complete private recovery checkpoint: `1f097a0`. Public source remains incomplete without licensed local assets. v0.9.3 Night Arrival is still the downloadable release and rollback.
+Complete private source checkpoint: `3410f90`. Complete licensed source and raw library remain local. Public source is deliberately incomplete without those assets.
 
-Implemented a manually placed/rotated, forgiving and saved plan overlay; sourced 1998 plans; a physically accessible and backed cellar inspection bay; removable signal bridge; remote-controlled historical reel; a disconnected monitor response; and a real Surveyor search. New cases earn this investigation before the existing porch recount. Legacy cases retain the previous progression.
-
-Native Windows candidate LastCall_04 passed 46 focused checks, including real player movement, doorway/standing clearance, manual paper alignment, partial placement recovery, interrupted playback, disconnected bridge persistence, paused search, saved search warning, spatial deck lure and physical escape through the maintenance passage. Screenshots were inspected. Earlier failed geometry/UI test attempts remain preserved locally.
-
-This is a recovery checkpoint, not a release acceptance claim. Visible-pursuit lure rejection, death/retry/story mode, additional resolutions, continuous earned route to both endings, audio recording and final source/package verification remain pending. Human comprehension, artistic approval, fear and first-play duration are untested. No new Surveyor artwork is promoted. Licensed speaker media remains local.
+The implemented plan/bay/recording chapter, dated discovery, real source hearing and saved search target pass focused exported Windows checks. See LAST_CALL_VERIFICATION.md for exact segmented earned route, both endings, final reports, preserved failures and pending human review. No Surveyor replacement model is included.

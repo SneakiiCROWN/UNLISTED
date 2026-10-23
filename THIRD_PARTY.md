@@ -78,3 +78,6 @@ The Inspection milestone's walk-in office cupboard derives from Kenney Furniture
 ## Arrival station wagon
 
 GGBotNet, PSX Style Cars, Car 01 / grey texture, CC0 as posted by the author at https://opengameart.org/content/psx-style-cars . Exact download/page and original files preserved locally. Converted to glTF at 4.45 m length with wet material response. Provenance and licence in assets/exterior/arrival/. Raw media remains excluded from public source.
+
+### Last Call monitor
+`assets/interiors/last_call/speakerSmall.glb` is from the existing Kenney Furniture Kit (CC0). Its included licence and local provenance accompany the runtime asset. No restricted raw library files are published with the source.

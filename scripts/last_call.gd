@@ -21,7 +21,7 @@ const TITLE:="SIMON / AFTER THE LOUNGE"
 const PLAN_TITLE:="THE TWO CELLAR PLANS"
 const PLAN_NOTE:="The printed sheet is the site-office plan issued in 1998. Dad's tracing was folded into the test-reel sleeve. It's marked 'measured in cellar / after the lounge'.\n\nThe stairs, walls and service line match. His tracing adds a doorway beside the lower landing, on the west side. The printed plan shows solid wall there.\n\nHe either found an alteration they hadn't recorded, or this place showed him a different layout. I can check the wall myself."
 const AFTER:="17 BRIAR LANE / S. WARD / 1998\nAfter the lounge inspection\n\nI rang home again. Eli was there. I could hear the kettle behind him.\n\nThen the monitor in this bay played our first call back. Every word. Even the kettle, in the same place. The line to it was already disconnected.\n\nI don't think there was a child in that room. It had my call, his room and the drawing from my toolbox. It was using things I knew.\n\nI nearly left it for the next contractor. Then the transport started again and the man was at the landing. I played the test reel in the office. He went towards it. I got back into this bay.\n\nI haven't signed the clearance. If anyone comes after me, please check the rooms. Don't follow a voice just because you recognise it.\n\n[The page ends here. The drawing and disconnected bridge are still in the bay.]"
-const OBSERVATION:="Dad's tracing led to a real doorway. Inside were the drawing from his toolbox, his test connections and a page written after he saw my room.\n\nHe checked that I was safe at home. Then this monitor repeated the call. He knew it was copying us.\n\nI removed the signal bridge myself. The monitor still answered the old test recording. The Surveyor came towards the sound of the deck.\n\nDad wasn't choosing this place over me. He was trying to work out what it was doing, then trying to get past the man at the stairs. I still don't know how far he got."
+const OBSERVATION:="Dad's tracing led to a real doorway. Inside were the drawing from his toolbox, his test connections and a page written after he saw my room.\n\nHe checked that I was safe at home. Then this monitor repeated the call. He knew it was copying us.\n\nI removed the signal bridge myself. The monitor still answered the old test recording. The office deck can still be run from here, without reconnecting the signal bridge.\n\nDad wasn't choosing this place over me. He was trying to work out what it was doing, then trying to get past the man at the stairs. I still don't know how far he got."
 func _ready() -> void:
 	name="TheLastCall";build();restore()
 	var previous:=24
@@ -75,7 +75,7 @@ func build() -> void:
 	for points in [[Vector3(-3.92,-1.65,-12.96),Vector3(-4.08,-1.65,-12.96),Vector3(-4.08,-.45,-12.96),Vector3(-3.25,-.45,-12.96)],[Vector3(-2.57,-1.66,-12.94),Vector3(-2.57,-1.18,-12.94),Vector3(-3.92,-1.18,-12.94),Vector3(-3.92,-1.42,-12.94)]]:
 		for i in range(points.size()-1):repair.tube(points[i],points[i+1],.008,Color("272e26"),bay)
 	folded_page=surface(bay,Vector3(-3.25,-1.881,-13.08),Vector3(.35,.004,.28),"res://assets/original/aged_paper.png",Color("b8ad8b"))
-	var ink: Label3D=tag(folded_page,"1998 / S. Ward\nAfter the lounge\nIt played our call back.",Vector3(0,.007,0),13);ink.rotation.x=-PI/2;ink.font=load("res://assets/fonts/Kalam-Regular.ttf");ink.font_size=22;ink.pixel_size=.0009
+	var ink: Label3D=tag(folded_page,"1998 / S. Ward\nAfter the lounge\nIt played our call back.",Vector3(0,.007,0),13);ink.rotation.x=-PI/2;ink.rotation.y=PI;ink.font=load("res://assets/fonts/Kalam-Regular.ttf");ink.font_size=22;ink.pixel_size=.0009
 	game.collision(bay,Vector3(-3.25,-1.86,-13.08),Vector3(.38,.06,.31),"call_page")
 	game.model("res://assets/dusk/psx_prop_ceiling_lamp_01.glb",bay,Vector3(-3.25,-.52,-13.6),Vector3(.30,.20,.30))
 	bay_light=game.lamp(Vector3(-3.25,-.68,-13.6),Color("b8ac86"),.38,3)
@@ -112,7 +112,9 @@ func open_plans() -> void:
 	p.add_button("Put down",func():widget.remember();p.resume_game(),true,actions)
 	for button in actions.get_children():
 		button.custom_minimum_size.x=0;button.size_flags_horizontal=Control.SIZE_EXPAND_FILL;button.add_theme_font_size_override("font_size",18)
-	var guidance: Label=p.label(p.card_body,"Drag / scroll to turn. Arrows or right stick move the tracing. Match the shared landmarks.",15,"Meta");guidance.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	widget.focus_neighbor_bottom=widget.get_path_to(actions.get_child(0))
+	actions.get_child(0).focus_neighbor_top=actions.get_child(0).get_path_to(widget)
+	var guidance: Label=p.label(p.card_body,"Drag / scroll to turn. Arrows or right stick move; D-pad selects controls. Match shared landmarks.",15,"Meta");guidance.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	widget.grab_focus()
 func busy() -> bool:
 	return game.events.get("call_test_running",false) or game.events.get("call_search_running",false) or reply_clock>=0
@@ -147,6 +149,9 @@ func restore() -> void:
 		if is_instance_valid(source):source.stop();source.queue_free()
 	sources.clear();reply_clock=-1;reply_index=0;cooldown=0;lamp_levels.clear()
 	game.events.call_test_running=false # Rewind an interrupted test, never award unheard evidence.
+	if game.events.get("call_search_running",false):
+		var target_: Array=game.events.get("call_search_target",[-3.25,-3.0,-15.7])
+		if target_.size()==3:game.threat.last_known=Vector3(float(target_[0]),float(target_[1]),float(target_[2]))
 	bay_light.light_energy=.04 if game.events.get("call_search_running",false) else .38
 	sync()
 func reel_cue(index: int) -> void:
@@ -165,7 +170,7 @@ func start_search() -> bool:
 	game.events.call_prior_origin=game.events.get("threat_origin","");game.events.call_prior_spawn=game.events.get("threat_spawn",[]).duplicate()
 	game.events.call_search_pending=false;game.events.call_search_running=true
 	game.events.threat_pending=true;game.events.threat_resolved=false;game.events.threat_origin="last_call";game.events.threat_spawn=[spawn.x,spawn.y,spawn.z]
-	game.threat.begin(false,spawn);game.threat.last_known=Vector3(-3.25,-3,-15.7)
+	game.threat.begin(false,spawn);game.threat.last_known=Vector3(-3.25,-3,-15.7);game.events.call_search_target=[-3.25,-3.0,-15.7]
 	game.sound("door",Vector3(0,-1.2,-12),-30);game.save_game(true);return true
 func finish_search() -> void:
 	game.events.call_search_running=false;game.events.call_search_done=true;game.events.call_search_pending=false
@@ -199,6 +204,7 @@ func _physics_process(delta: float) -> void:
 	if game.events.get("call_search_pending",false):start_search()
 	var running: bool=game.events.get("call_search_running",false)
 	if running and game.events.get("threat_origin","")=="last_call":
+		var target_: Vector3=game.threat.last_known;game.events.call_search_target=[target_.x,target_.y,target_.z]
 		if game.threat.state=="observe":game.threat.change("investigate");game.threat.plan(game.threat.last_known)
 		if game.threat.state=="complete":finish_search();running=false
 		elif game.threat.age>8 and game.player.position.y>-.4 and game.player.position.x>11.9 and game.player.position.z< -6 and game.player.position.z> -10 and not game.threat.can_see_player() and game.threat.state not in ["retreat","dead","capture"]:

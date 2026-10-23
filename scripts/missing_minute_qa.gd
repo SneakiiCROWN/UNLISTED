@@ -20,7 +20,7 @@ func play_chapter(accessibility:=false) -> void:
 	# rather than retaining the old test's assumption of nearly endless UV.
 	if g.equipment.data.uv and float(g.equipment.data.charge)<30:
 		var spares_: int=g.equipment.data.spares
-		await action("battery_replace")
+		await action("battery_replace");await wait(1.6)
 		check("collected spare restores depleted inspection light through input",spares_>0 and int(g.equipment.data.spares)==spares_-1 and float(g.equipment.data.charge)>99 and g.equipment.is_uv())
 	await travel(Vector2(3,-7),"original reaches archive")
 	await travel(Vector2(5.7,-7.2),"writing surface approach")

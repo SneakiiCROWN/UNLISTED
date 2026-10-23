@@ -404,6 +404,10 @@ func complete_intro() -> void:
 	game.new_game()
 
 func clear_card() -> void:
+	# Card buttons are destroyed below; never retain stale node handles from a prior view.
+	buttons.clear()
+	var focus:=get_viewport().gui_get_focus_owner()
+	if is_instance_valid(focus) and card_body.is_ancestor_of(focus):focus.release_focus()
 	card.add_theme_stylebox_override("panel",normal_panel)
 	note.remove_theme_color_override("default_color");note.remove_theme_font_override("normal_font")
 	status.visible = false

@@ -1,4 +1,4 @@
-# Current alpha limitations / 0.9.3
+# Current alpha limitations / 0.10.0
 
 - The larger middle act and complete game's 30-60 minute first-play target are unfinished. Automated route timing is not human playtime.
 - Surveyor character art is unchanged and still needs a professional asset-first redesign. Rejected studies remain excluded. Temporary vocals are replaceable.
@@ -10,3 +10,5 @@
 - Native capture records the rendered viewport and game audio bus. It does not measure what a listener hears through their own device, or normal uncaptured frame rate.
 - Historical forced/headless shutdown/resource warnings and older driver issues are not declared universally fixed by clean current native exits.
 - Public GitHub source excludes licensed raw media and complete private history. Rebuilding requires the preserved complete licensed local project.
+
+- The Last Call adds a connected mandatory investigation for new cases. Final route acceptance is a segmented continuation from genuinely earned saves, not a clean single final-binary fresh route. Earlier native layout access violations are preserved and discussed in LAST_CALL_VERIFICATION.md; their exact native cause is not conclusively established.

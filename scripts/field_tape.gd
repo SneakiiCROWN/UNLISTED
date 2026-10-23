@@ -72,19 +72,23 @@ func play(from_remote:=false) -> void:
 	game.horror.stop_audition();stop();game.horror.audition="FIELD"
 	game.events.test_reel_loaded=true;stored_reel.visible=true;game.save_game(true)
 	playing=true;remote=from_remote;clock=0;next=0
-	motor=game.sound("hum",DECK,-32,true);motor.unit_size=1;motor.max_distance=7;sources.append(motor)
+	motor=game.sound("hum",DECK,-26 if remote else -32,true);motor.unit_size=2.5 if remote else 1;motor.max_distance=24 if remote else 7;sources.append(motor)
 	game.sound_caption("Motor running on the recording.",2.5,"1998 TEST REEL",motor,true)
+func notify_audible_source(audio: AudioStreamPlayer3D) -> void:
+	# The same actual sound the player hears can redirect investigation.
+	# A sighted pursuit keeps its target; warning grace and state rules still apply.
+	if remote and audio.playing and game.threat.active() and not game.threat.can_see_player():game.threat.hear(audio.global_position,28.0)
 func cue(index: int) -> void:
-	if remote:
-		game.last_call.reel_cue(index)
-		# An audible source can redirect a search, never erase a sighted pursuit.
-		if game.threat.active() and not game.threat.can_see_player():game.threat.hear(DECK,28.0)
+	if remote:game.last_call.reel_cue(index)
 	if index==6:
 		if is_instance_valid(motor):motor.stop()
-		var click=game.sound("latch",DECK,-29);sources.append(click)
+		var click=game.sound("latch",DECK,-23 if remote else -29);sources.append(click)
+		click.max_distance=24 if remote else 9;click.unit_size=2.5 if remote else 1;notify_audible_source(click)
 		game.sound_caption("A switch clicks. The motor stops.",2.5,"1998 TEST REEL",click,true);return
-	var audio=game.sound("prop_impact",DECK,-27 if index>=7 else -31);sources.append(audio)
-	audio.unit_size=1.5 if remote else 1.0;audio.max_distance=24 if remote else 9;audio.pitch_scale=.82 if index>=7 else 1.12
+	var audio=game.sound("prop_impact",DECK,(-23 if index>=7 else -21) if remote else (-27 if index>=7 else -31));sources.append(audio)
+	audio.unit_size=2.5 if remote else 1.0;audio.max_distance=24 if remote else 9;audio.pitch_scale=.82 if index>=7 else 1.12
+	# Hearing is tied to the same audible source, not a separate invisible cue.
+	notify_audible_source(audio)
 	if index==0:game.sound_caption("Three taps, then a reply.",3.2,"1998 TEST REEL",audio,true)
 	if index==7:game.sound_caption("The same taps, with the motor silent.",3,"1998 TEST REEL",audio,true)
 func _physics_process(delta: float) -> void:

@@ -1,3 +1,7 @@
+# UNLISTED 0.10.0 / The Last Call
+
+A sourced plan-overlay puzzle, real cellar inspection bay, captive signal bridge, separate recording remote, disconnected monitor response, dated later evidence and a spatial Surveyor distraction now form a connected investigation. Both porch choices retain their meaning and eligibility. Legacy cases retain their progression. Partial sheet/hardware/search saves and physical escape are covered; controller paper navigation and document button cleanup improve the interface. Surveyor art and the larger complete game remain unfinished. See LAST_CALL_VERIFICATION.md for actual segmented route evidence and preserved native failures.
+
 # UNLISTED 0.9.3 / Night Arrival
 
 A parked station wagon now grounds Eli's arrival at the front gate. It uses a properly scaled PSX asset, wet material response and fitted mesh collision, with open walking space around it and an unobstructed gate/lane.

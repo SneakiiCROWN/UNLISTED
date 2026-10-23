@@ -296,6 +296,15 @@ func run(game: Node) -> void:
 		chapter_test.g=g;chapter_test.output=output;chapter_test.started_at=started_at
 		await chapter_test.play_chapter(true)
 		checks.append_array(chapter_test.checks);chapter_test.queue_free()
+	if g.events.get("case_v4",false):
+		phase="The Last Call / continuous earned investigation"
+		var call_test=load("res://scripts/last_call_qa.gd").new();add_child(call_test)
+		call_test.g=g;call_test.output=output;call_test.started_at=started_at;call_test.exact_target=exact_target
+		await call_test.play_continuous();checks.append_array(call_test.checks);call_test.queue_free()
+		for result in checks:
+			if not result.passed:await finish_run(false);return
+	await finish_departure()
+func finish_departure() -> void:
 	await travel(Vector2(0,2.5),"final hall return")
 	if not g.doors.front.opened:await use("front")
 	await travel(Vector2(-0.7,5.5),"porch register return");await use("order",false)

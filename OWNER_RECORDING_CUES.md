@@ -24,3 +24,9 @@ until story context and casting are agreed; the Surveyor is not confirmed to be
 Eli's father. No owner recordings are required for play. Missing clips use the
 preserved temporary sounds. No microphone or live audio capture runs in the game.
 Human sound approval remains pending; signal loudness alone is not a mix review.
+
+## Optional Last Call additions (not required or recorded yet)
+
+Keep final Surveyor vocals replaceable. The current 1998 reel remains a mechanical test, not an impersonation of Simon. The bay's answering taps and physical disconnected bridge carry the playable contradiction.
+
+If recording later: a short ordinary home phone exchange, Eli safe at home with a kettle in the background; a second exact repeat can establish copying. Do not suggest the Surveyor is Simon, confirm Simon's death, or claim Eli lived at Briar Lane. Record dry originals and leave processing to the mix. No new vocal recording is included in this milestone.
