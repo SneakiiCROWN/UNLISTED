@@ -36,7 +36,7 @@ for i,row in enumerate(frames):
     lines.extend(["file '"+row['file']+"'",'option framerate 1000','duration '+str(max(.001,end-(row['seconds'] if i else 0)))])
 concat=R/'native_frames.ffconcat';concat.write_text('\n'.join(lines)+'\n',encoding='utf8')
 with (B/'native_encode.log').open('w',encoding='utf8') as f:
-    subprocess.run([r'C:\Program Files\Jellyfin\Server\ffmpeg.exe','-hide_banner','-y','-safe','0','-f','concat','-i',str(concat),'-i',str(R/'game_bus.wav'),'-vf','fps=30','-c:v','libx264','-preset','veryfast','-threads','4','-crf','24','-pix_fmt','yuv420p','-c:a','aac','-b:a','160k','-af','apad','-t',str(report['duration_seconds']),'-movflags','+faststart',str(video)],stdout=f,stderr=subprocess.STDOUT,check=True)
+    subprocess.run([r'C:\Program Files\Jellyfin\Server\ffmpeg.exe','-hide_banner','-y','-safe','0','-f','concat','-threads','1','-i',str(concat),'-i',str(R/'game_bus.wav'),'-vf','fps=30','-c:v','libx264','-preset','veryfast','-threads','2','-crf','24','-pix_fmt','yuv420p','-c:a','aac','-b:a','160k','-af','apad','-t',str(report['duration_seconds']),'-movflags','+faststart',str(video)],stdout=f,stderr=subprocess.STDOUT,check=True)
 capture=dict(source='Actual native Windows viewport and simultaneous Master bus, isolated automated input',frames=len(frames),duration_seconds=report['duration_seconds'],average_sampled_fps=len(frames)/report['duration_seconds'],largest_sample_interval=max(frames[i+1]['seconds']-frames[i]['seconds'] for i in range(len(frames)-1)),encoded_fps=30,timing='Original wall-clock timestamps, repeated frames; no acceleration or interpolation',audio=prior.signal(R/'game_bus.wav'))
 (B/'NATIVE_CAPTURE.json').write_text(json.dumps(capture,indent=2),encoding='utf8')
 E=B/'Evidence';E.mkdir();cards=[]
