@@ -112,7 +112,7 @@ func begin(basement := false,position_override: Variant=null) -> void:
 	game.surveyor_actor.set_mode("listen")
 	game.sound("latch",Vector3(0,1,3.8),-23)
 	var breathing=voice("warning",-28)
-	if breathing:game.sound_caption("Breathing, close by.",2.5,"CELLAR" if basement else "HALL",breathing)
+	if breathing:game.sound_caption("Breathing, close by.",2.5,"CELLAR" if game.presence.position.y<-.5 else "HALL",breathing)
 
 func stop_voice() -> void:
 	if is_instance_valid(voice_player):voice_player.stop();voice_player.queue_free()

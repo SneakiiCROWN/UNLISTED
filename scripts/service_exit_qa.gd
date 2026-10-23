@@ -12,6 +12,11 @@ func run(current: Node) -> void:
 	g.events.chair=true;g.events["return"]=true;g.events.underfloor_read=true;g.events.underfloor_echo_complete=true
 	g.events.threat_resolved=true;g.threat.enabled=false;g.threat.reset();g.events.archive_rack_open=true;g.events.archive_rack_x=3.15;g.maintenance.restore()
 	g.presentation.prefs.data.story_mode=false;g.presentation.prefs.data.flicker_reduction=true
+	if "--exit-caption-only" in OS.get_cmdline_user_args():
+		g.player.position=Vector3(5,-2.999,-9.6);g.player.restore_stance(false)
+		g.events.exit_receipt_read=true;g.events.exit_blackout_pending=true;g.threat.enabled=true;await wait(.5)
+		check("cellar warning follows real source height",g.threat.state=="warning" and is_instance_valid(g.threat.voice_player) and g.threat.voice_player.playing and g.message_info.get("source","")=="CELLAR")
+		await shot("X12_cellar_warning_caption");await finish();return
 	if "--exit-layouts-only" in OS.get_cmdline_user_args():await layouts();await finish();return
 	g.player.position=Vector3(13.25,.1,-8.35);g.player.restore_stance(false);await wait(.5)
 	g.player.camera.look_at(Vector3(9.8,.5,-8.35));await shot("X01_exterior_bulkhead")
@@ -136,6 +141,8 @@ func finish() -> void:
 	recording=false;recorder.set_recording_active(false);recorder.get_recording().save_to_wav(output.path_join("game_bus.wav"));await wait(.2)
 	var failed:=0
 	for item in checks:if not item.passed:failed+=1
-	for spec in [["input_trace.json",trace],["frames.json",frames],["report.json",{"passed":checks.size()-failed,"failed":failed,"checks":checks,"duration_seconds":seconds(),"scope":"Native staged service-exit movement, actual prop throw, physical contact test, local blackout/live AI, pause and save. Not a fresh full-route or human playtest."}]]:
+	var scope:="Native staged service-exit movement, actual prop throw, physical contact test, local blackout/live AI, pause and save. Not a fresh full-route or human playtest."
+	if "--exit-layouts-only" in OS.get_cmdline_user_args():scope="Native evidence/knowledge/register layout fixtures only; no movement, prop or threat proof. Not a human playtest."
+	for spec in [["input_trace.json",trace],["frames.json",frames],["report.json",{"passed":checks.size()-failed,"failed":failed,"checks":checks,"duration_seconds":seconds(),"scope":scope}]]:
 		var file=FileAccess.open(output.path_join(spec[0]),FileAccess.WRITE);file.store_string(JSON.stringify(spec[1],"\t"));file.close()
 	print("SERVICE_EXIT_QA_COMPLETE ",checks.size()-failed," passed ",failed," failed");await g.qa_exit(0 if failed==0 else 1)

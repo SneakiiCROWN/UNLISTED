@@ -1,9 +1,9 @@
-# Known limitations / 0.8.1
+# Current alpha limitations / 0.9.1
 
-- Alpha; the complete 30-60-minute game is unfinished. Human first-playthrough, fear, narrative/art and listening assessment pending.
-- Surveyor model unchanged. No rejected study promoted. Vocals remain replaceable.
-- Whole-property support/art audit, richer audio, stronger cinematic endings and lightning unfinished.
-- Planar mirror has no player-body reflection.
-- Native fresh shared route completed both endings, with one obsolete title assertion preserved and separately verified by physical rereading. Final runtime matches that route; exact scopes in DIRECTOR_PASS_VERIFICATION.md.
-- Historical ordinary-shutdown/resource and driver risks are not proved fixed by QA cleanup.
-- Public code excludes licensed raw media and cannot rebuild the complete game by itself.
+- The larger middle act and complete game's 30-60 minute first-play target are unfinished. Automated route timing is not human playtime.
+- Surveyor character art is unchanged and still needs a professional asset-first redesign. Rejected studies remain excluded. Temporary vocals are replaceable.
+- The new branch is functionally tested; human story comprehension, fear, visual quality, controller play and subjective audio mixing remain pending.
+- Room art, some utility equipment, the limited cot reflection and parts of the outdoor composition still need review. This release does not certify the entire map as finished.
+- Native capture records the rendered viewport and game audio bus. It does not measure what a listener hears through their own device, or normal uncaptured frame rate.
+- Historical forced/headless shutdown/resource warnings and older driver issues are not declared universally fixed by clean current native exits.
+- Public GitHub source excludes licensed raw media and complete private history. Rebuilding requires the preserved complete licensed local project.

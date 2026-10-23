@@ -1,5 +1,7 @@
 # Newer continuation / 0.9.1 The Other Way Out
 
+**Latest:** ServiceExit_11 integrated Windows acceptance finished **352/0**, with both earned departures. Gameplay matches 09/10; the final helper uses the intended inside-first physical tool solution. See OTHER_WAY_OUT_VERIFICATION.md and OTHER_WAY_OUT_RELEASE_NOTES.md. Native video/gallery assembly and guarded package/publication follow; inspect their receipts before repeating anything. The older running/failed-path entries below are historical.
+
 The interrupted Unsigned Clearance investigation is verified: private 170ed1f, public 8602969, native fresh gate-to-both-departures 312/0. Read UNSIGNED_INTEGRATION.md. Complete local source and Windows backups are sealed separately in Checkpoints/20261023_unsigned_integrated.
 
 New service-exit runtime is preserved at private aac3951 / public d2d698c, followed by QA/tool/document checkpoints. Read SERVICE_EXIT_PROGRESS.md and actual latest reports before acting. ServiceExit_08 native mechanics/death/retry/story fixtures passed 48/0. New evidence/register layout fixtures passed 9/0 each at 1080p (ServiceExit_10), 1440p and ultrawide (ServiceExit_09). Runtime fingerprints for 09/10/11 are identical; only QA helpers differ. Complete candidate source aac3951 freshly imports and all 77 scripts load, archived under Checkpoints/20261023_service_exit_candidate.

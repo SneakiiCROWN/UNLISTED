@@ -1,5 +1,7 @@
 # 0.9.1 candidate / The Other Way Out
 
+**Integrated acceptance complete:** ServiceExit_11 native fresh gate-to-both-earned-departures run passed 352/0, including the inside-first carried/throw/retrieve/reuse tool sequence, live local search and the original relay threat, saving, hiding, UV/radio, bedroom and recount. New layouts passed 9/0 each at 1080p/1440p/ultrawide. See OTHER_WAY_OUT_VERIFICATION.md; older pending status below is retained as development history. Packaging/publication receipts are the authority for actual release/download status. No new Surveyor art or human-duration claim.
+
 New playable branch: the existing records store opens onto a lined, low service incline and the actual east yard. There is no teleport. The external lever releases a seized grille; a sufficiently heavy thrown shared prop can also free its catch from below. The real colliding leaf opens, stops on bodies, reverses, pauses and restores its partial pose. Ordinary yard grade is retained around exact cuts in both current terrain and hidden legacy ground.
 
 Opening from below can produce a departure strip before Eli crosses the disconnected contact. Opening from outside does not award that observation. The existing underfloor terminal produces the evidence; there is no second attendance register, forced rack repetition or additional ending gate. Early inspection text cannot reveal the unread office findings. Current wording avoids claiming the player still needs a report already acquired.
