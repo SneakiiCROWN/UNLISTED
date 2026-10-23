@@ -11,7 +11,7 @@ files=[Path(os.environ['APPDATA'])/'UNLISTED'/n for n in ['checkpoint.json','set
 hashes=lambda:{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in files if p.exists()}
 before=hashes()
 try:
-    for name,flag,extra in [('exit','--exit-qa',['--capture-size=1920x1080','--exit-risk-qa']),('exit1440','--exit-qa',['--capture-size=2560x1440','--exit-layouts-only']),('exituw','--exit-qa',['--capture-size=3440x1440','--exit-layouts-only'])]:
+    for name,flag,extra in [('exit','--exit-qa',['--capture-size=1920x1080','--exit-risk-qa']),('exit1080','--exit-qa',['--capture-size=1920x1080','--exit-layouts-only']),('exit1440','--exit-qa',['--capture-size=2560x1440','--exit-layouts-only']),('exituw','--exit-qa',['--capture-size=3440x1440','--exit-layouts-only'])]:
         if name in selected:suite.run(name,flag,*extra)
     if 'continuous' in selected:suite.run('continuous','--recording-repair-qa','--both-earned-endings','--underfloor-route','--witness-route','--exit-route','--dead-line-route','--service-aisle','--capture-size=1920x1080')
 finally:

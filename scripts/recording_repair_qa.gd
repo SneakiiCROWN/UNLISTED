@@ -196,6 +196,9 @@ func run(game: Node) -> void:
 		var store_test=load(store_path).new();add_child(store_test)
 		store_test.g=g;store_test.output=output;store_test.started_at=started_at;store_test.exact_target=exact_target
 		await store_test.play_store();checks.append_array(store_test.checks);store_test.queue_free()
+		if "--exit-route" in OS.get_cmdline_user_args():
+			for item in checks:
+				if not item.passed:await finish_run(false);return
 	if "--dead-line-route" in OS.get_cmdline_user_args():
 		var line_test=load("res://scripts/dead_line_qa.gd").new();add_child(line_test)
 		line_test.g=g;line_test.output=output;line_test.started_at=started_at;line_test.exact_target=exact_target
@@ -343,6 +346,8 @@ func run(game: Node) -> void:
 		await shot("R09_on_record_branch")
 		g.save_game();g.load_game();await wait(.3)
 		check("alternate completed save restores correct outcome",g.ended and g.events.get("ending","")=="on_record")
+	await finish_run()
+func finish_run(via_menu:=true) -> void:
 	recorder.set_recording_active(false);recorder.get_recording().save_to_wav(output.path_join("game_bus.wav"))
 	recording = false;await wait(0.2)
 	var failed := 0
@@ -350,4 +355,4 @@ func run(game: Node) -> void:
 	for spec in [["input_trace.json",trace],["frames.json",frames],["repair_report.json",{"passed":checks.size()-failed,"failed":failed,"checks":checks,"started_unix_seconds":started_unix_seconds,"duration_seconds":seconds(),"capture":"Native wall-clock, sampled images; actions driven by automated input, no human playtest."}]]:
 		var file := FileAccess.open(output.path_join(spec[0]),FileAccess.WRITE);file.store_string(JSON.stringify(spec[1],"\t"));file.close()
 	print("REPAIR_QA_COMPLETE ",checks.size()-failed," passed ",failed," failed")
-	get_tree().paused = false;await g.qa_exit(0 if failed==0 else 1,true)
+	get_tree().paused = false;await g.qa_exit(0 if failed==0 else 1,via_menu)

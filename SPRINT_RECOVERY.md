@@ -1,14 +1,26 @@
+# Newer continuation / 0.9.1 The Other Way Out
+
+The interrupted Unsigned Clearance investigation is verified: private 170ed1f, public 8602969, native fresh gate-to-both-departures 312/0. Read UNSIGNED_INTEGRATION.md. Complete local source and Windows backups are sealed separately in Checkpoints/20261023_unsigned_integrated.
+
+New service-exit runtime is preserved at private aac3951 / public d2d698c, followed by QA/tool/document checkpoints. Read SERVICE_EXIT_PROGRESS.md and actual latest reports before acting. ServiceExit_08 native mechanics/death/retry/story fixtures passed 48/0. New evidence/register layout fixtures passed 9/0 each at 1080p (ServiceExit_10), 1440p and ultrawide (ServiceExit_09). Runtime fingerprints for 09/10/11 are identical; only QA helpers differ. Complete candidate source aac3951 freshly imports and all 77 scripts load, archived under Checkpoints/20261023_service_exit_candidate.
+
+Integrated candidate is **Builds/UNLISTED_ServiceExit_11**, running through both earned endings with `tools/validate_service_exit.py UNLISTED_ServiceExit_11 continuous`. Check its continuous.log, QA/continuous/repair_report.json and process status first; do not rerun a finished passing route. The helper now actually carries the original utility tin through the crawl, throws it against the grille, earns the false-departure strip, escapes the real local search, retrieves the same tool and returns it for the original weight puzzle. No item awards, relocation or injected AI state in this branch helper. Failure now seals evidence and stops early.
+
+09/10's interrupted expanded runs are preserved: the outside-first automation attempted an existing yard fence, then garden/tree geometry. No global controller/fence changes were made to satisfy that path. The intended inside-first physical route is under integrated acceptance now. Public Windows remains **0.9.0 Inspection** until successful integration, packaging and independent download verification. No prerelease promotion from the focused test count alone.
+
+New source contains a real lined records-store exit to the east yard, physical seized catch / shared prop impact / exterior release / colliding reversible grille, a powered false-departure experiment, knowledge-safe evidence, local light failure and existing Surveyor search with pause/load/consumed-state/prior-threat recovery. No new Surveyor art. `tools/assemble_service_exit.py` and `tools/package_service_exit.py` require accepted reports before sealing; finish current integration before running them. Preserve private media boundaries and previous builds. Original sprint record follows for history.
+
 # UNLISTED / final sprint recovery / 23 October 2026
 
 ## Resume here
 
-Authoritative project: <complete-local-UNLISTED>/Game. Do not restore incomplete public source over it. Public Windows release remains verified **0.9.0 Inspection**, untouched. New **0.9.1-dev Unsigned Clearance** is an unreleased local candidate.
+Authoritative project: C:/Users/Snkii/Documents/UNLISTED/Game. Do not restore incomplete public source over it. Public Windows release remains verified **0.9.0 Inspection**, untouched. New **0.9.1-dev Unsigned Clearance** is an unreleased local candidate.
 
 Runtime source checkpoint: private **503d6bc7cdaeb19bed3095d4ba5cff66b3020efb**, public **7b7293fefd353477f187a992b97f87004cb510ab**. Later commits may contain recovery documentation only. Consult `git log -1` for that documentation HEAD, not a different runtime. Recovery baseline tag: recovery/before-final-sprint-89243ce. All prior releases, saves, source archives and Assets are preserved.
 
-Complete private source ZIP: **<complete-local-UNLISTED>/Checkpoints/20261023_final_sprint_witness/UNLISTED_Unsigned_Clearance_Complete_Source.zip**. Its exact archive commit/hash and pre-sprint owner-data copy are recorded beside it in PACKAGE_RECEIPT.json. All used licensed Game media is included; the complete original Assets library remains preserved in place.
+Complete private source ZIP: **C:/Users/Snkii/Documents/UNLISTED/Checkpoints/20261023_final_sprint_witness/UNLISTED_Unsigned_Clearance_Complete_Source.zip**. Its exact archive commit/hash and pre-sprint owner-data copy are recorded beside it in PACKAGE_RECEIPT.json. All used licensed Game media is included; the complete original Assets library remains preserved in place.
 
-Local Windows candidate: **<complete-local-UNLISTED>/Builds/UNLISTED_Sprint_Witness_04/UNLISTED.exe**. Extractable candidate ZIP: **<complete-local-UNLISTED>/Builds/UNLISTED-Unsigned-Clearance-Candidate-Windows.zip**. Not a new public release.
+Local Windows candidate: **C:/Users/Snkii/Documents/UNLISTED/Builds/UNLISTED_Sprint_Witness_04/UNLISTED.exe**. Extractable candidate ZIP: **C:/Users/Snkii/Documents/UNLISTED/Builds/UNLISTED-Unsigned-Clearance-Candidate-Windows.zip**. Not a new public release.
 
 ## Implemented
 
