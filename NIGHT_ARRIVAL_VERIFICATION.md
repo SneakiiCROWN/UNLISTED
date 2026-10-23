@@ -1,3 +1,7 @@
+# Publication verified
+
+All six public files anonymously downloaded and hash-matched; both ZIPs extracted/CRC checked. Downloaded executable passes car/traversal/settings 16/0 and physical reload/death/retry 18/0; owner data unchanged and prior release identities/digests preserved. Complete source c24aae4 archive freshly extracted; first import stopped early, same-source retry completed, all 81 scripts compile. Cause is not established; both logs preserved.
+
 # Night Arrival / verification and scope
 
 Final candidate: Builds/UNLISTED_NightArrival_03/UNLISTED.exe, version 0.9.3. Read BUILD_MANIFEST.json for exact checkpoint, hashes and reports.

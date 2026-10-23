@@ -1,3 +1,18 @@
+# Secured milestone / Night Arrival 0.9.3 / 23 October 2026
+
+Publication is independently verified. Release: https://github.com/SneakiiCROWN/UNLISTED/releases/tag/unlisted-v0.9.3-night-arrival-public-test-20261023
+Windows: https://github.com/SneakiiCROWN/UNLISTED/releases/download/unlisted-v0.9.3-night-arrival-public-test-20261023/UNLISTED-Windows-Night-Arrival-v0.9.3.zip
+
+Actual complete private source checkpoint: **c24aae4b9f19b3f6f718dff9a378ddd5d7065593**. Source ZIP: Checkpoints/20261023_night_arrival_release/UNLISTED_Night_Arrival_Complete_Source.zip. SHA256 d3a8a1c77ec1dc966b3daebf0451f7e05ec01ae3b15874923ad309d6066afc88. Public immutable release target: **d006f5680426567428ed378b6e82433d75435031**. Subsequent commits contain packaging/recovery documentation only.
+
+Executable: Builds/UNLISTED_NightArrival_03/UNLISTED.exe. Windows ZIP: Builds/UNLISTED-Windows-Night-Arrival-v0.9.3.zip. SHA256 ee21d8c2bdeaafce243f62a6c42774468919501690944820f6ef3279b031974a. Gallery: Builds/UNLISTED_NightArrival_03/Evidence/index.html. Native reload/interruption video: Builds/UNLISTED_NightArrival_03/UNLISTED_Night_Arrival_native.mp4. Publication receipts are in that build and checkpoint folder.
+
+All six public assets anonymously downloaded/hash-matched; ZIPs CRC/extracted; downloaded Windows car/traversal/settings 16/0 and actual reload/death/retry 18/0. Previous 0.9.2 release asset identities/digests are unchanged. Owner save/settings hashes unchanged. Complete source extracted and all 81 scripts compile after a preserved interrupted first import/retry; cause not established. Preserve both import logs. The final arrival helper uses existing explicit QA audio-stop teardown; normal/forced/headless resource warnings are not declared universally fixed.
+
+Final original Windows tests: car 16/0, 1440p and ultrawide each 7/0, arrival/knock/door/legacy save 23/0, reload 18/0. TorchService_03's UV/puzzle/migration 79/0 and field/controller/battery/contact 38/0 remain equipment-regression baseline. Full 362-check fresh route is already passing in Field Test. Do not repeat it for these cosmetic changes. Read NIGHT_ARRIVAL_VERIFICATION.md for boundaries.
+
+Next development resumes the approved coherent middle act, natural investigation writing, controlled environmental horror and asset-first Surveyor pipeline. No new Surveyor artwork was promoted here. Keep rejected studies out of ordinary gameplay. The larger game and human art/hardware/listening/first-play assessment remain unfinished. Car is supported parked arrival scenery; not a new escape/quest gate. Physical pack exchange reuses existing PSX hands and actual cap, not a newly rigged hand replacement. Preserve local licensed media, all releases and saves.
+
 # Current handoff / Field Test published
 
 Read SPRINT_RECOVERY.md first. 0.9.2 is independently downloaded/verified; complete source b3ed8fd and public tag e3a1f29 preserved. Next task is the physical battery reload, followed by connected director work. Do not rerun passing 362-check full route for cosmetic-only work.

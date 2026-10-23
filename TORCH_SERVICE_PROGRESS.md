@@ -1,3 +1,7 @@
+# Now included in verified 0.9.3 Night Arrival
+
+Read NIGHT_ARRIVAL_VERIFICATION.md and SPRINT_RECOVERY.md. The following records the earlier isolated reload checkpoint.
+
 # Torch service / working 0.9.3-dev candidate
 
 The published and independently downloaded Windows baseline remains **0.9.2 Field Test**. This newer local candidate adds the requested physical torch pack replacement. No Surveyor artwork, story gate, collision controller or ending condition is changed.

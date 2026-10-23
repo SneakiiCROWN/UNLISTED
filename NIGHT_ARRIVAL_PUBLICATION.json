@@ -1,0 +1,17 @@
+{
+  "verified": true,
+  "tag": "unlisted-v0.9.3-night-arrival-public-test-20261023",
+  "release_url": "https://github.com/SneakiiCROWN/UNLISTED/releases/tag/unlisted-v0.9.3-night-arrival-public-test-20261023",
+  "windows_url": "https://github.com/SneakiiCROWN/UNLISTED/releases/download/unlisted-v0.9.3-night-arrival-public-test-20261023/UNLISTED-Windows-Night-Arrival-v0.9.3.zip",
+  "public_commit": "d006f5680426567428ed378b6e82433d75435031",
+  "private_source_commit": "c24aae4b9f19b3f6f718dff9a378ddd5d7065593",
+  "anonymous_assets": 6,
+  "all_hashes_match": true,
+  "zip_crc_and_extract": true,
+  "downloaded_windows_native_tests": {
+    "car": 16,
+    "reload": 18
+  },
+  "previous_release_unchanged": true,
+  "human_art_hardware_listening_pending": true
+}
