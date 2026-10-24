@@ -15,6 +15,15 @@ func receiver_widget() -> Control:
 	for node in g.presentation.card_body.get_children():
 		if node.get_script() and str(node.get_script().resource_path).ends_with("return_receiver.gd"):return node
 	return null
+func press_receiver(receiver: Control) -> void:
+	# Operate the current widget, never a stale button dictionary entry from an
+	# older wording or an earlier inspection card.
+	for child in receiver.get_children():
+		if child is Button:
+			await pointer(child.get_global_rect().get_center(),true)
+			await pointer(child.get_global_rect().get_center(),false)
+			await wait(.2);return
+	check("receiver has a physical listen control",false)
 func play_chapter(accessibility:=false) -> void:
 	# The shorter battery budget is real. Use a legitimately collected spare,
 	# rather than retaining the old test's assumption of nearly endless UV.
@@ -48,11 +57,12 @@ func play_chapter(accessibility:=false) -> void:
 	await travel(Vector2(4.9,-7.3),"receiver approach");await use("return_receiver",false)
 	var receiver=receiver_widget();check("receiver uses real slider",receiver!=null)
 	if receiver==null:return
-	receiver.dial.value=103.0;g.presentation.buttons["Listen to receiver"].pressed.emit();await wait(.2)
+	receiver.dial.value=103.0;await press_receiver(receiver)
 	check("wrong frequency cannot change room",not g.events.get("receiver_found",false))
 	receiver.dial.value=g.PUZZLES.station(g.events);await shot("M02_tuned_receiver")
-	g.presentation.buttons["Listen to receiver"].pressed.emit();await wait(2)
+	await press_receiver(receiver);await wait(2)
 	check("return is heard before exploring",g.events.get("receiver_found",false))
+	if not g.events.get("receiver_found",false):return # Preserve the first failure without cascading into a nonexistent bedroom.
 	await travel(Vector2(3,-7),"archive chapter exit");await travel(Vector2(0,-7),"chapter hallway")
 	await travel(Vector2(0,1),"closed lounge approach")
 	check("closed unobserved room changes",g.chapter.active and not g.lounge_contents.visible)
@@ -135,9 +145,9 @@ func edge_checks() -> void:
 	check("partial rubbing survives checkpoint",is_equal_approx(float(g.events.carbon_coverage[0]),float(partial[0])) and is_equal_approx(float(g.events.carbon_coverage[1]),float(partial[1])) and is_equal_approx(float(g.events.carbon_coverage[2]),float(partial[2])) and not g.events.get("carbon_read",false))
 	g.stage=3;g.isolated=false;g.chapter.open_receiver();await wait(.3)
 	var receiver=receiver_widget();receiver.dial.value=g.PUZZLES.station(g.events)
-	g.presentation.buttons["Listen to receiver"].pressed.emit();await wait(.2)
+	await press_receiver(receiver)
 	check("live feed blocks even correct frequency",not g.events.get("receiver_found",false) and g.menu_open and receiver.display.text.to_lower().contains("interference"),receiver.display.text)
-	g.isolated=true;g.presentation.buttons["Listen to receiver"].pressed.emit();await wait(.3)
+	g.isolated=true;await press_receiver(receiver);await wait(.3)
 	check("known frequency needs no invisible clue flag",g.events.get("receiver_found",false) and not g.events.get("carbon_read",false))
 	g.threat.reset();g.presence.visible=false
 	for size_ in [Vector2i(1920,1080),Vector2i(2560,1440),Vector2i(3440,1440)]:

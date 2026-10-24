@@ -1,14 +1,14 @@
 {
   "version": "0.10.1-dev",
-  "private_source_commit": "c4e6846ecd6b5c7007c233f3772ff35773fa2eda",
+  "private_source_commit": "11a0e5ae4739246f261bd4cb3e0d9f3d1b289e5c",
   "public_playable_release": "0.10.0 The Last Call",
   "complete_source_local_only": true,
   "human_playtested": false,
-  "verification": "HOUSE_REMEMBERS_PROGRESS.md",
+  "verification": "HOUSE_INTEGRATION_STATUS.md",
   "last_verified_private_source": "62958922ac9ffc160f0dc91afaa390fb98912293",
-  "verification_status": "UNTESTED house/interior and property art; source/asset inspection only, no Godot/import/gameplay/export or release",
-  "testing_paused_at_user_request": true,
+  "verification_status": "Scoped native Windows checks, multiresolution visual review and earned-save chapter/both endings passed; retained fresh-route fixture failures documented",
+  "testing_paused_at_user_request": false,
   "private_windows_candidate": true,
-  "latest_source_is_verified": false,
+  "latest_source_is_verified": true,
   "private_windows_candidate_source": "62958922ac9ffc160f0dc91afaa390fb98912293"
 }

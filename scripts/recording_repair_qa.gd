@@ -135,6 +135,9 @@ func run(game: Node) -> void:
 	started_at = Time.get_ticks_usec();recording = true
 	recorder = AudioEffectRecord.new();recorder.format = AudioStreamWAV.FORMAT_16_BITS
 	AudioServer.add_bus_effect(0,recorder);recorder.set_recording_active(true)
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--earned-chapter-recovery="):
+			await recover_earned_chapter(arg.trim_prefix("--earned-chapter-recovery="));return
 	phase = "title";await wait(2);await shot("R00_title")
 	phase = "new game opening"
 	g.presentation.buttons["New Game"].pressed.emit()
@@ -303,6 +306,29 @@ func run(game: Node) -> void:
 		await call_test.play_continuous();checks.append_array(call_test.checks);call_test.queue_free()
 		for result in checks:
 			if not result.passed:await finish_run(false);return
+	await finish_departure()
+func recover_earned_chapter(path: String) -> void:
+	# Continue the actual isolated save from the retained run. No progression
+	# flags, equipment, solutions, doors or player positions are injected.
+	check("earned recovery source exists",FileAccess.file_exists(path))
+	if not FileAccess.file_exists(path):await finish_run(false);return
+	DirAccess.copy_absolute(path,g.checkpoint_path)
+	g.presentation.restart_checkpoint();await wait(.6)
+	check("earned save restores isolated investigation",g.player.active and g.isolated and g.events.get("call_complete",false) and not g.events.get("receiver_found",false))
+	# The earned save is on the east landing. Use its already-open outdoor
+	# return instead of assuming a standing capsule fits the low bulkhead.
+	await travel(Vector2(12.3,-3),"earned recovery follows east property")
+	await travel(Vector2(9,6.5),"earned recovery rounds house")
+	await travel(Vector2(0,7),"earned recovery reaches porch")
+	if not g.doors.front.opened:
+		await travel(Vector2(0,5.5),"earned recovery approaches front door");await use("front")
+	await travel(Vector2(0,2.5),"earned recovery reenters house")
+	await travel(Vector2(0,-7),"earned recovery returns to hall")
+	var chapter_test=load("res://scripts/missing_minute_qa.gd").new();add_child(chapter_test)
+	chapter_test.g=g;chapter_test.output=output;chapter_test.started_at=started_at
+	await chapter_test.play_chapter(true);checks.append_array(chapter_test.checks);chapter_test.queue_free()
+	for result in checks:
+		if not result.passed:await finish_run(false);return
 	await finish_departure()
 func finish_departure() -> void:
 	await travel(Vector2(0,2.5),"final hall return")

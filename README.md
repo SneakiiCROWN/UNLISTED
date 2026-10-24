@@ -6,17 +6,11 @@ Eli Ward takes a night call at 17 Briar Lane, the address on his father Simon's 
 
 **0.10.0 / The Last Call - Windows alpha.** A connected plan investigation, real cellar bay, disconnected monitor experiment and sound-based escape deepen Simon's last investigation. The larger game and 30-60 minute human first-play target remain unfinished.
 
-## Latest source / house interior pass - UNTESTED
+## Latest source / private house integration
 
-The newest source continues the property work with corrected sofa anatomy/orientation, fitted textile detail, supported lounge/office dressing, connected equipment, cot/mirror mounts, cellar infrastructure and restrained copied-bedroom imperfections. A recorder-memory sequence remains isolated and inactive. No new AI, puzzle or save rules.
+The accumulated property and interior passes now have native Windows verification and reviewed 1080p, 1440p and ultrawide captures. Input isolation and evidence visibility were repaired. Targeted tests and an earned-save continuation cover the investigation, hiding, battery replacement, save/retry and both departures. Experimental scenes remain development-only.
 
-Development only: no Godot/import, gameplay tests, captures, Windows export or release. The verified private candidate and public v0.10.0 remain preserved. See [house changes and deferred verification](HOUSE_REMEMBERS_PROGRESS.md). Earlier verification below applies to its own older candidate.
-
-## Latest source / property overhaul - UNTESTED
-
-The newest source adds connected worn ground routes, foundation/corner/gutter details, authored woodland pockets, shed drainage and maintenance dressing, and service-exit finish work. Terrain collision, original physical woodland, AI, save schema and puzzle gates are unchanged in source. A one-way footprint study remains isolated and inactive.
-
-This pass is **development only** at the owner's request. No Godot import/run, gameplay tests, captures, Windows export or release. The verified private 0.10.1-dev playability candidate and public 0.10.0 remain preserved. See [property changes and deferred inspection](PROPERTY_OVERHAUL_PROGRESS.md). The verification below belongs to the earlier candidate, not these new additions.
+The first fresh-route fixture failed at an obsolete radio button reference; the corrected physical-widget fixture and saved continuation passed. This is not a claim of one uninterrupted clean fresh run or human artistic approval. See [exact scope and remaining work](HOUSE_INTEGRATION_STATUS.md). Previous untested-pass documents remain historical records. **No new public playable release.**
 
 ## Unreleased playability candidate
 

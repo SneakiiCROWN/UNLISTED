@@ -89,10 +89,10 @@ func run(current: Node) -> void:
 	g.equipment.data.mode=1;g.equipment.apply_light();await wait(.2);await shot("I09_world_white_seal")
 	check("white light never activates fluorescent shader",float(seal.ink.get_shader_parameter("beam_active"))<.1)
 	g.player.position=Vector3(4.9,.04,-7.3);await use("return_receiver",false)
-	var receiver=receiver_widget();receiver.dial.value=104.6;g.presentation.buttons["Listen to receiver"].pressed.emit();await wait(.2)
+	var receiver=receiver_widget();receiver.dial.value=104.6;g.presentation.buttons["Listen"].pressed.emit();await wait(.2)
 	check("old universal frequency is rejected on new game",not g.events.get("receiver_found",false))
 	receiver.dial.value=g.PUZZLES.station(g.events);await shot("I07_saved_station")
-	g.presentation.buttons["Listen to receiver"].pressed.emit();await wait(.3)
+	g.presentation.buttons["Listen"].pressed.emit();await wait(.3)
 	check("generated frequency operates real receiver",g.events.get("receiver_found",false))
 	# Three distinct saved mappings operate real wheels and the isolator.
 	for seed_ in [45,68,91]:
