@@ -12,7 +12,10 @@
   "latest_source_is_verified": true,
   "private_windows_candidate_source": "06bac3fc5412c7e23dc42bdd21a8bd39b2dfebde",
   "private_package_extracted_native_checks": {
-    "status": "pending new package verification"
+    "passed": 48,
+    "failed": 0,
+    "duration_seconds": 27.935372,
+    "owner_data_unchanged": true
   },
   "settled_ending_and_radio_checks": {
     "passed": 15,
@@ -24,5 +27,7 @@
   "private_complete_source_checkpoint": "06bac3fc5412c7e23dc42bdd21a8bd39b2dfebde",
   "human_approval": "pending",
   "new_character_art": "not promoted; original working Surveyor retained",
-  "new_asset_batch": "Eight licensed nearfield recordings and two original fixed grip meshes private; code/provenance only public"
+  "new_asset_batch": "Eight licensed nearfield recordings and two original fixed grip meshes private; code/provenance only public",
+  "private_package_sha256": "72e8cd5cd983997603c9e2fb15e88b17cfac9cf8b501d2595c8627f2ba90d1f3",
+  "complete_private_source_sha256": "43d1987cfa606ecdc34b06267077842c83a10d122b4bec61ee05a63e76067803"
 }
