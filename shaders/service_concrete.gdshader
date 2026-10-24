@@ -12,7 +12,9 @@ void fragment(){
 	float aggregate=texture(concrete,uv*2.3+vec2(.31,.17)).r;
 	float low=1.0-smoothstep(.12,.72,world_position.y-floor_level+(aggregate-.5)*.32);
 	float run=pow(.5+.5*sin(plane.x*19.0+sin(plane.x*3.7)),9.0)*.05;
-	ALBEDO=stone*vec3(.62,.65,.59)*(1.0-low*.12-run);
+	// Match the previous interior wall tint; weathering belongs at the damp
+	// foot and narrow mineral runs, not in a globally darker cellar material.
+	ALBEDO=stone*vec3(.76,.76,.70)*(1.0-low*.12-run);
 	ROUGHNESS=mix(.79,.95,texture(roughness_map,uv).r)-low*.05;
 	SPECULAR=.16;
 }
