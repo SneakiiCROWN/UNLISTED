@@ -104,6 +104,7 @@ func _ready() -> void:
 	qa_mode = qa_mode or "--exit-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--storage-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--inspection-qa" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--night-arrival-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--arrival-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--ambient-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--director-qa" in OS.get_cmdline_user_args()
@@ -804,7 +805,7 @@ func show_settings() -> void:
 func show_credits() -> void:
 	presentation.show_credits()
 
-func new_game() -> void:
+func new_game(cinematic_handoff:=false) -> void:
 	if is_instance_valid(impossible_room):impossible_room.reset()
 	if is_instance_valid(capture_director):capture_director.cancel()
 	if is_instance_valid(capture_director):capture_director.repeats=0
@@ -867,7 +868,7 @@ func new_game() -> void:
 	player.camera.fov = 77
 	for v in valve_visuals.values(): v.rotation.z = 0
 	save_game()
-	presentation.moment("arrival")
+	if not cinematic_handoff:presentation.moment("arrival")
 	if presentation.prefs.data.reminders:presentation.notify("J  FIELD NOTES     H  OPTIONAL HINT")
 
 func resume() -> void:
@@ -1355,6 +1356,7 @@ func run_qa() -> void:
 	if "--director-qa" in OS.get_cmdline_user_args():path="res://scripts/director_qa.gd"
 	if "--production-views" in OS.get_cmdline_user_args():path="res://scripts/production_views.gd"
 	if "--maintenance-qa" in OS.get_cmdline_user_args():path="res://scripts/maintenance_qa.gd"
+	if "--night-arrival-qa" in OS.get_cmdline_user_args():path="res://scripts/night_arrival_qa.gd"
 	if "--house-answers-qa" in OS.get_cmdline_user_args():path="res://scripts/house_answers_qa.gd"
 	if "--vent-qa" in OS.get_cmdline_user_args():path="res://scripts/vent_sighting_qa.gd"
 	if "--dead-line-qa" in OS.get_cmdline_user_args():path="res://scripts/dead_line_qa.gd"

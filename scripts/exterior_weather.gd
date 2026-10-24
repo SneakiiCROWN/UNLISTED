@@ -101,7 +101,7 @@ func _process(delta: float) -> void:
 	var p: Vector3=game.player.position
 	# The isolated title study has its own camera, not a relocated player.
 	# Keep its foreground rain and shelter mix at that actual viewpoint.
-	if is_instance_valid(game.presentation) and game.presentation.section=="arrival_study":
+	if is_instance_valid(game.presentation) and (game.presentation.section=="arrival_study" or is_instance_valid(game.presentation.arrival_sequence)):
 		var camera: Camera3D=get_viewport().get_camera_3d()
 		if is_instance_valid(camera):p=camera.global_position
 	near_rain.position=Vector3(p.x,p.y+12,p.z)

@@ -101,3 +101,7 @@ No new raw asset intake. Reuses the existing approved Daniel Jurys CC0 couch, Ke
 ### Isolated Surveyor Reborn construction study / 24 October
 
 Development-only, not a replacement approved for ordinary gameplay. Uses the preserved MakeHuman CC0 system male_generic proxy, low-poly eyes/brown eye texture, male_worksuit01 and onlytheghosts old Eurasian male skin from the existing CC0 intake. The supplied system mhclo/proxy headers identify the CC0 dedication and Data Collection AB / Joel Palmius / Jonas Hauquier; complete intake licences remain in Assets/Intake_20261021_MakeHuman. Existing Quaternius CC0 65-bone rig, seven UAL retargets and native finger/foot topology are retained. Original inspection-coat/cap construction and rest-pose fitting are in tools/build_surveyor_reborn.py and the private packed tools/Surveyor_Reborn.blend. Exact source hashes and construction limits are in assets/original/surveyor_reborn_provenance.json. Raw media, editable licensed source and failure captures remain private. No new downloads, purchases, character voice or public playable release.
+
+### Integrated arrival / 25 October 2026
+
+The New Game arrival also selects Car_Door_Open.ogg and Car_Engine_Loop.ogg, unmodified from the same preserved GGBotNet PSX Style Cars CC0 archive. Hashes and original filenames are in assets/audio/arrival/provenance.json. Engine-off and door-close selections are reused. No new download, voice or paid asset. Raw media remains private; notices accompany the private Windows package.

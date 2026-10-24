@@ -50,6 +50,8 @@ var fade: ColorRect
 var transition: Tween
 var moment_tween: Tween
 var toast_tween: Tween
+var arrival_sequence: Node3D
+var cinematic_arrival_enabled:=true
 var arrival_fade: Tween
 var arrival_lens: Tween
 var menu_navigation: Label
@@ -393,6 +395,17 @@ func intro_lines(tag: String, title_: String, small: String) -> void:
 	c.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 func begin_new_game() -> void:
+	if is_instance_valid(arrival_sequence):return
+	if cinematic_arrival_enabled and is_instance_valid(game.get_node_or_null("BriarLaneExterior/EliArrivalCar")):
+		var scene=load("res://scenes/arrival_study.tscn")
+		if scene is PackedScene and scene.can_instantiate():
+			clear_transients();arrival_sequence=scene.instantiate();arrival_sequence.game=game;arrival_sequence.integrated=true;game.add_child(arrival_sequence);return
+	begin_original_intro()
+
+func recover_arrival_removal() -> void:
+	if is_inside_tree() and is_instance_valid(game) and game.is_inside_tree() and section=="intro" and not is_instance_valid(arrival_sequence):complete_intro(true)
+
+func begin_original_intro() -> void:
 	clear_transients()
 	footer.visible = false
 	pause_world()
@@ -418,12 +431,16 @@ func begin_new_game() -> void:
 	toast.text = "A / B / START  SKIP" if game.controller.used else "SPACE / E / ESC  SKIP"
 	toast.modulate.a = 0.65
 
-func complete_intro() -> void:
+func complete_intro(from_arrival:=false) -> void:
+	if is_instance_valid(arrival_sequence) and not from_arrival:
+		arrival_sequence.finish();return
 	if intro_tween and intro_tween.is_valid():intro_tween.kill()
 	intro_text.visible = false
 	intro_text.modulate.a = 1
 	toast.text = ""
-	game.new_game()
+	game.new_game(from_arrival)
+	if from_arrival:
+		fade.color.a=1;arrival_fade=create_tween();arrival_fade.tween_property(fade,"color:a",0.0,.75)
 
 func clear_card() -> void:
 	# Card buttons are destroyed below; never retain stale node handles from a prior view.

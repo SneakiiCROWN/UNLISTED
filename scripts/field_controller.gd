@@ -34,6 +34,10 @@ func _input(event: InputEvent) -> void:
 		if event.relative.length()>2:used=false
 	if event is InputEventJoypadButton:
 		used=true
+		if game.presentation.section=="intro" and event.button_index in [JOY_BUTTON_A,JOY_BUTTON_B,JOY_BUTTON_START]:
+			get_viewport().set_input_as_handled()
+			if event.pressed:game.presentation.complete_intro()
+			return
 		var actions: Dictionary={JOY_BUTTON_A:"ui_accept",JOY_BUTTON_B:"ui_cancel",JOY_BUTTON_X:"interact",JOY_BUTTON_Y:"battery_replace",JOY_BUTTON_LEFT_SHOULDER:"crouch",JOY_BUTTON_RIGHT_SHOULDER:"flashlight",JOY_BUTTON_LEFT_STICK:"sprint",JOY_BUTTON_BACK:"journal",JOY_BUTTON_START:"pause",JOY_BUTTON_DPAD_UP:"battery_status",JOY_BUTTON_DPAD_DOWN:"torch_tap",JOY_BUTTON_DPAD_LEFT:"hint"}
 		var id: String=actions.get(event.button_index,"")
 		if event.button_index==JOY_BUTTON_B and not game.menu_open and game.player.active:id="crouch_toggle"
