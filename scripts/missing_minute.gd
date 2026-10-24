@@ -128,7 +128,7 @@ func open_carbon() -> void:
 	var rubbing=load("res://scripts/carbon_rubbing.gd").new();rubbing.game=game;p.card_body.add_child(rubbing)
 	var actions:=HBoxContainer.new();p.card_body.add_child(actions)
 	p.add_button("Slow automatic scan",rubbing.complete_accessibly,true,actions)
-	p.add_button("Put sheet down",func():game.save_game();p.resume_game(),true,actions)
+	p.add_button("Put sheet down",rubbing.close_sheet,true,actions)
 	p.entrance_animation(p.card)
 func complete_rubbing() -> void:
 	if not game.events.get("carbon_read",false) and int(game.events.get("puzzles",{}).get("version",0))>=1 and not game.events.get("inspection_search_started",false):game.events.inspection_search_pending=true
@@ -142,7 +142,7 @@ func open_receiver() -> void:
 	var p=game.presentation;p.pause_world();p.clear_transients();p.clear_card();p.section="document"
 	p.label(p.card_body,"OFFICE RADIO",15,"Meta")
 	var widget=load("res://scripts/return_receiver.gd").new();widget.game=game;p.card_body.add_child(widget)
-	p.add_button("Leave radio",func():game.save_game();p.resume_game(),true,p.card_body)
+	p.add_button("Leave radio",widget.close_radio,true,p.card_body)
 	p.entrance_animation(p.card)
 func receive_return() -> void:
 	# Knowing the frequency is enough. Never require a journal flag as a magic key.

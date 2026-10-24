@@ -16,6 +16,8 @@ The 24 October source continuation adds a correctly proportioned kitchen sink un
 
 The newest source also prepares a separate title-only development arrival study using the parked car, camera fades and original CC0 car audio. It has not been run and does not replace the ordinary opening. New audio stays with the complete private project.
 
+Current untested source additionally preserves changed radio frequency and partial UV scanning on Back/Pause/button exits, adds supported work-surface props and tile/bookend details, and restores the arrival study's rain viewpoint/title audio/focus. These are source changes only; no newer Windows build has been produced.
+
 ## Play
 
 [Download the Windows ZIP](https://github.com/SneakiiCROWN/UNLISTED/releases/download/unlisted-v0.10.0-last-call-public-test-20261023/UNLISTED-Windows-The-Last-Call-v0.10.0.zip) / [prerelease and visual evidence](https://github.com/SneakiiCROWN/UNLISTED/releases/tag/unlisted-v0.10.0-last-call-public-test-20261023). Extract into a NEW folder and run **UNLISTED.exe**. Preserve previous builds and `%APPDATA%/UNLISTED`. Older saves retain their earned progression; new cases investigate the bay before the original porch recount.

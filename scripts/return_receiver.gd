@@ -3,12 +3,14 @@ var game: Node
 var dial: HSlider
 var display: Label
 var hiss: AudioStreamPlayer
+var committed_frequency:=98.0
 func _ready() -> void:
 	process_mode=Node.PROCESS_MODE_ALWAYS;custom_minimum_size=Vector2(800,250)
 	var p=game.presentation
 	display=p.label(self,"",30,"Title")
 	p.label(self,"FM   88 -------------------- 108",17,"Meta")
 	dial=HSlider.new();dial.min_value=88;dial.max_value=108;dial.step=.1;dial.value=float(game.events.get("receiver_frequency",98.0));dial.custom_minimum_size.y=65;add_child(dial)
+	committed_frequency=dial.value
 	dial.value_changed.connect(tune)
 	p.label(self,"Turn the dial, then listen. Left / right also adjusts the station.",17)
 	p.add_button("Listen",listen,true,self)
@@ -23,7 +25,7 @@ func tune(value: float) -> void:
 		if not game.isolated:strength=0
 		hiss.volume_db=-27-strength*13;hiss.pitch_scale=.9+strength*.25
 func listen() -> void:
-	game.save_game()
+	commit_progress()
 	if not game.isolated:
 		display.text="I can only hear interference while the service equipment is running.";return
 	if absf(dial.value-game.PUZZLES.station(game.events))>.051:
@@ -31,5 +33,17 @@ func listen() -> void:
 		return
 	game.chapter.receive_return()
 	game.presentation.resume_game()
+
+func commit_progress() -> void:
+	# One write on leaving/explicit listening, never on every dial tick.
+	if is_equal_approx(dial.value,committed_frequency):return
+	game.events.receiver_frequency=dial.value
+	game.save_game(true);committed_frequency=dial.value
+func close_radio() -> void:
+	commit_progress();game.presentation.resume_game()
+func _input(event: InputEvent) -> void:
+	if not is_visible_in_tree() or game.presentation.section!="document":return
+	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("pause"):
+		commit_progress() # Leave Back/Pause to the existing presentation handler.
 func _process(_delta: float) -> void:
-	if is_instance_valid(hiss) and (not is_visible_in_tree() or game.presentation.section!="document"):hiss.stop()
+	if is_instance_valid(hiss) and hiss.playing and (not is_visible_in_tree() or game.presentation.section!="document"):hiss.stop()

@@ -32,3 +32,8 @@ Porch/gate: new-case arrival outside existing saved gate. One knock/ajar/open se
 ## 24 October / source-only room finish, NOT visually accepted
 
 Source groups 0e658f1 / d8fe284 / 76ccf3d continue 19dc757. Kitchen sink source was a complete cabinet/tap compressed to 14 cm: full proportions restored while the prior base collision is retained. Recorder/reel/radio supports, lounge shelf packers, utility hooks, cellar housings/header/flanges and shed service wiring are implemented. Added two curated carryables on existing supports. Exterior downpipes now connect to roof gutters and outlets. No new route blockers, terrain changes or light-energy retuning. Review all of these in-engine when testing resumes; source coordinates are not player-eye visual evidence. See DEVELOPMENT_PAUSED_TESTS.md for the accumulated checks.
+
+
+## 24 October / counter and work-surface continuation — UNTESTED
+
+Counter backsplash uses the existing Dusk cracked tiles around, not across, the real front window (opening x=-5.59..-4.01, y=1..2.4). Office bookends rest on existing .675/1.225 m boards. Counter vase converted to a shared carryable; work mug and small parts tin added to clear portions of existing utility/shed benches. No new floor obstacles or route collision. Coordinates/materials reviewed in source, not player-eye acceptance. See the newest DEVELOPMENT_PAUSED_TESTS.md section for required visual/physics checks.

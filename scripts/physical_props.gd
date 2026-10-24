@@ -26,6 +26,11 @@ func _ready() -> void:
 	# Curated loose details on existing supports, not new progression items.
 	make_prop("water_bottle","empty bottle","res://assets/dusk/psx_prop_single_bottle.glb",Vector3(-6.50,.942,-.99),Vector3(.08,.28,.08),.28)
 	make_prop("parts_tin","parts tin","res://assets/dusk/psx_prop_single_tin.glb",Vector3(-4.58,-2.078,-17.88),Vector3(.16,.24,.16),.36)
+	# Replace one existing fixed household object, then add two purposeful
+	# working-room details on the authored .86 m counter / .80 m benches.
+	make_prop("counter_vase","small vase","res://assets/furniture/vase.glb",Vector3(-4.15,1.022,3.55),Vector3(.20,.32,.20),.60)
+	make_prop("utility_mug","work mug","res://assets/dusk/psx_prop_mug_01.glb",Vector3(-2.10,.867,-9.15),Vector3(.11,.13,.11),.25)
+	make_prop("shed_parts","parts tin","res://assets/dusk/psx_prop_single_tin.glb",Vector3(-17.85,.902,-15.80),Vector3(.18,.20,.18),.40)
 	build_support()
 
 func build_support() -> void:
@@ -72,7 +77,7 @@ func make_prop(id: String,label_: String,path: String,pos: Vector3,size_: Vector
 	body.position = pos
 	var shape := CollisionShape3D.new()
 	shape.name = "PropShape"
-	if id in ["cup","water_bottle"]:
+	if id in ["cup","water_bottle","counter_vase","utility_mug"]:
 		var cylinder := CylinderShape3D.new()
 		cylinder.radius = size_.x/2
 		cylinder.height = size_.y

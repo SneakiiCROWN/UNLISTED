@@ -14,7 +14,7 @@ func piece(parent: Node3D,id: String,pos: Vector3,size_: Vector3,texture: String
 
 func build(game: Node3D) -> void:
 	g=game;repair=load("res://scripts/environment_repair.gd").new();repair.g=g
-	office();lounge();utility();cellar();shed()
+	office();kitchen();lounge();utility();cellar();shed()
 
 func office() -> void:
 	var deck: Node3D=g.get_node("ArchiveTransport")
@@ -31,6 +31,25 @@ func office() -> void:
 	# The radio's .81 m base also sits just above the .80 m desk.
 	# Tiny feet avoid changing its tuned dial, target or saved pose.
 	for x in [4.75,5.01]:piece(g,"ReceiverFoot",Vector3(x,.805,-8.56),Vector3(.045,.01,.12),STEEL,Color("282e26"))
+	# The ledgers already stand on the .675 / 1.225 m boards. Support their
+	# row ends without adding more books or changing the rack's collision proxy.
+	for top in [.675,1.225]:
+		for z in [-6.59,-5.09]:
+			piece(g,"LedgerBookendFoot",Vector3(6.99,top+.005,z),Vector3(.24,.01,.10),STEEL,Color("464d40"))
+			piece(g,"LedgerBookend",Vector3(6.99,top+.11,z),Vector3(.24,.20,.016),STEEL,Color("5b6050"))
+
+func kitchen() -> void:
+	# Front glazing is x=-5.59..-4.01, y=1.0..2.4. Keep it open:
+	# tile only the two solid piers and the low strip below its sill.
+	var material: StandardMaterial3D=g.texture_mat("res://assets/dusk/psx_house_kitchen_tiles_01.png",Color("b5b6a7")).duplicate()
+	material.uv1_scale=Vector3.ONE;material.roughness=.86
+	for span in [Vector2(-6.30,-5.62),Vector2(-3.98,-3.30)]:
+		var width: float=span.y-span.x;var x: float=(span.x+span.y)*.5
+		var tiles: MeshInstance3D=piece(g,"KitchenSplashbackPier",Vector3(x,1.16,3.900),Vector3(width,.60,.035),WOOD,Color.WHITE)
+		tiles.material_override=material
+		piece(g,"SplashbackTopTrim",Vector3(x,1.465,3.88),Vector3(width,.018,.022),STEEL,Color("5a6051"))
+	var low: MeshInstance3D=piece(g,"KitchenSillTileBand",Vector3(-4.80,.92,3.900),Vector3(3.0,.12,.035),WOOD,Color.WHITE)
+	low.material_override=material
 
 func lounge() -> void:
 	var shelf: Node3D=g.get_node("LoungeWallShelf")

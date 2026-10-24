@@ -544,8 +544,7 @@ func build_world() -> void:
 
 	table(Vector3(-5.9,0,-0.8),1.6,0.8)
 	furniture("chair",Vector3(-4.7,0,-0.6),Vector3(0.6,0.95,0.6),PI/2)
-	var kitchen_vase=furniture("vase",Vector3(-4.15,.86,3.55),Vector3(0.20,0.32,0.20),0,false)
-	kitchen_vase.name="KitchenCounterVase"
+	# The former fixed counter vase is now owned by the shared portable system.
 	ART.new().panel(self)
 	fixture(Vector3(-4.5,2.67,1),false)
 	window_at(Vector3(-7.37,0,1),PI/2)

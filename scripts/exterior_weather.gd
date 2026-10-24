@@ -99,6 +99,11 @@ func build_mist() -> void:
 func _process(delta: float) -> void:
 	if not is_instance_valid(game.player) or not is_instance_valid(outside):return
 	var p: Vector3=game.player.position
+	# The isolated title study has its own camera, not a relocated player.
+	# Keep its foreground rain and shelter mix at that actual viewpoint.
+	if is_instance_valid(game.presentation) and game.presentation.section=="arrival_study":
+		var camera: Camera3D=get_viewport().get_camera_3d()
+		if is_instance_valid(camera):p=camera.global_position
 	near_rain.position=Vector3(p.x,p.y+12,p.z)
 	var inside:=absf(p.x)<7.6 and p.z>-10.1 and p.z<4.1
 	var shed:=p.x>-20.1 and p.x< -13.9 and p.z>-17.1 and p.z< -10.9

@@ -8,6 +8,7 @@ var previous_focus: Control
 var previous_stage:=false
 var hidden_controls: Dictionary={}
 var streams: Array[AudioStreamPlayer3D]=[]
+var menu_levels: Dictionary={}
 
 func _ready() -> void:
 	if not is_instance_valid(game) or not game.dev_mode or game.started or game.presentation.section!="title":queue_free();return
@@ -16,6 +17,7 @@ func _ready() -> void:
 	running=true
 	previous_camera=get_viewport().get_camera_3d();previous_focus=get_viewport().gui_get_focus_owner()
 	var p=game.presentation;previous_stage=p.stage.active;p.section="arrival_study"
+	for audio in [p.ambience,p.menu_drone]:menu_levels[audio]=audio.volume_db
 	for control in [p.body,p.status,p.footer,p.shade,p.card,p.toast,p.menu_navigation]:
 		hidden_controls[control]=control.visible;control.visible=false
 	p.stage.set_active(false)
@@ -64,11 +66,16 @@ func finish() -> void:
 		if is_instance_valid(audio):audio.stop()
 	for control in hidden_controls:
 		if is_instance_valid(control):control.visible=hidden_controls[control]
+	for audio in menu_levels:
+		if is_instance_valid(audio):audio.volume_db=menu_levels[audio]
 	if is_instance_valid(game):
 		game.presentation.stage.set_active(previous_stage)
 		if game.presentation.section=="arrival_study":game.presentation.section="title"
 	if is_instance_valid(previous_camera):previous_camera.current=true
 	if is_instance_valid(previous_focus) and previous_focus.is_visible_in_tree():previous_focus.grab_focus()
+	elif is_instance_valid(game) and game.presentation.section=="title":
+		var first: Button=game.presentation.buttons.get("New Game")
+		if is_instance_valid(first) and first.is_visible_in_tree():first.grab_focus()
 	queue_free()
 
 func _exit_tree() -> void:

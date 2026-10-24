@@ -47,11 +47,11 @@ func run(current: Node) -> void:
 		var y:=top_at(root,body.position)
 		var bottom: float=body.position.y-body.get_node("PropShape").shape.size.y/2
 		check("rendered kitchen support "+id,is_finite(y) and absf(bottom-y)<.015,"bottom %.5f actual triangle %.5f"%[bottom,y])
-	var vase: AABB=render_bounds(g.get_node("KitchenCounterVase"))
+	var vase: AABB=render_bounds(g.physical.props.counter_vase)
 	var separated:=true
 	for id in ["can0","can1","can2"]:
 		if vase.intersects(render_bounds(g.physical.props[id])):separated=false
-	check("counter tins do not intersect decorative vase",separated,str(vase))
+	check("counter tins do not intersect portable vase",separated,str(vase))
 	check("vase sits on actual cabinet surface",absf(vase.position.y-top_at(g.get_node("KitchenBase38"),vase.get_center()))<.005)
 	# Stand in the room and traverse its actual clear aisle before the close view.
 	g.player.position=Vector3(-2.8,.04,1)

@@ -11,6 +11,7 @@ var previous:=Vector2(-200,-200)
 var auto_clock:=-1.0
 var TEXT: Array[String]=[]
 var needed: Array[int]=[]
+var dirty:=false
 func _ready() -> void:
 	name="ReportSleeveScan"
 	process_mode=Node.PROCESS_MODE_ALWAYS
@@ -40,7 +41,7 @@ func _process(delta: float) -> void:
 		var row:=mini(2,int(auto_clock/3.2));var progress:=fmod(auto_clock,3.2)/3.2
 		beam=Vector2(45+progress*700,113+row*74)
 		scan(beam)
-		if auto_clock>=9.6:auto_clock=-1;game.save_game(true)
+		if auto_clock>=9.6:auto_clock=-1;commit_progress()
 	queue_redraw()
 func _draw() -> void:
 	var uv: bool=game.equipment.is_uv()
@@ -67,6 +68,7 @@ func scan(point: Vector2) -> void:
 	if not Rect2(Vector2(40,85),Vector2(705,220)).has_point(point):previous=point;return
 	if previous.distance_to(point)<7:return
 	previous=point
+	dirty=true
 	for row in 3:
 		if absf(point.y-(113+row*74))>30:continue
 		var col:=clampi(int((point.x-40)/44.0),0,15)
@@ -83,9 +85,9 @@ func scan(point: Vector2) -> void:
 			for index in range(number_start,needed[0]):read=read and float(cells[0][index])>=.65
 		if read and not rows[row]:rows[row]=true;changed=true
 	game.events.uv_rows=rows
-	if rows[0] and not game.events.get("carbon_read",false):game.chapter.complete_rubbing()
+	if rows[0] and not game.events.get("carbon_read",false):game.chapter.complete_rubbing();dirty=false
 	elif changed and game.events.get("carbon_read",false):
-		game.events.notes[game.NOTES.INSPECTION_TITLE]=game.NOTES.rubbing_note(game.events);game.save_game(true)
+		game.events.notes[game.NOTES.INSPECTION_TITLE]=game.NOTES.rubbing_note(game.events);game.save_game(true);dirty=false
 
 	queue_redraw()
 func rub(point: Vector2) -> void:
@@ -94,8 +96,15 @@ func rub(point: Vector2) -> void:
 func complete_accessibly() -> void:
 	if not game.equipment.is_uv():game.presentation.notify("Switch the torch to UV light first.");return
 	auto_clock=0;previous=Vector2(-200,-200)
+func commit_progress() -> void:
+	if not dirty:return
+	game.save_game(true);dirty=false
+func close_sheet() -> void:
+	commit_progress();game.presentation.resume_game()
 func _input(event: InputEvent) -> void:
 	if not is_visible_in_tree() or game.presentation.section!="document":return
+	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("pause"):
+		commit_progress();return
 	if event.is_action_pressed("flashlight"):
 		game.equipment.cycle();queue_redraw();accept_event()
 	elif event.is_action_pressed("torch_tap"):game.equipment.tap_contact();accept_event()
@@ -105,7 +114,7 @@ func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT:
 		dragging=event.pressed;beam=event.position;auto_clock=-1
 		if dragging:scan(beam)
-		else:game.save_game(true)
+		else:commit_progress()
 		accept_event()
 	if event is InputEventMouseMotion:
 		beam=event.position
