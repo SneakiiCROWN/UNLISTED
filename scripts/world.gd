@@ -104,6 +104,7 @@ func _ready() -> void:
 	qa_mode = qa_mode or "--exit-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--storage-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--inspection-qa" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--sound-touch-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--night-arrival-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--arrival-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--ambient-qa" in OS.get_cmdline_user_args()
@@ -763,6 +764,15 @@ func sound(name_: String, pos: Vector3, db := -20.0, looping := false) -> AudioS
 		foley_index[key] = index
 		name_ = "foley/"+key+"_"+str(index)
 		path = "res://assets/audio/"+name_+".wav"
+	# Selected physical recordings; old samples above remain an explicit fallback.
+	var nearfield: Dictionary={"radio_switch":"radio_switch","radio_dial":"radio_dial","torch_cap":"torch_cap","transport_click":"transport_click","cloth_handling":"cloth_handling","prop_soft":"soft_contact"}
+	if slot=="prop_metal":
+		var variant: int=int(foley_index.get("small_metal",0))%2+1;foley_index.small_metal=variant
+		nearfield[slot]="metal_light_"+str(variant)
+	if nearfield.has(slot):
+		var selected: String="res://assets/audio/sound_touch/"+str(nearfield[slot])+".ogg"
+		var fallback: Dictionary={"transport_click":"relay","prop_metal":"foley/drop_stone_1","prop_soft":"foley/drop_wood_1","cloth_handling":"latch"}
+		path=selected if ResourceLoader.exists(selected) else "res://assets/audio/"+str(fallback.get(slot,"latch"))+".wav"
 	if not resources.has(path): resources[path] = load(path)
 	var audio := AudioStreamPlayer3D.new()
 	audio.set_meta("source_slot",slot)
@@ -776,6 +786,7 @@ func sound(name_: String, pos: Vector3, db := -20.0, looping := false) -> AudioS
 	audio.volume_db = db
 	audio.max_distance = 24
 	audio.unit_size = 3
+	if nearfield.has(slot):audio.unit_size=1.2 if slot.begins_with("prop_") else .65;audio.max_distance=12 if slot.begins_with("prop_") else 6
 	add_child(audio)
 	audio.position = pos
 	if looping: audio.finished.connect(func(): audio.play())
@@ -1355,6 +1366,7 @@ func run_qa() -> void:
 	if "--director-qa" in OS.get_cmdline_user_args():path="res://scripts/director_qa.gd"
 	if "--production-views" in OS.get_cmdline_user_args():path="res://scripts/production_views.gd"
 	if "--maintenance-qa" in OS.get_cmdline_user_args():path="res://scripts/maintenance_qa.gd"
+	if "--sound-touch-qa" in OS.get_cmdline_user_args():path="res://scripts/sound_touch_qa.gd"
 	if "--night-arrival-qa" in OS.get_cmdline_user_args():path="res://scripts/night_arrival_qa.gd"
 	if "--house-answers-qa" in OS.get_cmdline_user_args():path="res://scripts/house_answers_qa.gd"
 	if "--vent-qa" in OS.get_cmdline_user_args():path="res://scripts/vent_sighting_qa.gd"

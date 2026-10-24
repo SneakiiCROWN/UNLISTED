@@ -1,14 +1,6 @@
-# Unreleased house interior pass / UNTESTED / 24 October 2026
+# PRIVATE v0.10.1-dev / Sound, Touch and Tension
 
-Corrected the approved sofa's visual axis/proportions/facing within its unchanged collision volume; added a surface-fitted throw, supported lounge/office details, connected equipment and a static recorder meter. Lounge reading lamp now follows room transformation. Cot/mirror mounts, concrete wear, cellar/underfloor supports and restrained bedroom material imperfections added. Recorder-memory sequence stays isolated and inactive. No engine/import/gameplay testing, captures, Windows export or release. Verified candidate 6295892 and public v0.10.0 remain preserved. See HOUSE_REMEMBERS_PROGRESS.md for exact scope and deferred verification.
-
-# Unreleased property overhaul / UNTESTED / 24 October 2026
-
-Connected ground wear and wet transitions, foundation/corner/gutter hardware, authored woodland pockets, shed drainage/workbench detail and service-exit finish. Existing terrain/colliders, AI, saves and puzzle conditions are preserved in source. One-way footprint study remains isolated and inactive. No Godot/import, gameplay tests, screenshots, Windows export or release for this owner-requested development-only pass. Verified private candidate 6295892 and public v0.10.0 stay intact. See PROPERTY_OVERHAUL_PROGRESS.md.
-
-# Unreleased / 0.10.1-dev private candidate / 24 October 2026
-
-Integrated clearer writing, hall microphone/recorder, supported work-room details, curated carryables, persistent partial radio/UV/plan progress, stamina and battery feedback. Fixed interrupted room finishing and measured plant-pot penetration. Recorder now has physical spoked reels/tape packs and weathered casing. Native fixture results and exact binary scope are in PLAYABILITY_CANDIDATE_VERIFICATION.md. The public Windows download remains v0.10.0; no public release was made. Human story/art/fear/listening approval remains pending.
+Tool-specific fixed grips and a D-cell grip improve physical handling while preserving collision, weights, throwing and saves. A duplicated hand discovered in native screenshots was corrected before packaging. Selected licensed radio controls, metal/soft impacts, battery handling and a restrained recorder-mechanism cue use existing sound routing. No new Surveyor voice, ambience stack or mandatory gameplay. Focused native Windows checks cover the changed interactions at1080p,1440p and3440x1440. Human art/listening approval remains pending; see SOUND_TOUCH_PROGRESS.md. This is a private development candidate; v0.10.0 remains the public playable release.
 
 # UNLISTED 0.10.0 / The Last Call
 

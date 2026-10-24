@@ -1,0 +1,70 @@
+{
+  "audition": "11-source local shortlist rendered before integration; source and preview index preserved in private Assets intake; subjective listening remains uncertain",
+  "selected": [
+    {
+      "output": "radio_switch.ogg",
+      "source": "Audio assets\\Sonniss.com-GDC2026-GameAudioBundle\\Sonic Bat - Vintage Radio\\SBvr_Power Button 003.wav",
+      "sha256_original": "573d2b5daaea262cc566b54af26211f7119157583edb91ea969fb30343c3c59d",
+      "sha256_output": "d8e135d7ef90957e9f48f85fe0a4483e0f23b11b6447a0846d4613eba70a33b2",
+      "processing": "mono48kHz Vorbis; 4ms head/12ms tail fade; no normalisation",
+      "license": "Sonniss GDC2026 supplied EULA; game incorporation; raw files private"
+    },
+    {
+      "output": "radio_dial.ogg",
+      "source": "Audio assets\\Sonniss.com-GDC2026-GameAudioBundle\\Sonic Bat - Vintage Radio\\SBvr_Mode Select Wheel 006.wav",
+      "sha256_original": "93d9dac69dc063d3b8e243f8d7dd8b100fba17567f67958840b318163af0a83b",
+      "sha256_output": "a6555febb055d9057cd33ceabf4f28c009a5ec80349529597cf099f691392ddd",
+      "processing": "mono48kHz Vorbis; 4ms head/12ms tail fade; no normalisation",
+      "license": "Sonniss GDC2026 supplied EULA; game incorporation; raw files private"
+    },
+    {
+      "output": "torch_cap.ogg",
+      "source": "Audio assets\\Sonniss.com-GDC2026-GameAudioBundle\\344 Audio - Antique Small Metals\\METLMvmt_  Opening Lid Of Antique Blowtorch_344 Audio_Antique Small Metals.wav",
+      "sha256_original": "f4a53372286877340a78949660711d36d8b1ecf7a66ad18b76abc41322c19351",
+      "sha256_output": "c4a3628d8494d0612ec92dda6e8799c42e6aa81191d6ba04bcdc7d200bb4a68a",
+      "processing": "mono48kHz Vorbis; 4ms head/12ms tail fade; no normalisation; short gesture excerpt .44/.48s respectively",
+      "license": "Sonniss GDC2026 supplied EULA; game incorporation; raw files private"
+    },
+    {
+      "output": "transport_click.ogg",
+      "source": "Audio assets\\Sonniss.com-GDC2026-GameAudioBundle\\Epic Stock Media - HD Lock And Mechanism Sound Design Kit\\MACHMech_Mechanism Counting Machine Interact Loose Container Short 01_ESM_HDLM.wav",
+      "sha256_original": "22a02e08af147649519a9081ac77e13e711387944a13bb8688ae5997c6efd968",
+      "sha256_output": "ea8652ecdea99a286817acd40a4d12714fa4fd82af09fb88be342e098c17b8f6",
+      "processing": "mono48kHz Vorbis; 4ms head/12ms tail fade; no normalisation",
+      "license": "Sonniss GDC2026 supplied EULA; game incorporation; raw files private"
+    },
+    {
+      "output": "cloth_handling.ogg",
+      "source": "Audio assets\\Sonniss.com-GDC2026-GameAudioBundle\\InMotionAudio - Foley T-Shirt\\FOLYClth_ClothMovement24_InMotionAudio_FoleyT-Shirt.wav",
+      "sha256_original": "6f25057d539906f4f589ea8c9d98081bc6896737d2a5c9486d8c9cce587f7f96",
+      "sha256_output": "87516c25effca21b6baf12332c76ec899d3d9e0ab74224fea7fe543a9f9a08dd",
+      "processing": "mono48kHz Vorbis; 4ms head/12ms tail fade; no normalisation; short gesture excerpt .44/.48s respectively",
+      "license": "Sonniss GDC2026 supplied EULA; game incorporation; raw files private"
+    },
+    {
+      "output": "metal_light_1.ogg",
+      "source": "Intake_20261025_SoundTouch\\impactMetal_light_000.ogg",
+      "sha256_original": "33b5e6e37c6e9d54e07bf5a89b12c76e879f40c1ea83cdd82714df1d6f9fec6d",
+      "sha256_output": "e6f6ffa0a10b1826eeeff4c71627ca62fcaba55f553eaa14aed88c3146bfeaa6",
+      "processing": "mono48kHz Vorbis; 4ms head/12ms tail fade; no normalisation",
+      "license": "Kenney CC0"
+    },
+    {
+      "output": "metal_light_2.ogg",
+      "source": "Intake_20261025_SoundTouch\\impactMetal_light_001.ogg",
+      "sha256_original": "fba69c467ddd85da7b1d82e259f936b876d9ba6a3d6f1b24bdd10468e46bfe08",
+      "sha256_output": "456f137141493bea2370eb8e07237409f5d2c69403c2257e31a0aa6b6feecad5",
+      "processing": "mono48kHz Vorbis; 4ms head/12ms tail fade; no normalisation",
+      "license": "Kenney CC0"
+    },
+    {
+      "output": "soft_contact.ogg",
+      "source": "Intake_20261025_SoundTouch\\impactSoft_medium_000.ogg",
+      "sha256_original": "7d3ba0bb5e60a11b5d3e558c141303dcf494256675fbf753c0d252d2cf0481e3",
+      "sha256_output": "1ed00ca75993f15fd56de35f364259e9a0e895f40bcfb118027ef0a080e3f8ec",
+      "processing": "mono48kHz Vorbis; 4ms head/12ms tail fade; no normalisation",
+      "license": "Kenney CC0"
+    }
+  ],
+  "fallback": "Original runtime samples retained"
+}

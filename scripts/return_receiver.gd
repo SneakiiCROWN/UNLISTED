@@ -4,6 +4,8 @@ var dial: HSlider
 var display: Label
 var hiss: AudioStreamPlayer
 var committed_frequency:=98.0
+var dial_sound: AudioStreamPlayer
+var dial_cooldown:=0.0
 func _ready() -> void:
 	process_mode=Node.PROCESS_MODE_ALWAYS;custom_minimum_size=Vector2(800,250)
 	var p=game.presentation
@@ -16,8 +18,12 @@ func _ready() -> void:
 	p.add_button("Listen",listen,true,self)
 	hiss=AudioStreamPlayer.new();hiss.stream=load("res://assets/audio/wind.wav");hiss.bus="SFX";hiss.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(hiss)
 	hiss.finished.connect(func():if is_visible_in_tree():hiss.play())
+	dial_sound=AudioStreamPlayer.new();dial_sound.stream=load("res://assets/audio/sound_touch/radio_dial.ogg");dial_sound.bus="SFX";dial_sound.volume_db=-34;add_child(dial_sound)
 	tune(dial.value);hiss.play();dial.grab_focus()
+	var button:=AudioStreamPlayer.new();button.stream=load("res://assets/audio/sound_touch/radio_switch.ogg");button.bus="SFX";button.volume_db=-33;add_child(button);button.finished.connect(button.queue_free);button.play()
 func tune(value: float) -> void:
+	if is_instance_valid(dial_sound) and dial_cooldown<=0 and not is_equal_approx(value,float(game.events.get("receiver_frequency",98.0))):
+		dial_sound.play();dial_cooldown=.22
 	game.events.receiver_frequency=value
 	display.text="%.1f MHz"%value
 	if is_instance_valid(hiss):
@@ -46,4 +52,7 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("pause"):
 		commit_progress() # Leave Back/Pause to the existing presentation handler.
 func _process(_delta: float) -> void:
-	if is_instance_valid(hiss) and hiss.playing and (not is_visible_in_tree() or game.presentation.section!="document"):hiss.stop()
+	dial_cooldown=maxf(0,dial_cooldown-_delta)
+	if not is_visible_in_tree() or game.presentation.section!="document":
+		if is_instance_valid(hiss):hiss.stop()
+		if is_instance_valid(dial_sound):dial_sound.stop()

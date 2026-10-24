@@ -71,7 +71,7 @@ func asset_checks() -> void:
 	await action("interact");check("spanner picked up with actual interaction",g.physical.held==tool);await wait(.4);await shot("P02_spanner_held")
 	check("blocked carry never stretches beyond reach",not g.physical.forearm.visible or tool.global_position.distance_to(g.player.camera.global_position)<=1.05)
 	g.player.camera.look_at(Vector3(-15.5,1.2,-14));await wait(.6);await shot("P02b_spanner_clear_of_bench")
-	check("free carry restores support hand",g.physical.support.visible and tool.global_position.distance_to(g.player.camera.global_position)<1.05)
+	check("free carry restores support hand",g.physical.tool_hand.visible and tool.global_position.distance_to(g.player.camera.global_position)<1.05)
 	await action("throw_prop");check("spanner throws as physical body",g.physical.held==null and tool.linear_velocity.length()>.5,str(tool.linear_velocity));await wait(.5)
 	g.save_game(true);var where: Vector3=tool.position;g.load_game();await wait(.2);check("new optional prop survives saved restore",tool.position.distance_to(where)<.6)
 	g.player.position=Vector3(4.88,.03,-7.5);g.player.camera.look_at(g.targets.return_receiver.global_position);await wait(.3);await shot("P03_atlas_receiver")

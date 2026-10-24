@@ -1,0 +1,22 @@
+{
+  "origin": "Original UNLISTED work-hand construction helpers from tools/build_first_person.py; fixed derivatives in tools/build_fixed_grips.py",
+  "external_assets": [],
+  "fallback": "support_hand.glb retained unchanged",
+  "editable_sources": [
+    "tools/FirstPerson_Grip_tool.blend",
+    "tools/FirstPerson_Grip_cell.blend"
+  ],
+  "scope": "Authored fixed poses and per-prop contact; no new finger rig or gameplay collision change",
+  "files": [
+    {
+      "file": "grip_tool.glb",
+      "sha256": "816e98741c96c34becb889ebb96c5b9b12f202d28196f0acd3e4b41df7c20fb1",
+      "triangles": 10634
+    },
+    {
+      "file": "grip_cell.glb",
+      "sha256": "a04493a0c779f1b414223e22a481302d9ce54e149f968ac71dfd9b5c62b218ab",
+      "triangles": 11470
+    }
+  ]
+}

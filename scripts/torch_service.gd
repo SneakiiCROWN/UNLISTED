@@ -6,6 +6,9 @@ var animation: AnimationPlayer
 var hinge: Node3D
 var hand: Node3D
 var sleeve: Node3D
+var cap_hand: Node3D
+var cell_hand: Node3D
+var service_sounds: Array[AudioStreamPlayer3D]=[]
 var old_pack: Node3D
 var new_pack: Node3D
 var running:=false
@@ -21,7 +24,9 @@ func _ready() -> void:
 	cap.reparent(hinge,true)
 	var pin:=MeshInstance3D.new();var cylinder:=CylinderMesh.new();cylinder.top_radius=.004;cylinder.bottom_radius=.004;cylinder.height=.033;cylinder.radial_segments=12;pin.mesh=cylinder;pin.material_override=player.game.mat(Color("575d55"));geometry.add_child(pin);pin.position=hinge.position
 	old_pack=pack("OldPack");new_pack=pack("NewPack")
-	hand=preload("res://assets/first_person/support_hand.glb").instantiate();hand.name="ServiceHand";add_child(hand)
+	hand=Node3D.new();hand.name="ServiceHand";add_child(hand)
+	cap_hand=preload("res://assets/first_person/support_hand.glb").instantiate();hand.add_child(cap_hand)
+	cell_hand=preload("res://assets/first_person/grip_cell.glb").instantiate();cell_hand.name="CellGrip";add_child(cell_hand)
 	sleeve=preload("res://assets/first_person/support_sleeve.glb").instantiate();sleeve.name="ServiceSleeve";add_child(sleeve)
 	player.viewmodel.prepare_meshes(self)
 	animation=AnimationPlayer.new();animation.name="PackAnimation";add_child(animation)
@@ -60,26 +65,42 @@ func finish(update_light:=true) -> void:
 	if is_instance_valid(animation):animation.stop()
 	position=Vector3.ZERO;rotation=Vector3.ZERO
 	if is_instance_valid(hinge):hinge.rotation=Vector3.ZERO
-	for node in [hand,sleeve,old_pack,new_pack]:
+	for audio in service_sounds:
+		if is_instance_valid(audio):audio.stop();audio.queue_free()
+	service_sounds.clear()
+	for node in [hand,cell_hand,sleeve,old_pack,new_pack]:
 		if is_instance_valid(node):node.visible=false
 	if update_light and is_instance_valid(player.game.equipment):player.game.equipment.apply_light()
 func sound_cue(pitch: float) -> void:
-	var cue=player.game.sound("latch",player.camera.global_position,-35);cue.pitch_scale=pitch
+	var cue=player.game.sound("torch_cap",player.camera.global_position,-33);cue.pitch_scale=pitch;service_sounds.append(cue)
 func _process(_delta: float) -> void:
 	if not running:return
 	if not player.active or is_instance_valid(player.game.physical.held):finish();return
 	if player.game.presentation.prefs.data.reduced_motion:rotation=Vector3.ZERO
 	var t: float=animation.current_animation_position
+	if t>=.62 and not has_meta("cue_pack"):
+		set_meta("cue_pack",true);service_sounds.append(player.game.sound("cloth_handling",player.camera.global_position,-40))
 	# Quiet mechanical cues follow the real animation, including pause-safe timing.
 	for pair in [[.30,.90],[1.13,1.12]]:
 		var key: String="cue_"+str(roundi(float(pair[0])*100))
 		if t<float(pair[0]):
 			if has_meta(key):remove_meta(key)
 		elif not has_meta(key):set_meta(key,true);sound_cue(pair[1])
-	sleeve.visible=hand.visible
-	if hand.visible:
+	# The fixed cell grip follows the actual visible battery, not an offset palm.
+	cell_hand.visible=t>=.60 and t<1.10
+	var wrist: Vector3
+	# Animation owns the parent pose; only this unanimated geometry child is
+	# hidden. Writing hand.visible here was overwritten by the animation later
+	# in the frame and rendered two hands despite the pre-render state check.
+	cap_hand.visible=not cell_hand.visible
+	if cell_hand.visible:
+		var battery: Node3D=old_pack if old_pack.visible else new_pack
+		cell_hand.global_transform=battery.global_transform*Transform3D(Basis.IDENTITY,Vector3(0,0,.008))
+		wrist=cell_hand.to_global(Vector3(-.052,-.065,.035))
+	else:wrist=hand.global_position-player.camera.global_basis.y*.035
+	sleeve.visible=(hand.visible and cap_hand.visible) or cell_hand.visible
+	if sleeve.visible:
 		var camera: Camera3D=player.camera
-		var wrist: Vector3=hand.global_position-camera.global_basis.y*.035
 		var start_: Vector3=camera.to_global(Vector3(-.36,-.59,-.08))
 		var sleeve_basis:=Basis(Quaternion(Vector3.UP,(wrist-start_).normalized()));sleeve_basis.y*=wrist.distance_to(start_)
 		sleeve.global_transform=Transform3D(sleeve_basis,start_)

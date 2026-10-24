@@ -9,6 +9,8 @@ var impact_cooldown := 0.0
 var reminded := false
 var support: Node3D
 var forearm: Node3D
+var tool_hand: Node3D
+var grip_mode := "cradle"
 
 func _ready() -> void:
 	make_prop("cup","mug","res://assets/dusk/psx_prop_mug_01.glb",Vector3(4.6,0.87,0),Vector3(0.12,0.14,0.12),0.24)
@@ -38,6 +40,8 @@ func _ready() -> void:
 func build_support() -> void:
 	support = preload("res://assets/first_person/support_hand.glb").instantiate()
 	support.name = "LeftCarryHand";add_child(support)
+	tool_hand=preload("res://assets/first_person/grip_tool.glb").instantiate();tool_hand.name="LeftToolGrip";add_child(tool_hand)
+	game.player.viewmodel.prepare_meshes(tool_hand);tool_hand.visible=false
 	forearm = preload("res://assets/first_person/support_sleeve.glb").instantiate()
 	add_child(forearm)
 	game.player.viewmodel.prepare_meshes(support)
@@ -49,13 +53,26 @@ func _process(_delta: float) -> void:
 	# A solid worktop can temporarily hold the carried body beyond arm's reach.
 	# Keep swept collision intact rather than stretching a sleeve through the table.
 	if shown:shown = held.global_position.distance_to(game.player.camera.global_position)<=1.05
-	support.visible = shown;forearm.visible = shown
+	grip_mode="tool" if is_instance_valid(held) and held.get_meta("loose_prop","") in ["work_wrench","work_tape"] else "cradle"
+	support.visible = shown and grip_mode=="cradle";tool_hand.visible=shown and grip_mode=="tool";forearm.visible = shown
 	if not shown:return
 	var camera: Camera3D = game.player.camera
 	# The palm follows the swept physical object, not an unrelated fixed screen pose.
-	support.global_transform = Transform3D(camera.global_basis,held.global_position-camera.global_basis.y*0.11)
+	var wrist: Vector3
+	if grip_mode=="tool":
+		# Contact is authored in the actual prop's local space, including rotation.
+		var contact:=Vector3(0,-.003,.018) if held==props.work_wrench else Vector3(-.041,.008,0)
+		tool_hand.global_transform=held.global_transform*Transform3D(Basis.IDENTITY,contact)
+		wrist=tool_hand.to_global(Vector3(-.052,-.065,.035))
+	else:
+		# Project the real collision proxy onto view-up; rotated objects still meet
+		# the palm instead of retaining a one-size-fits-all eleven-centimetre gap.
+		var size_: Vector3=held.get_meta("carry_size",Vector3(.14,.14,.14))
+		var extent: float=(absf(camera.global_basis.y.dot(held.global_basis.x))*size_.x+absf(camera.global_basis.y.dot(held.global_basis.y))*size_.y+absf(camera.global_basis.y.dot(held.global_basis.z))*size_.z)*.5
+		support.global_transform=Transform3D(camera.global_basis,held.global_position-camera.global_basis.y*(extent+.038))
+		wrist=support.to_global(Vector3(0,-.055,.030))
 	var a: Vector3 = camera.to_global(Vector3(-0.36,-0.64,-0.03))
-	var b := support.global_position-camera.global_basis.y*0.035
+	var b := wrist
 	forearm.global_position = a
 	forearm.quaternion = Quaternion(Vector3.UP,(b-a).normalized())
 	forearm.scale.y = a.distance_to(b)
@@ -78,6 +95,7 @@ func make_prop(id: String,label_: String,path: String,pos: Vector3,size_: Vector
 	body.physics_material_override = material
 	body.set_meta("loose_prop",id)
 	body.set_meta("prop_label",label_)
+	body.set_meta("carry_size",size_)
 	add_child(body)
 	body.position = pos
 	var shape := CollisionShape3D.new()
@@ -105,7 +123,8 @@ func impact(body: RigidBody3D,id: String) -> void:
 	var strength: float = last_speed.get(id,0.0)
 	if strength<0.65:return
 	impact_cooldown = 0.16
-	var audio = game.sound("prop_impact",body.position,clampf(-34+strength*1.5,-33,-22))
+	var material_slot: String="prop_metal" if id in ["work_wrench","spare","tin","pot","wash_pan","shed_parts","parts_tin"] or id.begins_with("can") else ("prop_soft" if id=="work_tape" else "prop_impact")
+	var audio = game.sound(material_slot,body.position,clampf(-34+strength*1.5,-33,-22))
 	audio.pitch_scale = 1.25 if id=="cup" else (0.85 if body.position.y < -1 else 1.02)
 	game.threat.hear(body.position,minf(14,strength*2.4))
 

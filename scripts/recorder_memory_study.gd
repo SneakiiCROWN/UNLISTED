@@ -135,7 +135,7 @@ func start_runtime(resuming:=false) -> void:
 	running=true;game.events.recorder_answer={"phase":"running","clock":at,"bases":bases.duplicate(),"reduced":reduced}
 	timeline.play("answer");timeline.seek(clampf(at,0,2.39),true)
 	if not resuming:
-		var cue: AudioStreamPlayer3D=game.sound("relay",deck.global_position+Vector3.UP*.1,-28)
+		var cue: AudioStreamPlayer3D=game.sound("transport_click",deck.global_position+Vector3.UP*.1,-28)
 		cue.unit_size=.9;cue.max_distance=7;sources.append(cue);click_count+=1
 		game.sound_caption("A relay clicks.",2.0,"TAPE RECORDER",cue)
 		history.append({"event":"started","time":game.time_in_game})
