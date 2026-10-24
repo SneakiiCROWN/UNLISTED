@@ -42,3 +42,8 @@ Counter backsplash uses the existing Dusk cracked tiles around, not across, the 
 ## 24 October / accumulated working-room verification
 
 Native Integration_04/05 reviewed the accumulated room pass. Repaired the reparented lounge-shelf reference (which interrupted later finish functions) and measured/fixed 11 mm plant-pot penetration into the kitchen worktop. The stable proxy now rests within 0.6 mm. Complete sink, tile/window junctions, worktop props, hall microphone/cable, cot/frame, cellar practical housings/common header, shed conduit/service box and downpipe/rain were inspected at player height. Kitchen/recorder received three-resolution captures. No global controller, enemy navigation, gate, room layout or story gate was changed. Recorder presentation now reuses the physical historical-reel design; controls/audio remain intact. Alpha art and broader furnishing remain unfinished; screenshots are evidence, not owner approval. See PLAYABILITY_CANDIDATE_VERIFICATION.md.
+
+
+## 24 October / property overhaul - UNTESTED source
+
+Connected arrival/lane/gate, west approach, foundations, woodland pockets, shed work area/drainage and service-cut finish are implemented in property_finish.gd and the existing ground shader. Terrain heights/triangles, original woodland RNG/colliders, door/grille collision, AI and save schema are preserved in source. Corner trim follows measured .18 m walls; shed flashing follows the existing 6.5 m repair roof rather than the inner ceiling. Source review only; no engine/import, screenshots or gameplay. An inactive footprint study is not registered for ordinary play. See PROPERTY_OVERHAUL_PROGRESS.md for changed regions and deferred checks.

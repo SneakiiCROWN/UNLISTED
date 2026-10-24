@@ -6,6 +6,12 @@ Eli Ward takes a night call at 17 Briar Lane, the address on his father Simon's 
 
 **0.10.0 / The Last Call - Windows alpha.** A connected plan investigation, real cellar bay, disconnected monitor experiment and sound-based escape deepen Simon's last investigation. The larger game and 30-60 minute human first-play target remain unfinished.
 
+## Latest source / property overhaul - UNTESTED
+
+The newest source adds connected worn ground routes, foundation/corner/gutter details, authored woodland pockets, shed drainage and maintenance dressing, and service-exit finish work. Terrain collision, original physical woodland, AI, save schema and puzzle gates are unchanged in source. A one-way footprint study remains isolated and inactive.
+
+This pass is **development only** at the owner's request. No Godot import/run, gameplay tests, captures, Windows export or release. The verified private 0.10.1-dev playability candidate and public 0.10.0 remain preserved. See [property changes and deferred inspection](PROPERTY_OVERHAUL_PROGRESS.md). The verification below belongs to the earlier candidate, not these new additions.
+
 ## Unreleased playability candidate
 
 The latest 0.10.1-dev source integrates the B/Start correction, fading battery meter, saved Hold/Toggle stamina, physical D-cell reload, human-language revisions, recorder/microphone, supported working-room details and curated portable props. Radio, UV and plan progress persist when inspections close.

@@ -30,6 +30,7 @@ func _ready() -> void:
 	property_fence()
 	front_approach()
 	arrival_car()
+	load("res://scripts/property_finish.gd").new().build(self)
 	var weather=load("res://scripts/exterior_weather.gd").new()
 	weather.game=game;add_child(weather)
 	set_meta("forest_instances",instance_count)
@@ -196,14 +197,21 @@ func build_woodland() -> void:
 		place("Rock_1" if rng.randf()<0.5 else "Rock_4",Vector3(spec[0],ground_height(spec[0],spec[1])-0.18,spec[1]),spec[2],rng.randf()*TAU,rng)
 	place("WoodLog",Vector3(-23,ground_height(-23,-4)-0.07,-4),0.5,0.7,rng)
 	place("TreeStump",Vector3(-10,ground_height(-10,10)-0.04,10),0.55,1.2,rng)
+	# Cull only decorative random grass/bushes inside the new authored pockets.
+	# Keep all RNG consumption, tree/rock placements and collision creation above
+	# unchanged. A source-only art pass must not silently reseed physical terrain.
+	var detail=load("res://scripts/property_finish.gd").new()
 	for key in batches:
 		var batch: Dictionary=batches[key]
+		var visible_items: Array=batch.items
+		if batch.id in ["Grass_Short","Bush_1","Bush_2","Plant_1"]:
+			visible_items=visible_items.filter(func(entry):return not detail.reserved_verge(entry.transform.origin))
 		for item in prototype(batch.id):
 			var multi:=MultiMesh.new();multi.transform_format=MultiMesh.TRANSFORM_3D;multi.use_colors=true;multi.mesh=item.mesh
-			multi.instance_count=batch.items.size()
-			for i in batch.items.size():
-				multi.set_instance_transform(i,batch.items[i].transform*item.transform)
-				multi.set_instance_color(i,batch.items[i].color)
+			multi.instance_count=visible_items.size()
+			for i in visible_items.size():
+				multi.set_instance_transform(i,visible_items[i].transform*item.transform)
+				multi.set_instance_color(i,visible_items[i].color)
 			var visible_batch:=MultiMeshInstance3D.new();visible_batch.multimesh=multi;visible_batch.name="Woodland_"+batch.id
 			visible_batch.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 			add_child(visible_batch)

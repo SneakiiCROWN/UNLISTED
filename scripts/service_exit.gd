@@ -20,7 +20,9 @@ const TITLE:="THE OTHER WAY OUT"
 const PAPER:="SERVICE EXIT / CONTACT TEST / TONIGHT\nWARD, ELI / OUT\n\nThe grille was open, but I hadn't gone through it. Its contact wire was hanging loose.\n\nI went back down. This was waiting in Dad's terminal box.\n\nIf it can write me out while I'm still inside, his EMPTY entry proves nothing. I'm keeping this with his report."
 const EARLY_PAPER:="SERVICE EXIT / CONTACT TEST / TONIGHT\nWARD, ELI / OUT\n\nThe grille was open, but I hadn't gone through it. Its contact wire was hanging loose.\n\nThat strip says I've left. I was still under the house when it printed. The wire isn't even connected. I'm keeping it."
 func _ready() -> void:
-	name="ServiceExit";build();restore()
+	name="ServiceExit";build()
+	load("res://scripts/property_finish.gd").new().finish_service_exit(game,self)
+	restore()
 	for id in game.physical.props:
 		var body: RigidBody3D=game.physical.props[id]
 		body.body_entered.connect(func(other):strike(body,id,other))

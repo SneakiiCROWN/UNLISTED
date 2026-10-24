@@ -1,12 +1,14 @@
 {
   "version": "0.10.1-dev",
-  "private_source_commit": "62958922ac9ffc160f0dc91afaa390fb98912293",
+  "private_source_commit": "839ea427fc2b7f1330ada12a8c171977f827cb3e",
   "public_playable_release": "0.10.0 The Last Call",
   "complete_source_local_only": true,
   "human_playtested": false,
-  "verification": "PLAYABILITY_CANDIDATE_VERIFICATION.md",
+  "verification": "PROPERTY_OVERHAUL_PROGRESS.md",
   "last_verified_private_source": "62958922ac9ffc160f0dc91afaa390fb98912293",
-  "verification_status": "Scoped native Windows candidate acceptance passed; no fresh full-route or human approval claim",
-  "testing_paused_at_user_request": false,
-  "private_windows_candidate": true
+  "verification_status": "UNTESTED property overhaul: source-only development; no Godot/import/gameplay/export or new public release",
+  "testing_paused_at_user_request": true,
+  "private_windows_candidate": true,
+  "latest_source_is_verified": false,
+  "private_windows_candidate_source": "62958922ac9ffc160f0dc91afaa390fb98912293"
 }

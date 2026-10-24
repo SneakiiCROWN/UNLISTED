@@ -87,3 +87,8 @@ GGBotNet, PSX Style Cars, Car 01 / grey texture, CC0 as posted by the author at 
 
 
 24 October isolated arrival study (untested): Car_Engine_Turning_Off.ogg and Car_Door_Close.ogg are unmodified selections from the same already-approved GGBotNet PSX Style Cars CC0 source pack used for Eli's parked car. Local output filenames and exact original hashes are recorded in assets/audio/arrival/provenance.json; the original intake archive is preserved. No new download, generated voice or final mixing approval. Audio media stays private with the complete source.
+
+
+### Property overhaul / UNTESTED source, 24 October
+
+No new asset intake, downloads or purchases. Reuses the already integrated Quaternius CC0 nature meshes/prototypes, ambientCG CC0 Ground067/Concrete019/WoodSiding006 textures, licensed existing Dusk steel and original work canvas. Hardware and the inactive bootprint shader are original native code/geometry. Existing licences and provenance above apply; raw media remains private.

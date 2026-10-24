@@ -1,3 +1,7 @@
+# Unreleased property overhaul / UNTESTED / 24 October 2026
+
+Connected ground wear and wet transitions, foundation/corner/gutter hardware, authored woodland pockets, shed drainage/workbench detail and service-exit finish. Existing terrain/colliders, AI, saves and puzzle conditions are preserved in source. One-way footprint study remains isolated and inactive. No Godot/import, gameplay tests, screenshots, Windows export or release for this owner-requested development-only pass. Verified private candidate 6295892 and public v0.10.0 stay intact. See PROPERTY_OVERHAUL_PROGRESS.md.
+
 # Unreleased / 0.10.1-dev private candidate / 24 October 2026
 
 Integrated clearer writing, hall microphone/recorder, supported work-room details, curated carryables, persistent partial radio/UV/plan progress, stamina and battery feedback. Fixed interrupted room finishing and measured plant-pot penetration. Recorder now has physical spoked reels/tape packs and weathered casing. Native fixture results and exact binary scope are in PLAYABILITY_CANDIDATE_VERIFICATION.md. The public Windows download remains v0.10.0; no public release was made. Human story/art/fear/listening approval remains pending.
