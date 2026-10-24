@@ -38,7 +38,9 @@ func _input(event: InputEvent) -> void:
 		if event.button_index==JOY_BUTTON_B and not game.menu_open and game.player.active:id="crouch_toggle"
 		if game.menu_open and event.button_index in [JOY_BUTTON_DPAD_UP,JOY_BUTTON_DPAD_DOWN,JOY_BUTTON_DPAD_LEFT,JOY_BUTTON_DPAD_RIGHT]:
 			id={JOY_BUTTON_DPAD_UP:"ui_up",JOY_BUTTON_DPAD_DOWN:"ui_down",JOY_BUTTON_DPAD_LEFT:"ui_left",JOY_BUTTON_DPAD_RIGHT:"ui_right"}[event.button_index]
-		if game.presentation.section=="document" and event.button_index==JOY_BUTTON_DPAD_DOWN and game.equipment.data.get("contact_fault",false):id="torch_tap"
+		# A loose contact must not steal Down navigation from every paper/menu.
+		# Only the actual torch inspection has the tap-to-restore control.
+		if game.presentation.section=="document" and event.button_index==JOY_BUTTON_DPAD_DOWN and game.equipment.data.get("contact_fault",false) and game.presentation.card_body.has_node("ReportSleeveScan"):id="torch_tap"
 		# Route release back to the action that received the press, even if it changed screens.
 		if event.pressed:button_actions[event.button_index]=id
 		else:

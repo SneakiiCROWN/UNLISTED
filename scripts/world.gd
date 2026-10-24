@@ -526,7 +526,12 @@ func build_world() -> void:
 	for x in [-5.8,-4.8,-3.8]:
 		var cabinet=model("res://assets/dusk/psx_prop_base_cabinet_01.glb",self,Vector3(x,0,3.55),Vector3(0.95,0.86,0.65),PI,true)
 		cabinet.name="KitchenBase"+str(roundi(absf(x)*10))
-	var sink=model("res://assets/dusk/psx_prop_sink_01.glb",self,Vector3(-5.8,0.86,3.55),Vector3(0.9,0.14,0.6),PI)
+		# Keep the established body/footprint, but not a second visible cabinet
+		# underneath a compressed full sink unit.
+		if is_equal_approx(x,-5.8):
+			for mesh in all_meshes(cabinet):mesh.visible=false
+	# Source rim y=.8865 and tap y=1.147283: rim meets the .86 m worktop.
+	var sink=model("res://assets/dusk/psx_prop_sink_01.glb",self,Vector3(-5.8,0,3.55),Vector3(.95,1.113,.65),PI)
 	sink.name="KitchenSink"
 	var stove=model("res://assets/dusk/psx_prop_stove_01.glb",self,Vector3(-7.04,0,1.45),Vector3(0.75,0.88,0.7),PI/2,false)
 	stove.name="KitchenStove"
@@ -569,6 +574,7 @@ func build_world() -> void:
 	ART.new().details(self)
 	load("res://scripts/house_polish.gd").new().build(self)
 	load("res://scripts/interior_life.gd").new().build(self)
+	load("res://scripts/room_finish.gd").new().build(self)
 	var paving := box(self,Vector3(-8.5,-0.10,-12.75),Vector3(11,0.20,5.5),Color(0.20,0.23,0.21),true)
 	paving.name="ServiceHardstanding"
 	paving.material_override = texture_mat("res://assets/architecture/concrete.jpg",Color(0.37,0.40,0.35))

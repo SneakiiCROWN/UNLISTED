@@ -12,6 +12,7 @@ var auto_clock:=-1.0
 var TEXT: Array[String]=[]
 var needed: Array[int]=[]
 func _ready() -> void:
+	name="ReportSleeveScan"
 	process_mode=Node.PROCESS_MODE_ALWAYS
 	custom_minimum_size=Vector2(800,390);mouse_filter=Control.MOUSE_FILTER_STOP;focus_mode=Control.FOCUS_ALL
 	TEXT=game.PUZZLES.lines(game.events)

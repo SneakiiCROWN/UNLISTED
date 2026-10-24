@@ -12,6 +12,8 @@ The preserved verified 0.10.1-dev checkpoint adds the B/Start correction, fading
 
 **Newer source is untested development.** At the owner's request, gameplay testing and Windows exports are paused. This pass revises player-facing writing and ending context, gives the hall microphone a physical presence, brings recorder functions into one inspection screen, adjusts a few supported props and preserves more of stamina's saved state. No new build is published. See [changed systems and deferred checks](DEVELOPMENT_PAUSED_TESTS.md).
 
+The 24 October source continuation adds a correctly proportioned kitchen sink unit, recorder/reel and shelf supports, cellar/shed finish work, connected roof gutters and two curated carryables. It also addresses inspection navigation, partial plan placement, notification fades and old prop-recovery bounds. These additions have not been imported, run, exported or visually accepted. The new bottle media stays in the complete private project.
+
 ## Play
 
 [Download the Windows ZIP](https://github.com/SneakiiCROWN/UNLISTED/releases/download/unlisted-v0.10.0-last-call-public-test-20261023/UNLISTED-Windows-The-Last-Call-v0.10.0.zip) / [prerelease and visual evidence](https://github.com/SneakiiCROWN/UNLISTED/releases/tag/unlisted-v0.10.0-last-call-public-test-20261023). Extract into a NEW folder and run **UNLISTED.exe**. Preserve previous builds and `%APPDATA%/UNLISTED`. Older saves retain their earned progression; new cases investigate the bay before the original porch recount.

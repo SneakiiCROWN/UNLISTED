@@ -23,6 +23,9 @@ func _ready() -> void:
 	# Reuse the existing wash-pan asset, away from the service doorway and rack.
 	# Legacy saves lack this optional body and fall back to its authored home.
 	make_prop("wash_pan","wash pan","res://assets/dusk/psx_prop_cooking_pot_01.glb",Vector3(-5.90,.112,-9.40),Vector3(.42,.22,.40),.60)
+	# Curated loose details on existing supports, not new progression items.
+	make_prop("water_bottle","empty bottle","res://assets/dusk/psx_prop_single_bottle.glb",Vector3(-6.50,.942,-.99),Vector3(.08,.28,.08),.28)
+	make_prop("parts_tin","parts tin","res://assets/dusk/psx_prop_single_tin.glb",Vector3(-4.58,-2.078,-17.88),Vector3(.16,.24,.16),.36)
 	build_support()
 
 func build_support() -> void:
@@ -69,7 +72,7 @@ func make_prop(id: String,label_: String,path: String,pos: Vector3,size_: Vector
 	body.position = pos
 	var shape := CollisionShape3D.new()
 	shape.name = "PropShape"
-	if id=="cup":
+	if id in ["cup","water_bottle"]:
 		var cylinder := CylinderShape3D.new()
 		cylinder.radius = size_.x/2
 		cylinder.height = size_.y
@@ -159,8 +162,12 @@ func restore(values := {}) -> void:
 		b.freeze = true
 		b.transform = homes[id]
 		var p: Array = values.get(id,[])
-		if p.size()==6 and Vector3(p[0],p[1],p[2]).is_finite() and float(p[1])>-5 and float(p[1])<3:
-			b.position = Vector3(p[0],p[1],p[2]);b.rotation = Vector3(p[3],p[4],p[5])
+		if p.size()==6:
+			var point:=Vector3(p[0],p[1],p[2]);var rotation_:=Vector3(p[3],p[4],p[5])
+			# Keep valid placements on the newer raised lane/terrain, while still
+			# rejecting out-of-world positions and invalid saved rotations.
+			if point.is_finite() and rotation_.is_finite() and point.y>-5 and point.y<40 and absf(point.x)<=128 and absf(point.z)<=128:
+				b.position=point;b.rotation=rotation_
 		b.linear_velocity = Vector3.ZERO;b.angular_velocity = Vector3.ZERO
 		b.call("relocate",b.transform)
 
@@ -170,7 +177,10 @@ func _physics_process(delta: float) -> void:
 	for id in props:
 		var body: RigidBody3D = props[id]
 		last_speed[id] = body.linear_velocity.length()
-		if body.position.y < -7 or absf(body.position.x)>28 or absf(body.position.z)>35:
+		# The old 28 m limit predated the connected lane and woodland. Do not
+		# snatch an object out of the player's hand inside the current property.
+		# Recovery remains beyond the 112 m authored exterior and below the cellar.
+		if body.position.y < -7 or absf(body.position.x)>128 or absf(body.position.z)>128:
 			if body==held:release(false)
 			body.call("relocate",homes[id])
 		if body.linear_velocity.length()>8:body.linear_velocity = body.linear_velocity.normalized()*8

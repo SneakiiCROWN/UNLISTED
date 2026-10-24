@@ -81,3 +81,6 @@ GGBotNet, PSX Style Cars, Car 01 / grey texture, CC0 as posted by the author at 
 
 ### Last Call monitor
 `assets/interiors/last_call/speakerSmall.glb` is from the existing Kenney Furniture Kit (CC0). Its included licence and local provenance accompany the runtime asset. No restricted raw library files are published with the source.
+
+
+24 October development (untested): psx_prop_single_bottle.glb selects Bottle_0 under the unchanged parent of the existing approved Dusk psx_prop_bottles_01.glb. Original geometry/materials/embedded image retained. Local source/output hashes and selection provenance are in assets/dusk/psx_prop_single_bottle.provenance.json; tools/select_scene_component.py records the non-destructive scene selection. Derivative raw media remains private under the original asset licence. No new third-party download. The full existing Dusk sink unit is now used at its proper counter proportions; no new sink artwork.

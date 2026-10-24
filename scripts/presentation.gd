@@ -49,6 +49,7 @@ var location_card: VBoxContainer
 var fade: ColorRect
 var transition: Tween
 var moment_tween: Tween
+var toast_tween: Tween
 var arrival_fade: Tween
 var arrival_lens: Tween
 var menu_navigation: Label
@@ -733,6 +734,7 @@ func show_ending() -> void:
 	entrance_animation(body)
 
 func clear_transients() -> void:
+	if toast_tween and toast_tween.is_valid():toast_tween.kill()
 	if moment_tween and moment_tween.is_valid():moment_tween.kill()
 	if arrival_fade and arrival_fade.is_valid():arrival_fade.kill()
 	if arrival_lens and arrival_lens.is_valid():
@@ -783,11 +785,13 @@ func apply_display() -> void:
 	DisplayServer.window_set_min_size(Vector2i(960,540))
 
 func notify(text: String) -> void:
+	# New feedback owns its lifetime; an older fading message cannot hide it.
+	if toast_tween and toast_tween.is_valid():toast_tween.kill()
 	toast.text = text
-	var t := create_tween()
+	toast_tween = create_tween()
 	toast.modulate.a = 1
-	t.tween_interval(2.5)
-	t.tween_property(toast,"modulate:a",0.0,0.5)
+	toast_tween.tween_interval(2.5)
+	toast_tween.tween_property(toast,"modulate:a",0.0,0.5)
 
 func moment(id: String) -> void:
 	if moment_tween and moment_tween.is_valid():moment_tween.kill()

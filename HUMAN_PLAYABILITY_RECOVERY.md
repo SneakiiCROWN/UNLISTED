@@ -41,3 +41,6 @@ Earlier failed evidence stays in place. Build 03's distance fixture started off 
 Whole-game rare-condition writing, broader physical furniture/prop review and later car-arrival cinematic remain unfinished. Human controller-hardware testing, endurance/balance, subjective art/story comprehension and listening approval remain pending. No claim of 30-60 minutes, a finished Surveyor redesign or a polished complete game is made.
 
 Continue from the newest clean private source and receipt, not an older archive. Preserve rejected Surveyor studies outside ordinary gameplay. Use targeted isolated Windows tests for changed systems; avoid repeating passed full routes unless a relevant gameplay change warrants it. No new public Windows prerelease is made by this checkpoint.
+
+
+24 October source-only continuation: room supports, fitted sink, curated carryables, inspection/feedback corrections and rainwater infrastructure remain UNTESTED. Exact latest private/public commits and final complete source archive are recorded in Checkpoints/20261024_full_production_01/RECOVERY.json. Continue from that newer source; preserve the verified 54d022b recovery and the earlier language checkpoint. No new Windows build exists.

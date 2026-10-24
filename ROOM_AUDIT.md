@@ -27,3 +27,8 @@ Lounge: measured shelf top is 1.85 m. Bottles now contact it. The four old lower
 Utility: mirror lowered/aligned to the cot and checked from the clear aisle. Returned blanket has head/shoulder/torso/knee contour; real card is excluded from the covered return. Height marks moved clear. Actual exported screenshot reviewed. Missing player-body reflection remains a limitation.
 
 Porch/gate: new-case arrival outside existing saved gate. One knock/ajar/open sequence tested through real movement, input, collision, pause and save/load; ordinary and legacy doors retained. No exterior art overhaul this continuation.
+
+
+## 24 October / source-only room finish, NOT visually accepted
+
+Source groups 0e658f1 / d8fe284 / 76ccf3d continue 19dc757. Kitchen sink source was a complete cabinet/tap compressed to 14 cm: full proportions restored while the prior base collision is retained. Recorder/reel/radio supports, lounge shelf packers, utility hooks, cellar housings/header/flanges and shed service wiring are implemented. Added two curated carryables on existing supports. Exterior downpipes now connect to roof gutters and outlets. No new route blockers, terrain changes or light-energy retuning. Review all of these in-engine when testing resumes; source coordinates are not player-eye visual evidence. See DEVELOPMENT_PAUSED_TESTS.md for the accumulated checks.

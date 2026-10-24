@@ -219,6 +219,21 @@ func infrastructure() -> void:
 	for x in [-7.66,7.66]:
 		tube(Vector3(x,2.76,4.15),Vector3(x,0.10,4.15),0.045,metal)
 		game.box(self,Vector3(x,0.006,4.25),Vector3(0.30,0.012,0.35),Color("242c2b"))
+		# Complete the existing downpipes. Open channels follow the actual
+		# pitched-roof eaves, rather than leaving pipes ending in mid-air.
+		var bottom: MeshInstance3D=game.box(self,Vector3(x,2.775,-3),Vector3(.14,.018,14.8),Color.WHITE)
+		bottom.name="RoofRainwaterChannel";bottom.material_override=metal
+		for edge in [-.065,.065]:
+			var lip: MeshInstance3D=game.box(self,Vector3(x+edge,2.811,-3),Vector3(.012,.065,14.8),Color.WHITE)
+			lip.material_override=metal
+		for z in [-10.4,4.4]:
+			var cap: MeshInstance3D=game.box(self,Vector3(x,2.811,z),Vector3(.14,.065,.012),Color.WHITE);cap.material_override=metal
+		for y in [.60,1.60,2.50]:
+			var anchor:=Vector3(signf(x)*7.56,y,4.105)
+			game.box(self,anchor,Vector3(.10,.05,.035),Color("3d4540"))
+			tube(anchor,Vector3(x,y,4.15),.008,metal)
+		tube(Vector3(x,.10,4.15),Vector3(x,.045,4.25),.04,metal)
+		for i in 5:game.box(self,Vector3(x-.115+i*.0575,.015,4.25),Vector3(.018,.009,.29),Color("545d52"))
 	var wood: StandardMaterial3D=game.texture_mat(ROOT+"WoodSiding006_1K-JPG_Color.jpg",Color("555047"))
 	tube(Vector3(-12,-0.10,5.5),Vector3(-12,6.3,5.5),0.115,wood)
 	game.box(self,Vector3(-12,5.95,5.5),Vector3(1.2,0.12,0.14),Color("3b3b33"))

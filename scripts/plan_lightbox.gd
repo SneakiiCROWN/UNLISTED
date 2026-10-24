@@ -63,9 +63,15 @@ func _gui_input(event: InputEvent) -> void:
 		elif event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN]:
 			turn(deg_to_rad(-3 if event.button_index==MOUSE_BUTTON_WHEEL_UP else 3));accept_event()
 	elif event is InputEventMouseMotion and dragging:
-		offset=(event.position-grab).clamp(Vector2(-200,-105),Vector2(200,105));try_register();queue_redraw();accept_event()
+		offset=(event.position-grab).clamp(Vector2(-200,-105),Vector2(200,105));try_register();remember(false);queue_redraw();accept_event()
 	elif event.is_action_pressed("ui_accept"):place_sheet();accept_event()
 	elif has_focus() and not game.controller.used and (event.is_action("ui_left") or event.is_action("ui_right") or event.is_action("ui_up") or event.is_action("ui_down")):accept_event()
+
+func _input(event: InputEvent) -> void:
+	# Back/Pause can close the sheet before a dragged mouse button is released.
+	# Preserve that partial placement without intercepting normal menu controls.
+	if is_visible_in_tree() and game.presentation.section=="document" and (event.is_action_pressed("ui_cancel") or event.is_action_pressed("pause")):
+		remember()
 func plan(marked: bool) -> void:
 	var ink:=Color(.28,.26,.19,.85) if not marked else Color(.18,.30,.28,.78)
 	# Surveyed arrangement: stairwell enters the cellar at the lower landing;
