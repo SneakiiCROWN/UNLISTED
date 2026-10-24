@@ -52,7 +52,7 @@ func run(current: Node) -> void:
 	for id in ["can0","can1","can2"]:
 		if vase.intersects(render_bounds(g.physical.props[id])):separated=false
 	check("counter tins do not intersect portable vase",separated,str(vase))
-	check("vase sits on actual cabinet surface",absf(vase.position.y-top_at(g.get_node("KitchenBase38"),vase.get_center()))<.005)
+	check("vase sits on actual cabinet surface",absf(vase.position.y-top_at(g.get_node("KitchenBase38"),vase.get_center()))<.005,"bottom="+str(vase.position.y)+" top="+str(top_at(g.get_node("KitchenBase38"),vase.get_center()))+" pose="+str(g.physical.props.counter_vase.transform))
 	# Stand in the room and traverse its actual clear aisle before the close view.
 	g.player.position=Vector3(-2.8,.04,1)
 	await travel(Vector2(-4.9,1),"kitchen centre aisle")

@@ -43,7 +43,8 @@ func build(game: Node3D) -> void:
 	var label: Label3D = g.label3(g,"17 BRIAR / SERVICE SURVEY",Vector3(5.2,2.09,-9.828),0,15,Color("333b34"));label.pixel_size = 0.0018
 	# Evidence transport fits on the clear left portion of the original office desk.
 	var transport := Node3D.new();transport.name = "ArchiveTransport";g.add_child(transport);transport.position = Vector3(3.3,0.86,-8.52)
-	g.box(transport,Vector3.ZERO,Vector3(0.62,0.10,0.41),Color("29312e"))
+	var casing: MeshInstance3D=g.box(transport,Vector3.ZERO,Vector3(0.62,0.10,0.41),Color("29312e"))
+	casing.material_override=g.texture_mat("res://assets/dusk/psx_house_steel_01.png",Color("596052"))
 	for x in [-0.18,0.18]:
 		var reel := MeshInstance3D.new();var mesh := TorusMesh.new();mesh.inner_radius = 0.06;mesh.outer_radius = 0.095;mesh.rings = 16;mesh.ring_segments = 8;reel.mesh = mesh;reel.material_override = g.mat(Color("696851"));transport.add_child(reel);reel.position = Vector3(x,0.065,-0.04);reel.add_to_group("archive_reels")
 	for i in 3:

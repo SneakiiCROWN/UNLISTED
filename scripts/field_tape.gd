@@ -36,6 +36,14 @@ func build() -> void:
 	var label: Label3D=game.label3(reel,"S. WARD / 1998\nLINE TEST",Vector3(0,.007,.105),0,12,Color("383b31"));label.quaternion=Quaternion(Vector3.RIGHT,PI/2)*Quaternion(Vector3.UP,PI);label.pixel_size=.0012
 	game.collision(reel,Vector3(0,.055,0),Vector3(.25,.11,.25),"test_reel")
 	var deck: Node3D=game.get_node("ArchiveTransport")
+	# Match the recorder's working reels to the physical 1998 reel, rather than
+	# leaving two empty rings on its lid. Keep the same animated group/positions.
+	for old in deck.get_children():
+		if old.is_in_group("archive_reels") and old is MeshInstance3D:
+			var working: Node3D=make_reel(deck)
+			working.position=old.position-Vector3(0,.016,0)
+			working.add_to_group("archive_reels")
+			old.remove_from_group("archive_reels");old.queue_free()
 	game.collision(deck,Vector3(0,.10,-.11),Vector3(.12,.15,.14),"test_reel_deck")
 	stored_reel=make_reel(deck);stored_reel.position=Vector3(-.34,.058,-.04)
 	game.box(deck,Vector3(-.34,.055,-.04),Vector3(.22,.005,.23),Color("786f59"))

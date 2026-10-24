@@ -77,7 +77,9 @@ func make_prop(id: String,label_: String,path: String,pos: Vector3,size_: Vector
 	body.position = pos
 	var shape := CollisionShape3D.new()
 	shape.name = "PropShape"
-	if id in ["cup","water_bottle","counter_vase","utility_mug"]:
+	# The broad, leafy pot needs a stable contact footprint. The cylinder proxy
+	# settled through the worktop by 11 mm in the native support capture.
+	if id in ["cup","water_bottle","utility_mug"]:
 		var cylinder := CylinderShape3D.new()
 		cylinder.radius = size_.x/2
 		cylinder.height = size_.y

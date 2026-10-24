@@ -52,7 +52,7 @@ func kitchen() -> void:
 	low.material_override=material
 
 func lounge() -> void:
-	var shelf: Node3D=g.get_node("LoungeWallShelf")
+	var shelf: Node3D=g.get_node("LoungeContents/LoungeWallShelf")
 	# Imported bracket rear at z=-2.84; interior wall face is z=-2.91.
 	# These packers fill that mounting gap, and travel with the remembered room.
 	for x in [5.46,6.54]:

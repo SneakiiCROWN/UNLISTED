@@ -12,6 +12,9 @@ func run(current: Node) -> void:
 		if arg.begins_with("--evidence="):output=arg.trim_prefix("--evidence=")
 	DirAccess.make_dir_recursive_absolute(output);g.checkpoint_path=output.path_join("checkpoint.json")
 	await exact_resolution()
+	if "--continuation-polish" in OS.get_cmdline_user_args():
+		var qa=load("res://scripts/continuation_qa.gd").new();qa.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(qa)
+		qa.g=g;qa.output=output;qa.started_at=started_at;qa.exact_target=exact_target;await qa.execute();return
 	if "--stamina-polish" in OS.get_cmdline_user_args():await stamina_polish_run();return
 	if "--cell-pickups-only" in OS.get_cmdline_user_args():await cell_pickups_run();return
 	if "--human-polish" in OS.get_cmdline_user_args():await human_polish_run();return
@@ -151,7 +154,7 @@ func tape_run() -> void:
 	check("full playback earns historical observation only",g.events.get("test_reel_heard",false) and g.events.notes.has(g.field_tape.NOTE_TITLE) and not g.events.get("memory_confirmed",false))
 	await use("test_reel_deck",false);await shot("T04_reel_observation");await tap(JOY_BUTTON_B)
 	g.save_game();g.load_game();await wait(.2)
-	check("listened reel and natural observation persist",g.events.get("test_reel_heard",false) and g.events.notes[g.field_tape.NOTE_TITLE].contains("no working line"))
+	check("listened reel and historical observation persist",g.events.get("test_reel_heard",false) and g.events.notes[g.field_tape.NOTE_TITLE]==g.field_tape.RESULT)
 	# No hidden underfloor prerequisite: the physical office box answers after supply.
 	g.events.erase("underfloor_read");g.events.erase("underfloor_taps");g.events.erase("line_calibrated");g.events.line_feed_off=false;g.events.line_return_out=false;g.events.underfloor_pattern=[0.0];g.dead_line.restore()
 	await travel(Vector2(4.8,-4.6),"investigate wall test after historical recording")
