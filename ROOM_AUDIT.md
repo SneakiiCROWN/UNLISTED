@@ -47,3 +47,8 @@ Native Integration_04/05 reviewed the accumulated room pass. Repaired the repare
 ## 24 October / property overhaul - UNTESTED source
 
 Connected arrival/lane/gate, west approach, foundations, woodland pockets, shed work area/drainage and service-cut finish are implemented in property_finish.gd and the existing ground shader. Terrain heights/triangles, original woodland RNG/colliders, door/grille collision, AI and save schema are preserved in source. Corner trim follows measured .18 m walls; shed flashing follows the existing 6.5 m repair roof rather than the inner ceiling. Source review only; no engine/import, screenshots or gameplay. An inactive footprint study is not registered for ordinary play. See PROPERTY_OVERHAUL_PROGRESS.md for changed regions and deferred checks.
+
+
+## 24 October / house interior pass - UNTESTED
+
+Lounge/office, utility, cellar/underfloor and copied-bedroom source changes are detailed in HOUSE_REMEMBERS_PROGRESS.md. Corrected the approved couch's long-axis fitting while retaining its original collider; cloth/support queries use actual mesh triangles. Reading lamp follows LoungeContents during transformation. Mirror feed geometry/eligibility retained with unrendered edge-wear material. No engine/gameplay/visual acceptance. Existing property pass remains untested too; do not confuse either with verified 6295892.

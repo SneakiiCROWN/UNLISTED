@@ -234,8 +234,9 @@ func dressing() -> void:
 		g.box(g,Vector3(x,1.75,-9.79),Vector3(0.42,0.56,0.01),Color(0.57,0.56,0.44))
 		g.label3(g,["SERVICE\nCHECKS","SPARE\n13A","KEEP\nCLEAR"][i],Vector3(x,1.76,-9.775),0,15,Color(0.08,0.09,0.07))
 	# Practical shaded lamp beside the couch, including stem and cloth shade.
-	tube(Vector3(6.7,0,2.95),Vector3(6.7,1.65,2.95),0.025)
-	textured_box(Vector3(6.7,0.035,2.95),Vector3(0.35,0.07,0.35),steel,Color(0.18,0.19,0.16))
+	var reading_group:=Node3D.new();reading_group.name="LoungeReadingLamp";g.lounge_contents.add_child(reading_group)
+	tube(Vector3(6.7,0,2.95),Vector3(6.7,1.65,2.95),0.025,Color(.24,.25,.22),reading_group)
+	textured_box(Vector3(6.7,0.035,2.95),Vector3(0.35,0.07,0.35),steel,Color(0.18,0.19,0.16),false,reading_group)
 	var shade := CylinderMesh.new()
 	shade.top_radius = 0.17
 	shade.bottom_radius = 0.32
@@ -243,9 +244,10 @@ func dressing() -> void:
 	var mesh := MeshInstance3D.new()
 	mesh.mesh = shade
 	mesh.material_override = g.mat(Color(0.49,0.44,0.29))
-	g.add_child(mesh)
+	reading_group.add_child(mesh)
 	mesh.position = Vector3(6.7,1.65,2.95)
-	g.lamp(Vector3(6.7,1.45,2.95),Color(0.96,0.71,0.43),0.6,3.5)
+	var reading_light: OmniLight3D=g.lamp(Vector3(6.7,1.45,2.95),Color(0.96,0.71,0.43),0.6,3.5)
+	reading_light.reparent(reading_group)
 	# An entrance mat anchors the house to the approach.
 	textured_box(Vector3(0,0.012,4.9),Vector3(1.5,0.025,0.65),wood,Color(0.22,0.26,0.23))
 

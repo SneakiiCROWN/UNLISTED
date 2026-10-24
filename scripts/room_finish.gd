@@ -77,7 +77,7 @@ func cellar() -> void:
 		for offset in [-.09,.09]:piece(g,"FlangeBolt",Vector3(x+offset,-2.962,-23.5),Vector3(.018,.014,.018),STEEL,Color("797561"))
 	# Cable clips follow the existing overhead service run, not the player's aisle.
 	for z in [-17,-19,-21,-23]:
-		for x in [-.3,.3]:piece(g,"OverheadCableClip",Vector3(x,-.44,z),Vector3(.075,.035,.06),STEEL,Color("74715e"))
+		for x in [-.3,.3]:piece(g,"OverheadCableClip",Vector3(x,-.445,z),Vector3(.075,.055,.06),STEEL,Color("74715e"))
 	# Backing spacers join the existing wall box to the west wall lining.
 	for z in [-16.90,-16.70]:piece(g,"CellarBoxWallSpacer",Vector3(-4.895,-1.79,z),Vector3(.03,.32,.035),STEEL,Color("424b40"))
 

@@ -32,7 +32,8 @@ func _ready() -> void:
 	camera=Camera3D.new();feed.add_child(camera);camera.current=true;camera.cull_mask=1|8|RETURN_CLOTH
 	glass=MeshInstance3D.new();var plane:=QuadMesh.new();plane.size=size_;glass.mesh=plane;glass.layers=GLASS;glass.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(glass);glass.global_position=center;glass.rotation.y=PI/2
-	var reflective:=StandardMaterial3D.new();reflective.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED;reflective.albedo_texture=feed.get_texture();reflective.uv1_scale.x=-1;reflective.uv1_offset.x=1;glass.material_override=reflective
+	var reflective:=ShaderMaterial.new();reflective.shader=load("res://shaders/inspection_glass.gdshader")
+	reflective.set_shader_parameter("reflected_room",feed.get_texture());glass.material_override=reflective
 	game.player.camera.cull_mask|=REAL_CLOTH|GLASS;game.player.torch.light_cull_mask|=REAL_CLOTH|RETURN_CLOTH
 	game.spare_place.cloth.layers=REAL_CLOTH
 	for geometry in game.spare_place.card.find_children("*","GeometryInstance3D",true,false):geometry.layers=REAL_CLOTH

@@ -92,3 +92,8 @@ GGBotNet, PSX Style Cars, Car 01 / grey texture, CC0 as posted by the author at 
 ### Property overhaul / UNTESTED source, 24 October
 
 No new asset intake, downloads or purchases. Reuses the already integrated Quaternius CC0 nature meshes/prototypes, ambientCG CC0 Ground067/Concrete019/WoodSiding006 textures, licensed existing Dusk steel and original work canvas. Hardware and the inactive bootprint shader are original native code/geometry. Existing licences and provenance above apply; raw media remains private.
+
+
+### House interior pass / UNTESTED source, 24 October
+
+No new raw asset intake. Reuses the existing approved Daniel Jurys CC0 couch, Kenney/home book and mirror assets, licensed Dusk materials, ambientCG Concrete019, and original canvas/paper/latch. Original code supplies static hardware, fitted throw, concrete/glass shaders and an inactive recorder-memory study. Existing licences/provenance apply. No new dialogue, creature recording or external character artwork.

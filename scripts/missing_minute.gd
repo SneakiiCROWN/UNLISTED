@@ -78,6 +78,7 @@ func build_room() -> void:
 	model("lampRoundTable",Vector3(5.12,.65,-2.29),Vector3(.25,.34,.25),0,false)
 	model("books",Vector3(5.17,.65,-2.43),Vector3(.27,.12,.15),0,false)
 	var wallpaper=game.box(room,Vector3(4.48,1.39,-2.902),Vector3(5.84,2.60,.004),Color.WHITE)
+	wallpaper.name="MemoryWallpaper"
 	var wall_mat: StandardMaterial3D=game.texture_mat("res://assets/dusk/psx_house_wallpaper_01.png",Color("9a9b80")).duplicate();wall_mat.uv1_scale=Vector3(4,1.6,1);wallpaper.material_override=wall_mat
 	var shelf=model("bookcaseClosedDoors",Vector3(3.05,0,-2.58),Vector3(1.25,1.85,.56))
 	shelf.name="RememberedStorage"
@@ -90,6 +91,7 @@ func build_room() -> void:
 	model("desk",Vector3(7.05,0,.10),Vector3(1.3,.70,.58),PI/2,true)
 	model("chairDesk",Vector3(6.15,0,.10),Vector3(.48,.83,.48),-PI/2,true)
 	var rug=model("rugRectangle",Vector3(4.65,.012,-.65),Vector3(1.0,.014,1.75),0,false)
+	rug.name="RememberedRug"
 	for mesh in game.all_meshes(rug):
 		var wool:=ShaderMaterial.new();wool.shader=load("res://shaders/memory_wool.gdshader");wool.set_shader_parameter("weave",load("res://assets/original/work_canvas.png"));wool.set_shader_parameter("rug",true);mesh.material_override=wool
 	model("books",Vector3(7.03,.705,.42),Vector3(.27,.12,.19),PI/2,false)

@@ -171,6 +171,7 @@ func _ready() -> void:
 	service_exit=load("res://scripts/service_exit.gd").new();service_exit.game=self;add_child(service_exit)
 	field_tape=load("res://scripts/field_tape.gd").new();field_tape.game=self;add_child(field_tape)
 	last_call=load("res://scripts/last_call.gd").new();last_call.game=self;add_child(last_call)
+	load("res://scripts/interior_finish.gd").new().build(self)
 	set_volume(volume)
 	show_menu("UNLISTED", true)
 	if dev_mode:
@@ -300,6 +301,7 @@ func wall(pos: Vector3, width: float, angle := 0.0, height := 2.8) -> void:
 		var w := minf(2.0,width-offset)
 		var piece := model("res://assets/architecture/wall_2x2.glb", self, pos+tangent*(-width/2+offset+w/2), Vector3(w, height, 0.18), angle, true)
 		piece.set_meta("exterior_wall",pos.y>-1 and (absf(pos.x)>7.4 or is_equal_approx(pos.z,4.0) or is_equal_approx(pos.z,-10.0)))
+		if pos.y < -1:piece.add_to_group("service_concrete_walls")
 		for mesh in all_meshes(piece):
 			var exterior := absf(pos.x) > 7.4 or is_equal_approx(pos.z,4.0) or is_equal_approx(pos.z,-10.0)
 			mesh.material_override = texture_mat("res://assets/exterior/Concrete019_1K-JPG_Color.jpg" if pos.y < -1 else ("res://assets/architecture/concrete.jpg" if exterior else "res://assets/original/aged_paper.png"),Color(0.63,0.66,0.60) if exterior else Color(0.76,0.76,0.7))
@@ -505,7 +507,15 @@ func build_world() -> void:
 	# Occupied living room: a television, conversation seating, fallen chair, clutter.
 	lounge_contents=Node3D.new();lounge_contents.name="LoungeContents";add_child(lounge_contents)
 	var lounge_before:=get_children()
-	furniture("couch",Vector3(6.4,0,0.3),Vector3(2.6,0.95,0.95),PI/2)
+	var sofa:=furniture("couch",Vector3(6.4,0,0.3),Vector3(2.6,0.95,0.95),PI/2)
+	sofa.name="LoungeSofa"
+	# The approved source couch is long on Z, not X. Keep the original exact
+	# collider/parent, but refit its visual with the correct anatomical axes.
+	for mesh in all_meshes(sofa):mesh.visible=false
+	# Parent + local quarter-turn = PI: the low front faces west to the TV,
+	# with the tall back towards the east wall, within the unchanged footprint.
+	var sofa_visual:=model("res://assets/furniture/couch.glb",sofa,Vector3.ZERO,Vector3(.95,.95,2.6),PI/2,false)
+	sofa_visual.name="CorrectedSofaVisual"
 	table(Vector3(4.5,0,0.3),1.7,0.9)
 	model("res://assets/dusk/psx_prop_newspapers_01.glb",self,Vector3(4.1,0.81,0.2),Vector3(0.5,0.04,0.35))
 	furniture("vase",Vector3(4.8,0.80,0.3),Vector3(0.18,0.31,0.18),0,false)
