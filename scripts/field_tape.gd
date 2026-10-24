@@ -45,9 +45,13 @@ func build() -> void:
 			working.add_to_group("archive_reels")
 			old.remove_from_group("archive_reels");old.queue_free()
 	game.collision(deck,Vector3(0,.10,-.11),Vector3(.12,.15,.14),"test_reel_deck")
-	stored_reel=make_reel(deck);stored_reel.position=Vector3(-.34,.058,-.04)
-	game.box(deck,Vector3(-.34,.055,-.04),Vector3(.22,.005,.23),Color("786f59"))
-	var tag: Label3D=game.label3(deck,"REEL / 1998",Vector3(-.34,.058,.057),0,11,Color("c3bba1"));tag.rotation.x=-PI/2;tag.pixel_size=.001
+	# The historical reel/sleeve rests on the actual desk beside the deck,
+	# clear of the working left reel. Four feet close the casing-to-desk gap.
+	for x in [-.23,.23]:
+		for z in [-.14,.14]:game.box(deck,Vector3(x,-.055,z),Vector3(.05,.01,.035),Color("202822"))
+	stored_reel=make_reel(deck);stored_reel.position=Vector3(-.48,-.056,-.04)
+	game.box(deck,Vector3(-.48,-.058,-.04),Vector3(.22,.005,.23),Color("786f59"))
+	var tag: Label3D=game.label3(deck,"REEL / 1998",Vector3(-.48,-.054,.075),0,11,Color("c3bba1"));tag.rotation.x=-PI/2;tag.pixel_size=.001
 func stop() -> void:
 	playing=false;remote=false;clock=0;next=0
 	for source in sources:

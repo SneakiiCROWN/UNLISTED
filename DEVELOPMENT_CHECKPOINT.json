@@ -4,7 +4,7 @@
   "public_playable_release": "unchanged v0.10.0",
   "complete_source_local_only": true,
   "human_playtested": false,
-  "verification": "VENT_SIGHTING_PROGRESS.md; focused native Windows fixtures only",
+  "verification": "HOUSE_ANSWERS_PROGRESS.md; native responses, vent regression and earned ending continuation",
   "last_verified_private_source": "11a0e5ae4739246f261bd4cb3e0d9f3d1b289e5c",
   "verification_status": "Isolated working character study; visual acceptance FAILED, not promoted. Native original-AI and study contact checks passed with documented revision scope.",
   "testing_paused_at_user_request": false,
@@ -21,8 +21,8 @@
   },
   "public_release_unchanged": true,
   "character_art_approved": false,
-  "milestone": "First vent Surveyor sighting / private development candidate",
-  "private_complete_source_checkpoint": "5b3d0b458f0de16ea8215f8a96f41764e7841f13",
+  "milestone": "The House Answers / private v0.10.1-dev",
+  "private_complete_source_checkpoint": "559ff487f0b4315de51fe4a71a609c048d5b53c0",
   "human_approval": "pending",
   "new_character_art": "not promoted; original working Surveyor retained"
 }

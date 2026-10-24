@@ -56,6 +56,8 @@ var witness: Node3D
 var service_exit: Node3D
 var maintenance: Node3D
 var last_call: Node3D
+var property_memory: Node3D
+var recorder_memory: Node3D
 var field_tape: Node3D
 var dead_line: Node3D
 var spare_place: Node3D
@@ -117,6 +119,7 @@ func _ready() -> void:
 	qa_mode = qa_mode or "--service-room-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--exterior-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--capture-qa" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--house-answers-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--vent-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--recount-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--interior-qa" in OS.get_cmdline_user_args()
@@ -181,6 +184,8 @@ func _ready() -> void:
 	field_tape=load("res://scripts/field_tape.gd").new();field_tape.game=self;add_child(field_tape)
 	last_call=load("res://scripts/last_call.gd").new();last_call.game=self;add_child(last_call)
 	load("res://scripts/interior_finish.gd").new().build(self)
+	property_memory=load("res://scripts/property_memory_study.gd").new();property_memory.game=self;add_child(property_memory)
+	recorder_memory=load("res://scripts/recorder_memory_study.gd").new();recorder_memory.game=self;recorder_memory.runtime=true;add_child(recorder_memory)
 	set_volume(volume)
 	show_menu("UNLISTED", true)
 	if dev_mode:
@@ -817,6 +822,7 @@ func new_game() -> void:
 	events.case_v2=true
 	events.case_v3=true
 	events.case_v4=true
+	events.house_answers=1
 	events.vent_first_pass="armed" # Absent on legacy saves: never inserts a late surprise.
 	events.arrival_check=true
 	events.notes={"WHY I CAME":NOTES.WHY_I_CAME}
@@ -840,6 +846,8 @@ func new_game() -> void:
 	horror.reset()
 	threat.reset()
 	if is_instance_valid(ambient_director):ambient_director.restore()
+	if is_instance_valid(property_memory):property_memory.restore()
+	if is_instance_valid(recorder_memory):recorder_memory.restore()
 	hint_until = 0
 	valve_order.clear()
 	for id in doors:
@@ -1188,6 +1196,7 @@ func door_swing_states() -> Dictionary:
 	return result
 
 func save_data() -> Dictionary:
+	if is_instance_valid(recorder_memory):recorder_memory.snapshot()
 	if is_instance_valid(horror):horror.snapshot_vent()
 	if is_instance_valid(maintenance):events.archive_rack_x=maintenance.rack.position.x
 	if is_instance_valid(physical):events["props"] = physical.snapshot()
@@ -1266,6 +1275,8 @@ func apply_save(data: Dictionary) -> void:
 	if is_instance_valid(dead_line):dead_line.restore()
 	if is_instance_valid(spare_place):spare_place.restore()
 	if is_instance_valid(ambient_director):ambient_director.restore()
+	if is_instance_valid(property_memory):property_memory.restore()
+	if is_instance_valid(recorder_memory):recorder_memory.restore()
 	if is_instance_valid(equipment):equipment.restore()
 	if is_instance_valid(storage_hide):storage_hide.restore()
 	horror.restore_vent()
@@ -1344,6 +1355,7 @@ func run_qa() -> void:
 	if "--director-qa" in OS.get_cmdline_user_args():path="res://scripts/director_qa.gd"
 	if "--production-views" in OS.get_cmdline_user_args():path="res://scripts/production_views.gd"
 	if "--maintenance-qa" in OS.get_cmdline_user_args():path="res://scripts/maintenance_qa.gd"
+	if "--house-answers-qa" in OS.get_cmdline_user_args():path="res://scripts/house_answers_qa.gd"
 	if "--vent-qa" in OS.get_cmdline_user_args():path="res://scripts/vent_sighting_qa.gd"
 	if "--dead-line-qa" in OS.get_cmdline_user_args():path="res://scripts/dead_line_qa.gd"
 	if "--spare-place-qa" in OS.get_cmdline_user_args():path="res://scripts/spare_place_qa.gd"
