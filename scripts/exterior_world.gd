@@ -351,10 +351,12 @@ func front_approach() -> void:
 
 func arrival_car() -> void:
 	# Eli parked along the near verge, leaving the gate and both lane directions open.
-	var car: Node3D=preload("res://assets/exterior/arrival/eli_station_wagon.glb").instantiate()
+	var car: Node3D=load("res://assets/exterior/arrival/eli_station_wagon.glb" if "--original-wagon" in OS.get_cmdline_user_args() and game.qa_mode else "res://assets/production_20261025/eli_sedan.glb").instantiate()
 	car.name="EliArrivalCar";add_child(car)
 	car.position=Vector3(-5.6,ground_height(-5.6,21.6)-.015,21.6)
 	car.rotation.y=PI/2-.067
+	car.set_meta("usable_interior",not ("--original-wagon" in OS.get_cmdline_user_args() and game.qa_mode))
+	var headlight_materials: Array=[]
 	var faces:=PackedVector3Array()
 	for mesh in game.all_meshes(car):
 		for v in mesh.mesh.get_faces():faces.append(car.global_transform.affine_inverse()*mesh.global_transform*v)
@@ -362,8 +364,10 @@ func arrival_car() -> void:
 			var source: Material=mesh.get_active_material(i)
 			if source is StandardMaterial3D:
 				var wet: StandardMaterial3D=source.duplicate();wet.texture_filter=BaseMaterial3D.TEXTURE_FILTER_NEAREST;wet.roughness=.43;wet.metallic=.12
+				if wet.emission_enabled:headlight_materials.append(wet);wet.emission_enabled=false
 				mesh.set_surface_override_material(i,wet)
 	var body:=StaticBody3D.new();body.name="FittedBodyCollision";car.add_child(body)
 	var shape:=ConcavePolygonShape3D.new();shape.set_faces(faces)
 	var collision:=CollisionShape3D.new();collision.shape=shape;body.add_child(collision)
+	car.set_meta("headlight_materials",headlight_materials)
 	car.set_meta("purpose","Eli's parked arrival vehicle; no new quest or departure condition")

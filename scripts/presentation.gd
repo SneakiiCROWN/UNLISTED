@@ -30,6 +30,7 @@ var battery_status_time:=0.0
 var hud: Control
 var objective: Label
 var reticle: Label
+var prompt_icon: TextureRect
 var prompt: Label
 var subtitle: Label
 var toast: Label
@@ -183,7 +184,8 @@ func build_screen() -> void:
 	objective.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	objective.custom_minimum_size.x = 720
 	prompt = label(hud,"",23)
-	anchored(prompt,Control.PRESET_BOTTOM_LEFT,Rect2(44,-78,840,38))
+	anchored(prompt,Control.PRESET_BOTTOM_LEFT,Rect2(84,-78,840,38))
+	prompt_icon=TextureRect.new();hud.add_child(prompt_icon);anchored(prompt_icon,Control.PRESET_BOTTOM_LEFT,Rect2(44,-75,30,30));prompt_icon.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;prompt_icon.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;prompt_icon.mouse_filter=Control.MOUSE_FILTER_IGNORE
 	prompt.add_theme_color_override("font_shadow_color",Color(0,0,0,0.95))
 	prompt.add_theme_constant_override("shadow_offset_x",2)
 	prompt.add_theme_constant_override("shadow_offset_y",2)
@@ -618,7 +620,7 @@ func show_credits() -> void:
 	label(card_body,"An original night call for SneakiiCROWN",19)
 	rule(card_body)
 	label(card_body,"ARCHITECTURE     Elegant Crow\nFURNITURE          Daniel Jurys / GameDev Deck / Kenney\nMACHINERY         chilly_durango\nMATERIALS           Poly Haven / AmbientCG\nAMBIENCE             CAPTNPHANTOM\nTYPE     Andrew Gleeson / Indian Type Foundry\nCHARACTER / MOTION    Quaternius (CC0)\nENGINE                 Godot 4.7.2",20)
-	label(card_body,"Original story, adapted Surveyor, interface and staging. Sound effects by WASD Sound.\nThird-party licences accompany this build.\nGodot Engine is distributed under the MIT licence.",16)
+	label(card_body,"Original story, adapted Surveyor, interface and staging. Sound effects by WASD Sound. Vehicles: Bricchi Games / GGBotNet.\nElectronics: Animimo Studios. Input icons: Kenney.\nThird-party licences accompany this build.\nGodot Engine is distributed under the MIT licence.",16)
 	add_button("Back",settings_back,true,card_body).grab_focus()
 
 func inspect_document(title_: String, text: String) -> void:
@@ -889,6 +891,7 @@ func _process(delta: float) -> void:
 		subtitle.offset_bottom=-104
 		subtitle.offset_top=-104-maxf(36,subtitle.get_minimum_size().y)
 		reticle.visible = prompt.text != ""
+		prompt_icon.visible=prompt.text!="";prompt_icon.texture=load("res://assets/ui/input/xbox_x.png" if game.controller.used else "res://assets/ui/input/keyboard_e.png")
 		objective.visible = location_card.modulate.a < 0.05 and subtitle.text == ""
 		var category: String=game.message_info.get("category","observation")
 		subtitle.visible = subtitle.text!="" and (prefs.data.sound_captions if category in ["sound","recording"] else (prefs.data.subtitles if category=="dialogue" else prefs.data.observations))

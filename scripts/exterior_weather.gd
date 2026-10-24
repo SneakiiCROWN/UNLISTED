@@ -105,7 +105,7 @@ func _process(delta: float) -> void:
 		var camera: Camera3D=get_viewport().get_camera_3d()
 		if is_instance_valid(camera):p=camera.global_position
 	near_rain.position=Vector3(p.x,p.y+12,p.z)
-	var inside:=absf(p.x)<7.6 and p.z>-10.1 and p.z<4.1
+	var inside: bool=(absf(p.x)<7.6 and p.z>-10.1 and p.z<4.1) or (is_instance_valid(game.presentation.arrival_sequence) and game.presentation.arrival_sequence.interior_active)
 	var shed:=p.x>-20.1 and p.x< -13.9 and p.z>-17.1 and p.z< -10.9
 	var roof:=absf(p.x)<1.8 and p.z>4 and p.z<6.5
 	var cellar:=p.y< -0.5 or (absf(p.x)<1.9 and p.z< -10 and p.z> -16)

@@ -891,13 +891,12 @@ func _process(delta: float) -> void:
 	objective.text = current_objective()
 	var hit: Dictionary = player.target()
 	prompt.text = ""
-	if physical.held:prompt.text = "[ E ]  Release"
+	if physical.held:prompt.text = "Release"
 	elif not hit.is_empty() and hit.collider.has_meta("loose_prop"):
-		if physical.can_carry(hit.collider):prompt.text = "[ E ]  Carry "+str(hit.collider.get_meta("prop_label"))
+		if physical.can_carry(hit.collider):prompt.text = "Carry "+str(hit.collider.get_meta("prop_label"))
 	elif not hit.is_empty() and hit.collider.has_meta("interaction"):
 		var id: String = hit.collider.get_meta("interaction")
-		prompt.text = "[ E ]  " + interaction_name(id)
-	if is_instance_valid(controller) and controller.used:prompt.text=prompt.text.replace("[ E ]","[ X ]")
+		prompt.text = interaction_name(id)
 	if time_in_game > caption_until: subtitle.text = ""
 	if stage >= 3 and not events.has("chair") and player.position.x < 1.1 and player.position.z < 1:
 		chair_event()

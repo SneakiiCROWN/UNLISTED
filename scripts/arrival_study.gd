@@ -5,6 +5,8 @@ var game: Node3D
 var integrated:=false
 var running:=false
 var headlamps: Array[SpotLight3D]=[]
+var headlight_materials: Array=[]
+var interior_active:=false
 var cue_log: Array=[]
 var engine: AudioStreamPlayer3D
 var original_car_transform:=Transform3D.IDENTITY
@@ -72,6 +74,8 @@ func finish() -> void:
 		finish_integrated();return
 	if not running:return
 	running=false;$AnimationPlayer.stop()
+	interior_active=false
+	for material in headlight_materials:material.emission_enabled=false
 	for audio in streams:
 		if is_instance_valid(audio):audio.stop()
 	for control in hidden_controls:
@@ -91,7 +95,8 @@ func finish() -> void:
 func _exit_tree() -> void:
 	# Also restore presentation on explicit removal, not just normal completion.
 	if running and integrated:
-		running=false
+		running=false;interior_active=false
+		for material in headlight_materials:material.emission_enabled=false
 		for audio in streams:
 			if is_instance_valid(audio):audio.stop()
 		if is_instance_valid(game) and is_instance_valid(game.presentation):
@@ -114,7 +119,12 @@ func start_integrated() -> void:
 	p.fade.color.a=0
 	$PreviewCamera.current=true;$PreviewCamera.fov=62
 	$PreviewOverlay/Skip.theme=p.THEME
-	$PreviewOverlay/Skip.text="A / B / START  SKIP" if game.controller.used else "SPACE / E / ESC  SKIP"
+	$PreviewOverlay/Skip.visible=false
+	var skip_row:=HBoxContainer.new();$PreviewOverlay.add_child(skip_row);p.anchored(skip_row,Control.PRESET_BOTTOM_LEFT,Rect2(32,-42,360,30));skip_row.add_theme_constant_override("separation",8)
+	var keys: Array=["xbox_a","xbox_b","xbox_menu"] if game.controller.used else ["keyboard_space","keyboard_escape"]
+	for key in keys:
+		var glyph:=TextureRect.new();skip_row.add_child(glyph);glyph.texture=load("res://assets/ui/input/"+str(key)+".png");glyph.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;glyph.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;glyph.custom_minimum_size=Vector2(30,28)
+	p.label(skip_row,"Skip",16,"Meta")
 	p.anchored($PreviewOverlay/Skip,Control.PRESET_BOTTOM_LEFT,Rect2(32,-38,650,24))
 	var text:=VBoxContainer.new();text.name="CaseContext";$PreviewOverlay.add_child(text)
 	p.anchored(text,Control.PRESET_CENTER_LEFT,Rect2(48,-60,700,140))
@@ -126,11 +136,18 @@ func start_integrated() -> void:
 	var name_: Label=p.label(title,"UNLISTED",58,"Title");name_.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
 	var tag: Label=p.label(title,"No Record. No Exit.",18,"Meta");tag.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
 	var h: float=car.global_position.y
+	var has_interior: bool=car.get_meta("usable_interior",false)
+	interior_active=has_interior
+	headlight_materials=car.get_meta("headlight_materials",[])
+	for material in headlight_materials:material.emission_enabled=true
 	var a:=view(Vector3(-1.3,h+1.15,25.7),car.global_position+Vector3(.65,.55,0))
 	var b:=view(Vector3(-1.55,h+1.15,25.5),car.global_position+Vector3(.65,.55,0))
 	var c:=view(Vector3(-5.1,h+1.66,19.5),Vector3(0,1.65,4.0))
 	var d:=view(Vector3(-4.95,h+1.66,19.4),Vector3(0,1.65,4.0))
 	var gate:=view(Vector3(0,1.68,19.4),Vector3(0,1.68,3.4))
+	if has_interior:
+		a=view(car.to_global(Vector3(.43,1.13,.03)),car.to_global(Vector3(.1,1.10,12)))
+		b=a
 	if p.prefs.data.reduced_motion:b=a;d=c
 	var clip:=Animation.new();clip.length=13.0
 	track(clip,"PreviewCamera:transform",[0,4.65,4.66,7.55,7.56,12.0],[a,b,c,d,gate,gate])
@@ -140,7 +157,7 @@ func start_integrated() -> void:
 	track(clip,"PreviewOverlay/ArrivalTitle:modulate:a",[0,8.2,8.9,10.7,11.3,12.0],[0.0,0.0,1.0,1.0,0.0,0.0])
 	for x in [-.62,.62]:
 		var light:=SpotLight3D.new();light.name="TemporaryArrivalHeadlamp";add_child(light)
-		light.global_position=car.to_global(Vector3(x,.62,2.23));light.look_at(light.global_position+car.global_basis.z*12+Vector3(0,-.7,0))
+		light.global_position=car.to_global(Vector3(x,.62,2.46 if has_interior else 2.23));light.look_at(light.global_position+car.global_basis.z*12+Vector3(0,-.7,0))
 		light.light_color=Color("e1d2aa");light.light_energy=.7;light.spot_range=17;light.spot_angle=34;light.spot_attenuation=.8;light.shadow_enabled=true;headlamps.append(light)
 	var method:=clip.add_track(Animation.TYPE_METHOD);clip.track_set_path(method,NodePath("."))
 	for cue in [[2.45,"engine_stop"],[4.72,"door_open"],[6.05,"door_close"]]:clip.track_insert_key(method,cue[0],{"method":"integrated_cue","args":[cue[1]]})
@@ -159,14 +176,19 @@ func integrated_cue(id: String) -> void:
 	cue_log.append({"id":id,"at":$AnimationPlayer.current_animation_position,"position":car.global_position})
 	if id=="engine_stop":
 		if is_instance_valid(engine):engine.stop()
+		for material in headlight_materials:material.emission_enabled=false
 		play_cue("res://assets/audio/arrival/engine_off.ogg",car.global_position+Vector3(1,.6,0),-25)
 		for light in headlamps:create_tween().tween_property(light,"light_energy",0.0,.6)
-	elif id=="door_open":play_cue("res://assets/audio/arrival/door_open.ogg",car.global_position+Vector3(0,.8,-.8),-28)
+	elif id=="door_open":
+		interior_active=false
+		play_cue("res://assets/audio/arrival/door_open.ogg",car.global_position+Vector3(0,.8,-.8),-28)
 	else:play_cue("res://assets/audio/arrival/door_close.ogg",car.global_position+Vector3(0,.8,-.8),-27)
 
 func finish_integrated() -> void:
 	if not running:return
 	running=false;$AnimationPlayer.stop()
+	interior_active=false
+	for material in headlight_materials:material.emission_enabled=false
 	for audio in streams:
 		if is_instance_valid(audio):audio.stop();audio.queue_free()
 	streams.clear()

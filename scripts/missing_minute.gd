@@ -44,8 +44,8 @@ func finish_materials(root: Node3D) -> void:
 				var cloth:=ShaderMaterial.new();cloth.shader=load("res://shaders/memory_wool.gdshader");cloth.set_shader_parameter("weave",load("res://assets/original/work_canvas.png"));mesh.set_surface_override_material(i,cloth)
 			else:mesh.set_surface_override_material(i,game.texture_mat(texture,tint))
 func build_work_surface() -> void:
-	radio=game.model("res://assets/interiors/home/radio.glb",self,Vector3(4.88,.81,-8.56),Vector3(.36,.25,.20))
-	radio.name="ArchiveReturnReceiver";finish_materials(radio)
+	radio=game.model("res://assets/production_20261025/return_receiver.glb",self,Vector3(4.88,.81,-8.56),Vector3(.36,.25,.20))
+	radio.name="ArchiveReturnReceiver" # Preserve the authored atlas and working receiver interactions.
 	game.collision(self,Vector3(4.88,.95,-8.55),Vector3(.38,.26,.22),"return_receiver")
 	var mat: MeshInstance3D=game.box(self,Vector3(6.27,.809,-8.56),Vector3(.38,.012,.36),Color("3b3d34"));mat.name="CarbonWritingMat"
 	game.box(self,Vector3(6.27,.819,-8.56),Vector3(.30,.004,.31),Color("aaa18a"))

@@ -1,19 +1,18 @@
 {
   "version": "0.10.1-dev",
-  "private_source_commit": "1d1bb625ec454f0bd90e15391a4783f6f78cbd37",
+  "private_source_commit": "87f1c4e5af11cd7f333fb866da6fbe94e3505dd1",
   "public_playable_release": "unchanged v0.10.0",
   "complete_source_local_only": true,
   "human_playtested": false,
-  "verification": "NIGHT_ARRIVAL_PROGRESS.md; NightWeArrived_05 native Windows",
-  "last_verified_private_source": "11a0e5ae4739246f261bd4cb3e0d9f3d1b289e5c",
-  "verification_status": "Isolated working character study; visual acceptance FAILED, not promoted. Native original-AI and study contact checks passed with documented revision scope.",
+  "verification": "ASSET_INTEGRATION_PROGRESS.md; native Windows 1080p 57/0, 1440p 27/0, ultrawide 26/0",
+  "last_verified_private_source": "87f1c4e5af11cd7f333fb866da6fbe94e3505dd1",
+  "verification_status": "Focused cinematic and affected asset systems verified; human art/listening approval pending; full route not repeated",
   "testing_paused_at_user_request": false,
   "private_windows_candidate": true,
-  "latest_source_is_verified": false,
-  "private_windows_candidate_source": "11a0e5ae4739246f261bd4cb3e0d9f3d1b289e5c",
+  "latest_source_is_verified": true,
+  "private_windows_candidate_source": "87f1c4e5af11cd7f333fb866da6fbe94e3505dd1",
   "private_package_extracted_native_checks": {
-    "passed": 23,
-    "failed": 0
+    "status": "pending package verification"
   },
   "settled_ending_and_radio_checks": {
     "passed": 15,
@@ -21,9 +20,9 @@
   },
   "public_release_unchanged": true,
   "character_art_approved": false,
-  "milestone": "Verified rainy New Game arrival recovery",
-  "private_complete_source_checkpoint": "cb2482e34fcadcc80f9f4350da4ed8a9b58fce1f",
+  "milestone": "Selected asset integration and rainy interior arrival",
+  "private_complete_source_checkpoint": "87f1c4e5af11cd7f333fb866da6fbe94e3505dd1",
   "human_approval": "pending",
   "new_character_art": "not promoted; original working Surveyor retained",
-  "new_asset_batch": "separate local work in progress; not part of this checkpoint"
+  "new_asset_batch": "Private licensed runtime media preserved locally; public code snapshot only"
 }

@@ -31,6 +31,8 @@ func _ready() -> void:
 	make_prop("counter_vase","small vase","res://assets/furniture/vase.glb",Vector3(-4.15,1.022,3.55),Vector3(.20,.32,.20),.60)
 	make_prop("utility_mug","work mug","res://assets/dusk/psx_prop_mug_01.glb",Vector3(-2.10,.867,-9.15),Vector3(.11,.13,.11),.25)
 	make_prop("shed_parts","parts tin","res://assets/dusk/psx_prop_single_tin.glb",Vector3(-17.85,.902,-15.80),Vector3(.18,.20,.18),.40)
+	make_prop("work_wrench","spanner","res://assets/production_20261025/workshop_wrench.glb",Vector3(-18.24,.817,-15.96),Vector3(.05,.024,.29),.60)
+	make_prop("work_tape","tape roll","res://assets/production_20261025/workshop_tape.glb",Vector3(-18.38,.831,-15.65),Vector3(.10,.058,.10),.15)
 	build_support()
 
 func build_support() -> void:
@@ -44,6 +46,9 @@ func build_support() -> void:
 
 func _process(_delta: float) -> void:
 	var shown: bool = is_instance_valid(held) and game.player.active and game.presentation.prefs.data.viewmodel
+	# A solid worktop can temporarily hold the carried body beyond arm's reach.
+	# Keep swept collision intact rather than stretching a sleeve through the table.
+	if shown:shown = held.global_position.distance_to(game.player.camera.global_position)<=1.05
 	support.visible = shown;forearm.visible = shown
 	if not shown:return
 	var camera: Camera3D = game.player.camera

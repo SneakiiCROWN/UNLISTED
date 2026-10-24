@@ -105,3 +105,11 @@ Development-only, not a replacement approved for ordinary gameplay. Uses the pre
 ### Integrated arrival / 25 October 2026
 
 The New Game arrival also selects Car_Door_Open.ogg and Car_Engine_Loop.ogg, unmodified from the same preserved GGBotNet PSX Style Cars CC0 archive. Hashes and original filenames are in assets/audio/arrival/provenance.json. Engine-off and door-close selections are reused. No new download, voice or paid asset. Raw media remains private; notices accompany the private Windows package.
+
+### Selected production integration / 25 October 2026
+
+Retro Car With Interior by Bricchi Games, https://bricchi-games.itch.io/retro-car-with-interior . Creator explicitly permits commercial use with attribution and describes CC 4.0 in the author comments. Credit retained in game and accompanying notice. Supplied white/emission textures relinked; grounded origin, simplified glass and glTF derivative. Original station wagon and all originals remain preserved privately. No implication of a more specific licence variant.
+
+Wrench and DuctTape from the user's retro_props.zip: included retro_props_lists.txt dedicates the pack to CC0. Only these two optional portable workshop objects are selected. FM Radio by Animimo Studios, https://animimostudios.itch.io/psx-electronics-asset-pack-free : creator page declares CC0. This replaces the existing functional receiver's visual only; original dial and puzzle remain.
+
+Input Prompts 1.5A by Kenney, CC0, https://kenney.nl/assets/input-prompts . Seven supplied keyboard/Xbox glyphs selected from the existing archive. No new download. Full local archive hashes and selection records remain private. The complete source and Windows notices retain attribution; raw media is excluded from public code snapshots.
