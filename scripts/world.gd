@@ -121,6 +121,14 @@ func _ready() -> void:
 	qa_mode = qa_mode or "--interior-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--investigation-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--missing-minute-qa" in OS.get_cmdline_user_args()
+	# Refuse mistyped automation before creating the world or reading/writing a
+	# normal case. A harness typo must never fall through to desktop gameplay.
+	var automation_requested:=false
+	for arg in OS.get_cmdline_user_args():
+		if arg.ends_with("-qa") or arg.begins_with("--evidence="):automation_requested=true
+	if automation_requested and not qa_mode and not "--dev-tools-qa" in OS.get_cmdline_user_args():
+		push_error("UNKNOWN_QA_MODE: refusing normal startup for unrecognised automation")
+		get_tree().quit(93);return
 	automated_qa=(qa_mode and not "--visual-probe" in OS.get_cmdline_user_args()) or (dev_mode and "--dev-tools-qa" in OS.get_cmdline_user_args())
 	if automated_qa:
 		get_tree().root.set_flag(Window.FLAG_NO_FOCUS,true)

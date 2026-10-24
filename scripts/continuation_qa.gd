@@ -54,8 +54,9 @@ func inspections() -> void:
 	# Ordinary documents must keep Down navigation when a loose contact exists.
 	g.equipment.data.contact_fault=true;g.inspect_text("FIXTURE","An ordinary paper.")
 	var extra: Button=g.presentation.add_button("Fixture second control",func():pass,true,g.presentation.card_body)
+	await wait(.15) # Let the new control participate in the actual GUI focus layout.
 	g.presentation.buttons["Close record  /  ESC"].grab_focus();await tap(JOY_BUTTON_DPAD_DOWN)
-	check("ordinary document Down is navigation, not torch tap",g.equipment.data.contact_fault and g.get_viewport().gui_get_focus_owner()==extra)
+	check("ordinary document Down is navigation, not torch tap",g.equipment.data.contact_fault and g.get_viewport().gui_get_focus_owner()==extra,"fault="+str(g.equipment.data.contact_fault)+" focus="+str(g.get_viewport().gui_get_focus_owner())+" expected="+str(extra))
 	await tap(JOY_BUTTON_B);g.equipment.tap_contact()
 	# Use the real transform widget, change it with actual controller input, then exit.
 	g.report_read=true;g.events.test_reel_found=true;g.last_call.open_plans();await wait(.2)

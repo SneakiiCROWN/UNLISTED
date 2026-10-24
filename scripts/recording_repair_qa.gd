@@ -73,7 +73,7 @@ func travel(point: Vector2,label_: String,sprint := false,crouch := false) -> bo
 		await get_tree().physics_frame
 	Input.action_release("forward");Input.action_release("sprint");Input.action_release("crouch")
 	await wait(0.25)
-	check(label_,remaining<0.20,"position="+str(g.player.position)+" remaining="+str(remaining))
+	check(label_,remaining<0.20,"position="+str(g.player.position)+" remaining="+str(remaining)+" pad="+str(g.controller.move)+" velocity="+str(g.player.velocity))
 	return remaining<0.20
 func use(id: String,close := true) -> bool:
 	phase = "interact "+id
@@ -81,7 +81,7 @@ func use(id: String,close := true) -> bool:
 	await wait(0.18)
 	var ray: Dictionary = g.player.target()
 	var actual: String = "none" if ray.is_empty() else str(ray.collider.get_meta("interaction","solid"))
-	check("input target "+id,actual==id,"hit="+actual)
+	check("input target "+id,actual==id,"hit="+actual+(" path="+str(ray.collider.get_path())+" at="+str(ray.position) if not ray.is_empty() else "")+" target_layer="+str(g.targets[id].collision_layer))
 	if actual!=id:return false
 	await action("interact")
 	await wait(0.8)

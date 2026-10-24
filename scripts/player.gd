@@ -74,6 +74,7 @@ func _ready() -> void:
 	camera.add_child(viewmodel)
 
 func _unhandled_input(event: InputEvent) -> void:
+	if game.automated_qa and not (event is InputEventAction or event.get_meta("unlisted_qa_input",false)):return
 	if not active: return
 	if event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT and event.pressed and game.physical.held:
 		game.physical.release(true)

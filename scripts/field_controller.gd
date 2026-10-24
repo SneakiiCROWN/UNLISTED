@@ -27,6 +27,7 @@ func clear() -> void:
 func _notification(what: int) -> void:
 	if what==NOTIFICATION_WM_WINDOW_FOCUS_OUT and is_instance_valid(game) and not game.automated_qa:clear()
 func _input(event: InputEvent) -> void:
+	if game.automated_qa and not (event is InputEventAction or event.get_meta("unlisted_qa_input",false)):return
 	if event is InputEventKey or event is InputEventMouseButton:
 		if event.pressed:used=false
 	elif event is InputEventMouseMotion:

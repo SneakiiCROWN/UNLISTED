@@ -158,7 +158,10 @@ func utility() -> void:
 		for z in [-5.64,-5.06]:piece("Mirror wall stand-off",Vector3(-7.405,y,z),Vector3(.012,.065,.055),"iron")
 	# Protect the wall where the existing tool loops actually rub; keep birthday
 	# marks, glass, fuse, rest cot and rear door free of new papers and clutter.
-	piece("Utility tool-rail backing",Vector3(-7.395,1.40,-6.85),Vector3(.014,.49,1.05),"wood")
+	# Native review showed the continuous board visually absorbing the existing
+	# ELI/1999 height marks. Keep a bare-wall gap around that evidence instead.
+	piece("Utility tool-rail backing",Vector3(-7.395,1.40,-7.10),Vector3(.014,.49,.80),"wood")
+	piece("Utility end-hook backing",Vector3(-7.395,1.40,-6.26),Vector3(.014,.49,.24),"wood")
 	for z in [-7.30,-6.80,-6.30]:piece("Tool backing fixing",Vector3(-7.384,1.58,z),Vector3(.008,.018,.018),"brass")
 	finish()
 

@@ -29,6 +29,9 @@ func play_store() -> void:
 	g.player.rotation.y=PI;g.player.camera.rotation=Vector3.ZERO
 	Input.action_press("forward");await wait(1.1);Input.action_release("forward");await wait(.2)
 	check("standing body cannot enter low opening",g.player.position.z< -15.15 and not g.player.crouched,str(g.player.position))
+	# The blocked standing probe may slide sideways along the lintel. Walk back
+	# to the real approach before testing crouching; never teleport into the gap.
+	await travel(Vector2(3.25,-16.1),"re-centre after standing obstruction")
 	g.player.camera.look_at(Vector3(3.25,-2.1,-12));await shot("U01_service_opening")
 	await travel(Vector2(3.25,-13.2),"physical crouch into service void",false,true)
 	check("real crouch clearance under roof",g.player.crouched and not g.player.can_stand() and g.player.body_shape.shape.height<1.1)

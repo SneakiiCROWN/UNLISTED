@@ -12,6 +12,9 @@ func run(current: Node) -> void:
 		if arg.begins_with("--evidence="):output=arg.trim_prefix("--evidence=")
 	DirAccess.make_dir_recursive_absolute(output);g.checkpoint_path=output.path_join("checkpoint.json")
 	await exact_resolution()
+	if "--house-integration" in OS.get_cmdline_user_args():
+		var qa=load("res://scripts/house_integration_qa.gd").new();qa.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(qa)
+		qa.g=g;qa.output=output;qa.started_at=started_at;qa.exact_target=exact_target;await qa.execute();return
 	if "--continuation-polish" in OS.get_cmdline_user_args():
 		var qa=load("res://scripts/continuation_qa.gd").new();qa.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(qa)
 		qa.g=g;qa.output=output;qa.started_at=started_at;qa.exact_target=exact_target;await qa.execute();return
