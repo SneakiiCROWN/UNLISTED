@@ -25,8 +25,23 @@ func build() -> void:
 	var wood:="res://assets/dusk/psx_house_old_wood_01.png"
 	# One 4.7 m crawl, 1.24 m clear height, beside the existing ramp. No teleports.
 	surface(Vector3(3.25,-3.09,-12.7),Vector3(1.62,.18,5.0),stone,Color("66685b"),true)
-	for x in [2.44,4.06]:surface(Vector3(x,-2.34,-12.7),Vector3(.14,1.32,5),stone,Color("666a60"),true)
-	surface(Vector3(3.25,-1.68,-12.7),Vector3(1.76,.16,5),stone,Color("555b52"),true)
+	surface(Vector3(4.06,-2.34,-12.7),Vector3(.14,1.32,5),stone,Color("666a60"),true)
+	for spec in [[-14.85,.70],[-11.35,2.30]]:surface(Vector3(2.44,-2.34,spec[0]),Vector3(.14,1.32,spec[1]),stone,Color("666a60"),true)
+	surface(Vector3(2.44,-2.875,-13.5),Vector3(.14,.25,2),stone,Color("666a60"),true)
+	# A raised inspection recess exposes the stairwell silhouette above the
+	# low crawl ceiling. Its solid returns and roof join the existing basement.
+	surface(Vector3(2.44,-.24,-13.5),Vector3(.14,.12,2),stone,Color("666a60"),true)
+	# Joined reveal through both foundation walls; no exposed outer-world slot.
+	for y in [-2.75,-.30]:surface(Vector3(1.97,y,-13.5),Vector3(1.08,.045,2.08),steel,Color("454b43"),true)
+	for z in [-14.51,-12.49]:surface(Vector3(1.97,-1.525,z),Vector3(1.08,2.45,.045),steel,Color("454b43"),true)
+	# Individual visible bars also provide collision. No invisible broad panel
+	# blocks the sight rays through the actual gaps.
+	for i in 13:surface(Vector3(2.46,-1.525,-14.45+i*.158),Vector3(.035,2.45,.028),steel,Color("484f46"),true)
+	for spec in [[-14.85,.70],[-11.35,2.30]]:surface(Vector3(3.25,-1.68,spec[0]),Vector3(1.76,.16,spec[1]),stone,Color("555b52"),true)
+	surface(Vector3(3.66,-1.68,-13.5),Vector3(.94,.16,2),stone,Color("555b52"),true)
+	surface(Vector3(2.78,-.22,-13.5),Vector3(.82,.16,2.08),stone,Color("555b52"),true)
+	surface(Vector3(3.19,-.99,-13.5),Vector3(.08,1.54,2.08),stone,Color("555b52"),true)
+	for z in [-14.52,-12.48]:surface(Vector3(2.78,-.99,z),Vector3(.82,1.54,.08),stone,Color("555b52"),true)
 	for z in [-14.9,-13.3,-11.7]:
 		for x in [2.54,3.96]:surface(Vector3(x,-2.35,z),Vector3(.045,1.28,.08),steel,Color("484e42"))
 		surface(Vector3(3.25,-1.80,z),Vector3(1.44,.05,.08),steel,Color("484e42"))

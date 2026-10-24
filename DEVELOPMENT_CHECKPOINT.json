@@ -1,10 +1,10 @@
 {
   "version": "0.10.1-dev",
   "private_source_commit": "1d1bb625ec454f0bd90e15391a4783f6f78cbd37",
-  "public_playable_release": "0.10.0 The Last Call",
+  "public_playable_release": "unchanged v0.10.0",
   "complete_source_local_only": true,
   "human_playtested": false,
-  "verification": "SURVEYOR_REBORN_PROGRESS.md",
+  "verification": "VENT_SIGHTING_PROGRESS.md; focused native Windows fixtures only",
   "last_verified_private_source": "11a0e5ae4739246f261bd4cb3e0d9f3d1b289e5c",
   "verification_status": "Isolated working character study; visual acceptance FAILED, not promoted. Native original-AI and study contact checks passed with documented revision scope.",
   "testing_paused_at_user_request": false,
@@ -20,5 +20,9 @@
     "failed": 0
   },
   "public_release_unchanged": true,
-  "character_art_approved": false
+  "character_art_approved": false,
+  "milestone": "First vent Surveyor sighting / private development candidate",
+  "private_complete_source_checkpoint": "5b3d0b458f0de16ea8215f8a96f41764e7841f13",
+  "human_approval": "pending",
+  "new_character_art": "not promoted; original working Surveyor retained"
 }

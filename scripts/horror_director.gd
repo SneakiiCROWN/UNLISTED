@@ -26,11 +26,19 @@ var audition_clock := 0.0
 var audition_index := 0
 var audition_tail := false
 var audition_players: Array[AudioStreamPlayer3D] = []
+var vent_owned:=false
+var vent_hidden:=0.0
+var vent_steps:=0.0
+var vent_history: Array=[]
+const VENT_START:=Vector3(-.9,-2.99,-17.2)
+const VENT_END:=Vector3(-4.5,.02,-8.8)
 
 func _ready() -> void:
 	build_feed()
 
 func reset() -> void:
+	vent_owned=false;vent_hidden=0;vent_steps=0
+	if is_instance_valid(actor):actor.attention_override=null
 	stop_audition()
 	beat = ""
 	echo_index = -1
@@ -53,6 +61,7 @@ func reset() -> void:
 	update_screen()
 
 func begin(id: String) -> void:
+	if vent_owned:return
 	if game.threat.active():return
 	stop_audition()
 	beat = id
@@ -89,6 +98,100 @@ func visible_to_player() -> bool:
 		query.exclude = [game.player.get_rid(),game.presence.get_rid()]
 		if game.get_world_3d().direct_space_state.intersect_ray(query).is_empty():return true
 	return false
+
+func vent_protected() -> bool:
+	var p: Vector3=game.player.position
+	return p.y< -2.6 and p.x>2.48 and p.x<4.0 and p.z> -15.5 and p.z< -10.0
+
+func vent_visible_from(position_: Vector3,eye: Vector3) -> bool:
+	# Frustum independent: turning the camera cannot expose a newly spawned or
+	# just removed actor. Sample the capsule envelope, not only its head centre.
+	for x in [-.38,0.0,.38]:
+		for z in [-.32,0.0,.32]:
+			for y in [.08,.65,1.3,2.05]:
+				var q:=PhysicsRayQueryParameters3D.create(eye,position_+Vector3(x,y,z),1)
+				q.exclude=[game.player.get_rid(),game.presence.get_rid()]
+				if game.get_world_3d().direct_space_state.intersect_ray(q).is_empty():return true
+	return false
+
+func vent_hide_safe() -> bool:
+	var eyes: Array[Vector3]=[game.player.camera.global_position,game.player.camera.global_position+game.player.velocity*.45,
+		Vector3(3.25,-2.06,-15.0),Vector3(3.25,-1.38,-16.2),Vector3(3.25,-1.38,-9.8),
+		Vector3(2.8,-2.06,-13.5),Vector3(3.7,-2.06,-13.5)]
+	for eye in eyes:
+		if vent_visible_from(game.presence.position,eye):return false
+	return true
+
+func vent_blocked() -> bool:
+	return game.threat.active() or game.events.get("threat_pending",false) or game.presence.visible or beat!="" or audition!="" or echo_index>=0 or game.chapter.active or game.chapter.return_clock>=0 or game.chapter.watch_clock>=0 or game.impossible_room.active or game.recount.active or game.last_call.busy() or not game.dead_line.sequence.is_empty() or game.maintenance.surprise_armed or game.spare_place.hunt_running
+
+func snapshot_vent() -> void:
+	if not vent_owned:return
+	game.events.vent_pass_snapshot={"pos":[game.presence.position.x,game.presence.position.y,game.presence.position.z],"yaw":game.presence.rotation.y,"mode":actor.mode,"clip":actor.animator.current_animation_position}
+
+func restore_vent() -> void:
+	if str(game.events.get("vent_first_pass",""))!="walking":return
+	var saved: Dictionary=game.events.get("vent_pass_snapshot",{})
+	var pos_: Array=saved.get("pos",[])
+	if pos_.size()!=3 or game.threat.active() or game.events.get("threat_pending",false):
+		game.events.vent_first_pass="spent";return
+	# Applied before the loaded world is rendered. This is its saved physical
+	# body, not a new staged spawn or a repeat of the first crossing.
+	game.presence.position=Vector3(pos_[0],pos_[1],pos_[2]);game.presence.rotation.y=float(saved.get("yaw",0))
+	vent_owned=true;beat="vent_pass";game.presence.visible=true;game.threat.set_collision(true)
+	game.threat.plan(VENT_END);game.threat.stuck=0;game.threat.door_wait=0;vent_hidden=0;vent_steps=0
+	actor.set_mode(str(saved.get("mode","walk")));actor.animator.seek(float(saved.get("clip",0)),true)
+	vent_history.append({"event":"restored","position":game.presence.position})
+
+func release_vent(hide_body: bool) -> void:
+	vent_owned=false;vent_hidden=0;game.events.vent_first_pass="spent";game.events.erase("vent_pass_snapshot")
+	if beat=="vent_pass":beat=""
+	actor.attention_override=null
+	game.threat.route.clear()
+	if hide_body:
+		game.presence.visible=false;game.presence.velocity=Vector3.ZERO;game.threat.set_collision(false);actor.set_mode("listen")
+	vent_history.append({"event":"retired" if hide_body else "handed_over","position":game.presence.position})
+	game.save_game(true)
+
+func _physics_process(delta: float) -> void:
+	if not game.started or game.menu_open or game.ended:return
+	var phase_: String=str(game.events.get("vent_first_pass",""))
+	var p: Vector3=game.player.position
+	if not vent_owned:
+		if phase_=="armed" and vent_protected() and p.z< -14.5:
+			game.events.vent_first_pass="approach";game.save_game(true);phase_="approach"
+		if phase_!="approach":return
+		if p.z> -11.3:
+			game.events.vent_first_pass="spent";game.save_game(true);return
+		if not vent_protected() or p.z< -13.8 or p.z> -12.0:return
+		# A closed/locked final portal or another actor owner is a reason to skip,
+		# not to spawn through a wall, delay a pursuit, or repeat on a later visit.
+		if vent_blocked() or game.doors.utility.locked or not game.doors.utility.opened:return
+		if vent_visible_from(VENT_START,game.player.camera.global_position):return
+		game.presence.position=VENT_START;game.presence.rotation.y=0;game.presence.velocity=Vector3.ZERO
+		game.threat.plan(VENT_END)
+		if game.threat.route.is_empty():return
+		vent_owned=true;beat="vent_pass";vent_hidden=0;vent_steps=0
+		game.threat.stuck=0;game.threat.door_wait=0;game.threat.set_collision(true);game.presence.visible=true
+		game.events.vent_first_pass="walking";actor.set_mode("walk")
+		vent_history.append({"event":"started_hidden","position":VENT_START});game.save_game(true)
+		return
+	if game.threat.active():
+		release_vent(false);return # An existing owner retains this exact body.
+	if game.threat.enabled and not vent_protected() and p.distance_to(game.presence.position)<2.4:
+		var where: Vector3=game.presence.position;var facing: float=game.presence.rotation.y
+		release_vent(false)
+		game.events.threat_origin="vent_follow";game.events.threat_spawn=[where.x,where.y,where.z];game.events.threat_pending=true
+		game.threat.begin(false,where);game.presence.rotation.y=facing;game.save_game(true);return
+	actor.attention_override=game.presence.position-game.presence.global_basis.z*3+Vector3.UP*1.45
+	# Reuse the real capsule, doors, floor gravity, corner recovery and animation
+	# rate. This staging owns no separate enemy or navigation implementation.
+	game.threat.move_route(delta,1.42,true)
+	var at_end:=Vector2(game.presence.position.x-VENT_END.x,game.presence.position.z-VENT_END.z).length()<.35
+	if game.threat.route.is_empty() and not at_end and game.threat.stuck<2:game.threat.plan(VENT_END)
+	if at_end or game.threat.stuck>=2:
+		vent_hidden=vent_hidden+delta if vent_hide_safe() else 0.0
+		if vent_hidden>.35:release_vent(true)
 
 func house_responds() -> void:
 	game.events["house_responds"] = true
@@ -277,6 +380,7 @@ func _process(delta: float) -> void:
 		feed_clock = 0
 		feed.render_target_update_mode = SubViewport.UPDATE_ONCE
 	if beat == "":return
+	if beat == "vent_pass":return # Actual physical movement belongs to the shared route mover below.
 	elapsed += delta
 	if beat == "wrong_direction":
 		# The recorded wall-side appearance is the start of the relay encounter.

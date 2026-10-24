@@ -82,6 +82,12 @@ func begin_basement() -> void:
 	begin(true)
 
 func begin(basement := false,position_override: Variant=null) -> void:
+	if game.horror.beat=="vent_pass":
+		# A scripted request cannot relocate a visible staged body or attack a
+		# player still confined in the crawl. Outside, hand over this same body.
+		if game.horror.vent_protected():return
+		position_override=game.presence.position
+		game.horror.release_vent(false)
 	game.horror.stop_audition()
 	stalk_used = false
 	game.horror.beat = ""
@@ -206,7 +212,7 @@ func plan(point: Vector3) -> void:
 	var end := graph.get_point_position(to)
 	if absf(end.y-point.y)<0.6 and point.distance_to(end)<3.0 and route_clear(end,point):route.append(point)
 
-func move_route(delta: float,speed: float) -> void:
+func move_route(delta: float,speed: float,staged:=false) -> void:
 	var body: CharacterBody3D = game.presence
 	if route.is_empty():
 		body.velocity.x = 0;body.velocity.z = 0
@@ -246,7 +252,7 @@ func move_route(delta: float,speed: float) -> void:
 	if stuck > 2.0:
 		# A moved chair/closed door is cover. Never warp through it to reach the player.
 		route.clear()
-		change("search")
+		if not staged:change("search")
 	elif stuck>0.65 and route.size()<12:
 		# A short swept sidestep recovers a corner/prop contact without teleporting.
 		for side in [direction.cross(Vector3.UP),-direction.cross(Vector3.UP)]:
@@ -270,7 +276,7 @@ func _physics_process(delta: float) -> void:
 	if state=="capture":return
 	if state == "dormant":
 		if game.events.get("threat_pending",false):
-			if game.events.get("threat_origin","") in ["window","inspection","last_call"] and game.events.get("threat_spawn",[]).size()==3:
+			if game.events.get("threat_origin","") in ["window","inspection","last_call","vent_follow"] and game.events.get("threat_spawn",[]).size()==3:
 				var p: Array=game.events.threat_spawn;begin(false,Vector3(p[0],p[1],p[2]))
 			elif game.events.get("threat_origin","")=="basement" and game.horror.beat!="wrong_direction":begin(true)
 			elif game.player.position.y > -0.3 and game.player.position.z > -8.2:begin()

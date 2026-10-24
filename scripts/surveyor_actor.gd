@@ -15,6 +15,7 @@ var tailored_presence:=false
 var reborn_presence:=false
 var motion_rate:=1.0
 var motion_target:=1.0
+var attention_override: Variant=null
 
 func _ready() -> void:
 	for mesh in figure.find_children("*","MeshInstance3D",true,false):

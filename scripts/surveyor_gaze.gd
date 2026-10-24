@@ -7,6 +7,7 @@ func _process_modification_with_delta(delta: float) -> void:
 	var s := get_skeleton()
 	if not is_instance_valid(actor.game.player) or not actor.get_parent().visible:return
 	var attention: Vector3=actor.game.player.camera.global_position
+	if actor.attention_override is Vector3:attention=actor.attention_override
 	if actor.reborn_presence:
 		var threat: Node=actor.game.threat
 		if threat.state in ["search","investigate"]:

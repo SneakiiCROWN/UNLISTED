@@ -117,6 +117,7 @@ func _ready() -> void:
 	qa_mode = qa_mode or "--service-room-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--exterior-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--capture-qa" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--vent-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--recount-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--interior-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--investigation-qa" in OS.get_cmdline_user_args()
@@ -677,7 +678,12 @@ func build_basement() -> void:
 	ramp.rotation.x = -atan2(3,5)
 	box(ramp,Vector3(0,-0.1,0),Vector3(3,0.2,sqrt(34.0)),Color(0.16,0.17,0.16),true)
 	wall(Vector3(-1.5,-3,-12.5),5,PI/2,5.8)
-	wall(Vector3(1.5,-3,-12.5),5,PI/2,5.8)
+	# A real inspection/air-return opening from the service crawl to the stairwell.
+	# The sleeve and closely spaced grille are built by maintenance_store.
+	wall(Vector3(1.5,-3,-14.75),.5,PI/2,5.8)
+	wall(Vector3(1.5,-3,-11.25),2.5,PI/2,5.8)
+	wall(Vector3(1.5,-3,-13.5),2,PI/2,.25)
+	wall(Vector3(1.5,-.30,-13.5),2,PI/2,3.1)
 	floor_area(-5,5,-24,-15,-3)
 	ceiling(-5,5,-24,-15,-0.2)
 	wall(Vector3(-5,-3,-19.5),9,PI/2)
@@ -811,6 +817,7 @@ func new_game() -> void:
 	events.case_v2=true
 	events.case_v3=true
 	events.case_v4=true
+	events.vent_first_pass="armed" # Absent on legacy saves: never inserts a late surprise.
 	events.arrival_check=true
 	events.notes={"WHY I CAME":NOTES.WHY_I_CAME}
 	PUZZLES.generate(events)
@@ -1181,6 +1188,7 @@ func door_swing_states() -> Dictionary:
 	return result
 
 func save_data() -> Dictionary:
+	if is_instance_valid(horror):horror.snapshot_vent()
 	if is_instance_valid(maintenance):events.archive_rack_x=maintenance.rack.position.x
 	if is_instance_valid(physical):events["props"] = physical.snapshot()
 	return {"schema":1,"stamina":player.stamina,"sprint_exhausted":player.exhausted,"stamina_delay":player.stamina_delay,"crouched":player.crouched,"stage":stage,"fuse":fuse,"key":brass_key,"report":report_read,"shed":shed_read,"isolated":isolated,"events":events,"valves":valve_order,"pos":[player.position.x,player.position.y,player.position.z],"yaw":player.rotation.y,"pitch":player.camera.rotation.x,"ended":ended,"doors":door_save_states(),"door_swing":door_swing_states()}
@@ -1260,6 +1268,7 @@ func apply_save(data: Dictionary) -> void:
 	if is_instance_valid(ambient_director):ambient_director.restore()
 	if is_instance_valid(equipment):equipment.restore()
 	if is_instance_valid(storage_hide):storage_hide.restore()
+	horror.restore_vent()
 
 func save_game(quiet := false) -> void:
 	if is_instance_valid(capture_director) and capture_director.active:return
@@ -1335,6 +1344,7 @@ func run_qa() -> void:
 	if "--director-qa" in OS.get_cmdline_user_args():path="res://scripts/director_qa.gd"
 	if "--production-views" in OS.get_cmdline_user_args():path="res://scripts/production_views.gd"
 	if "--maintenance-qa" in OS.get_cmdline_user_args():path="res://scripts/maintenance_qa.gd"
+	if "--vent-qa" in OS.get_cmdline_user_args():path="res://scripts/vent_sighting_qa.gd"
 	if "--dead-line-qa" in OS.get_cmdline_user_args():path="res://scripts/dead_line_qa.gd"
 	if "--spare-place-qa" in OS.get_cmdline_user_args():path="res://scripts/spare_place_qa.gd"
 	if "--caption-qa" in OS.get_cmdline_user_args():path="res://scripts/caption_qa.gd"
