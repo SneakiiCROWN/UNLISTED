@@ -6,17 +6,13 @@ Eli Ward takes a night call at 17 Briar Lane, the address on his father Simon's 
 
 **0.10.0 / The Last Call - Windows alpha.** A connected plan investigation, real cellar bay, disconnected monitor experiment and sound-based escape deepen Simon's last investigation. The larger game and 30-60 minute human first-play target remain unfinished.
 
-## Unreleased playability work
+## Unreleased playability candidate
 
-The preserved verified 0.10.1-dev checkpoint adds the B/Start correction, fading torch meter, Hold/Toggle sprint with stamina, clearer office controls and a fitted D-cell reload. These changes are not in the v0.10.0 Windows download. See [the verified recovery record](HUMAN_PLAYABILITY_RECOVERY.md).
+The latest 0.10.1-dev source integrates the B/Start correction, fading battery meter, saved Hold/Toggle stamina, physical D-cell reload, human-language revisions, recorder/microphone, supported working-room details and curated portable props. Radio, UV and plan progress persist when inspections close.
 
-**Newer source is untested development.** At the owner's request, gameplay testing and Windows exports are paused. This pass revises player-facing writing and ending context, gives the hall microphone a physical presence, brings recorder functions into one inspection screen, adjusts a few supported props and preserves more of stamina's saved state. No new build is published. See [changed systems and deferred checks](DEVELOPMENT_PAUSED_TESTS.md).
+Testing has resumed. Focused native Windows fixtures cover controls, partial progress, carrying/weighted mechanisms, real Surveyor encounters, earned-save escape and both endings. Actual room/UI captures were reviewed at 1080p, 1440p and ultrawide. The final private candidate refines the tape recorder's reels and casing. See [exact verification scope and remaining work](PLAYABILITY_CANDIDATE_VERIFICATION.md).
 
-The 24 October source continuation adds a correctly proportioned kitchen sink unit, recorder/reel and shelf supports, cellar/shed finish work, connected roof gutters and two curated carryables. It also addresses inspection navigation, partial plan placement, notification fades and old prop-recovery bounds. These additions have not been imported, run, exported or visually accepted. The new bottle media stays in the complete private project.
-
-The newest source also prepares a separate title-only development arrival study using the parked car, camera fades and original CC0 car audio. It has not been run and does not replace the ordinary opening. New audio stays with the complete private project.
-
-Current untested source additionally preserves changed radio frequency and partial UV scanning on Back/Pause/button exits, adds supported work-surface props and tile/bookend details, and restores the arrival study's rain viewpoint/title audio/focus. These are source changes only; no newer Windows build has been produced.
+A private Windows candidate and complete licensed recovery source are retained locally. **The public playable remains v0.10.0.** This is not a human-approved finished game. The car-arrival study stays isolated and does not replace the working introduction. Raw licensed media and private archives remain excluded from this public repository.
 
 ## Play
 

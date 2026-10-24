@@ -1,3 +1,7 @@
+# Unreleased / 0.10.1-dev private candidate / 24 October 2026
+
+Integrated clearer writing, hall microphone/recorder, supported work-room details, curated carryables, persistent partial radio/UV/plan progress, stamina and battery feedback. Fixed interrupted room finishing and measured plant-pot penetration. Recorder now has physical spoked reels/tape packs and weathered casing. Native fixture results and exact binary scope are in PLAYABILITY_CANDIDATE_VERIFICATION.md. The public Windows download remains v0.10.0; no public release was made. Human story/art/fear/listening approval remains pending.
+
 # UNLISTED 0.10.0 / The Last Call
 
 A sourced plan-overlay puzzle, real cellar inspection bay, captive signal bridge, separate recording remote, disconnected monitor response, dated later evidence and a spatial Surveyor distraction now form a connected investigation. Both porch choices retain their meaning and eligibility. Legacy cases retain their progression. Partial sheet/hardware/search saves and physical escape are covered; controller paper navigation and document button cleanup improve the interface. Surveyor art and the larger complete game remain unfinished. See LAST_CALL_VERIFICATION.md for actual segmented route evidence and preserved native failures.

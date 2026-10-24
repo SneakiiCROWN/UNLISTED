@@ -1,11 +1,12 @@
 {
   "version": "0.10.1-dev",
-  "private_source_commit": "c0414717f1ac9e40730fd88da508f17763d64fc7",
+  "private_source_commit": "62958922ac9ffc160f0dc91afaa390fb98912293",
   "public_playable_release": "0.10.0 The Last Call",
   "complete_source_local_only": true,
   "human_playtested": false,
   "verification": "PLAYABILITY_CANDIDATE_VERIFICATION.md",
-  "last_verified_private_source": "54d022bb5486d26cc6d535b969a89de6ea6865be",
-  "verification_status": "Native candidate acceptance in progress; not a public playable release",
-  "testing_paused_at_user_request": false
+  "last_verified_private_source": "62958922ac9ffc160f0dc91afaa390fb98912293",
+  "verification_status": "Scoped native Windows candidate acceptance passed; no fresh full-route or human approval claim",
+  "testing_paused_at_user_request": false,
+  "private_windows_candidate": true
 }

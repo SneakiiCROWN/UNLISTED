@@ -1,3 +1,5 @@
+> Historical pause log. Testing resumed on 24 October at the owner's request. See PLAYABILITY_CANDIDATE_VERIFICATION.md for subsequent native results and remaining limits.
+
 # Active development / testing paused by owner
 
 Base: complete private 54d022b / public 00132a5, v0.10.1-dev. Recovery tag: recovery/before-language-pass-54d022b. That verified source and its Windows build remain untouched. Published v0.10.0 is unchanged.
@@ -25,7 +27,7 @@ No Godot launch/import, gameplay suite, Windows export, new screenshot capture, 
 The optional inside-car cinematic is deferred; the existing parked car, gate spawn, opening and skip/save path are preserved. New Surveyor art/staging and a broad exterior overhaul are not claimed by this pass. No new Windows package or prerelease is published.
 
 
-## 24 October / full-production continuation — still UNTESTED
+## 24 October / full-production continuation â€” still UNTESTED
 
 Continues private 19dc757 / public b0dec4c. Recovery tag recovery/before-production-overhaul-19dc757. Intermediate source groups: 0e658f1 (room/props), d8fe284 (inspection/feedback), 76ccf3d (rainwater infrastructure). No engine import/launch, export, gameplay test or release publication performed.
 
@@ -41,7 +43,7 @@ Deferred additions to the existing test list: first import the new private bottl
 Only static source/diff/resource-path review was performed. The owner's optional audio replacement directory is an intentional existing dynamic prefix, not a newly missing shipped asset. The car arrival and additional Surveyor/event changes remain deferred rather than replacing working content without runtime review. Next highest-impact work: resumed coordinated verification of this accumulated candidate, then remaining room-specific art and the opt-in car arrival study when appropriate. Testing remains paused until the owner resumes it.
 
 
-## 24 October / resumed after system reset — UNTESTED arrival study
+## 24 October / resumed after system reset â€” UNTESTED arrival study
 
 Recovered clean source 0fdc2df and preserved recovery/before-arrival-study-0fdc2df. Existing ordinary opening, gate spawn, car body, knock sequence and saves are unchanged. Added scenes/arrival_study.tscn and scripts/arrival_study.gd: an 8.4-second AnimationPlayer study framing the parked car, then gate/house, with slow fades and a reduced-motion variant. This is not a driving scene, first-person car interior or approved replacement intro. It uses the existing world and car without moving any body. Two unmodified CC0 GGBotNet car cues from the previously approved pack are kept locally in assets/audio/arrival with hashes/provenance.
 
@@ -52,7 +54,7 @@ Also aligned held-object rotation obstruction checks with the existing swept car
 Deferred: compile/import the scene and two audio clips; inspect both shots at the three target aspect ratios; listen to timing, relative volume and rain; verify reduced-motion cuts and no unmasked transition. Check title-only guard, repeated preview/skip/completion via keyboard/controller, title camera/UI/focus restoration, audio cleanup and exact before/after case/save/settings state. Exercise held-object rotation beside the live Surveyor without clipping or unfair capture. No Windows export, gameplay test, screenshot capture, release or artistic acceptance. Final source/commit receipt: Checkpoints/20261024_arrival_study_01/RECOVERY.json.
 
 
-## 24 October / radio persistence and working-room continuation — UNTESTED
+## 24 October / radio persistence and working-room continuation â€” UNTESTED
 
 Continues private 7f00be7 / public 8e0f360; recovery/before-widget-continuation-7f00be7 preserves that source. Source groups d0eb605 (inspection exits), 986653c (room/portable objects), 57b93ba (isolated study), 0556bbb (front-window clearance). No game/engine import or launch, Windows export, capture, automated gameplay or release publication.
 

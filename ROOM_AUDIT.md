@@ -34,6 +34,11 @@ Porch/gate: new-case arrival outside existing saved gate. One knock/ajar/open se
 Source groups 0e658f1 / d8fe284 / 76ccf3d continue 19dc757. Kitchen sink source was a complete cabinet/tap compressed to 14 cm: full proportions restored while the prior base collision is retained. Recorder/reel/radio supports, lounge shelf packers, utility hooks, cellar housings/header/flanges and shed service wiring are implemented. Added two curated carryables on existing supports. Exterior downpipes now connect to roof gutters and outlets. No new route blockers, terrain changes or light-energy retuning. Review all of these in-engine when testing resumes; source coordinates are not player-eye visual evidence. See DEVELOPMENT_PAUSED_TESTS.md for the accumulated checks.
 
 
-## 24 October / counter and work-surface continuation — UNTESTED
+## 24 October / counter and work-surface continuation â€” UNTESTED
 
 Counter backsplash uses the existing Dusk cracked tiles around, not across, the real front window (opening x=-5.59..-4.01, y=1..2.4). Office bookends rest on existing .675/1.225 m boards. Counter vase converted to a shared carryable; work mug and small parts tin added to clear portions of existing utility/shed benches. No new floor obstacles or route collision. Coordinates/materials reviewed in source, not player-eye acceptance. See the newest DEVELOPMENT_PAUSED_TESTS.md section for required visual/physics checks.
+
+
+## 24 October / accumulated working-room verification
+
+Native Integration_04/05 reviewed the accumulated room pass. Repaired the reparented lounge-shelf reference (which interrupted later finish functions) and measured/fixed 11 mm plant-pot penetration into the kitchen worktop. The stable proxy now rests within 0.6 mm. Complete sink, tile/window junctions, worktop props, hall microphone/cable, cot/frame, cellar practical housings/common header, shed conduit/service box and downpipe/rain were inspected at player height. Kitchen/recorder received three-resolution captures. No global controller, enemy navigation, gate, room layout or story gate was changed. Recorder presentation now reuses the physical historical-reel design; controls/audio remain intact. Alpha art and broader furnishing remain unfinished; screenshots are evidence, not owner approval. See PLAYABILITY_CANDIDATE_VERIFICATION.md.
