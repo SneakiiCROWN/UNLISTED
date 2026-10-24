@@ -141,7 +141,9 @@ func rotate_held(relative: Vector2) -> void:
 		var query := PhysicsShapeQueryParameters3D.new()
 		query.shape = held.get_node("PropShape").shape
 		query.transform = held.global_transform
-		query.collision_mask = 1|32
+		# Rotation must respect the Surveyor's body as well as walls/other props,
+		# just like the existing swept carry movement does.
+		query.collision_mask = 1|16|32
 		query.exclude = [held.get_rid(),game.player.get_rid()]
 		if not game.get_world_3d().direct_space_state.intersect_shape(query).is_empty():held.transform = before
 

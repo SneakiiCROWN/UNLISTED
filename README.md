@@ -14,6 +14,8 @@ The preserved verified 0.10.1-dev checkpoint adds the B/Start correction, fading
 
 The 24 October source continuation adds a correctly proportioned kitchen sink unit, recorder/reel and shelf supports, cellar/shed finish work, connected roof gutters and two curated carryables. It also addresses inspection navigation, partial plan placement, notification fades and old prop-recovery bounds. These additions have not been imported, run, exported or visually accepted. The new bottle media stays in the complete private project.
 
+The newest source also prepares a separate title-only development arrival study using the parked car, camera fades and original CC0 car audio. It has not been run and does not replace the ordinary opening. New audio stays with the complete private project.
+
 ## Play
 
 [Download the Windows ZIP](https://github.com/SneakiiCROWN/UNLISTED/releases/download/unlisted-v0.10.0-last-call-public-test-20261023/UNLISTED-Windows-The-Last-Call-v0.10.0.zip) / [prerelease and visual evidence](https://github.com/SneakiiCROWN/UNLISTED/releases/tag/unlisted-v0.10.0-last-call-public-test-20261023). Extract into a NEW folder and run **UNLISTED.exe**. Preserve previous builds and `%APPDATA%/UNLISTED`. Older saves retain their earned progression; new cases investigate the bay before the original porch recount.

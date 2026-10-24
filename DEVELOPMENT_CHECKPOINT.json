@@ -1,11 +1,11 @@
 {
   "version": "0.10.1-dev",
-  "private_source_commit": "0fdc2df56d36d4ee49b3141d63c875cd3bd9eb58",
+  "private_source_commit": "7f00be7be597cd2b9d587fc56d88bf62a09847af",
   "public_playable_release": "0.10.0 The Last Call",
   "complete_source_local_only": true,
   "human_playtested": false,
   "verification": "DEVELOPMENT_PAUSED_TESTS.md",
   "last_verified_private_source": "54d022bb5486d26cc6d535b969a89de6ea6865be",
-  "verification_status": "UNTESTED full-production continuation - source/static review only",
+  "verification_status": "UNTESTED arrival study / held-prop separation; testing remains paused",
   "testing_paused_at_user_request": true
 }

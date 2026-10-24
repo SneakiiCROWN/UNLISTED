@@ -84,3 +84,6 @@ GGBotNet, PSX Style Cars, Car 01 / grey texture, CC0 as posted by the author at 
 
 
 24 October development (untested): psx_prop_single_bottle.glb selects Bottle_0 under the unchanged parent of the existing approved Dusk psx_prop_bottles_01.glb. Original geometry/materials/embedded image retained. Local source/output hashes and selection provenance are in assets/dusk/psx_prop_single_bottle.provenance.json; tools/select_scene_component.py records the non-destructive scene selection. Derivative raw media remains private under the original asset licence. No new third-party download. The full existing Dusk sink unit is now used at its proper counter proportions; no new sink artwork.
+
+
+24 October isolated arrival study (untested): Car_Engine_Turning_Off.ogg and Car_Door_Close.ogg are unmodified selections from the same already-approved GGBotNet PSX Style Cars CC0 source pack used for Eli's parked car. Local output filenames and exact original hashes are recorded in assets/audio/arrival/provenance.json; the original intake archive is preserved. No new download, generated voice or final mixing approval. Audio media stays private with the complete source.

@@ -26,6 +26,7 @@ var last_target := ""
 var refresh := 0.0
 var output := "user://development/evidence"
 var navigation_overlay: MeshInstance3D
+var arrival_preview: Node3D
 
 func _ready() -> void:
 	if not game.dev_mode:queue_free();return
@@ -139,6 +140,7 @@ func build_ui() -> void:
 		if not options.is_empty() and game.ambient_director.request(options[0]):close_panel()
 		else:status.text="No quiet, safe event is eligible here.")
 	var previews:=row(body)
+	button(previews,"Arrival study (title only)",preview_arrival)
 	button(previews,"Preview room memory",func():
 		if not allow_action():return
 		if game.impossible_room.begin():log_event("impossible_room");close_panel()
@@ -162,6 +164,16 @@ func build_ui() -> void:
 	label(body,"Not yet implemented: inverted-room controls. Engine collision overlay needs a debug export template.",16)
 	panel.visible=false
 
+func preview_arrival() -> void:
+	if not armed.button_pressed or game.started or game.presentation.section!="title" or flying:
+		status.text="Return to the title and enable test actions to preview this isolated, untested arrival study."
+		return
+	if is_instance_valid(arrival_preview):return
+	close_panel()
+	arrival_preview=load("res://scenes/arrival_study.tscn").instantiate()
+	arrival_preview.game=game;game.add_child(arrival_preview)
+	log_event("arrival_study",{"status":"UNTESTED preview; ordinary opening unchanged"})
+
 func allow_action() -> bool:
 	if not armed.button_pressed or not game.started or game.ended or game.presentation.section!="game" or game.physical.held:
 		status.text="Start or resume gameplay, enable test actions, and release any carried prop first."
@@ -169,7 +181,7 @@ func allow_action() -> bool:
 	return true
 
 func open_panel() -> void:
-	if opened:return
+	if opened or is_instance_valid(arrival_preview):return
 	paused_before = get_tree().paused
 	active_before = game.player.active
 	mouse_before = Input.mouse_mode
@@ -191,6 +203,7 @@ func close_panel() -> void:
 		Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if game.automated_qa else mouse_before
 
 func _input(event: InputEvent) -> void:
+	if is_instance_valid(arrival_preview):return # The isolated study owns its skip input.
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.physical_keycode==KEY_F1:
 			if opened:close_panel()
