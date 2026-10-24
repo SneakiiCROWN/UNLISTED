@@ -6,6 +6,12 @@ Eli Ward takes a night call at 17 Briar Lane, the address on his father Simon's 
 
 **0.10.0 / The Last Call - Windows alpha.** A connected plan investigation, real cellar bay, disconnected monitor experiment and sound-based escape deepen Simon's last investigation. The larger game and 30-60 minute human first-play target remain unfinished.
 
+## Latest development / isolated Surveyor study - NOT APPROVED
+
+An asset-first MakeHuman/Quaternius character construction study and candidate-only animation/gaze work are preserved. Native Windows review found unresolved coat binding and a weak silhouette; **the replacement failed visual acceptance and is not active in ordinary gameplay**. Existing Surveyor AI, the verified private house candidate and public v0.10.0 remain preserved. No new public Windows release.
+
+[Actual work, native evidence scope and unresolved defects](SURVEYOR_REBORN_PROGRESS.md). Raw character media/editable sources and captures remain private. Mechanical checks do not approve character art or establish human fear.
+
 ## Latest source / private house integration
 
 The accumulated property and interior passes now have native Windows verification and reviewed 1080p, 1440p and ultrawide captures. Input isolation and evidence visibility were repaired. Targeted tests and an earned-save continuation cover the investigation, hiding, battery replacement, save/retry and both departures. Experimental scenes remain development-only.

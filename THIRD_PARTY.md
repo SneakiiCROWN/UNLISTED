@@ -97,3 +97,7 @@ No new asset intake, downloads or purchases. Reuses the already integrated Quate
 ### House interior pass / UNTESTED source, 24 October
 
 No new raw asset intake. Reuses the existing approved Daniel Jurys CC0 couch, Kenney/home book and mirror assets, licensed Dusk materials, ambientCG Concrete019, and original canvas/paper/latch. Original code supplies static hardware, fitted throw, concrete/glass shaders and an inactive recorder-memory study. Existing licences/provenance apply. No new dialogue, creature recording or external character artwork.
+
+### Isolated Surveyor Reborn construction study / 24 October
+
+Development-only, not a replacement approved for ordinary gameplay. Uses the preserved MakeHuman CC0 system male_generic proxy, low-poly eyes/brown eye texture, male_worksuit01 and onlytheghosts old Eurasian male skin from the existing CC0 intake. The supplied system mhclo/proxy headers identify the CC0 dedication and Data Collection AB / Joel Palmius / Jonas Hauquier; complete intake licences remain in Assets/Intake_20261021_MakeHuman. Existing Quaternius CC0 65-bone rig, seven UAL retargets and native finger/foot topology are retained. Original inspection-coat/cap construction and rest-pose fitting are in tools/build_surveyor_reborn.py and the private packed tools/Surveyor_Reborn.blend. Exact source hashes and construction limits are in assets/original/surveyor_reborn_provenance.json. Raw media, editable licensed source and failure captures remain private. No new downloads, purchases, character voice or public playable release.

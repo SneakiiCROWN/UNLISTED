@@ -125,7 +125,7 @@ func _ready() -> void:
 	# normal case. A harness typo must never fall through to desktop gameplay.
 	var automation_requested:=false
 	for arg in OS.get_cmdline_user_args():
-		if arg.ends_with("-qa") or arg.begins_with("--evidence="):automation_requested=true
+		if arg.ends_with("-qa") or arg.begins_with("--evidence=") or arg in ["--surveyor-reborn","--surveyor-study","--reborn-views","--reborn-components"]:automation_requested=true
 	if automation_requested and not qa_mode and not "--dev-tools-qa" in OS.get_cmdline_user_args():
 		push_error("UNKNOWN_QA_MODE: refusing normal startup for unrecognised automation")
 		get_tree().quit(93);return
@@ -698,6 +698,8 @@ func build_basement() -> void:
 func surveyor_model_path() -> String:
 	# An art study must pass visual review before becoming the ordinary actor.
 	# This switch is available only inside the isolated automated QA environment.
+	if qa_mode and "--surveyor-reborn" in OS.get_cmdline_user_args():
+		return "res://assets/original/surveyor_reborn_study.glb"
 	if qa_mode and "--surveyor-study" in OS.get_cmdline_user_args():
 		return "res://assets/original/surveyor_erasure_study.glb"
 	return "res://assets/original/surveyor_presence.glb"

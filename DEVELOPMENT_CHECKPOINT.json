@@ -1,15 +1,15 @@
 {
   "version": "0.10.1-dev",
-  "private_source_commit": "11a0e5ae4739246f261bd4cb3e0d9f3d1b289e5c",
+  "private_source_commit": "1d1bb625ec454f0bd90e15391a4783f6f78cbd37",
   "public_playable_release": "0.10.0 The Last Call",
   "complete_source_local_only": true,
   "human_playtested": false,
-  "verification": "HOUSE_INTEGRATION_STATUS.md",
+  "verification": "SURVEYOR_REBORN_PROGRESS.md",
   "last_verified_private_source": "11a0e5ae4739246f261bd4cb3e0d9f3d1b289e5c",
-  "verification_status": "Scoped native Windows checks, multiresolution visual review and earned-save chapter/both endings passed; retained fresh-route fixture failures documented",
+  "verification_status": "Isolated working character study; visual acceptance FAILED, not promoted. Native original-AI and study contact checks passed with documented revision scope.",
   "testing_paused_at_user_request": false,
   "private_windows_candidate": true,
-  "latest_source_is_verified": true,
+  "latest_source_is_verified": false,
   "private_windows_candidate_source": "11a0e5ae4739246f261bd4cb3e0d9f3d1b289e5c",
   "private_package_extracted_native_checks": {
     "passed": 23,
@@ -19,5 +19,6 @@
     "passed": 15,
     "failed": 0
   },
-  "public_release_unchanged": true
+  "public_release_unchanged": true,
+  "character_art_approved": false
 }

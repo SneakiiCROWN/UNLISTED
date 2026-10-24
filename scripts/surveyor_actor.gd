@@ -12,9 +12,13 @@ var capture_amount:=0.0
 var capture_phase:=0.0
 var capture_diagnostics: Dictionary={}
 var tailored_presence:=false
+var reborn_presence:=false
+var motion_rate:=1.0
+var motion_target:=1.0
 
 func _ready() -> void:
 	for mesh in figure.find_children("*","MeshInstance3D",true,false):
+		if mesh.name.begins_with("Reborn"):reborn_presence=true
 		if mesh.name.begins_with("Continuous tailored"):tailored_presence=true
 		for i in mesh.mesh.get_surface_count():
 			var material: Material=mesh.get_active_material(i)
@@ -54,7 +58,13 @@ func locomotion(distance_per_second: float, running := false) -> void:
 	# capsule must not keep playing a jogging clip while barely moving.
 	var jog: bool=running and speed>(1.65 if mode=="run" else 1.9)
 	set_mode("run" if jog else "walk")
-	animator.speed_scale = clampf(speed/(2.581*1.05 if jog else 1.018*1.05),0.18,2.3)
+	motion_target=clampf(speed/(2.581*1.05 if jog else 1.018*1.05),0.18,2.3)
+	if not reborn_presence:animator.speed_scale=motion_target
 
-func _process(_delta: float) -> void:
-	if mode in ["listen","watch"]:animator.speed_scale = 0.72
+func _process(delta: float) -> void:
+	if mode in ["listen","watch"]:animator.speed_scale = .62 if reborn_presence else .72
+	elif reborn_presence and mode in ["walk","run"]:
+		# Visual rate follows measured body travel, easing between rates without
+		# changing AI acceleration, pursuit speed or attack timing.
+		motion_rate=lerpf(motion_rate,motion_target,1-exp(-delta*10))
+		animator.speed_scale=motion_rate
