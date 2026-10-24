@@ -12,7 +12,10 @@
   "latest_source_is_verified": true,
   "private_windows_candidate_source": "87f1c4e5af11cd7f333fb866da6fbe94e3505dd1",
   "private_package_extracted_native_checks": {
-    "status": "pending package verification"
+    "passed": 26,
+    "failed": 0,
+    "duration_seconds": 20.079098,
+    "owner_data_unchanged": true
   },
   "settled_ending_and_radio_checks": {
     "passed": 15,
@@ -24,5 +27,7 @@
   "private_complete_source_checkpoint": "87f1c4e5af11cd7f333fb866da6fbe94e3505dd1",
   "human_approval": "pending",
   "new_character_art": "not promoted; original working Surveyor retained",
-  "new_asset_batch": "Private licensed runtime media preserved locally; public code snapshot only"
+  "new_asset_batch": "Private licensed runtime media preserved locally; public code snapshot only",
+  "private_package_sha256": "fd739162da422b2a55bd8f5eac58ddb3cafbce544ebaac08286aa6f588e82a0b",
+  "complete_private_source_sha256": "34e8d82c392cb1f30b5c799256dc703da21179d637b00c7be2b94c837fa56809"
 }
