@@ -11,3 +11,5 @@ The fresh input route retained 378 passed and 26 failed checks: an obsolete radi
 Private source, native screenshots, logs, audio and separate recordings remain local. Raw licensed media and owner data are excluded from public Git history. Previous candidates and releases are retained.
 
 Human story comprehension, fear, subjective listening, final character art and artistic approval remain pending. No 30-60 minute duration or performance claim. Historical forced/ordinary shutdown warnings and driver faults are not proven resolved by clean isolated QA exits.
+
+Final private package: CRC/hash checked; independently extracted executable passed 23 native controls/menu/crouch checks. Radio prerequisite edges and settled endings passed 15 checks across 1080p, 1440p and ultrawide. Captured audio is non-silent with no clipped samples; subjective listening remains pending. Complete private source and separate failed/continuation recordings are archived locally. No new public download.
