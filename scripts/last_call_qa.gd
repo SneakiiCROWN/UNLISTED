@@ -11,6 +11,27 @@ func wait_for(flag: String,limit: float) -> bool:
 	var end: float=seconds()+limit
 	while not g.events.get(flag,false) and seconds()<end:await wait(.05)
 	return g.events.get(flag,false)
+func manual_plan_input(widget: Control) -> void:
+	# Let the card container finish arranging the physical sheet, then convert
+	# its local paper coordinates through its complete Control transform.
+	await wait(.25)
+	var from: Vector2=widget.get_global_transform()*(widget.CENTRE+widget.offset)
+	var to: Vector2=widget.get_global_transform()*(widget.CENTRE+Vector2(15,8))
+	await pointer(from,true);await pointer(to,true,true);await pointer(to,false)
+	for i in 3:await wheel(to)
+	# Ordinary keyboard nudges are legitimate manual controls too. Do not write
+	# a pose/solved flag when a layout movement leaves the first drag imperfect.
+	widget.grab_focus()
+	for i in 16:
+		if g.events.get("call_plan_aligned",false):break
+		var keys: Array[String]=[]
+		if absf(widget.offset.x)>3:keys.append("ui_left" if widget.offset.x>0 else "ui_right")
+		if absf(widget.offset.y)>3:keys.append("ui_up" if widget.offset.y>0 else "ui_down")
+		for key in keys:Input.action_press(key)
+		await wait(.06)
+		for key in keys:Input.action_release(key)
+		await wait(.02)
+	print("PLAN_UI_INPUT final_offset=",widget.offset," angle=",widget.angle," aligned=",g.events.get("call_plan_aligned",false))
 func finish() -> void:
 	recording=false
 	if recorder:
@@ -83,6 +104,16 @@ func run(current: Node) -> void:
 		if arg.begins_with("--evidence="):output=arg.trim_prefix("--evidence=")
 	DirAccess.make_dir_recursive_absolute(output);g.checkpoint_path=output.path_join("checkpoint.json");await exact_resolution()
 	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--last-call-plan-source="):
+			start_recording();g.new_game();g.apply_save(JSON.parse_string(FileAccess.get_file_as_string(arg.trim_prefix("--last-call-plan-source="))));await wait(.4)
+			check("focused UI fixture retains genuinely earned plan sources",g.last_call.plans_available() and g.events.get("test_reel_heard",false))
+			# Explicit inspection-only fixture; no traversal or ending claim.
+			g.last_call.open_plans();await wait(.2)
+			var paper:=plan_widget();check("earned partial plan opens",paper!=null)
+			if paper:
+				await shot("P01_earned_partial_UI_fixture");await manual_plan_input(paper)
+				check("manual input aligns actual sheet without pose injection",g.events.get("call_plan_aligned",false) and paper.offset.is_zero_approx());await shot("P02_manual_alignment")
+			await finish_run(false);return
 		if arg.begins_with("--last-call-landing="):
 			start_recording();g.new_game();g.apply_save(JSON.parse_string(FileAccess.get_file_as_string(arg.trim_prefix("--last-call-landing="))));await wait(.4)
 			check("landing continuation uses fully earned original investigation",g.events.get("bedroom_left",false) and g.events.get("memory_confirmed",false) and g.events.get("test_reel_loaded",false) and g.events.get("call_plan_aligned",false) and not g.events.get("call_disconnected",false))
@@ -210,11 +241,9 @@ func play_continuous() -> void:
 	await use("call_lightbox",false)
 	var widget:=plan_widget();check("earned reel supplies actual cellar tracing",widget!=null and g.last_call.plans_available())
 	if widget==null or not g.last_call.plans_available():return
-	var from: Vector2=widget.global_position+widget.CENTRE+widget.offset
-	var to: Vector2=widget.global_position+widget.CENTRE+Vector2(15,8)
-	await pointer(from,true);await pointer(to,true,true);await pointer(to,false)
-	for i in 3:await wheel(to)
+	await manual_plan_input(widget)
 	check("earned manual plan comparison identifies missing doorway",g.events.get("call_plan_aligned",false))
+	if not g.events.get("call_plan_aligned",false):return
 	await shot("L02_registered_missing_door");g.presentation.buttons["Put down"].pressed.emit();await wait(.2)
 	await travel(Vector2(3.3,-7),"lightbox investigation leaves office")
 	if not g.doors.office.opened:await use("office")
