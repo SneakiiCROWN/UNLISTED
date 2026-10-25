@@ -53,6 +53,14 @@ void fragment(){
 	float shed_edge=min(abs(p.x+20.18),min(abs(p.y+17.16),abs(p.y+10.84)));
 	float shed_band=(1.0-smoothstep(.06,.37,shed_edge+(fine-.5)*.12))*step(-20.7,p.x)*step(p.x,-13.5)*step(-17.55,p.y)*step(p.y,-10.5);
 	base*=1.0-max(house_band,shed_band)*.13;
+	// Damp organic material gathers beside actual fence toes and foundations.
+	// Its broken edge follows the soil, not a second flat decal/terrain plate.
+	float garden_toe=(1.0-smoothstep(.06,.48,abs(abs(p.x)-10.08)+(fine-.5)*.18))*step(5.7,p.y)*step(p.y,16.3);
+	float yard_toe=(1.0-smoothstep(.06,.43,abs(p.y+15.51)+(fine-.5)*.17))*step(-12.25,p.x)*step(p.x,-3.0);
+	float sheltered=max(max(house_band,shed_band),max(garden_toe,yard_toe));
+	float organic=sheltered*smoothstep(.25,.72,fine)*.48;
+	vec3 litter=texture(soil_color,p/1.1+vec2(.7,1.9)).rgb*vec3(.40,.37,.29);
+	base=mix(base,litter,organic);
 	ALBEDO=base;
 	NORMAL_MAP=mix(texture(soil_normal,p/2.8).rgb,texture(concrete_normal,p/2.1).rgb,pad);
 	float puddle=smoothstep(0.68,0.87,noise2(p*0.32+vec2(17.0,9.0)));
@@ -61,4 +69,13 @@ void fragment(){
 	NORMAL_MAP_DEPTH=mix(0.24,0.10,max(puddle,traffic*.55));
 	float rough=mix(texture(soil_roughness,p/2.8).r,texture(concrete_roughness,p/2.1).r,pad);
 	ROUGHNESS=mix(clamp(0.56+rough*0.22,0.62,0.82),0.43,puddle);SPECULAR=0.25;
+	// Brief rain rings affect only shallow wet patches, without bright particles
+	// or displaced collision. Each cell has its own phase; no travelling wave.
+	vec2 cell=floor(p*2.2);
+	float age=fract(TIME*.82+hash(cell+vec2(13.0,2.0)));
+	vec2 centre=vec2(hash(cell),hash(cell+7.0))*.6+.2;
+	vec2 offset=fract(p*2.2)-centre;
+	float radius=length(offset);
+	float ring=exp(-pow((radius-age*.42)*35.0,2.0))*sin(radius*70.0-age*20.0)*(1.0-age)*puddle;
+	NORMAL_MAP.xy+=normalize(offset+vec2(.001))*ring*.035;
 }

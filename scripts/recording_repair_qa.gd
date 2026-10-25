@@ -14,6 +14,8 @@ var capturing := false
 var recorder: AudioEffectRecord
 var started_unix_seconds := 0.0
 var exact_target: SubViewport
+var capture_manifest: FileAccess
+var capture_interval: float=1.0/6.0 if "--route-light-capture" in OS.get_cmdline_user_args() else 1.0/30.0
 func exact_resolution() -> void:
 	# The shared guard owns input delivery; resizing must not add a second bridge.
 	g.prepare_automated_qa()
@@ -36,7 +38,7 @@ func wait(s: float) -> void:await get_tree().create_timer(s,true).timeout
 func _process(delta: float) -> void:
 	if not recording:return
 	capture_clock += delta
-	if capture_clock>=1.0/30.0 and not capturing:
+	if capture_clock>=capture_interval and not capturing:
 		capture_clock = 0;capture_frame()
 func _physics_process(_delta: float) -> void:
 	if not recording:return
@@ -47,6 +49,11 @@ func capture_frame() -> void:
 	var filename := "%05d.jpg"%frames.size()
 	g.get_viewport().get_texture().get_image().save_jpg(output.path_join(filename),0.85)
 	frames.append({"file":filename,"seconds":seconds(),"phase":phase})
+	# Keep timing evidence even if Windows or the tool session interrupts a run.
+	if capture_manifest==null:capture_manifest=FileAccess.open(output.path_join("frames_live.jsonl"),FileAccess.WRITE)
+	if capture_manifest:
+		capture_manifest.store_line(JSON.stringify(frames.back()))
+		if frames.size()%30==0:capture_manifest.flush()
 	capturing = false
 func shot(id: String) -> void:
 	await RenderingServer.frame_post_draw
@@ -197,11 +204,14 @@ func run(game: Node) -> void:
 	await travel(Vector2(0,-8.4),"stair door approach");await use("basement")
 	await travel(Vector2(0,-18),"physical basement descent")
 	if "--underfloor-route" in OS.get_cmdline_user_args():
-		var store_path:="res://scripts/service_exit_route_qa.gd" if "--exit-route" in OS.get_cmdline_user_args() else ("res://scripts/witness_carbon_qa.gd" if "--witness-route" in OS.get_cmdline_user_args() else "res://scripts/maintenance_qa.gd")
+		# Current investigations later escape through this grille. Earn its latch
+		# and contact investigation now, rather than assuming an open exit fixture.
+		var full_exit: bool="--exit-route" in OS.get_cmdline_user_args() or g.events.get("case_v4",false)
+		var store_path:="res://scripts/service_exit_route_qa.gd" if full_exit else ("res://scripts/witness_carbon_qa.gd" if "--witness-route" in OS.get_cmdline_user_args() else "res://scripts/maintenance_qa.gd")
 		var store_test=load(store_path).new();add_child(store_test)
 		store_test.g=g;store_test.output=output;store_test.started_at=started_at;store_test.exact_target=exact_target
 		await store_test.play_store();checks.append_array(store_test.checks);store_test.queue_free()
-		if "--exit-route" in OS.get_cmdline_user_args():
+		if full_exit:
 			for item in checks:
 				if not item.passed:await finish_run(false);return
 	if "--dead-line-route" in OS.get_cmdline_user_args():
@@ -419,7 +429,9 @@ func finish_departure() -> void:
 func physical_final_exit() -> void:
 	if is_instance_valid(g.final_account) and g.final_account.pending():
 		await travel(Vector2(-5.5,19.4),"return to actual driver door")
-		await use("account_car",false);await wait(1.7)
+		await use("account_car",false)
+		var deadline: float=seconds()+4.0
+		while not g.ended and seconds()<deadline:await wait(.05)
 	else:
 		g.player.rotation.y=PI;g.player.camera.rotation=Vector3.ZERO;Input.action_press("forward")
 		var until:=seconds()+5

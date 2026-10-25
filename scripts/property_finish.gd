@@ -81,7 +81,7 @@ func finish() -> void:
 
 func build(outdoor: Node3D) -> void:
 	prepare(outdoor,"PropertyFinish")
-	arrival();house();woodland();shed();yard()
+	arrival();house();woodland();shed();yard();sheltered_verges()
 	finish()
 
 func arrival() -> void:
@@ -223,3 +223,19 @@ func finish_service_exit(game: Node3D,exit: Node3D) -> void:
 	for x in [11.58,12.06]:
 		for z in [-9.20,-7.50]:piece("Landing frame anchor",Vector3(x,y-.003,z),Vector3(.025,.006,.025),"rust")
 	finish()
+
+func sheltered_verges() -> void:
+	# Authored sheltered growth, rather than scatter across the player's routes.
+	# The service-pad fence ends at z=-15.4: leave its real drain and access gaps
+	# clear. Roots sit in the existing soil, never on the concrete or door sill.
+	section="ShelteredVerges"
+	for spec in [[-11.8,-15.62,.20,1.1],[-10.9,-15.64,.26,2.2],[-9.7,-15.66,.18,.8],[-8.8,-15.63,.22,2.9],[-7.5,-15.66,.23,.2],[-6.3,-15.62,.17,1.9],[-4.0,-15.65,.22,.9],[-2.78,-14.7,.21,1.4],[-2.77,-12.0,.19,.4],[-14.5,-10.69,.15,2.8],[-18.7,-10.68,.18,1.7],[-19.6,-17.33,.19,2.1],[-17.7,-17.35,.22,1.2],[-15.0,-17.36,.18,.7]]:
+		nature("Grass_Short",Vector2(spec[0],spec[1]),spec[2],spec[3],.018)
+	for side in [-1,1]:
+		for i in 7:
+			var z: float=6.4+i*1.42
+			var x: float=side*(10.18+sin(i*2.7)*.10)
+			nature("Grass_Short" if i%3!=1 else "Plant_1",Vector2(x,z),.16+.035*(i%3),i*1.73,.02)
+	# Uneven bush/grass silhouettes behind the fence, not a new hedge wall.
+	for spec in [["Bush_1",-10.9,10.8,.37,1.3],["Bush_2",10.9,7.4,.38,2.6],["Plant_1",11.0,15.3,.26,.7],["Plant_1",-19.2,-17.52,.24,2.4],["Plant_1",-8.0,-15.7,.22,1.3]]:
+		nature(spec[0],Vector2(spec[1],spec[2]),spec[3],spec[4])

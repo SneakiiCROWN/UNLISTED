@@ -14,7 +14,13 @@ func run(current: Node) -> void:
 		viewport=game.get_viewport() as SubViewport
 	else:
 		viewport=SubViewport.new();root.add_child(viewport);game.reparent(viewport)
-	viewport.size=Vector2i(1920,1080)
+	var capture_size:=Vector2i(1920,1080)
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--capture-size="):
+			var dimensions:=arg.trim_prefix("--capture-size=").split("x")
+			capture_size=Vector2i(int(dimensions[0]),int(dimensions[1]))
+	assert(capture_size.x>=1280 and capture_size.x<=3840 and capture_size.y>=720 and capture_size.y<=2160)
+	viewport.size=capture_size
 	viewport.size_2d_override=Vector2i(1280,720);viewport.size_2d_override_stretch=true
 	viewport.audio_listener_enable_3d=true;viewport.render_target_update_mode=SubViewport.UPDATE_ALWAYS
 	game.checkpoint_path=output.path_join("fixture_checkpoint.json")
@@ -53,12 +59,12 @@ func run(current: Node) -> void:
 		game.presentation.clear_transients();game.subtitle.text="";game.presentation.hud.visible=false
 		await RenderingServer.frame_post_draw
 		var rendered:=viewport.get_texture().get_image()
-		assert(rendered.get_size()==Vector2i(1920,1080))
+		assert(rendered.get_size()==capture_size)
 		var saved:=rendered.save_png(output.path_join(spec[0]+".png"))
-		if saved!=OK or rendered.get_size()!=Vector2i(1920,1080):
+		if saved!=OK or rendered.get_size()!=capture_size:
 			push_error("Exterior image capture failed: "+str(spec[0])+" error="+str(saved))
 			await game.qa_exit(1);return
-		manifest.append({"view":spec[0],"player":str(spec[1]),"look_at":str(spec[2]),"resolution":"1920x1080","fixture":"Explicit player-height visual placement; not traversal proof"})
+		manifest.append({"view":spec[0],"player":str(spec[1]),"look_at":str(spec[2]),"resolution":str(capture_size),"fixture":"Explicit player-height visual placement; not traversal proof"})
 	if "--sky-diagnostic" in OS.get_cmdline_user_args():
 		for node in game.find_children("*","GeometryInstance3D",true,false):node.visible=false
 		game.presentation.film.visible=false

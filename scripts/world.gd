@@ -327,8 +327,14 @@ func wall(pos: Vector3, width: float, angle := 0.0, height := 2.8) -> void:
 		# Exterior concrete keeps its outside face; quiet paper lines the occupied interior.
 		if pos.y > -1 and (absf(pos.x)>7.4 or is_equal_approx(pos.z,4.0) or is_equal_approx(pos.z,-10.0)):
 			var inward := Vector3(-signf(pos.x),0,0) if absf(pos.x)>7.4 else Vector3(0,0,-signf(pos.z))
+			# The shed is a separate building centred at (-17,-14). House-relative
+			# signs put its east/north/south interior lining on the OUTSIDE face.
+			var shed_wall: bool=pos.x>=-20.1 and pos.x<=-13.9 and pos.z>=-17.1 and pos.z<=-10.9
+			if shed_wall:
+				inward=Vector3(-signf(pos.x+17),0,0) if is_equal_approx(pos.x,-20.0) or is_equal_approx(pos.x,-14.0) else Vector3(0,0,-signf(pos.z+14))
 			var center_ := pos+tangent*(-width/2+offset+w/2)
 			var lining := box(self,center_+inward*0.099+Vector3(0,height/2,0),Vector3(w,height,0.008),cream)
+			if shed_wall:lining.set_meta("shed_interior_lining",true)
 			lining.rotation.y = angle
 			lining.material_override = texture_mat("res://assets/original/aged_paper.png",Color(0.79,0.83,0.76))
 			var skirting := box(self,center_+inward*0.116+Vector3(0,0.10,0),Vector3(w,0.18,0.025),Color(0.17,0.18,0.15))

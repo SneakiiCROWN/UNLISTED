@@ -104,12 +104,15 @@ func build_terrain() -> void:
 	var pad: MeshInstance3D=game.get_node("ServiceHardstanding")
 	pad.material_override=ground_material(true)
 
+func timber(tint: Color) -> ShaderMaterial:
+	var material:=ShaderMaterial.new();material.shader=load("res://shaders/damp_timber.gdshader")
+	material.set_shader_parameter("boards",load(ROOT+"WoodSiding006_1K-JPG_Color.jpg"))
+	material.set_shader_parameter("boards_normal",load(ROOT+"WoodSiding006_1K-JPG_NormalGL.jpg"))
+	material.set_shader_parameter("tint",tint)
+	return material
+
 func cladding() -> void:
-	var boards: StandardMaterial3D=game.texture_mat(ROOT+"WoodSiding006_1K-JPG_Color.jpg",Color(0.54,0.59,0.57))
-	boards.texture_filter=BaseMaterial3D.TEXTURE_FILTER_NEAREST_WITH_MIPMAPS
-	boards.uv1_scale=Vector3.ONE*0.55;boards.roughness=0.94
-	boards.normal_enabled=true;boards.normal_texture=load(ROOT+"WoodSiding006_1K-JPG_NormalGL.jpg");boards.normal_scale=0.25
-	boards.roughness_texture=load(ROOT+"WoodSiding006_1K-JPG_Roughness.jpg")
+	var boards: ShaderMaterial=timber(Color(.54,.59,.57))
 	for child in game.get_children():
 		if child.get_meta("exterior_wall",false):
 			for mesh in game.all_meshes(child):mesh.material_override=boards
@@ -301,7 +304,7 @@ func grounded_model_collision(id: String,xf: Transform3D) -> void:
 
 func approach_fence(a: Vector2,b: Vector2) -> void:
 	var count:=ceili(a.distance_to(b)/1.8)
-	var wood: Material=game.texture_mat(ROOT+"WoodSiding006_1K-JPG_Color.jpg",Color("55544a"))
+	var wood: Material=timber(Color("55544a"))
 	for i in range(count+1):
 		var p:=a.lerp(b,float(i)/count);var h:=ground_height(p.x,p.y)
 		var post: MeshInstance3D=game.box(self,Vector3(p.x,h+0.63,p.y),Vector3(0.11,1.38,0.11),Color.WHITE,true)
@@ -325,7 +328,7 @@ func front_approach() -> void:
 	var gate:=Node3D.new();gate.set_script(game.DOOR);gate.name="FrontGardenGate"
 	gate.game=game;gate.door_id="front_gate";gate.clear_half_width=1.55
 	add_child(gate);gate.position=Vector3(0,0,17)
-	var wood: Material=game.texture_mat(ROOT+"WoodSiding006_1K-JPG_Color.jpg",Color("686459"))
+	var wood: Material=timber(Color("686459"))
 	for x in [-1.46,1.46]:
 		var post: MeshInstance3D=game.box(gate,Vector3(x,0.67,0),Vector3(0.16,1.48,0.16),Color.WHITE,true)
 		post.material_override=wood

@@ -1,36 +1,33 @@
 {
-  "version": "0.10.1-dev",
-  "private_source_commit": "38b66c27c27bf97ba6cde61dda35753a7d774760",
+  "version": "0.10.2-dev",
+  "private_source_commit": "ca02aaa4d37aa80c0448faa9ce7c1cbf82b13ed1",
   "public_playable_release": "unchanged v0.10.0",
   "complete_source_local_only": true,
   "human_playtested": false,
-  "verification": "FINAL_ACCOUNT_VERIFICATION.md",
+  "verification": "PRODUCTION_CONTINUATION.md",
   "last_verified_private_source": "38b66c27c27bf97ba6cde61dda35753a7d774760",
-  "verification_status": "Final06 saved continuation91/0,1440p35/0,ultrawide35/0; independently extracted package1080p 35/0. Human approval pending.",
+  "verification_status": "Property appearance reviewed1080p. Fresh03 failed at unearned closed grille; route corrected. New fresh05 running. No new private package certified.",
   "testing_paused_at_user_request": false,
   "private_windows_candidate": true,
-  "latest_source_is_verified": true,
+  "latest_source_is_verified": false,
   "private_windows_candidate_source": "38b66c27c27bf97ba6cde61dda35753a7d774760",
-  "private_package_extracted_native_checks": {
-    "passed": 35,
-    "failed": 0,
-    "errors": 0,
-    "resolution": "1920x1080",
-    "owner_save_settings_unchanged": true
-  },
   "settled_ending_and_radio_checks": {
     "passed": 15,
     "failed": 0
   },
   "public_release_unchanged": true,
   "character_art_approved": false,
-  "milestone": "The Final Account / final native candidate",
-  "private_complete_source_checkpoint": "38b66c27c27bf97ba6cde61dda35753a7d774760",
+  "milestone": "Property Continuation / native fresh verification in progress",
+  "private_complete_source_checkpoint": "ca02aaa4d37aa80c0448faa9ce7c1cbf82b13ed1",
   "human_approval": "pending",
   "new_character_art": "not promoted; original working Surveyor retained",
   "new_asset_batch": "Eight licensed nearfield recordings and two original fixed grip meshes private; code/provenance only public",
   "fresh_route_limit": "Fresh04 362/9; missing reel step in route helper. Actual earned save continued in06; not uninterrupted fresh acceptance.",
-  "private_windows_zip_sha256": "c9f9b9da5457bd315e2ba1da0479e9b6f216b7d227de92180cb07b4271021ddf",
-  "private_complete_source_zip_sha256": "39775d52adad355a91b94b7b8ece813abbd6c544f43ae1f1322db6327d985c62",
-  "private_runtime_exe_sha256": "6ab4dab45e03b8d3bab3ea7749e1944f60d4766261ede22239f29ca49325d120"
+  "previous_final_account_extracted_checks": {
+    "passed": 35,
+    "failed": 0,
+    "errors": 0,
+    "resolution": "1920x1080",
+    "owner_save_settings_unchanged": true
+  }
 }

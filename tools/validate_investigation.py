@@ -5,7 +5,7 @@ import hashlib, json, os, subprocess, sys, re, shutil
 G = Path(__file__).resolve().parents[1]
 B = G.parent / 'Builds/UNLISTED_Investigation_08'
 
-def run(name, flag, *extra, engine_args=(), cwd=None):
+def run(name, flag, *extra, engine_args=(), cwd=None, timeout_seconds=900):
     # Never let a typo silently start ordinary gameplay with the owner's save.
     known=set(re.findall(r'"(--[a-z0-9-]+)"',(G/'scripts/world.gd').read_text(encoding='utf8')))
     assert flag in known, 'Unknown QA flag: '+flag
@@ -22,7 +22,7 @@ def run(name, flag, *extra, engine_args=(), cwd=None):
             '--evidence='+str(evidence), *extra]
     try:
         with (B/(name+'.log')).open('w', encoding='utf8') as log:
-            p = subprocess.run(args, cwd=Path(cwd) if cwd is not None else G, stdout=log, stderr=subprocess.STDOUT, timeout=900)
+            p = subprocess.run(args, cwd=Path(cwd) if cwd is not None else G, stdout=log, stderr=subprocess.STDOUT, timeout=timeout_seconds)
     finally:
         after=hashes()
         (B/(name+'_owner_integrity.json')).write_text(json.dumps({'before':before,'after':after,'unchanged':before==after},indent=2),encoding='utf8')

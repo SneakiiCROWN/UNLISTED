@@ -193,7 +193,7 @@ func run(current: Node) -> void:
 	await travel(Vector2(3.25,-9.3),"reach records cover",false,true)
 	await travel(Vector2(5,-8.35),"clear aisle towards known service exit")
 	await travel(Vector2(9,-8.35),"escape up real service incline",false,true)
-	await travel(Vector2(12.3,-8.35),"reach actual east yard",false,true)
+	if not await travel(Vector2(12.3,-8.35),"reach actual east yard",false,true):return
 	check("physical escape retains control without death or jumping",g.player.position.y>-.2 and g.player.active and g.presentation.section!="dead")
 	await wait_for("call_complete",20)
 	check("surviving test and finding final page completes coherent act",g.events.get("call_complete",false) and g.events.notes.has("ELI / THE LAST CALL"))

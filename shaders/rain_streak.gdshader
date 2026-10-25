@@ -25,5 +25,10 @@ void fragment() {
 	bool records_store = world_point.x > 2.0 && world_point.x < 6.10 && world_point.z > -10.50 && world_point.z < -6.20 && world_point.y < -0.10;
 	if (house || shed || porch || annex || cellar || service_void || records_store) { discard; }
 	ALBEDO = vec3(0.47, 0.56, 0.63);
-	ALPHA = opacity;
+	// A nearby quad must not become a solid white bar across the player's view.
+	// Keep the useful mid-distance drizzle; soften just its tips and near lens.
+	float near_lens=smoothstep(.75,1.8,length(world_point-INV_VIEW_MATRIX[3].xyz));
+	float sides=smoothstep(0.0,.18,UV.x)*(1.0-smoothstep(.82,1.0,UV.x));
+	float tips=smoothstep(0.0,.12,UV.y)*(1.0-smoothstep(.78,1.0,UV.y));
+	ALPHA = opacity*near_lens*sides*tips;
 }

@@ -123,3 +123,6 @@ Kenney impact sounds: impactMetal_light_000/001 and impactSoft_medium_000, CC0 f
 ### The Final Account / 25 October 2026
 
 No new third-party media. Uses existing original aged paper, licensed Dusk wood, the already credited Bricchi Games sedan, GGBot engine/door cues, existing wood footsteps and the SoundTouch mechanism selection. New clipboard support, receipt, desk exhibit, packet and interaction geometry are native original code. All original licences and raw archives remain preserved privately.
+
+
+Property Continuation (25 October2026): existing ambientCG CC0 timber/soil maps and Quaternius CC0 grass/plant/bush meshes reused for damp surfaces and sheltered verges. New native shaders/code only; no new media intake or licensing change. Raw libraries and integrated restricted media remain private.
