@@ -3,6 +3,7 @@ extends Node3D
 # movement/collision, sight rays and hearing determine the result each time.
 var game: Node3D
 var state := "dormant"
+var visual_line_of_sight:=false
 var clock := 0.0
 var age := 0.0
 var grace := 0.0
@@ -53,6 +54,7 @@ func _ready() -> void:
 	for pair in service_edges:graph.connect_points(pair[0],pair[1])
 
 func reset() -> void:
+	visual_line_of_sight=false
 	stop_voice();last_voice=-100;last_attack_voice=-100
 	for id in memory_routes:graph.set_point_disabled(id,true)
 	state = "dormant"
@@ -286,6 +288,9 @@ func _physics_process(delta: float) -> void:
 	age += delta
 	grace = maxf(0,grace-delta)
 	var seen := can_see_player()
+	# Share the existing perception result with visual attention. No extra gaze
+	# raycasts, hidden-player tracking or changed detection rules.
+	visual_line_of_sight=seen
 	var distance: float = game.presence.position.distance_to(game.player.position)
 	if state == "warning":
 		if seen:

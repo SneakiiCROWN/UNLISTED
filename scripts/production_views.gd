@@ -11,7 +11,9 @@ func run(current: Node) -> void:
 	for light in g.lamps:light.light_energy=.6
 	for door in g.doors.values():door.locked=false;door.set_open(true,.01)
 	if "--foreground-profile" in OS.get_cmdline_user_args():
-		await profile_rooms();await g.qa_exit(0);return
+		if "--unseen-profile" in OS.get_cmdline_user_args():await profile_unseen()
+		else:await profile_rooms()
+		await g.qa_exit(0);return
 	if "--room-tour" in OS.get_cmdline_user_args():
 		await room_tour();return
 	var views=[
@@ -75,3 +77,43 @@ func profile_rooms() -> void:
 			results.append({"view":view[0],"render_size":str(resolution),"focused_frames":samples.size(),"excluded_unfocused":unfocused,"median_ms":samples[samples.size()/2] if samples.size()>0 else null,"p95_ms":samples[int(samples.size()*.95)] if samples.size()>0 else null,"median_draw_calls":draws[draws.size()/2] if draws.size()>0 else null})
 	var file=FileAccess.open(output.path_join("foreground_profile.json"),FileAccess.WRITE)
 	file.store_string(JSON.stringify({"scope":"Exported Windows, actual native-resolution private viewport presented in a 1280x720 desktop window; 60fps cap, no readback during measurement. Only focused frames counted. Fixed powered fixtures, not an uninterrupted gameplay benchmark. Shared desktop activity can invalidate focus. No ultrawide display claim.","results":results},"\t"));file.close()
+
+func profile_unseen() -> void:
+	var results: Array=[]
+	g.presentation.prefs.data.story_mode=true
+	for resolution in [Vector2i(1920,1080),Vector2i(2560,1440),Vector2i(3440,1440)]:
+		g.get_viewport().size=resolution
+		g.new_game();g.stage=3;g.presentation.clear_transients();g.threat.enabled=false;g.threat.reset()
+		g.events.chair=true;g.events["return"]=true;g.events.threat_resolved=true
+		for light in g.lamps:light.light_energy=.6
+		for door in g.doors.values():door.locked=false;door.set_open(true,0)
+		g.player.position=Vector3(0,.04,16);g.player.rotation=Vector3.ZERO;g.player.camera.rotation=Vector3.ZERO
+		await wait(1.5);results.append(await moving_sample("rainy front approach",resolution,"forward",.6))
+		g.player.position=Vector3(0,.04,1);g.player.camera.look_at(Vector3(0,1.4,3))
+		g.doors.lounge.set_open(false,0);await wait(.2)
+		check("performance room fixture changes only out of sight",g.impossible_room.begin())
+		g.doors.lounge.set_open(true,0);g.player.position=Vector3(2.2,.04,1.6)
+		g.player.rotation.y=-PI/2;g.player.camera.rotation=Vector3.ZERO
+		await wait(1.5);results.append(await moving_sample("walking below inverted furniture",resolution,"forward",.45))
+		g.impossible_room.reset();g.events.impossible_room_active=false;g.events.impossible_room_resolved=true
+		g.player.position=Vector3(0,.04,-3);g.player.rotation=Vector3.ZERO;g.player.camera.rotation=Vector3.ZERO
+		g.threat.enabled=true;g.threat.begin(false,Vector3(0,.04,-7));g.threat.grace=0
+		g.threat.change("pursue");g.threat.plan(g.player.position)
+		await wait(.2);results.append(await moving_sample("real AI pursuit / story-mode fixture",resolution,"back",1.0))
+		g.threat.reset();g.threat.enabled=false
+	var file=FileAccess.open(output.path_join("dynamic_foreground_profile.json"),FileAccess.WRITE)
+	file.store_string(JSON.stringify({"scope":"Exported Windows moving fixtures, actual controller physics and AI, story mode. 60fps cap; native-resolution viewport presented at 1280x720; focus counted, no image readback during samples. Warmed views, three seconds each, deliberate fixture placements and forced pursuit. Not sustained whole-game/minimum-spec or human playtesting.","results":results},"\t"));file.close()
+
+func moving_sample(label: String,resolution: Vector2i,action_: String,strength: float) -> Dictionary:
+	var samples: Array=[];var draws: Array=[];var excluded:=0;var states: Dictionary={}
+	var start: Vector3=g.player.position
+	Input.action_press(action_,strength)
+	var previous:=Time.get_ticks_usec();var stop:=previous+3000000
+	while Time.get_ticks_usec()<stop:
+		await get_tree().process_frame
+		var now:=Time.get_ticks_usec();states[g.threat.state]=true
+		if get_tree().root.has_focus():samples.append((now-previous)/1000.0);draws.append(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME))
+		else:excluded+=1
+		previous=now
+	Input.action_release(action_);samples.sort();draws.sort()
+	return {"fixture":label,"render_size":str(resolution),"focused_frames":samples.size(),"excluded_unfocused":excluded,"median_ms":samples[samples.size()/2] if samples.size()>0 else null,"p95_ms":samples[int(samples.size()*.95)] if samples.size()>0 else null,"max_ms":samples.back() if samples.size()>0 else null,"median_draw_calls":draws[draws.size()/2] if draws.size()>0 else null,"actual_displacement_m":start.distance_to(g.player.position),"enemy_states":states.keys()}

@@ -6,7 +6,16 @@ Eli Ward takes a night call at 17 Briar Lane, the address on his father Simon's 
 
 **0.10.0 / The Last Call - Windows alpha.** A connected plan investigation, real cellar bay, disconnected monitor experiment and sound-based escape deepen Simon's last investigation. The larger game and 30-60 minute human first-play target remain unfinished.
 
-## Current private development / 0.10.3-dev
+## Current private development / 0.10.4-dev
+
+The Unseen Presence strengthens the existing upside-down lounge's visibility,
+save recovery and room ownership, with one restrained positional overhead contact.
+Surveyor visual attention shares actual perception in warning and pursuit. An
+isolated character study failed construction review and remains excluded; the
+working model is deliberately retained. See [implementation and verification
+limits](UNSEEN_PRESENCE_VERIFICATION.md). No public Windows release is created.
+
+### Preserved 0.10.3 milestone
 
 Living Nightmare adds fitted lounge curtains and upholstery, working-room finishes
 and a padded office chair, purposeful cellar parts storage and quieter concrete

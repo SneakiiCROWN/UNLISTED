@@ -8,10 +8,17 @@ var visited_for:=0.0
 var closed_for:=0.0
 var surfaces: Node3D
 var sight_exclusions: Array[RID]=[]
+var settle_clock:=0.0
+var visibility_points: Array[Vector3]=[]
 const TURN:=Transform3D(Basis(Vector3.RIGHT,PI),Vector3(0,2.8,1.0))
 
 func _ready() -> void:
 	name="ImpossibleLoungeMemory"
+	# Sample the room's changed volume, not just three furniture centres. A
+	# partial view through glazing must also protect the destination geometry.
+	for x in [1.72,4.5,7.28]:
+		for z in [-2.72,.5,3.72]:
+			for y in [.18,1.4,2.62]:visibility_points.append(Vector3(x,y,z))
 	sight_exclusions.append(game.player.get_rid())
 	for body in game.find_children("*","StaticBody3D",true,false):
 		if body.get_meta("transparent_glass",false):sight_exclusions.append(body.get_rid())
@@ -53,17 +60,18 @@ func reset() -> void:
 		apply_chair_pose()
 		if game.events.get("return",false):
 			game.chair.position=Vector3(.65,0,-2.8);game.chair.rotation=Vector3(0,PI,0)
-	active=false;surfaces.visible=false;quiet=0;closed_for=0;visited_for=0
+	active=false;surfaces.visible=false;quiet=0;closed_for=0;visited_for=0;settle_clock=0
 
 func restore_saved() -> void:
 	if not game.events.get("impossible_room_active",false):return
 	apply_chair_pose()
 	game.lounge_contents.transform=TURN
-	active=true;surfaces.visible=true
+	active=true;surfaces.visible=true;settle_clock=0
 
 func begin() -> bool:
 	if is_instance_valid(game.dead_line) and not game.dead_line.sequence.is_empty():return false
 	if active or not safe_to_change() or game.physical.held or game.threat.active() or game.horror.beat!="" or game.horror.audition!="" or game.horror.echo_index>=0:return false
+	if game.chapter.active or game.events.get("memory_bedroom_active",false) or game.recount.active:return false
 	remember_chair();game.events.impossible_room_active=true
 	game.lounge_contents.transform=TURN;surfaces.visible=true;active=true;closed_for=0
 	# A loose cup obeys ordinary gravity when its support moves away. It remains
@@ -71,18 +79,29 @@ func begin() -> bool:
 	game.physical.props.cup.sleeping=false
 	var cue=game.sound("door",Vector3(4.7,2.4,.5),-33);cue.pitch_scale=.65
 	game.sound_caption("Timber strains beyond the door.",2.5,"LOUNGE",cue)
+	game.save_game(true)
 	return true
 
 func can_see_changed_room() -> bool:
-	var camera: Camera3D=game.player.camera
-	for point in [game.lounge_contents.to_global(Vector3(6.4,.55,.3)),game.lounge_contents.to_global(Vector3(4.5,.79,.3)),game.targets.television.global_position]:
-		if camera.is_position_behind(point):continue
-		if not game.get_viewport().get_visible_rect().has_point(camera.unproject_position(point)):continue
-		var query:=PhysicsRayQueryParameters3D.create(camera.global_position,point,1)
-		query.exclude=sight_exclusions
-		var hit:=get_world_3d().direct_space_state.intersect_ray(query)
-		if hit.is_empty() or game.lounge_contents.is_ancestor_of(hit.collider):return true
+	for point in visibility_points:
+		if visible_point(point):return true
 	return false
+
+func can_see_furniture() -> bool:
+	# Visibility protection is deliberately broader than narrative recognition.
+	# Seeing a sliver of floor must not award knowledge of ceiling furniture.
+	for point in [game.lounge_contents.to_global(Vector3(6.4,.55,.3)),game.lounge_contents.to_global(Vector3(4.5,.79,.3)),game.targets.television.global_position]:
+		if visible_point(point):return true
+	return false
+
+func visible_point(point: Vector3) -> bool:
+	var camera: Camera3D=game.player.camera
+	if camera.is_position_behind(point):return false
+	if not game.get_viewport().get_visible_rect().has_point(camera.unproject_position(point)):return false
+	var query:=PhysicsRayQueryParameters3D.create(camera.global_position,point,1)
+	query.exclude=sight_exclusions
+	var hit:=get_world_3d().direct_space_state.intersect_ray(query)
+	return hit.is_empty() or game.lounge_contents.is_ancestor_of(hit.collider)
 
 func _process(delta: float) -> void:
 	if not game.started or game.menu_open:return
@@ -92,7 +111,7 @@ func _process(delta: float) -> void:
 			if visited_for>1.5:game.events.lounge_seen_before=true
 		else:visited_for=0
 		if game.events.get("impossible_room_resolved",false):
-			if not game.events.get("impossible_room_revisited",false) and game.doors.lounge.opened and can_see_changed_room():
+			if not game.events.get("impossible_room_revisited",false) and game.doors.lounge.opened and can_see_furniture():
 				game.events.impossible_room_revisited=true
 				var notes: Dictionary=game.events.get("notes",{})
 				notes["THE ROOM / AFTER THE ARCHIVE"]=str(notes.get("THE ROOM / AFTER THE ARCHIVE",""))+"\nI opened the door again. Everything was back on the floor."
@@ -104,14 +123,26 @@ func _process(delta: float) -> void:
 			if quiet>float(game.events.impossible_delay):begin()
 		else:quiet=0
 		return
-	if not game.events.get("impossible_room_seen",false) and can_see_changed_room():
+	if not game.events.get("impossible_room_seen",false) and can_see_furniture():
 		game.events.impossible_room_seen=true
 		var notes: Dictionary=game.events.get("notes",{})
 		notes["THE ROOM / AFTER THE ARCHIVE"]="The lounge furniture was fixed to the ceiling. The door and window hadn't moved."
 		if game.events.get("memory_reviewed",false):notes["THE ROOM / AFTER THE ARCHIVE"]+=" The drawing beside the television was still signed ELI / AGE 7."
 		game.events.notes=notes
+		game.save_game(true)
+	# One small contact above Eli, attached to the real inverted table. It is
+	# spent before playback, so reload cannot repeat or resume an old scare.
+	if inside(game.player.global_position) and game.events.get("impossible_room_seen",false) and not game.events.get("impossible_room_settled",false) and not game.threat.active():
+		settle_clock+=delta
+		if settle_clock>1.3:
+			game.events.impossible_room_settled=true
+			var cue=game.sound("foley/drop_wood_2",game.lounge_contents.to_global(Vector3(4.5,.79,.3)),-33)
+			cue.pitch_scale=.72;game.sound_caption("Wood shifts overhead.",2.0,"LOUNGE",cue)
+			game.save_game(true)
+	else:settle_clock=0
 	if safe_to_change() and game.events.get("impossible_room_seen",false):
 		closed_for+=delta
 		if closed_for>.35:
 			reset();game.events.impossible_room_active=false;game.events.impossible_room_resolved=true
+			game.save_game(true)
 	else:closed_for=0

@@ -31,6 +31,9 @@ func until_state(value: String,seconds: float) -> bool:
 func run(game: Node) -> void:
 	g = game
 	output = ProjectSettings.globalize_path("res://qa") if OS.has_feature("editor") else OS.get_executable_path().get_base_dir().path_join("QA")
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--evidence="):output=arg.trim_prefix("--evidence=")
+	DirAccess.make_dir_recursive_absolute(output)
 	g.checkpoint_path = output.path_join("threat_checkpoint.json")
 	g.presentation.prefs.data = g.presentation.PREFS.DEFAULTS.duplicate()
 	g.presentation.apply_preferences(false)
@@ -61,6 +64,11 @@ func run(game: Node) -> void:
 	check("sight in clear hall",g.threat.can_see_player())
 	g.player.position = Vector3(3,0.03,-7)
 	check("wall breaks sight",not g.threat.can_see_player())
+	await wait(.1)
+	check("visual attention shares actual occluded perception",not g.threat.visual_line_of_sight)
+	var hidden_attention: Vector3=actor.gaze.attention_point()
+	g.player.position=Vector3(3.6,.03,-7);await wait(.1)
+	check("warning head cannot follow movement through office wall",actor.gaze.attention_point().distance_to(hidden_attention)<.01)
 	g.player.position = Vector3(0,0.03,-4)
 	await wait(4.2)
 	check("detect and pursue",await until_state("pursue",4))

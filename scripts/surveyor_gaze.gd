@@ -4,9 +4,13 @@ var yaw := 0.0
 var target_yaw := 0.0
 
 func attention_point() -> Vector3:
-	var attention: Vector3=actor.game.player.camera.global_position
 	var threat: Node=actor.game.threat
-	if threat.state in ["search","investigate"]:attention=threat.last_known+Vector3.UP*1.45
+	var body: Node3D=actor.game.presence
+	var attention: Vector3=body.global_position-body.global_basis.z*3+Vector3.UP*1.45
+	if threat.active():
+		attention=threat.last_known+Vector3.UP*1.45
+		if threat.visual_line_of_sight and threat.state not in ["search","investigate"]:attention=actor.game.player.camera.global_position
+	if actor.capture_amount>0:attention=actor.game.player.camera.global_position
 	if actor.attention_override is Vector3:attention=actor.attention_override
 	return attention
 
