@@ -1,4 +1,8 @@
-# The Final Account / private v0.10.1-dev candidate
+# Current result / The Final Account
+
+The recovered final-act implementation is verified through the final06 focused Windows runs and the actual saved route continuation. See FINAL_ACCOUNT_VERIFICATION.md for exact scope, the retained failed fresh attempt and the successful continuation. Boarding now runs2.25seconds with opening/closing cues concealed by black; papers never appear before that cut. Both established meanings remain intact; human approval remains pending.
+
+# Recovery and iteration record
 
 Recovered the unfinished source over 06bac3f; recovery tag recovery-final-account-20261025 and draft commit0fbb815 preserve it. The previous Sound, Touch & Tension package and complete source remain intact.
 
@@ -9,3 +13,5 @@ The office terminal identifies the powered 1998 file and updates as original evi
 FinalAccount_03 focused native Windows:68/0 at1080p;33/0 at1440p and ultrawide. Normal/story, keyboard/simulated controller, physical receipt/car rays, save/load, pause, once-only response, legacy entitlement and old exits covered. _04 adds the final outcome wording and frame observation for concealed paper placement:34/0 at1440p and ultrawide; fresh integrated investigation is still running at this checkpoint. Branch fixtures restore genuine previously earned evidence from LastCall_14, explicitly resetting its completed outcome/placement; they are segmented verification, not independent fresh playthroughs.
 
 Failure evidence retained: _01 failed to load the new dynamic script due to three inferred local types; corrected to explicit engine types before _02. _02 passed but images showed an oversized register heading and a desk-label overlap with the existing battery; fixed before _03. No world geometry was weakened to pass tests. Human comprehension, emotion, artistic and listening approval remain pending. No public release, new asset intake or unrelated regression-suite repetition.
+
+The current _05 build changes only the final boarding cue timing and its observation checks: fade to black first, door-open cue at0.70s, door-close/idle at1.30s, finish at2.25s. Papers appear only behind black. This avoids playing an opening sound over a visibly shut car door; it is not a new animation/driving system. _05 has been exported and awaits focused native confirmation after the one _04 fresh route finishes. The _04 route keeps the same receipt, car, eligibility and recovery logic. No need to repeat the entire route for this cosmetic cue adjustment.

@@ -136,6 +136,8 @@ func run(game: Node) -> void:
 	recorder = AudioEffectRecord.new();recorder.format = AudioStreamWAV.FORMAT_16_BITS
 	AudioServer.add_bus_effect(0,recorder);recorder.set_recording_active(true)
 	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--earned-final-recovery="):
+			await recover_final_act(arg.trim_prefix("--earned-final-recovery="));return
 		if arg.begins_with("--earned-chapter-recovery="):
 			await recover_earned_chapter(arg.trim_prefix("--earned-chapter-recovery="));return
 	phase = "title";await wait(2);await shot("R00_title")
@@ -206,7 +208,7 @@ func run(game: Node) -> void:
 		var line_test=load("res://scripts/dead_line_qa.gd").new();add_child(line_test)
 		line_test.g=g;line_test.output=output;line_test.started_at=started_at;line_test.exact_target=exact_target
 		await line_test.upstairs_test();checks.append_array(line_test.checks);line_test.queue_free()
-		if "--tape-route" in OS.get_cmdline_user_args():
+		if "--tape-route" in OS.get_cmdline_user_args() or g.events.get("case_v4",false):
 			await travel(Vector2(3.3,-7.3),"bring recovered reel to office deck")
 			await use("test_reel_deck",false)
 			check("fresh route carries found reel to matching recorder",g.events.get("test_reel_found",false) and g.presentation.buttons.has("Load reel and listen"))
@@ -306,6 +308,32 @@ func run(game: Node) -> void:
 		await call_test.play_continuous();checks.append_array(call_test.checks);call_test.queue_free()
 		for result in checks:
 			if not result.passed:await finish_run(false);return
+	await finish_departure()
+func recover_final_act(path: String) -> void:
+	# Continue actual failed-route data, without awarding any missing evidence.
+	g.new_game();g.apply_save(JSON.parse_string(FileAccess.get_file_as_string(path)));await wait(.4)
+	check("recovery retains legitimately earned investigation",g.report_read and g.isolated and g.events.get("bedroom_left",false) and g.events.get("memory_confirmed",false) and not g.events.get("test_reel_found",false) and not g.events.get("call_complete",false))
+	await travel(Vector2(12.3,-8.35),"earned recovery follows east yard")
+	await travel(Vector2(9,-8.35),"return down known service incline",false,true)
+	await travel(Vector2(5,-8.35),"return to original records aisle",false,true)
+	await travel(Vector2(4.95,-8.2),"reach real reel shelf")
+	await use("test_reel");check("missing reel is physically recovered, not injected",g.events.get("test_reel_found",false))
+	await travel(Vector2(3.25,-9.3),"reel leaves store")
+	await travel(Vector2(3.25,-12.8),"carry reel through original low passage",false,true)
+	await travel(Vector2(3.25,-16.1),"clear original low return",false,true)
+	await travel(Vector2(0,-18),"rejoin cellar landing")
+	await travel(Vector2(0,-7),"carry reel up existing stairs")
+	if not g.doors.office.opened:await use("office")
+	await travel(Vector2(3.3,-7.3),"bring recovered reel to office recorder")
+	await use("test_reel_deck",false)
+	check("actual recorder offers recovered reel",g.presentation.buttons.has("Load reel and listen"))
+	if not g.presentation.buttons.has("Load reel and listen"):await finish_run(false);return
+	g.presentation.buttons["Load reel and listen"].pressed.emit();await wait(14.6)
+	check("historical tape is genuinely loaded and heard",g.events.get("test_reel_loaded",false) and g.events.get("test_reel_heard",false))
+	var next=load("res://scripts/last_call_qa.gd").new();add_child(next);next.g=g;next.output=output;next.started_at=started_at;next.exact_target=exact_target
+	await next.play_continuous();checks.append_array(next.checks);next.queue_free()
+	for result in checks:
+		if not result.passed:await finish_run(false);return
 	await finish_departure()
 func recover_earned_chapter(path: String) -> void:
 	# Continue the actual isolated save from the retained run. No progression

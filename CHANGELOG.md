@@ -1,3 +1,7 @@
+# PRIVATE v0.10.1-dev / The Final Account
+
+The existing porch choice now produces an ending-specific physical receipt. Eli takes it, walks through the real gate and returns to his arrival car before a short concealed boarding cut. Simon remains missing in both outcomes. Clearer office/choice/outcome writing and an optional physical2018-label comparison keep undated equipment separate from Simon's1998 records. Previous pending/completed saves retain their departures. See FINAL_ACCOUNT_VERIFICATION.md: final focused tests and saved continuation passed; the first fresh route omitted the reel in its test script and remains preserved as failed evidence. No public playable release or claim of human narrative approval.
+
 # PRIVATE v0.10.1-dev / Sound, Touch and Tension
 
 Tool-specific fixed grips and a D-cell grip improve physical handling while preserving collision, weights, throwing and saves. A duplicated hand discovered in native screenshots was corrected before packaging. Selected licensed radio controls, metal/soft impacts, battery handling and a restrained recorder-mechanism cue use existing sound routing. No new Surveyor voice, ambience stack or mandatory gameplay. Focused native Windows checks cover the changed interactions at1080p,1440p and3440x1440. Human art/listening approval remains pending; see SOUND_TOUCH_PROGRESS.md. This is a private development candidate; v0.10.0 remains the public playable release.

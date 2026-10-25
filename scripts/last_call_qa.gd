@@ -209,7 +209,7 @@ func play_continuous() -> void:
 	await travel(Vector2(3,-4.65),"sourced plan cabinet approach")
 	await use("call_lightbox",false)
 	var widget:=plan_widget();check("earned reel supplies actual cellar tracing",widget!=null and g.last_call.plans_available())
-	if widget==null:return
+	if widget==null or not g.last_call.plans_available():return
 	var from: Vector2=widget.global_position+widget.CENTRE+widget.offset
 	var to: Vector2=widget.global_position+widget.CENTRE+Vector2(15,8)
 	await pointer(from,true);await pointer(to,true,true);await pointer(to,false)
@@ -234,7 +234,8 @@ func play_from_landing() -> void:
 	check("new bay has real standing clearance and floor contact",g.player.position.y< -2.8 and g.player.is_on_floor() and g.player.can_stand() and not g.player.crouched)
 	g.player.camera.look_at(Vector3(-4.0,-2.65,-13.3));await shot("L05_supported_bay_floor")
 	g.player.camera.look_at(Vector3(-3.25,-1.4,-13));await shot("L05_physical_call_evidence")
-	await use("call_bridge");check("signal bridge actually leaves its contacts",g.events.get("call_disconnected",false) and g.last_call.jumper.position.y<-.15 and g.targets.call_bridge.collision_layer==0)
+	if not g.events.get("call_disconnected",false):await use("call_bridge")
+	check("signal bridge actually leaves its contacts",g.events.get("call_disconnected",false) and g.last_call.jumper.position.y<-.15 and g.targets.call_bridge.collision_layer==0)
 	await use("call_remote");await wait(3)
 	check("real remote runs audible upstairs reel",g.field_tape.playing and g.field_tape.remote and is_instance_valid(g.field_tape.motor) and g.field_tape.motor.playing and g.field_tape.motor.max_distance>g.field_tape.motor.global_position.distance_to(g.player.camera.global_position))
 	await action("ui_cancel");var t: float=g.field_tape.clock;await wait(.4)
@@ -244,9 +245,11 @@ func play_from_landing() -> void:
 	await use("call_remote");await wait_for("call_test_complete",18)
 	check("disconnected monitor visibly and audibly completes a real test",g.events.get("call_test_complete",false) and (g.events.get("call_search_pending",false) or g.events.get("call_search_running",false)))
 	await shot("L06_dead_monitor_answers")
-	await use("call_page",false)
-	check("discovery explains why Simon stayed without revealing an identity",g.events.get("call_note_read",false) and g.presentation.note.text.contains("It was using things I knew") and not g.presentation.note.text.contains("Simon is the Surveyor"))
-	await shot("L07_after_the_lounge");await action("ui_cancel")
+	if not g.events.get("call_note_read",false):await use("call_page",false)
+	var account: String=str(g.events.get("notes",{}).get(g.last_call.TITLE,""))
+	check("discovery explains why Simon stayed without revealing an identity",g.events.get("call_note_read",false) and account.contains("It was using things I knew") and not account.contains("Simon is the Surveyor"))
+	await shot("L07_after_the_lounge")
+	if g.menu_open:await action("ui_cancel")
 	var checkpoint: Dictionary=g.save_data().duplicate(true);var out:=FileAccess.open(output.path_join("earned_bay_checkpoint.json"),FileAccess.WRITE);out.store_string(JSON.stringify(checkpoint));out.close()
 	await wait_for("call_search_running",3)
 	check("new search starts off-screen with actual warned AI",g.events.get("call_search_running",false) and g.threat.active() and g.threat.grace>2.5)

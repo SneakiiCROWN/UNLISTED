@@ -43,7 +43,7 @@ func play_store() -> void:
 	check("standing recovers in full-height store",not g.player.crouched and g.player.can_stand())
 	g.player.camera.look_at(Vector3(4.7,-1.75,-7.1));await shot("U03_records_store")
 	await travel(Vector2(4.95,-8.2),"archive shelf approach")
-	if "--tape-route" in OS.get_cmdline_user_args():
+	if "--tape-route" in OS.get_cmdline_user_args() or g.events.get("case_v4",false):
 		g.player.camera.look_at(g.targets.test_reel.global_position);await shot("T00_service_reel_on_rack")
 		await use("test_reel")
 		check("fresh investigation physically takes historical test reel",g.events.get("test_reel_found",false))

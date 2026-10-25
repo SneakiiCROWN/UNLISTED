@@ -2,9 +2,11 @@ extends "res://scripts/recording_repair_qa.gd"
 var earned: Dictionary={}
 var original: Dictionary={}
 var exposed_packet_frames:=0
+var premature_door_frames:=0
 func _process(delta: float) -> void:
 	super._process(delta)
 	if is_instance_valid(g) and is_instance_valid(g.final_account) and not g.menu_open and g.final_account.phase()=="boarding" and g.final_account.packet.visible and g.presentation.fade.color.a<.99:exposed_packet_frames+=1
+	if is_instance_valid(g) and is_instance_valid(g.final_account) and not g.menu_open and g.final_account.phase()=="boarding" and g.final_account.door_started and g.presentation.fade.color.a<.99:premature_door_frames+=1
 func tap(button: int) -> void:
 	for down in [true,false]:
 		var event:=InputEventJoypadButton.new();event.button_index=button;event.pressed=down;event.set_meta("unlisted_qa_input",true);Input.parse_input_event(event);await wait(.07)
@@ -50,6 +52,7 @@ func run(current: Node) -> void:
 		var legacy: Dictionary=earned.duplicate(true);legacy.pos=[0,.03,21.1];legacy.events.departure_pending="accounted_for";legacy.events.erase("final_account")
 		g.apply_save(legacy);await wait(.3);check("already pending legacy departure keeps its lane exit",g.ended and g.events.get("ending","")=="accounted_for")
 	check("papers never appear in the car before the black cut",exposed_packet_frames==0)
+	check("door opening is heard only behind the black cut",premature_door_frames==0)
 	await finish_run()
 func branch(outcome: String,story: bool) -> void:
 	g.presentation.prefs.data.story_mode=story;g.presentation.prefs.data.reduced_motion=story
@@ -82,12 +85,13 @@ func branch(outcome: String,story: bool) -> void:
 	var hit: Dictionary=g.player.target();check("driver handle is reachable outside fitted car collision",not hit.is_empty() and hit.collider==g.targets.account_car,str(hit));await shot("F06_driver_door_"+outcome)
 	if story:await tap(JOY_BUTTON_X)
 	else:await action("interact")
+	await wait(.60)
 	check("boarding starts only through car interaction",g.final_account.phase()=="boarding" and not g.ended)
 	if story:await tap(JOY_BUTTON_START)
 	else:await action("pause")
 	var elapsed: float=g.final_account.elapsed;await wait(.35);check("pause safely freezes boarding",get_tree().paused and is_equal_approx(elapsed,g.final_account.elapsed))
 	g.save_game(true);g.load_game();await wait(.2);check("interrupted boarding restores control and retained receipt",g.final_account.phase()=="ready" and g.player.active and not g.menu_open and g.presentation.fade.color.a==0)
-	await physical_use("account_car",story);await wait(1.0)
+	await physical_use("account_car",story);await wait(1.5)
 	check("stowing papers completes intended ending",g.ended and g.presentation.section=="ending" and g.events.get("ending","")==outcome and g.player.position.z>18.5)
 	await shot("F07_ending_"+outcome)
 	g.save_game(true);g.presentation.buttons["Main Menu"].pressed.emit();await wait(.2);check("completed save offers its ending",g.presentation.buttons.has("View Ending"))

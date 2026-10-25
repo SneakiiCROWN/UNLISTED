@@ -11,6 +11,7 @@ var cabin: OmniLight3D
 var packet: Node3D
 var elapsed:=0.0
 var engine_started:=false
+var door_started:=false
 var sources: Array[AudioStreamPlayer3D]=[]
 func _ready() -> void:
 	name="TheFinalAccount"
@@ -49,7 +50,7 @@ func cleanup() -> void:
 		if is_instance_valid(audio):audio.stop();audio.queue_free()
 	sources.clear()
 func restore() -> void:
-	cleanup();elapsed=0;engine_started=false
+	cleanup();elapsed=0;engine_started=false;door_started=false
 	game.presentation.fade.color.a=0
 	# Recover interrupted boarding with the receipt retained and full control.
 	if phase()=="boarding":
@@ -65,7 +66,7 @@ func sync() -> void:
 	tag_card.visible=game.events.get("equipment_date_compared",false)
 	game.targets.account_compare.collision_layer=1 if game.stage>=3 and game.report_read and tag_known() and not tag_card.visible else 0
 	cabin.light_energy=.12 if pending() and phase() in ["ready","boarding"] else 0
-	packet.visible=(phase()=="boarding" and elapsed>=.70) or (game.ended and not state().is_empty())
+	packet.visible=(phase()=="boarding" and elapsed>=1.00) or (game.ended and not state().is_empty())
 func tag_known() -> bool:
 	return game.equipment.data.get("uv",false) and game.events.get("notes",{}).has("INSPECTION KIT")
 func begin(outcome: String) -> bool:
@@ -90,9 +91,8 @@ func use(id: String) -> void:
 	if phase()=="receipt":
 		game.message("My receipt is still in the clip on the porch.",3);return
 	if phase()!="ready" or game.threat.active() or game.player.position.z<18.5:return
-	game.events.final_account.phase="boarding";elapsed=0;engine_started=false;sync();game.save_game(true)
+	game.events.final_account.phase="boarding";elapsed=0;engine_started=false;door_started=false;sync();game.save_game(true)
 	game.physical.release(false);game.player.velocity=Vector3.ZERO;game.player.active=false
-	play("door_open",-27)
 func play(id: String,db: float) -> void:
 	var cue:=AudioStreamPlayer3D.new();cue.stream=load("res://assets/audio/arrival/"+id+".ogg");cue.bus="SFX";cue.volume_db=db;cue.unit_size=1;cue.max_distance=6;add_child(cue);cue.global_position=game.targets.account_car.global_position;cue.finished.connect(cue.queue_free);sources.append(cue);cue.play()
 func _process(delta: float) -> void:
@@ -102,8 +102,9 @@ func _process(delta: float) -> void:
 	if phase()=="boarding":
 		game.player.active=false
 		elapsed+=delta;game.presentation.fade.color.a=clampf(elapsed/.65,0,1)
-		if elapsed>=.70 and not engine_started:engine_started=true;play("door_close",-28);play("engine_idle",-31)
-		if elapsed>=1.65:
+		if elapsed>=.70 and not door_started:door_started=true;play("door_open",-27)
+		if elapsed>=1.30 and not engine_started:engine_started=true;play("door_close",-28);play("engine_idle",-31)
+		if elapsed>=2.25:
 			var outcome: String=game.events.departure_pending
 			game.events.final_account.phase="departed";game.events.departure_pending="";game.events.ending=outcome
 			cleanup();game.presentation.fade.color.a=0;game.finish_game();sync()
