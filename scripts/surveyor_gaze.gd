@@ -3,17 +3,20 @@ var actor: Node3D
 var yaw := 0.0
 var target_yaw := 0.0
 
+func attention_point() -> Vector3:
+	var attention: Vector3=actor.game.player.camera.global_position
+	var threat: Node=actor.game.threat
+	if threat.state in ["search","investigate"]:attention=threat.last_known+Vector3.UP*1.45
+	if actor.attention_override is Vector3:attention=actor.attention_override
+	return attention
+
 func _process_modification_with_delta(delta: float) -> void:
 	var s := get_skeleton()
 	if not is_instance_valid(actor.game.player) or not actor.get_parent().visible:return
-	var attention: Vector3=actor.game.player.camera.global_position
-	if actor.attention_override is Vector3:attention=actor.attention_override
+	# Search attention belongs to the last heard/seen point for every model.
+	# An authored gaze override has priority over ordinary search presentation.
+	var attention:=attention_point()
 	if actor.reborn_presence:
-		var threat: Node=actor.game.threat
-		if threat.state in ["search","investigate"]:
-			# Attention belongs to the heard/last-seen location, not an unseen
-			# player's live position behind cover. This never changes perception.
-			attention=threat.last_known+Vector3.UP*1.45
 		var spine_id:=s.find_bone("spine_03")
 		if spine_id>=0:
 			var spine:=s.get_bone_global_pose(spine_id)

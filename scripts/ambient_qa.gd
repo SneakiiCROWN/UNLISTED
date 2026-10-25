@@ -51,14 +51,39 @@ func run(current: Node) -> void:
 	var recorder:=AudioEffectRecord.new();recorder.format=AudioStreamWAV.FORMAT_16_BITS
 	AudioServer.add_bus_effect(0,recorder);recorder.set_recording_active(true)
 	check("window event spatially eligible",g.ambient_director.request("window_taps"))
+	var room: Node=g.get_node("LivingRoomFinishes")
+	check("window response uses existing accepted event",room.response>0 or g.presentation.prefs.data.reduced_motion)
 	await wait(.2);await action("ui_cancel")
-	var phase_: float=g.ambient_director.elapsed;await wait(.5)
+	var phase_: float=g.ambient_director.elapsed;var curtain_phase: float=room.response;await wait(.5)
 	check("pause freezes ambient sequence",g.menu_open and is_equal_approx(phase_,g.ambient_director.elapsed))
+	check("pause freezes curtain response",is_equal_approx(curtain_phase,room.response))
 	g.presentation.buttons.Resume.pressed.emit();await wait(1.2)
 	check("two actual window sources play",g.ambient_director.emitted.size()==2 and g.ambient_director.emitted[0].playing and g.ambient_director.emitted[1].playing)
 	await shot("A02_window_taps")
 	g.save_game();g.load_game();await wait(.2)
 	check("saved event is consumed without replay",int(g.ambient_director.policy.data.used.get("window_taps",0))==1 and g.ambient_director.queue.is_empty())
+	check("reload clears transient curtain movement",room.response==0)
+	var reduced_before: bool=g.presentation.prefs.data.reduced_motion
+	g.presentation.prefs.data.reduced_motion=true;room.respond_window()
+	check("reduced motion suppresses curtain tug",room.response==0)
+	g.presentation.prefs.data.reduced_motion=reduced_before
+	check("two fitted curtains belong to lounge memory",g.lounge_contents.find_children("FittedWindowCurtain*","MeshInstance3D",true,false).size()==2)
+	check("office chair preserves original collision",g.get_node("OfficeTaskChair").find_children("*","CollisionShape3D",true,false).size()>0)
+	check("cellar storage replaces bottle rows",g.get_node("CellarPartsRack").find_children("*","MeshInstance3D",true,false).size()>6)
+	var actor: Node=g.presence.get_child(0)
+	# Resolve the actual active skeleton modifier rather than a replacement model.
+	var modifiers: Array=g.presence.find_children("*","SkeletonModifier3D",true,false)
+	for modifier in modifiers:
+		if not modifier.has_method("attention_point"):continue
+		actor=modifier.actor
+		g.threat.state="search";g.threat.last_known=Vector3(1,0,-7)
+		actor.attention_override=null
+		var point: Vector3=modifier.attention_point()
+		g.player.position=Vector3(5,.04,-5)
+		check("active Surveyor search gaze ignores hidden player movement",modifier.attention_point().is_equal_approx(point) and point.is_equal_approx(g.threat.last_known+Vector3.UP*1.45))
+		actor.attention_override=Vector3(-3,1,-8)
+		check("authored gaze override retains priority",modifier.attention_point().is_equal_approx(actor.attention_override))
+		actor.attention_override=null;g.threat.reset()
 	# Across-hall steps are interrupted by the existing physical encounter.
 	g.player.position=Vector3(3,.04,-7);g.player.camera.look_at(Vector3(5.6,1,-8.7))
 	check("empty utility footsteps eligible from office",g.ambient_director.request("empty_room_steps"))

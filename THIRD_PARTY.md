@@ -126,3 +126,5 @@ No new third-party media. Uses existing original aged paper, licensed Dusk wood,
 
 
 Property Continuation (25 October2026): existing ambientCG CC0 timber/soil maps and Quaternius CC0 grass/plant/bush meshes reused for damp surfaces and sheltered verges. New native shaders/code only; no new media intake or licensing change. Raw libraries and integrated restricted media remain private.
+
+Living Nightmare (26 October 2026): reuses the existing credited Kenney interior desk-chair and cardboard-box models, existing approved machinery valve/breaker models, original work canvas and aged paper, and ambientCG concrete maps. Curtains, supports, wall finishes, equipment diagram and apron are original native code/shaders. No new third-party download, new voice recording or new redistribution permission. Raw media remains local; public source checkpoints contain code and notices only.

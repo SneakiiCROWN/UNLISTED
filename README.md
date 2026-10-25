@@ -6,7 +6,20 @@ Eli Ward takes a night call at 17 Briar Lane, the address on his father Simon's 
 
 **0.10.0 / The Last Call - Windows alpha.** A connected plan investigation, real cellar bay, disconnected monitor experiment and sound-based escape deepen Simon's last investigation. The larger game and 30-60 minute human first-play target remain unfinished.
 
-## Current private development / 0.10.2-dev
+## Current private development / 0.10.3-dev
+
+Living Nightmare adds fitted lounge curtains and upholstery, working-room finishes
+and a padded office chair, purposeful cellar parts storage and quieter concrete
+materials. The existing window-tap event can briefly move the curtain hem, with
+pause, save recovery and reduced-motion support. The active Surveyor's search
+gaze follows its last known point. Its character model and core AI are preserved.
+
+Native three-resolution screenshots, focused movement/save/event checks and both
+earned-checkpoint departures accompany the private candidate. No new full fresh
+investigation or human artistic approval is claimed. See [changes and verification
+scope](LIVING_NIGHTMARE_VERIFICATION.md). Previous milestones remain preserved.
+
+### Preserved 0.10.2 baseline
 
 Property Continuation builds on The Final Account: physical ending receipts, a return to Eli's actual parked car, and a short sound/fade departure. Both outcomes leave Simon missing. The optional2018 equipment label is kept separate from his1998 evidence; it does not establish a new visitor or a return.
 

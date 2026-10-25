@@ -188,6 +188,8 @@ func _ready() -> void:
 	field_tape=load("res://scripts/field_tape.gd").new();field_tape.game=self;add_child(field_tape)
 	last_call=load("res://scripts/last_call.gd").new();last_call.game=self;add_child(last_call)
 	load("res://scripts/interior_finish.gd").new().build(self)
+	var living_rooms=load("res://scripts/living_rooms.gd").new()
+	add_child(living_rooms);living_rooms.build(self)
 	property_memory=load("res://scripts/property_memory_study.gd").new();property_memory.game=self;add_child(property_memory)
 	recorder_memory=load("res://scripts/recorder_memory_study.gd").new();recorder_memory.game=self;recorder_memory.runtime=true;add_child(recorder_memory)
 	final_account=load("res://scripts/final_account.gd").new();final_account.game=self;add_child(final_account)
@@ -587,7 +589,14 @@ func build_world() -> void:
 	load("res://scripts/interior_life.gd").new().desk(self,Vector3(5.6,0,-8.7),2.0,.85)
 	monitor(Vector3(5.6,1.13,-8.7),"security","PROPERTY FILES\nS. WARD / 1998")
 	security_light = lamp(Vector3(5.6,1.8,-8.1),cold,0.8,4)
-	furniture("chair",Vector3(6.65,0,-7.5),Vector3(0.65,1.0,0.65),PI*0.85)
+	var office_chair: Node3D=furniture("chair",Vector3(6.65,0,-7.5),Vector3(0.65,1.0,0.65),PI*0.85)
+	office_chair.name="OfficeTaskChair"
+	for mesh in all_meshes(office_chair):mesh.visible=false
+	var chair_visual: Node3D=model("res://assets/interiors/chairDesk.glb",office_chair,Vector3.ZERO,Vector3(.60,.98,.60))
+	for mesh in all_meshes(chair_visual):
+		for i in mesh.mesh.get_surface_count():
+			var source: Material=mesh.get_active_material(i)
+			mesh.set_surface_override_material(i,texture_mat("res://assets/original/work_canvas.png",Color("41483d") if source!=null and "carpet" in source.resource_name.to_lower() else Color("30362f")))
 	load("res://scripts/interior_life.gd").new().desk(self,Vector3(3.3,0,-8.6),1.25,.8)
 	paper(Vector3(3.4,1.5,-9.89),"record","PROPERTY 17\n\nOCCUPANCY\nRECORD\n\nDO NOT ERASE")
 	fixture(Vector3(4,2.67,-6),false)

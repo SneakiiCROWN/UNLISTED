@@ -8,13 +8,16 @@ void vertex(){world_position=(MODEL_MATRIX*vec4(VERTEX,1.0)).xyz;wall_normal=nor
 void fragment(){
 	vec2 plane=abs(wall_normal.x)>.5?world_position.zy:world_position.xy;
 	vec2 uv=plane/2.1;
-	vec3 stone=texture(concrete,uv).rgb;
+	vec3 stone=mix(vec3(.44,.45,.41),texture(concrete,uv).rgb,.50);
 	float aggregate=texture(concrete,uv*2.3+vec2(.31,.17)).r;
 	float low=1.0-smoothstep(.12,.72,world_position.y-floor_level+(aggregate-.5)*.32);
 	float run=pow(.5+.5*sin(plane.x*19.0+sin(plane.x*3.7)),9.0)*.05;
 	// Match the previous interior wall tint; weathering belongs at the damp
 	// foot and narrow mineral runs, not in a globally darker cellar material.
-	ALBEDO=stone*vec3(.76,.76,.70)*(1.0-low*.12-run);
+	// Shallow formwork seams are material detail, never false collision ledges.
+	vec2 cell=abs(fract((plane+vec2(.31,0.0))/vec2(2.4,.9))-.5);
+	float joint=smoothstep(.491,.499,max(cell.x,cell.y));
+	ALBEDO=stone*vec3(.76,.76,.70)*(1.0-low*.12-run-joint*.13);
 	ROUGHNESS=mix(.79,.95,texture(roughness_map,uv).r)-low*.05;
 	SPECULAR=.16;
 }

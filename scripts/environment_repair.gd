@@ -210,6 +210,17 @@ func rack(pos: Vector3, width := 1.7, angle := 0.0) -> void:
 	for y in [0.12,0.65,1.2,1.75]:textured_box(Vector3(0,y,0),Vector3(width,0.05,0.52),wood,Color(0.43,0.4,0.32),false,parent)
 	g.collision(parent,Vector3(0,0.9,0),Vector3(width,1.8,0.48))
 	if pos.x>6:return # Office shelves are dressed with property ledgers.
+	if pos.y< -2:
+		parent.name="CellarPartsRack"
+		for y in [.675,1.225]:
+			for x in [-.73,0,.73]:
+				if y>1 and x==0:
+					g.model("res://assets/machinery/pipe_valve.glb",parent,Vector3(x,y,0),Vector3(.32,.24,.30),PI/2)
+					continue
+				var bin_: Node3D=g.model("res://assets/interiors/cardboardBoxOpen.glb",parent,Vector3(x,y,0),Vector3(.40,.27,.38))
+				load("res://scripts/interior_life.gd").new().finish_model(g,bin_,true)
+				if x<0:g.model("res://assets/machinery/circuit_breaker.glb",parent,Vector3(x,y+.025,0),Vector3(.22,.28,.24))
+		return
 	for i in range(3):
 		g.model("res://assets/dusk/psx_prop_tins_01.glb",parent,Vector3(-width/2+0.3+float(i)*0.5,0.68,0),Vector3(0.28,0.28,0.2))
 		g.model("res://assets/dusk/psx_prop_bottles_01.glb",parent,Vector3(-width/2+0.3+float(i)*0.5,1.23,0),Vector3(0.25,0.34,0.2))

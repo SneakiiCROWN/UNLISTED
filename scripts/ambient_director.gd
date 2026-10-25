@@ -16,6 +16,8 @@ func _ready() -> void:
 	name="HouseAmbientDirector"
 	restore()
 func restore() -> void:
+	var room: Node=game.get_node_or_null("LivingRoomFinishes")
+	if room:room.reset_response()
 	for source in sources:
 		if is_instance_valid(source):source.stop();source.queue_free()
 	sources.clear();queue.clear();emitted.clear();elapsed=0
@@ -49,6 +51,8 @@ func request(id: String) -> bool:
 	policy.consume(id);game.events.atmosphere=policy.data
 	last_event=id;elapsed=0
 	if id=="window_taps":
+		var room: Node=game.get_node_or_null("LivingRoomFinishes")
+		if room:room.respond_window()
 		queue=[{"at":0.0,"where":WINDOW,"sound":"foley/drop_wood_1","db":-34.0,"pitch":1.3,"caption":"Two light taps at the window.","source":"LOUNGE WINDOW"},{"at":.83,"where":WINDOW,"sound":"foley/drop_wood_2","db":-36.0,"pitch":1.15}]
 	elif id=="empty_room_steps":
 		for i in 3:queue.append({"at":i*.91,"where":STEPS+Vector3(.26*i,0,.36*i),"sound":"step","db":-31.0-i,"pitch":.89,"caption":"Footsteps across the hall." if i==0 else "","source":"UTILITY ROOM"})
