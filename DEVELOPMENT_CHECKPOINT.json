@@ -1,47 +1,49 @@
 {
-  "version": "0.10.2-dev",
-  "milestone": "Property Continuation",
-  "private_source_commit": "1f1b2c3386042071286ceefb50dc7c0a1bd2c51d",
-  "private_complete_source_checkpoint": "1f1b2c3386042071286ceefb50dc7c0a1bd2c51d",
-  "last_verified_private_source": "1f1b2c3386042071286ceefb50dc7c0a1bd2c51d",
+  "version": "0.10.4-dev",
+  "milestone": "The Unseen Presence",
+  "private_source_commit": "f413afd227479349a3ba71129056404e72900b12",
+  "github_source_commit": "103447483a482650cd56f37d6e2ceedee56dd49a",
   "latest_source_is_verified": true,
-  "verification": "PROPERTY_CONTINUATION_VERIFICATION.md",
-  "fresh_investigation": {
+  "source_commit_scope": "These hashes identify the verified runtime/source change. Subsequent checkpoint commits update metadata only. Complete source is pinned by the development tag.",
+  "development_tag": "dev-v0.10.4-unseen-presence-20261026",
+  "verification": "UNSEEN_PRESENCE_VERIFICATION.md",
+  "previous_verified_milestone": {
+    "version": "0.10.3-dev",
+    "private_source": "ce834d245191e1be849b68b5fdf82f1456e67785",
+    "github_source": "3c9c903352d23e9ba682d2f95e768f296c1ebbbf",
+    "verification": "LIVING_NIGHTMARE_VERIFICATION.md"
+  },
+  "fresh_investigation_baseline": {
+    "version": "0.10.2-dev",
     "passed": 412,
     "failed": 0,
-    "scope": "One fresh New Game case, real interactions, deliberate pause/load and death/retry. Alternate ending from same earned checkpoint; not second fresh playthrough."
+    "rerun_this_milestone": false
   },
   "targeted_checks": {
-    "tool_without_continuous_readback": "16/0",
-    "ending_1440p_keyboard": "35/0",
-    "ending_ultrawide_controller_story_reduced_motion": "35/0",
-    "arrival_ultrawide_reduced_motion": "12/0",
-    "plan_UI_three_resolutions": "4/0 each"
+    "surveyor_perception_hiding_escape_recovery": "58/0",
+    "final_impossible_room_and_three_resolution_views": "52/0",
+    "vent_reversal": "8/0"
   },
+  "surveyor_art": "Retained working model; new static study failed construction review, no animation/rig promotion",
   "owner_saves_settings_unchanged": true,
-  "native_runtime_errors": 0,
-  "human_playtested": false,
+  "public_playable": "unchanged v0.10.0",
+  "human_playtested_this_milestone": false,
   "human_approval": "pending",
-  "foreground_performance_benchmarked": false,
-  "private_package_extracted_native_checks": {
-    "passed": 35,
-    "failed": 0,
-    "errors": 0,
-    "resolution": "1920x1080",
-    "executed_from_extraction_directory": true,
-    "owner_saves_settings_unchanged": true
+  "performance": {
+    "scope": "Exported Windows moving fixtures, actual controller physics and AI, story mode. 60fps cap; native-resolution viewport presented at 1280x720; focus counted, no image readback during samples. Warmed views, three seconds each, deliberate fixture placements and forced pursuit. Not sustained whole-game/minimum-spec or human playtesting.",
+    "samples": 9,
+    "focused_frames": 1626,
+    "excluded_unfocused": 0,
+    "median_ms_range": [
+      16.65,
+      16.672
+    ],
+    "p95_ms_range": [
+      16.811,
+      17.313
+    ],
+    "max_ms": 27.4,
+    "sustained_whole_game_benchmark": false
   },
-  "public_playable_release": "unchanged v0.10.0",
-  "public_release_unchanged": true,
-  "complete_source_local_only": true,
-  "new_character_art": "none; original Surveyor retained",
-  "asset_boundary": "No new media intake; licensed runtime/library remain private",
-  "previous_final_account_source": "38b66c2",
-  "development_tag": "dev-v0.10.2-property-continuation-20261025",
-  "private_windows_zip_sha256": "e5846713a573938db833c94bffd5e46933027e3263740ed4ec3d82611870c195",
-  "private_complete_source_zip_sha256": "801fd6b94c7122f243a039dd32cd0a07efc19c2260c188f9dcc164eca0ca5b65",
-  "private_runtime_executable_sha256": "7f16fa1a593bf5750145b03e3071d1515ee86553f06ecadd82219651c9c4bf12",
-  "full_fresh_recording_sha256": "bcc40542595c001116e4ddb47cfc01e229f0f46a9c57612bd8b8036b1fe40c1c",
-  "verification_status": "Verified fresh412/0; targeted35/0 each; arrival12/0; independently extracted1080p35/0. All owner hashes unchanged. Private package/source preserved; no public release.",
-  "private_windows_candidate_source": "1f1b2c3386042071286ceefb50dc7c0a1bd2c51d"
+  "package_verification": "Independent ZIP launch, hashes and exact private delivery paths are recorded in the private milestone DELIVERY.json; no new public Windows release."
 }
