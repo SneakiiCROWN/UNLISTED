@@ -140,6 +140,9 @@ func parts(node: Node,transform_: Transform3D,result: Array) -> void:
 
 func prototype(id: String) -> Array:
 	if prototypes.has(id):return prototypes[id]
+	if "_Dead_" in id:
+		prototypes[id]=load("res://scripts/natural_crown.gd").new().build(id)
+		return prototypes[id]
 	var scene: Node3D=load(ROOT+id+".glb").instantiate()
 	var result: Array=[];parts(scene,Transform3D.IDENTITY,result);scene.free()
 	for item in result:
@@ -216,7 +219,11 @@ func build_woodland() -> void:
 				multi.set_instance_transform(i,visible_items[i].transform*item.transform)
 				multi.set_instance_color(i,visible_items[i].color)
 			var visible_batch:=MultiMeshInstance3D.new();visible_batch.multimesh=multi;visible_batch.name="Woodland_"+batch.id
-			visible_batch.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+			# Tiny undergrowth was paying every shadow-map pass despite little
+			# visible contribution. Trees, logs, rocks and architectural shadows stay.
+			var ground_cover: bool=batch.id in ["Grass_Short","Bush_1","Bush_2","Plant_1"]
+			visible_batch.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF if ground_cover else GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+			visible_batch.set_meta("ground_cover_shadow",ground_cover)
 			add_child(visible_batch)
 	set_meta("forest_batches",batches.size())
 

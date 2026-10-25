@@ -14,9 +14,15 @@ func run(game: Node) -> void:
 	recorder=AudioEffectRecord.new();recorder.format=AudioStreamWAV.FORMAT_16_BITS
 	AudioServer.add_bus_effect(0,recorder);recorder.set_recording_active(true)
 	await wait(0.3)
-	await travel(Vector2(0,14.7),"spawn to garden gate")
+	# New Game arrives outside the closed gate. Earn the first crossing instead
+	# of asking the controller to walk through a correctly colliding leaf.
+	await travel(Vector2(0,19),"arrival lane-side gate approach")
 	await use("front_gate");await wait(0.8)
 	check("gate opens through interaction",g.doors.front_gate.opened)
+	await travel(Vector2(0,14.7),"first actual arrival through open gate")
+	await use("front_gate");await wait(.95)
+	check("arrival gate closes from garden",not g.doors.front_gate.opened)
+	await use("front_gate");await wait(.95)
 	await travel(Vector2(0,19.5),"gate outward crossing")
 	await use("front_gate");await wait(0.8)
 	check("gate closes from lane side",not g.doors.front_gate.opened)

@@ -129,14 +129,14 @@ func recorder() -> void:
 	var deck: Node3D=g.get_node("ArchiveTransport")
 	begin(deck,"RecorderInstrumentFinish")
 	# A restrained physical VU window fits between the existing 20 cm reels.
-	# It is static in ordinary play; the isolated study may animate its needle.
+	# The existing stopped-transport anomaly owns the brief mechanical response.
 	piece("VU bezel",Vector3(0,.054,-.09),Vector3(.105,.008,.074),"iron")
 	piece("VU scale backing",Vector3(0,.0585,-.09),Vector3(.089,.001,.058),"paper")
 	for x in [-.032,-.016,0,.016,.032]:piece("VU scale tick",Vector3(x,.0594,-.111),Vector3(.0015,.0008,.009),"rubber")
 	var needle:=Node3D.new();needle.name="ReturnMeterNeedle";deck.add_child(needle);needle.position=Vector3(0,.060,-.068)
 	var pointer: MeshInstance3D=g.box(needle,Vector3(0,0,-.024),Vector3(.0018,.001,.046),Color("383e34"))
 	pointer.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;needle.rotation.y=-.55
-	needle.set_meta("development_status","UNTESTED static meter; study not wired to gameplay/audio")
+	needle.set_meta("rest_angle",-.55)
 	# Capstan/pinch guide meets the existing tape path at z=.075. No new
 	# button, legend or interaction zone is added to this already busy deck.
 	tube("Tape guide spindle",Vector3(-.07,.052,.075),Vector3(-.07,.069,.075),.005,"brass")

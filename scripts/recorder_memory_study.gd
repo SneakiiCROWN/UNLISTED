@@ -95,6 +95,8 @@ func cleanup_runtime() -> void:
 func restore() -> void:
 	cleanup_runtime()
 	var state: Dictionary=game.events.get("recorder_answer",{})
+	needle=game.get_node("ArchiveTransport").get_node_or_null("ReturnMeterNeedle")
+	if is_instance_valid(needle):needle.rotation.y=float(state.get("needle_angle",-.55))
 	var nodes: Array=get_tree().get_nodes_in_group("archive_reels")
 	var angles: Array=state.get("angles",[])
 	for i in nodes.size():nodes[i].rotation.y=float(angles[i]) if i<angles.size() else 0.0
@@ -108,12 +110,14 @@ func snapshot() -> void:
 	var state: Dictionary=game.events.get("recorder_answer",{})
 	if state.is_empty():return
 	state.angles=[]
+	if is_instance_valid(needle):state.needle_angle=needle.rotation.y
 	for reel in get_tree().get_nodes_in_group("archive_reels"):state.angles.append(reel.rotation.y)
 	if running and is_instance_valid(timeline):state.clock=timeline.current_animation_position
 	game.events.recorder_answer=state
 
 func start_runtime(resuming:=false) -> void:
 	var deck: Node3D=game.get_node("ArchiveTransport")
+	needle=deck.get_node_or_null("ReturnMeterNeedle")
 	var nodes: Array=get_tree().get_nodes_in_group("archive_reels")
 	var state: Dictionary=game.events.get("recorder_answer",{})
 	bases=state.get("bases",[]) if resuming else []
@@ -124,15 +128,22 @@ func start_runtime(resuming:=false) -> void:
 	# Enabling reduced motion during recovery always takes precedence.
 	reduced=reduced or game.presentation.prefs.data.reduced_motion
 	var at: float=float(state.get("clock",0)) if resuming else 0.0
+	var needle_base: float=float(state.get("needle_base",-.55)) if resuming else (needle.rotation.y if is_instance_valid(needle) else -.55)
 	timeline=AnimationPlayer.new();timeline.name="QuietTransportAnswer";add_child(timeline)
 	var clip:=Animation.new();clip.length=2.4
 	if not reduced:
+		if is_instance_valid(needle):
+			var meter_track:=clip.add_track(Animation.TYPE_VALUE)
+			clip.track_set_path(meter_track,NodePath(str(needle.get_path())+":rotation:y"))
+			# The stopped return meter answers against the reverse transport, then
+			# decays to rest. No voice, extra popup or separate event scheduler.
+			for key in [[0.0,needle_base],[.18,needle_base],[.35,.18],[.62,-.24],[.82,.04],[1.30,-.42],[1.85,needle_base],[2.4,needle_base]]:clip.track_insert_key(meter_track,key[0],key[1])
 		for i in nodes.size():
 			var track:=clip.add_track(Animation.TYPE_VALUE);clip.track_set_path(track,NodePath(str(nodes[i].get_path())+":rotation:y"))
 			for key in [[0.0,bases[i]],[.18,bases[i]],[1.25,float(bases[i])-.72],[2.4,float(bases[i])-.72]]:clip.track_insert_key(track,key[0],key[1])
 	var library:=AnimationLibrary.new();library.add_animation("answer",clip);timeline.add_animation_library("",library)
 	timeline.animation_finished.connect(func(_name):finish_runtime("completed"))
-	running=true;game.events.recorder_answer={"phase":"running","clock":at,"bases":bases.duplicate(),"reduced":reduced}
+	running=true;game.events.recorder_answer={"phase":"running","clock":at,"bases":bases.duplicate(),"reduced":reduced,"needle_base":needle_base}
 	timeline.play("answer");timeline.seek(clampf(at,0,2.39),true)
 	if not resuming:
 		var cue: AudioStreamPlayer3D=game.sound("transport_click",deck.global_position+Vector3.UP*.1,-28)
@@ -151,6 +162,13 @@ func finish_runtime(reason: String) -> void:
 func _physics_process(delta: float) -> void:
 	if not runtime or not game.started or game.menu_open or game.ended:return
 	if running:
+		if game.presentation.prefs.data.reduced_motion and not game.events.recorder_answer.get("reduced",false):
+			# A setting changed while paused takes effect without rewinding the
+			# visible hardware or replaying its relay click on resume.
+			game.events.recorder_answer.reduced=true
+			var clip: Animation=timeline.get_animation("answer")
+			for i in clip.get_track_count():
+				if clip.track_get_type(i)==Animation.TYPE_VALUE:clip.track_set_enabled(i,false)
 		if not equipment_still() or game.ambient_director.response_blocked():finish_runtime("interrupted")
 		return
 	if game.events.get("house_answers",0)!=1 or game.events.has("recorder_answer") or not game.events.get("test_reel_heard",false):return

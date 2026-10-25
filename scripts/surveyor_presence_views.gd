@@ -55,10 +55,11 @@ func static_review(path: String) -> void:
 	study.position=Vector3(0,.04,-6.2);study.rotation.y=0;study.scale=Vector3.ONE*1.05;study.visible=false
 	for mode in ["current","rejected_static"]:
 		g.presence.visible=mode=="current";study.visible=mode!="current"
-		for spec in [["front",Vector3(0,.04,-3.4)],["side",Vector3(1.1,.04,-6.2)],["rear",Vector3(0,.04,-8.9)],["distance",Vector3(0,.04,.4)]]:
-			g.player.position=spec[1];g.player.camera.look_at(Vector3(0,1.1,-6.2))
+		for spec in [["front",Vector3(0,.04,-3.4)],["side",Vector3(1.1,.04,-6.2)],["rear",Vector3(0,.04,-8.9)],["distance",Vector3(0,.04,.4)],["face",Vector3(0,.04,-5.4)]]:
+			g.player.position=spec[1];g.player.camera.look_at(Vector3(0,1.65 if spec[0]=="face" else 1.1,-6.2))
 			await wait(.4);await shot(mode+"_"+spec[0])
 	check("active model path remains preserved",g.surveyor_model_path()=="res://assets/original/surveyor_presence.glb")
 	var report=FileAccess.open(output.path_join("static_review.json"),FileAccess.WRITE)
-	report.store_string(JSON.stringify({"status":"REJECTED at static construction gate","reason":"Garment/body intersections, unfinished footwear and unconvincing hood silhouette. No rig, animation or gameplay promotion.","scope":"Actual Windows current-model and external static-study views; not movement acceptance or human approval.","checks":checks},"\t"));report.close()
+	var matched: bool="--matched-static" in OS.get_cmdline_user_args()
+	report.store_string(JSON.stringify({"status":"NOT PROMOTED / matched-source construction foundation" if matched else "REJECTED at static construction gate","reason":"Construction is improved; distinctive Surveyor identity and material/face art are not achieved. No rig or gameplay promotion." if matched else "Garment/body intersections, unfinished footwear and unconvincing hood silhouette. No rig, animation or gameplay promotion.","scope":"Actual Windows current-model and external static-study views; not movement acceptance or human approval.","checks":checks},"\t"));report.close()
 	await g.qa_exit(0)

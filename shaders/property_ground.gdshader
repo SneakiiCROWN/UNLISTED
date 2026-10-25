@@ -61,6 +61,12 @@ void fragment(){
 	float organic=sheltered*smoothstep(.25,.72,fine)*.48;
 	vec3 litter=texture(soil_color,p/1.1+vec2(.7,1.9)).rgb*vec3(.40,.37,.29);
 	base=mix(base,litter,organic);
+	// Damp, broken garden growth belongs beside the worn route, never across it.
+	// This is surface colour, not a raised terrain plate or collision change.
+	float garden=(1.0-smoothstep(8.8,10.0,abs(p.x)))*smoothstep(2.2,3.8,abs(p.x))*smoothstep(6.4,8.2,p.y)*(1.0-smoothstep(15.8,17.1,p.y));
+	float growing=smoothstep(.30,.66,noise2(p*.7+vec2(23,7)))*garden*(1.0-traffic)*.72;
+	vec3 wet_growth=texture(soil_color,p/1.1).rgb*vec3(.30,.40,.25);
+	base=mix(base,wet_growth,growing);
 	ALBEDO=base;
 	NORMAL_MAP=mix(texture(soil_normal,p/2.8).rgb,texture(concrete_normal,p/2.1).rgb,pad);
 	float puddle=smoothstep(0.68,0.87,noise2(p*0.32+vec2(17.0,9.0)));

@@ -1,4 +1,20 @@
 extends "res://scripts/recording_repair_qa.gd"
+var cover_profiling:=false
+var cover_gaps: Array=[]
+var cover_draws: Array=[]
+var cover_excluded:=0
+var cover_previous:=0
+
+func _process(delta: float) -> void:
+	super._process(delta)
+	if not cover_profiling:return
+	var now:=Time.get_ticks_usec()
+	if get_tree().root.has_focus():
+		if cover_previous>0:
+			cover_gaps.append((now-cover_previous)/1000.0)
+			cover_draws.append(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME))
+	else:cover_excluded+=1
+	cover_previous=now
 func run(current: Node) -> void:
 	g=current;started_at=Time.get_ticks_usec()
 	output=OS.get_executable_path().get_base_dir().path_join("QA/views")
@@ -11,7 +27,8 @@ func run(current: Node) -> void:
 	for light in g.lamps:light.light_energy=.6
 	for door in g.doors.values():door.locked=false;door.set_open(true,.01)
 	if "--foreground-profile" in OS.get_cmdline_user_args():
-		if "--unseen-profile" in OS.get_cmdline_user_args():await profile_unseen()
+		if "--ground-cover-profile" in OS.get_cmdline_user_args():await profile_cover_route()
+		elif "--unseen-profile" in OS.get_cmdline_user_args():await profile_unseen()
 		else:await profile_rooms()
 		await g.qa_exit(0);return
 	if "--room-tour" in OS.get_cmdline_user_args():
@@ -117,3 +134,21 @@ func moving_sample(label: String,resolution: Vector2i,action_: String,strength: 
 		previous=now
 	Input.action_release(action_);samples.sort();draws.sort()
 	return {"fixture":label,"render_size":str(resolution),"focused_frames":samples.size(),"excluded_unfocused":excluded,"median_ms":samples[samples.size()/2] if samples.size()>0 else null,"p95_ms":samples[int(samples.size()*.95)] if samples.size()>0 else null,"max_ms":samples.back() if samples.size()>0 else null,"median_draw_calls":draws[draws.size()/2] if draws.size()>0 else null,"actual_displacement_m":start.distance_to(g.player.position),"enemy_states":states.keys()}
+
+func profile_cover_route() -> void:
+	var results: Array=[]
+	g.horror.set_process(false);g.horror.set_physics_process(false);g.ambient_director.enabled=false
+	for spec in [[Vector2i(2560,1440),true],[Vector2i(2560,1440),false],[Vector2i(1920,1080),false],[Vector2i(3440,1440),false]]:
+		g.get_viewport().size=spec[0]
+		for n in g.find_children("*","MultiMeshInstance3D",true,false):
+			if n.get_meta("ground_cover_shadow",false):n.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_ON if spec[1] else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		g.player.position=Vector3(0,.04,16);g.player.velocity=Vector3.ZERO;g.player.rotation=Vector3.ZERO;g.player.camera.rotation=Vector3.ZERO
+		await wait(2.0)
+		cover_gaps=[];cover_draws=[];cover_excluded=0;cover_previous=0
+		var start:=Time.get_ticks_usec();cover_profiling=true
+		for p in [Vector2(0,8),Vector2(-8.8,7.2),Vector2(-8.8,-8.8),Vector2(-8.8,-12.4),Vector2(-13,-14),Vector2(-8.8,-12.4),Vector2(-4.5,-11.7)]:
+			await travel(p,"continuous property profile route")
+		cover_profiling=false;cover_gaps.sort();cover_draws.sort()
+		results.append({"render_size":str(spec[0]),"small_foliage_shadows":spec[1],"duration_seconds":(Time.get_ticks_usec()-start)/1000000.0,"focused_frames":cover_gaps.size(),"excluded_unfocused":cover_excluded,"median_ms":cover_gaps[cover_gaps.size()/2] if not cover_gaps.is_empty() else null,"p95_ms":cover_gaps[int(cover_gaps.size()*.95)] if not cover_gaps.is_empty() else null,"max_ms":cover_gaps.back() if not cover_gaps.is_empty() else null,"median_draw_calls":cover_draws[cover_draws.size()/2] if not cover_draws.is_empty() else null})
+	var file=FileAccess.open(output.path_join("property_route_profile.json"),FileAccess.WRITE)
+	file.store_string(JSON.stringify({"scope":"Actual isolated input drives the connected gate/front/west/rear/shed route. Same new environment in all runs; 1440p A/B changes only small random foliage shadow casting. Trees/architecture/actor shadows retained. Foreground focus counted, 60fps cap, no image readback during samples, native render sizes displayed in 1280x720 desktop window. Warmed shaders; scripted threats disabled. Not whole-game, cold-start or minimum-spec evidence.","results":results,"checks":checks},"\t"));file.close()

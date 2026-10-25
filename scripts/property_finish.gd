@@ -1,5 +1,5 @@
 extends RefCounted
-# UNTESTED property art continuation. Static render geometry only: no collisions,
+# Authored property art continuation. Static render geometry only: no collisions,
 # physics bodies, interaction targets, lights, save fields or frame callbacks.
 var g: Node3D
 var site: Node3D
@@ -21,7 +21,7 @@ func reserved_verge(p: Vector3) -> bool:
 func prepare(outdoor: Node3D,id: String) -> void:
 	site=outdoor;g=site.game
 	root=Node3D.new();root.name=id;site.add_child(root)
-	root.set_meta("development_status","UNTESTED / source-only property overhaul")
+	root.set_meta("development_status","Authored static property finishes; acceptance tracked in milestone reports")
 	root.set_meta("collision_policy","Decoration only; all existing physical routes retained")
 	for spec in [["wood",EXTERIOR+"WoodSiding006_1K-JPG_Color.jpg","58564a"],["iron",STEEL,"454e47"],["rust",STEEL,"5d5141"],["stone",EXTERIOR+"Concrete019_1K-JPG_Color.jpg","61665a"],["rubber",STEEL,"242d29"],["canvas","res://assets/original/work_canvas.png","676454"]]:
 		var material: StandardMaterial3D=g.texture_mat(spec[1],Color(spec[2])).duplicate()
@@ -81,8 +81,39 @@ func finish() -> void:
 
 func build(outdoor: Node3D) -> void:
 	prepare(outdoor,"PropertyFinish")
-	arrival();house();woodland();shed();yard();sheltered_verges()
+	arrival();house();woodland();shed();yard();sheltered_verges();living_verges()
 	finish()
+
+func living_verges() -> void:
+	section="OvergrownGarden"
+	var rng:=RandomNumberGenerator.new();rng.seed=170105
+	# Authored growth bands frame the clearing. The gate, service circuit, car,
+	# footprint evidence and east return remain open; no new invisible barriers.
+	for pocket in [Rect2(-7.2,9.0,3.4,6.2),Rect2(4.0,7.8,5.3,7.8),Rect2(8.3,-2.0,5.4,6.4),Rect2(-15.0,-25.0,13.0,3.5)]:
+		for i in 65:
+			var p:=Vector2(rng.randf_range(pocket.position.x,pocket.end.x),rng.randf_range(pocket.position.y,pocket.end.y))
+			var clustering: float=sin(p.x*1.7+p.y*.6)*cos(p.y*1.2-p.x*.3)
+			if clustering<-.25:continue
+			var id: String="Grass_Short" if i%4!=0 else ("Plant_1" if i%8==0 else "Bush_2")
+			nature(id,p,rng.randf_range(.13,.30) if id!="Bush_2" else rng.randf_range(.28,.48),rng.randf()*TAU)
+	section="FineWoodlandEdge"
+	# Thin, weather-bent coppice beside existing mature trees provides a fine
+	# silhouette between the coarse crowns and the ground, not another tree grid.
+	for p in [Vector2(-11.3,10.5),Vector2(-11.7,14.8),Vector2(-12.5,5.2),Vector2(11.0,14.2),Vector2(12.0,9.4),Vector2(13.2,4.3),Vector2(14.1,1.2),Vector2(-10,-24.5),Vector2(-15,-23),Vector2(-5,-25.5)]:
+		var base:=Vector3(p.x,site.ground_height(p.x,p.y)-.035,p.y)
+		for stem in 3:
+			var yaw:=rng.randf()*TAU
+			var drift:=Vector3(cos(yaw),0,sin(yaw))
+			var height: float=rng.randf_range(1.45,2.3)
+			var a:=base+drift*.10
+			var b:=a+Vector3.UP*height*.52+drift*.12
+			var c:=a+Vector3.UP*height+drift*.40
+			tube("Coppice rooted stem",a,b,.023,"wood");tube("Coppice upper stem",b,c,.011,"wood")
+			for sign_ in [-1,1]:
+				var fork: Vector3=b.lerp(c,.3)+Vector3(-drift.z,0,drift.x)*sign_*.37+Vector3.UP*.18
+				tube("Fine lateral shoot",b.lerp(c,.2),fork,.007,"wood")
+				tube("Terminal twig",fork,fork+drift*.16+Vector3.UP*.28,.0035,"wood")
+		for i in 4:nature("Grass_Short",p+Vector2(rng.randf_range(-.6,.6),rng.randf_range(-.6,.6)),rng.randf_range(.18,.32),rng.randf()*TAU)
 
 func arrival() -> void:
 	section="FrontApproach"

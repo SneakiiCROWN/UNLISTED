@@ -6,7 +6,16 @@ Eli Ward takes a night call at 17 Briar Lane, the address on his father Simon's 
 
 **0.10.0 / The Last Call - Windows alpha.** A connected plan investigation, real cellar bay, disconnected monitor experiment and sound-based escape deepen Simon's last investigation. The larger game and 30-60 minute human first-play target remain unfinished.
 
-## Current private development / 0.10.4-dev
+## Current private development / 0.10.5-dev
+
+Horror & Character Production adds finer winter-tree crowns and woodland-edge
+growth, damp garden transitions and selective small-foliage shadow savings. The
+existing recorder anomaly now drives its physical meter, with partial-save and
+reduced-motion recovery. A matched-source character construction study remains
+isolated; it does not replace the working Surveyor or meet final character-art
+approval. See [actual implementation and test scope](HORROR_CHARACTER_VERIFICATION.md).
+
+### Preserved 0.10.4 milestone
 
 The Unseen Presence strengthens the existing upside-down lounge's visibility,
 save recovery and room ownership, with one restrained positional overhead contact.
