@@ -1,17 +1,17 @@
 {
-  "version": "0.10.4-dev",
-  "milestone": "The Unseen Presence",
-  "private_source_commit": "f413afd227479349a3ba71129056404e72900b12",
-  "github_source_commit": "103447483a482650cd56f37d6e2ceedee56dd49a",
+  "version": "0.10.5-dev",
+  "milestone": "Horror & Character Production",
+  "private_source_commit": "61dffd26097e9f2c390ac59e426345f6dea24245",
+  "github_source_commit": "043e5999d9c0477af20d1f00536a2a27442e9e8a",
   "latest_source_is_verified": true,
   "source_commit_scope": "These hashes identify the verified runtime/source change. Subsequent checkpoint commits update metadata only. Complete source is pinned by the development tag.",
-  "development_tag": "dev-v0.10.4-unseen-presence-20261026",
-  "verification": "UNSEEN_PRESENCE_VERIFICATION.md",
+  "development_tag": "dev-v0.10.5-horror-character-20261026",
+  "verification": "HORROR_CHARACTER_VERIFICATION.md",
   "previous_verified_milestone": {
-    "version": "0.10.3-dev",
-    "private_source": "ce834d245191e1be849b68b5fdf82f1456e67785",
-    "github_source": "3c9c903352d23e9ba682d2f95e768f296c1ebbbf",
-    "verification": "LIVING_NIGHTMARE_VERIFICATION.md"
+    "version": "0.10.4-dev",
+    "private_source": "2da91cd29d72919259e377eb04c15f081b66fd56",
+    "github_source": "551b8055fe619f6e28db736dd23db893c1fa880b",
+    "verification": "UNSEEN_PRESENCE_VERIFICATION.md"
   },
   "fresh_investigation_baseline": {
     "version": "0.10.2-dev",
@@ -20,29 +20,64 @@
     "rerun_this_milestone": false
   },
   "targeted_checks": {
-    "surveyor_perception_hiding_escape_recovery": "58/0",
-    "final_impossible_room_and_three_resolution_views": "52/0",
-    "vent_reversal": "8/0"
+    "exterior_movement_gate_perimeter_save": "59/0",
+    "full_recorder_house_responses": "33/0",
+    "recorder1440_layout_recovery": "24/0",
+    "native_exterior_views": "17 views each at 1080p, 1440p and 3440x1440; explicit camera fixtures"
   },
-  "surveyor_art": "Retained working model; new static study failed construction review, no animation/rig promotion",
+  "surveyor_art": "Matched canonical construction foundation only; not distinctive final art, not rigged, active model retained",
   "owner_saves_settings_unchanged": true,
   "public_playable": "unchanged v0.10.0",
   "human_playtested_this_milestone": false,
   "human_approval": "pending",
   "performance": {
-    "scope": "Exported Windows moving fixtures, actual controller physics and AI, story mode. 60fps cap; native-resolution viewport presented at 1280x720; focus counted, no image readback during samples. Warmed views, three seconds each, deliberate fixture placements and forced pursuit. Not sustained whole-game/minimum-spec or human playtesting.",
-    "samples": 9,
-    "focused_frames": 1626,
-    "excluded_unfocused": 0,
-    "median_ms_range": [
-      16.65,
-      16.672
+    "scope": "Actual isolated input drives the connected gate/front/west/rear/shed route. Same new environment in all runs; 1440p A/B changes only small random foliage shadow casting. Trees/architecture/actor shadows retained. Foreground focus counted, 60fps cap, no image readback during samples, native render sizes displayed in 1280x720 desktop window. Warmed shaders; scripted threats disabled. Not whole-game, cold-start or minimum-spec evidence.",
+    "results": [
+      {
+        "duration_seconds": 25.165836,
+        "excluded_unfocused": 0,
+        "focused_frames": 1509,
+        "max_ms": 20.852,
+        "median_draw_calls": 9770.0,
+        "median_ms": 16.666,
+        "p95_ms": 16.904,
+        "render_size": "(2560, 1440)",
+        "small_foliage_shadows": true
+      },
+      {
+        "duration_seconds": 25.166158,
+        "excluded_unfocused": 0,
+        "focused_frames": 1509,
+        "max_ms": 17.268,
+        "median_draw_calls": 9402.0,
+        "median_ms": 16.667,
+        "p95_ms": 16.885,
+        "render_size": "(2560, 1440)",
+        "small_foliage_shadows": false
+      },
+      {
+        "duration_seconds": 25.165832,
+        "excluded_unfocused": 0,
+        "focused_frames": 1509,
+        "max_ms": 17.487,
+        "median_draw_calls": 9403.0,
+        "median_ms": 16.666,
+        "p95_ms": 16.853,
+        "render_size": "(1920, 1080)",
+        "small_foliage_shadows": false
+      },
+      {
+        "duration_seconds": 25.166442,
+        "excluded_unfocused": 0,
+        "focused_frames": 1509,
+        "max_ms": 17.516,
+        "median_draw_calls": 10062.0,
+        "median_ms": 16.666,
+        "p95_ms": 16.9,
+        "render_size": "(3440, 1440)",
+        "small_foliage_shadows": false
+      }
     ],
-    "p95_ms_range": [
-      16.811,
-      17.313
-    ],
-    "max_ms": 27.4,
     "sustained_whole_game_benchmark": false
   },
   "package_verification": "Independent ZIP launch, hashes and exact private delivery paths are recorded in the private milestone DELIVERY.json; no new public Windows release."
