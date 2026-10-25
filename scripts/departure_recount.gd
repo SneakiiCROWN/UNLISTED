@@ -59,10 +59,13 @@ func restore_state() -> void:
 	update_archive()
 
 func update_archive() -> void:
-	var returned: bool=game.events.get("return_request",false)
-	archive.text="POWER RESTORED\nWORK ORDER 017\n1998 JOB: NOT CLOSED" if returned else archive_text
-	archive.font_size=12 if returned else archive_font
-	archive.pixel_size=.0035 if returned else archive_pixels
+	var description:="S. WARD / 1998\nJOB FILE AVAILABLE\nOPEN WORK RECORD"
+	if game.report_read:description="S. WARD / 1998\nORIGINAL: SERVICE CABINET\nEXIT NOT RECORDED"
+	if game.events.get("field_return_read",false):description="S. WARD / 1998\nORIGINAL RECOVERED\nEXIT NOT WITNESSED"
+	if game.events.get("equipment_date_compared",false):description="S. WARD / 1998\n2018 STOCK LABEL\nDATE OF USE UNKNOWN"
+	archive.text=description if game.stage>=3 else archive_text
+	archive.font_size=12 if game.stage>=3 else archive_font
+	archive.pixel_size=.0035 if game.stage>=3 else archive_pixels
 
 func update_sheet() -> void:
 	var complete: bool=game.events.get("recount_complete",false)
@@ -70,7 +73,11 @@ func update_sheet() -> void:
 	sheet.font_size=16 if complete else 17
 	sheet.pixel_size=.0035 if complete else .005
 	if str(game.events.get("departure_pending",""))!="":
-		sheet.text="WITNESSED / E. WARD\n\nS. WARD / IN\n\nRECEIPT RETAINED\nEXIT / PENDING"
+		var submitted: bool=game.events.departure_pending=="on_record"
+		sheet.text=("REPORTS SUBMITTED" if submitted else "1998 / CORRECTED")+"\n\nS. WARD / IN\nE. WARD / IN\n\n"+("COPY BELOW" if is_instance_valid(game.final_account) and game.final_account.phase()=="receipt" else "COPY RETAINED / EXIT --")
+
+	var measured: Vector2=ThemeDB.fallback_font.get_multiline_string_size(sheet.text,HORIZONTAL_ALIGNMENT_CENTER,-1,sheet.font_size)
+	sheet.pixel_size=minf(sheet.pixel_size,minf(.42/maxf(measured.x,1),.50/maxf(measured.y,1)))
 
 func request() -> bool:
 	if game.events.get("case_v2",false) and not game.events.get("field_return_read",false):
@@ -102,6 +109,7 @@ func _process(delta: float) -> void:
 		var catch: AudioStreamPlayer3D=game.sound("latch",shutter.global_position,-24)
 		game.sound_caption("A mechanical catch releases.",2,"RELAY CABINET",catch)
 	was_isolated=game.isolated
+	update_archive()
 	if game.isolated and not game.events.get("return_request",false) and game.events.get("threat_resolved",false) and not game.threat.active():
 		var p: Vector3=game.player.position
 		if p.y>-.3 and absf(p.x)<6 and p.z< -4 and p.z> -9:

@@ -50,6 +50,7 @@ var capture_director: Node
 var memory_receipt: Node3D
 var lounge_contents: Node3D
 var impossible_room: Node3D
+var final_account: Node3D
 var recount: Node3D
 var investigation: Node3D
 var witness: Node3D
@@ -104,6 +105,7 @@ func _ready() -> void:
 	qa_mode = qa_mode or "--exit-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--storage-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--inspection-qa" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--final-account-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--sound-touch-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--night-arrival-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--arrival-qa" in OS.get_cmdline_user_args()
@@ -188,6 +190,7 @@ func _ready() -> void:
 	load("res://scripts/interior_finish.gd").new().build(self)
 	property_memory=load("res://scripts/property_memory_study.gd").new();property_memory.game=self;add_child(property_memory)
 	recorder_memory=load("res://scripts/recorder_memory_study.gd").new();recorder_memory.game=self;recorder_memory.runtime=true;add_child(recorder_memory)
+	final_account=load("res://scripts/final_account.gd").new();final_account.game=self;add_child(final_account)
 	set_volume(volume)
 	show_menu("UNLISTED", true)
 	if dev_mode:
@@ -854,6 +857,7 @@ func new_game(cinematic_handoff:=false) -> void:
 	if is_instance_valid(spare_place):spare_place.restore()
 	if is_instance_valid(investigation):investigation.restore()
 	if is_instance_valid(recount):recount.restore_state()
+	if is_instance_valid(final_account):final_account.restore()
 	physical.restore()
 	horror.reset()
 	threat.reset()
@@ -941,6 +945,10 @@ func open_casebook() -> void:
 	presentation.inspect_document("FIELD NOTES / RECORDS EXAMINED",text_)
 
 func interaction_name(id: String) -> String:
+	if id=="account_receipt":return "Take my receipt"
+	if id=="account_compare":return "Compare the stock label"
+	if id=="account_car":return "Stow the papers and leave" if final_account.phase()=="ready" else "Return to the receipt"
+	if id=="order" and is_instance_valid(final_account) and final_account.phase() in ["ready","boarding"]:return "Receipt retained"
 	if id=="hall_microphone":return "Inspect microphone"
 	if id=="call_lightbox":return "Compare plans"
 	if id=="call_niche":return "Close lining door" if doors.call_niche.opened else "Lift recessed latch"
@@ -992,6 +1000,7 @@ func try_interact() -> void:
 		interact(str(hit.collider.get_meta("interaction")))
 
 func interact(id: String) -> void:
+	if id.begins_with("account_"):final_account.use(id);return
 	if id.begins_with("call_"):last_call.use(id);return
 	if id.begins_with("exit_"):service_exit.use(id);return
 	if id.begins_with("witness_"):witness.use(id);return
@@ -1030,6 +1039,7 @@ func interact(id: String) -> void:
 		"source_copy":
 			if events.get("memory_confirmed",false):inspect_text(NOTES.COMPARISON_TITLE,NOTES.SOURCE_COPY)
 		"order":
+			if is_instance_valid(final_account) and final_account.phase() in ["ready","boarding"]:return
 			if isolated:
 				if recount.request():presentation.show_register()
 			else:
@@ -1181,8 +1191,10 @@ func finish_attendance(outcome: String) -> bool:
 	if outcome=="on_record" and not events.get("memory_confirmed",false):return false
 	if events.get("case_v3",false) and not events.get("bedroom_left",false):return false
 	if events.get("case_v2",false):
-		if not events.get("field_return_read",false):return false
-		events.departure_pending=outcome
+		if not events.get("field_return_read",false) or not events.get("recount_complete",false):return false
+		if events.get("case_v4",false) and not events.get("call_complete",false):return false
+		if threat.active() or events.get("threat_pending",false):return false
+		if not final_account.begin(outcome):return false
 		presentation.resume_game();recount.update_sheet();save_game()
 		return true
 	events.ending=outcome
@@ -1276,6 +1288,7 @@ func apply_save(data: Dictionary) -> void:
 	resume()
 	if data.get("ended",false): finish_game()
 	if is_instance_valid(recount):recount.restore_state()
+	if is_instance_valid(final_account):final_account.restore()
 	if is_instance_valid(investigation):investigation.restore()
 	if is_instance_valid(chapter):chapter.restore()
 	if is_instance_valid(witness):witness.restore()
@@ -1366,6 +1379,7 @@ func run_qa() -> void:
 	if "--director-qa" in OS.get_cmdline_user_args():path="res://scripts/director_qa.gd"
 	if "--production-views" in OS.get_cmdline_user_args():path="res://scripts/production_views.gd"
 	if "--maintenance-qa" in OS.get_cmdline_user_args():path="res://scripts/maintenance_qa.gd"
+	if "--final-account-qa" in OS.get_cmdline_user_args():path="res://scripts/final_account_qa.gd"
 	if "--sound-touch-qa" in OS.get_cmdline_user_args():path="res://scripts/sound_touch_qa.gd"
 	if "--night-arrival-qa" in OS.get_cmdline_user_args():path="res://scripts/night_arrival_qa.gd"
 	if "--house-answers-qa" in OS.get_cmdline_user_args():path="res://scripts/house_answers_qa.gd"

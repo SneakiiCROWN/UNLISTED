@@ -1,21 +1,18 @@
 {
   "version": "0.10.1-dev",
-  "private_source_commit": "06bac3fc5412c7e23dc42bdd21a8bd39b2dfebde",
+  "private_source_commit": "8d7e9bf9343abb5099d45d469a3eb0f66cbd546d",
   "public_playable_release": "unchanged v0.10.0",
   "complete_source_local_only": true,
   "human_playtested": false,
-  "verification": "SOUND_TOUCH_PROGRESS.md; native Windows48/0 at1080p,36/0 at1440p,36/0 at3440x1440,11/0 cinematic continuity",
-  "last_verified_private_source": "06bac3fc5412c7e23dc42bdd21a8bd39b2dfebde",
-  "verification_status": "Focused changed systems and post-render hand visibility verified; human artistic/listening approval pending; full investigation not rerun",
+  "verification": "FINAL_ACCOUNT_PROGRESS.md; FinalAccount03 targeted branches and04 outcome layouts; fresh integrated route in progress",
+  "last_verified_private_source": "8d7e9bf9343abb5099d45d469a3eb0f66cbd546d",
+  "verification_status": "Targeted physical receipt, car, recovery and legacy checks passing; not yet packaged; human comprehension and emotional approval pending",
   "testing_paused_at_user_request": false,
   "private_windows_candidate": true,
   "latest_source_is_verified": true,
-  "private_windows_candidate_source": "06bac3fc5412c7e23dc42bdd21a8bd39b2dfebde",
+  "private_windows_candidate_source": "8d7e9bf9343abb5099d45d469a3eb0f66cbd546d",
   "private_package_extracted_native_checks": {
-    "passed": 48,
-    "failed": 0,
-    "duration_seconds": 27.935372,
-    "owner_data_unchanged": true
+    "status": "pending new package verification"
   },
   "settled_ending_and_radio_checks": {
     "passed": 15,
@@ -23,11 +20,9 @@
   },
   "public_release_unchanged": true,
   "character_art_approved": false,
-  "milestone": "Sound, Touch and Tension / fixed grips and selected nearfield recordings",
-  "private_complete_source_checkpoint": "06bac3fc5412c7e23dc42bdd21a8bd39b2dfebde",
+  "milestone": "The Final Account / targeted verified candidate",
+  "private_complete_source_checkpoint": "8d7e9bf9343abb5099d45d469a3eb0f66cbd546d",
   "human_approval": "pending",
   "new_character_art": "not promoted; original working Surveyor retained",
-  "new_asset_batch": "Eight licensed nearfield recordings and two original fixed grip meshes private; code/provenance only public",
-  "private_package_sha256": "72e8cd5cd983997603c9e2fb15e88b17cfac9cf8b501d2595c8627f2ba90d1f3",
-  "complete_private_source_sha256": "43d1987cfa606ecdc34b06267077842c83a10d122b4bec61ee05a63e76067803"
+  "new_asset_batch": "Eight licensed nearfield recordings and two original fixed grip meshes private; code/provenance only public"
 }

@@ -16,6 +16,8 @@ This maps implemented runtime, not human comprehension approval.
 
 ## Comprehension defects still requiring production work
 
-The link from restoring supply to reading the office file is too weak if the player never tries its terminal. The 2018 equipment label is an observation awaiting meaningful later payoff. The porch register still asks the player to trust a service procedure in a supernatural house; its stakes and physical outcome need stronger authored presentation. Optional investigations can be bypassed too easily for the target adventure length. The Surveyor has physical danger but no fully authored explanation of its relationship to the house. Its identity must stay uncertain, not silently become Simon.
+Implemented in The Final Account: the powered terminal names Simon's job, the legitimately collected 2018 label can be separated from dated evidence on the desk, and each porch choice produces a physical receipt before the walk to Eli's car. The choice distinguishes closing a service call from submitting a witness report; neither resolves Simon's disappearance. The final walk remains interactive, with one restrained hall response and no new chase. Already pending older departures retain their exit.
+
+Human comprehension, emotional payoff and pacing remain unverified. Optional investigation depth and the Surveyor's relationship to the house remain unresolved creative work; his identity must stay uncertain.
 
 Next story work should address these through playable causes and consequences. More documents alone are insufficient. No human first-time comprehension assessment available for this new slice yet.

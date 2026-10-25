@@ -85,6 +85,7 @@ func _process(delta: float) -> void:
 	cover.position.x=move_toward(cover.position.x,-.66 if open else 0.0,delta*.8)
 	game.targets.field_notebook.collision_layer=1 if open and cover.position.x<-.55 and not game.events.get("field_return_read",false) else 0
 	if str(game.events.get("departure_pending",""))=="":return
+	if is_instance_valid(game.final_account) and game.final_account.pending():return
 	departure_clock+=delta
 	if departure_cue<2 and departure_clock>2.0+departure_cue*3.0:
 		game.sound("step",Vector3(0,0,-1+departure_cue*3),-27);departure_cue+=1

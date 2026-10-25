@@ -1,7 +1,7 @@
 extends RefCounted
 
 const WHY_I_CAME := "Dad disappeared on a job at 17 Briar Lane in 1998. They never found him. Tonight someone reported a television playing in the empty house, although its power should be disconnected. I asked dispatch for the job.\n\nHis last job slip has this address on it. I want to find out what he was doing here before I close tonight's call."
-const OFFICE_POWER := "Restoring the kitchen supply switched on the office equipment too. Dad's last job was here. There may still be a record of it in those files."
+const OFFICE_POWER := "The office terminal came on with the kitchen supply. Dad's name is on its 1998 job file. I want to read it before I close this call."
 const INSPECTION_KIT := "The case is stamped 2018. This address came off the service list in 1999. I don't know when the case was brought here, or who left it.\n\nThe UV head fits my work torch. It reveals ink I can't see in white light. The label says the office report sleeves use that ink.\n\nBoth lights use the same battery. UV runs it down faster. I have a hand-wound backup in the cap if I run out of spares. Equipment controls are listed in Settings."
 
 const HALL_MICROPHONE := "A small microphone is bolted to the hall wall. Its cable runs back to the office recorder.\n\nThe recorder can pick up my footsteps as I cross the hall. I can play them back from the office. Dad used this equipment too, but his 1998 test reel is stored separately."
@@ -63,7 +63,9 @@ static func clue(game: Node) -> String:
 		if game.events.get("carbon_read",false):return "Dad wrote down %.1f. I can try it on the office radio."%game.PUZZLES.station(game.events)
 		if not game.equipment.data.uv:return "Dad marked the sleeve for UV light. I saw an inspection kit on the shed bench."
 		return "Dad marked the report sleeve for UV light. I can examine it on the office desk."
-	if game.events.get("departure_pending","")!="":return "I have the receipt. I need to get it out to the lane."
+	if game.events.get("departure_pending","")!="":
+		if is_instance_valid(game.final_account) and game.final_account.phase()=="receipt":return "My receipt is in the lower clip on the porch register."
+		return "I've kept the receipt. My car is outside the front gate."
 	if game.isolated and game.events.get("case_v2",false) and not game.events.get("field_return_read",false):return "The drawer shuts when I step off the floor plate. Something heavy could hold it open."
 	if game.isolated:return "The original contradicts the office file. The porch register still carries the false entry."
 	if game.shed_read:return "Match the circuit names in Simon's note to the plates on the relay."
@@ -85,6 +87,7 @@ static func refresh_collected(events: Dictionary) -> void:
 		notes.erase("SIMON / RETURN CHANNEL")
 	for title_ in current:
 		if notes.has(title_):notes[title_]=current[title_]
+	if notes.has("INSPECTION KIT") and events.get("equipment_date_compared",false):notes["INSPECTION KIT"]+="\n\nI compared its 2018 stock label with the 1998 job record. That doesn't tell me who left it here, or when they used it. I kept the label separate."
 
 static func unfinished_return(events: Dictionary) -> String:
 	if events.get("bedroom_left",false):return "I found Dad's last page. I kept it with his report."

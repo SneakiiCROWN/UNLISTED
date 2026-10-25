@@ -354,16 +354,13 @@ func finish_departure() -> void:
 	await wait(.5)
 	check("pause suspends departure cues",g.menu_open and is_equal_approx(departure_time,g.investigation.departure_clock))
 	await action("ui_cancel")
+	if g.final_account.pending():await use("account_receipt",false)
 	await travel(Vector2(0,8),"leave porch with evidence")
 	await travel(Vector2(0,15.1),"approach property gate")
 	if not g.doors.front_gate.opened:await use("front_gate")
 	await travel(Vector2(0,19.5),"cross property gate")
-	g.player.rotation.y=PI;g.player.camera.rotation=Vector3.ZERO
-	Input.action_press("forward")
-	var leave_until:=seconds()+5
-	while not g.ended and seconds()<leave_until:await get_tree().physics_frame
-	Input.action_release("forward")
-	check("walking into lane completes departure",g.ended and g.player.position.z>21)
+	await physical_final_exit()
+	check("physical departure completes selected outcome",g.ended and g.player.position.z>18.5)
 	check("fresh route ending",g.ended and g.presentation.section=="ending")
 	check("fresh route preserves selected outcome",g.events.get("ending","accounted_for")==("on_record" if "--on-record-ending" in OS.get_cmdline_user_args() else "accounted_for"))
 	await shot("R08_ending")
@@ -376,23 +373,30 @@ func finish_departure() -> void:
 	check("completed menu preserves selected outcome",g.events.get("ending","accounted_for")==("on_record" if "--on-record-ending" in OS.get_cmdline_user_args() else "accounted_for"))
 	if "--both-earned-endings" in OS.get_cmdline_user_args():
 		phase="Alternate ending / restore naturally earned porch checkpoint"
-		g.checkpoint_path=earned_path;g.presentation.restart_checkpoint();await wait(.5)
+		g.apply_save(JSON.parse_string(FileAccess.get_file_as_string(earned_path)));await wait(.5)
 		check("earned branch restores complete investigation",not g.ended and g.events.get("bedroom_left",false) and g.events.get("memory_confirmed",false))
 		await use("order",false)
 		if g.presentation.buttons.has("Attach original / keep Simon's case open"):g.presentation.buttons["Attach original / keep Simon's case open"].pressed.emit()
+		if g.final_account.pending():await use("account_receipt",false)
 		await travel(Vector2(0,8),"evidence branch porch departure")
 		await travel(Vector2(0,15.1),"evidence branch gate approach")
 		if not g.doors.front_gate.opened:await use("front_gate")
 		await travel(Vector2(0,19.5),"evidence branch crosses gate")
-		g.player.rotation.y=PI;g.player.camera.rotation=Vector3.ZERO;Input.action_press("forward")
-		var branch_until:=seconds()+5
-		while not g.ended and seconds()<branch_until:await get_tree().physics_frame
-		Input.action_release("forward")
+		await physical_final_exit()
 		check("earned alternate branch leaves on record",g.ended and g.events.get("ending","")=="on_record")
 		await shot("R09_on_record_branch")
 		g.save_game();g.load_game();await wait(.3)
 		check("alternate completed save restores correct outcome",g.ended and g.events.get("ending","")=="on_record")
 	await finish_run()
+func physical_final_exit() -> void:
+	if is_instance_valid(g.final_account) and g.final_account.pending():
+		await travel(Vector2(-5.5,19.4),"return to actual driver door")
+		await use("account_car",false);await wait(1.7)
+	else:
+		g.player.rotation.y=PI;g.player.camera.rotation=Vector3.ZERO;Input.action_press("forward")
+		var until:=seconds()+5
+		while not g.ended and seconds()<until:await get_tree().physics_frame
+		Input.action_release("forward")
 func finish_run(via_menu:=true) -> void:
 	recorder.set_recording_active(false);recorder.get_recording().save_to_wav(output.path_join("game_bus.wav"))
 	recording = false;await wait(0.2)

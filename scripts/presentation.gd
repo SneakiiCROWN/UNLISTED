@@ -284,6 +284,7 @@ func pause_world() -> void:
 	hud.visible = false
 
 func show_menu(main: bool) -> void:
+	if is_instance_valid(game.final_account) and game.final_account.phase()=="boarding":fade.color.a=0
 	death_backing.visible = false
 	clear_transients()
 	footer.visible = true
@@ -376,6 +377,7 @@ func resume_now() -> void:
 func return_to_title() -> void:
 	if game.started and not game.ended and section != "dead":game.save_game()
 	if is_instance_valid(game.capture_director):game.capture_director.cancel()
+	if is_instance_valid(game.final_account):game.final_account.cleanup();fade.color.a=0
 	game.started = false
 	show_menu(true)
 
@@ -676,20 +678,22 @@ func show_register() -> void:
 	section = "register"
 	label(card_body,"PROPERTY 17 / ATTENDANCE REGISTER",16,"Meta")
 	label(card_body,"SIMON WARD / NO EXIT RECORDED",32,"Title")
-	var final_line:="and ask dispatch to investigate the house. I need to take the receipt out to the lane." if game.events.get("case_v2",false) else "and ask dispatch to investigate the house."
 	var context:="Simon was still inside when the office marked him absent."
 	if game.events.get("case_v3",false):context="Dad knew I was at home. He found my room here anyway.\nHe went back to check whether someone was trapped."
 	if game.events.get("witness_carbon_read",false):context="Dad never signed the clearance. The machine filed it while he was inside.\nI have the unsigned carbon and his account of what happened."
 	if game.events.get("exit_receipt_read",false):context="The service exit printed my departure before I crossed it.\nDad's EMPTY entry doesn't prove he left either. I have his report."
 	if game.events.get("call_complete",false):context="Dad's later page says he called home, then heard the speaker repeat our conversation.\nHe used the recorder to get past the man at the stairs.\nI found that page and repeated his test with the speaker disconnected."
-	label(card_body,"SIMON WARD    1998 / MARKED ABSENT / NO EXIT\nELI WARD          TONIGHT / ARRIVAL RECORDED\n\n"+context+"\n\nCorrecting his entry means he was here in 1998, not that I found him.\nI can close tonight's job with that correction, or submit the evidence\n"+final_line,20)
+	label(card_body,"1998 / Simon Ward: marked absent, with no recorded exit.\nTonight / Eli Ward: still here.\n\n"+context,19)
+	if game.events.get("equipment_date_compared",false):label(card_body,"2018 stock label kept separate / date of use unknown",15,"Meta")
 	var close_call:=add_button("Simon Ward / PRESENT",func():game.finish_attendance("accounted_for"),true,card_body)
-	close_call.text="Correct the 1998 entry / close tonight's job";close_call.grab_focus()
-	if not game.events.get("case_v2",false):add_button("Eli Ward / PRESENT",func():resume_game();game.sound("relay",Vector3(0,1.5,4),-26);game.message("Your arrival is already entered. Simon's departure is still blank.",5),true,card_body)
+	close_call.text="Correct Dad's false absence";close_call.grab_focus()
+	label(card_body,"Close my service call. Keep his papers. Dad remains missing.",16,"Meta")
+	if not game.events.get("case_v2",false):add_button("Eli Ward / PRESENT",func():resume_game();game.sound("relay",Vector3(0,1.5,4),-26);game.message("My arrival is entered. Dad's exit is still blank.",4),true,card_body)
 	if game.events.get("memory_confirmed",false):
-		label(card_body,"Submit both accounts to request an investigation. Dad remains missing.",16,"Meta")
 		var keep_case:=add_button("Attach original / keep Simon's case open",func():game.finish_attendance("on_record"),true,card_body)
-		keep_case.text="Submit the evidence / request investigation"
+		keep_case.text="Submit Dad's records and tonight's comparison"
+		label(card_body,"Leave the fault open. Ask dispatch to investigate. Record me as a witness.",16,"Meta")
+	if game.events.get("case_v2",false):label(card_body,"Either way, take the receipt from the clip below and return to the car.\nNeither choice tells me where Dad went.",16)
 	add_button("Leave register",resume_game,true,card_body)
 	entrance_animation(card)
 
@@ -740,12 +744,17 @@ func show_ending() -> void:
 	label(body,"PROPERTY 17  /  ORIGINAL RETAINED" if retained else "PROPERTY 17  /  REGISTER CORRECTED",14,"Meta")
 	label(body,"ON\nRECORD" if retained else "ACCOUNTED\nFOR",48,"Title")
 	rule(body)
+	var physical_departure: bool=is_instance_valid(game.final_account) and game.final_account.phase()=="departed"
 	if retained:
 		label(body,"1998 / Simon Ward     STILL MISSING\nTonight / Eli Ward      WITNESS RECORDED",21)
-		label(body,"I left Dad's report with mine. His account, and what happened to me tonight.\n\nHe is still missing. But there are two reports now.\nThis time I want someone to check the house, not just the paperwork." if game.events.get("case_v3",false) else "I sent the comparison with Dad's report. The fault stays open.\n\nHe is still missing. But his account is on record now, and so is mine.",19)
+		var text_:="I've kept Dad's originals with the comparison I recorded tonight.\n\nI'm taking them to dispatch. I want someone to investigate the house.\nDad is still missing. This report has my name on it."
+		if not physical_departure:text_="I sent the comparison with Dad's report. The fault stays open.\n\nHe is still missing. But his account is on record now, and so is mine."
+		label(body,text_,19)
 	else:
 		label(body,"1998 / Simon Ward     PRESENT\nTonight / Eli Ward      DEPARTURE RECORDED\nSimon is still missing.",21)
-		label(body,"I corrected Dad's entry. He was here. He never signed out.\n\nI closed tonight's job and kept the pages he left.\nI still don't know where he went. He was trying to get home." if game.events.get("case_v3",false) else "I corrected Dad's entry and closed my call-out.\nHe was here. He never signed out.\n\nI still have his service key. I still don't know where he went.",19)
+		var text_:="I kept Dad's records and corrected the entry that said he wasn't here.\n\nMy service call is closed. His disappearance isn't.\nI still don't know where he went."
+		if not physical_departure:text_="I corrected Dad's entry and closed my call-out.\nHe was here. He never signed out.\n\nI still have his service key. I still don't know where he went."
+		label(body,text_,19)
 	add_button("Credits",show_credits)
 	add_button("Main Menu",func():game.started = false;show_menu(true))
 	add_button("Quit to Desktop",func():get_tree().quit())
