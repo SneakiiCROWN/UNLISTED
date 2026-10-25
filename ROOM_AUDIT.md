@@ -52,3 +52,7 @@ Connected arrival/lane/gate, west approach, foundations, woodland pockets, shed 
 ## 24 October / house interior pass - UNTESTED
 
 Lounge/office, utility, cellar/underfloor and copied-bedroom source changes are detailed in HOUSE_REMEMBERS_PROGRESS.md. Corrected the approved couch's long-axis fitting while retaining its original collider; cloth/support queries use actual mesh triangles. Reading lamp follows LoungeContents during transformation. Mirror feed geometry/eligibility retained with unrendered edge-wear material. No engine/gameplay/visual acceptance. Existing property pass remains untested too; do not confuse either with verified 6295892.
+
+
+## 25 October / Property Continuation
+Actual player-eye comparison found shed lining covering exterior faces. Corrected inward direction relative to shed centre; collision/foundation/doors retained. Native1080/1440/3440 property views reviewed with damp timber/ground, sheltered vegetation and softened near-lens rain. Fresh case412/0 supplies actual traversal, carrying, exit physics, hiding and both departures. Not a claim all rooms or character art are finished. Scope: PROPERTY_CONTINUATION_VERIFICATION.md.

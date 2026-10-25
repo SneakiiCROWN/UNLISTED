@@ -1,5 +1,7 @@
 # Property Continuation / 25 October 2026
 
+FINAL STATUS: Production08 fresh New Game412/0 through both earned departures; widths35/0 each; arrival12/0; uncaptured tool replay16/0. See PROPERTY_CONTINUATION_VERIFICATION.md. Packaging/extracted launch pending. Earlier entries below are preserved iteration history.
+
 Recovery: complete private38b66c2, safe GitHub a4a2183 (the supplied4a2a183 was a transposition). Recovery tag recovery-production-20261025-finalaccount-38b66c2 preserves the original. All previous ZIPs and saves retained; no public release.
 
 In progress: corrected fresh New Game route using FinalAccount06 unchanged Windows binary, real reel collection/loading and all existing manual interactions. Results pending; do not claim an uninterrupted pass until its report completes. Explicit pause/load and real death/retry are part of this single investigation, not a pre-earned recovery. Second ending may restore its actual earned register checkpoint.

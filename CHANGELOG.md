@@ -1,5 +1,11 @@
 # PRIVATE v0.10.1-dev / The Final Account
 
+## 0.10.2-dev / Property Continuation (private)
+
+Shed lining now faces inside its own building, revealing exterior timber correctly. Damp timber, sheltered ground wear/vegetation and softened near-lens rain improve the existing property. Existing puzzles, AI, saves and physical departures retained.
+
+Fresh native New Game now earns the reel AND physical service exit, manually solves the plan and reaches both endings. Corrected route-driver assumptions and frame-stall-sensitive checks without weakening game rules. See PROPERTY_CONTINUATION_VERIFICATION.md. Human approval/foreground profiling pending. No public release.
+
 The existing porch choice now produces an ending-specific physical receipt. Eli takes it, walks through the real gate and returns to his arrival car before a short concealed boarding cut. Simon remains missing in both outcomes. Clearer office/choice/outcome writing and an optional physical2018-label comparison keep undated equipment separate from Simon's1998 records. Previous pending/completed saves retain their departures. See FINAL_ACCOUNT_VERIFICATION.md: final focused tests and saved continuation passed; the first fresh route omitted the reel in its test script and remains preserved as failed evidence. No public playable release or claim of human narrative approval.
 
 # PRIVATE v0.10.1-dev / Sound, Touch and Tension

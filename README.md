@@ -12,7 +12,7 @@ Property Continuation builds on The Final Account: physical ending receipts, a r
 
 This pass repairs shed lining that covered the outside walls, refines damp timber/ground surfaces and adds restrained sheltered vegetation using existing assets. The rainy car arrival, vent crossing, footprints, recorder anomaly and existing investigations remain integrated. No new Surveyor model or voice design.
 
-The corrected uninterrupted New Game investigation is currently under native Windows verification. Do not treat a running test or the previous saved continuation as a completed fresh pass. See [current work and verification scope](PRODUCTION_CONTINUATION.md) and [previous Final Account results](FINAL_ACCOUNT_VERIFICATION.md). Older source-only notes describe their historical snapshots, not the current candidate.
+The fresh New Game investigation passes through the physical car departure, with the second ending from its legitimately earned shared porch checkpoint. Native412/0;1440p/ultrawide ending/recovery35/0 each; reduced-motion arrival12/0. Deliberate save/load and real death/retry are part of that case. This is automated verification, not human playtesting. See [actual results, failures and limits](PROPERTY_CONTINUATION_VERIFICATION.md) and [iteration history](PRODUCTION_CONTINUATION.md).
 
 Private builds and complete licensed source are retained locally. **The public playable remains v0.10.0.** No public release is authorised for this pass. Human playtesting, story comprehension and emotional/artistic approval are pending. Raw licensed media, private archives and player data remain excluded from GitHub source checkpoints.
 

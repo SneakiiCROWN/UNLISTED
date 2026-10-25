@@ -1,33 +1,36 @@
 {
   "version": "0.10.2-dev",
-  "private_source_commit": "64c7f679195af98d3bb628ec5f5fdd35e6bdeed8",
-  "public_playable_release": "unchanged v0.10.0",
-  "complete_source_local_only": true,
-  "human_playtested": false,
-  "verification": "PRODUCTION_CONTINUATION.md",
-  "last_verified_private_source": "38b66c27c27bf97ba6cde61dda35753a7d774760",
-  "verification_status": "Tool return replay16/0 with capture and16/0 without continuous readback. Simulation-aware native driver fixes wall-clock expiry; fresh08 running. No complete fresh pass claimed yet.",
-  "testing_paused_at_user_request": false,
-  "private_windows_candidate": true,
-  "latest_source_is_verified": false,
-  "private_windows_candidate_source": "38b66c27c27bf97ba6cde61dda35753a7d774760",
-  "settled_ending_and_radio_checks": {
-    "passed": 15,
-    "failed": 0
-  },
-  "public_release_unchanged": true,
-  "character_art_approved": false,
-  "milestone": "Property Continuation / native fresh verification in progress",
-  "private_complete_source_checkpoint": "64c7f679195af98d3bb628ec5f5fdd35e6bdeed8",
-  "human_approval": "pending",
-  "new_character_art": "not promoted; original working Surveyor retained",
-  "new_asset_batch": "Eight licensed nearfield recordings and two original fixed grip meshes private; code/provenance only public",
-  "fresh_route_limit": "Fresh04 362/9; missing reel step in route helper. Actual earned save continued in06; not uninterrupted fresh acceptance.",
-  "previous_final_account_extracted_checks": {
-    "passed": 35,
+  "milestone": "Property Continuation",
+  "private_source_commit": "1f1b2c3386042071286ceefb50dc7c0a1bd2c51d",
+  "private_complete_source_checkpoint": "1f1b2c3386042071286ceefb50dc7c0a1bd2c51d",
+  "last_verified_private_source": "1f1b2c3386042071286ceefb50dc7c0a1bd2c51d",
+  "latest_source_is_verified": true,
+  "verification": "PROPERTY_CONTINUATION_VERIFICATION.md",
+  "fresh_investigation": {
+    "passed": 412,
     "failed": 0,
-    "errors": 0,
-    "resolution": "1920x1080",
-    "owner_save_settings_unchanged": true
-  }
+    "scope": "One fresh New Game case, real interactions, deliberate pause/load and death/retry. Alternate ending from same earned checkpoint; not second fresh playthrough."
+  },
+  "targeted_checks": {
+    "tool_without_continuous_readback": "16/0",
+    "ending_1440p_keyboard": "35/0",
+    "ending_ultrawide_controller_story_reduced_motion": "35/0",
+    "arrival_ultrawide_reduced_motion": "12/0",
+    "plan_UI_three_resolutions": "4/0 each"
+  },
+  "owner_saves_settings_unchanged": true,
+  "native_runtime_errors": 0,
+  "human_playtested": false,
+  "human_approval": "pending",
+  "foreground_performance_benchmarked": false,
+  "private_package_extracted_native_checks": {
+    "status": "pending new package verification"
+  },
+  "public_playable_release": "unchanged v0.10.0",
+  "public_release_unchanged": true,
+  "complete_source_local_only": true,
+  "new_character_art": "none; original Surveyor retained",
+  "asset_boundary": "No new media intake; licensed runtime/library remain private",
+  "previous_final_account_source": "38b66c2",
+  "development_tag": "dev-v0.10.2-property-continuation-20261025"
 }
