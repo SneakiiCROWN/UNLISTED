@@ -24,7 +24,12 @@
   "human_approval": "pending",
   "foreground_performance_benchmarked": false,
   "private_package_extracted_native_checks": {
-    "status": "pending new package verification"
+    "passed": 35,
+    "failed": 0,
+    "errors": 0,
+    "resolution": "1920x1080",
+    "executed_from_extraction_directory": true,
+    "owner_saves_settings_unchanged": true
   },
   "public_playable_release": "unchanged v0.10.0",
   "public_release_unchanged": true,
@@ -32,5 +37,11 @@
   "new_character_art": "none; original Surveyor retained",
   "asset_boundary": "No new media intake; licensed runtime/library remain private",
   "previous_final_account_source": "38b66c2",
-  "development_tag": "dev-v0.10.2-property-continuation-20261025"
+  "development_tag": "dev-v0.10.2-property-continuation-20261025",
+  "private_windows_zip_sha256": "e5846713a573938db833c94bffd5e46933027e3263740ed4ec3d82611870c195",
+  "private_complete_source_zip_sha256": "801fd6b94c7122f243a039dd32cd0a07efc19c2260c188f9dcc164eca0ca5b65",
+  "private_runtime_executable_sha256": "7f16fa1a593bf5750145b03e3071d1515ee86553f06ecadd82219651c9c4bf12",
+  "full_fresh_recording_sha256": "bcc40542595c001116e4ddb47cfc01e229f0f46a9c57612bd8b8036b1fe40c1c",
+  "verification_status": "Verified fresh412/0; targeted35/0 each; arrival12/0; independently extracted1080p35/0. All owner hashes unchanged. Private package/source preserved; no public release.",
+  "private_windows_candidate_source": "1f1b2c3386042071286ceefb50dc7c0a1bd2c51d"
 }
