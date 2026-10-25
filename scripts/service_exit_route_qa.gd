@@ -46,6 +46,10 @@ func play_store() -> void:
 	g.save_game();g.load_game();await wait(.3)
 	check("outside save retains both discoveries",g.events.get("exit_receipt_read",false) and g.events.get("witness_carbon_read",false) and g.events.get("exit_blackout_done",false))
 	g.player.camera.look_at(Vector3(9.5,.3,-8.35));await shot("X01_exterior_bulkhead");await shot("X06_yard_escape")
+	await return_tool()
+
+func return_tool() -> void:
+	var tin: RigidBody3D=g.physical.props.tin
 	if not await travel(Vector2(10.25,-8.35),"return to retrieve thrown tool",false,true):return
 	g.player.camera.look_at(tin.global_position);await action("interact")
 	check("same thrown tool remains retrievable",g.physical.held==tin)
@@ -55,7 +59,10 @@ func play_store() -> void:
 	if not await travel(Vector2(3.25,-12.8),"old crawl retains prop clearance",false,true):return
 	if not await travel(Vector2(3.25,-16.1),"return to cellar with tool",false,true):return
 	if not await travel(Vector2(0,-18),"old relay route remains clear"):return
-	if not await travel(Vector2(0,-7),"return tool up original ramp"):return
+	if not await travel(Vector2(0,-7),"return tool up original ramp"):
+		await shot("X07_blocked_ramp")
+		await travel(Vector2(0,-7),"diagnostic crouched ramp with same tool",false,true)
+		await shot("X08_crouched_ramp");return
 	if not await travel(Vector2(-3.1,-7),"recovered tool returns to utility"):return
 	if not await travel(Vector2(-3.2,-7.75),"leave tool beside original bench"):return
 	g.player.camera.look_at(g.physical.homes.tin.origin);await action("interact");await wait(1)

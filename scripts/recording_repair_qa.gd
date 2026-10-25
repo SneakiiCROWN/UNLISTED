@@ -16,6 +16,8 @@ var started_unix_seconds := 0.0
 var exact_target: SubViewport
 var capture_manifest: FileAccess
 var capture_interval: float=1.0/6.0 if "--route-light-capture" in OS.get_cmdline_user_args() else 1.0/30.0
+var process_gaps: Array[float]=[]
+var previous_process_tick:=0
 func exact_resolution() -> void:
 	# The shared guard owns input delivery; resizing must not add a second bridge.
 	g.prepare_automated_qa()
@@ -37,6 +39,10 @@ func check(id: String,okay: bool,detail := "") -> void:
 func wait(s: float) -> void:await get_tree().create_timer(s,true).timeout
 func _process(delta: float) -> void:
 	if not recording:return
+	var tick: int=Time.get_ticks_usec()
+	if previous_process_tick>0:process_gaps.append((tick-previous_process_tick)/1000000.0)
+	previous_process_tick=tick
+	if "--route-no-images" in OS.get_cmdline_user_args():return
 	capture_clock += delta
 	if capture_clock>=capture_interval and not capturing:
 		capture_clock = 0;capture_frame()
@@ -72,15 +78,24 @@ func travel(point: Vector2,label_: String,sprint := false,crouch := false) -> bo
 	if sprint:Input.action_press("sprint")
 	if crouch:Input.action_press("crouch")
 	var remaining := 100.0
-	while seconds()-start<limit and not g.menu_open:
+	var physics_elapsed:=0.0
+	# Movement is integrated on physics ticks. A desktop/render stall must not
+	# consume the travel budget while no movement ticks are being simulated.
+	while physics_elapsed<limit and seconds()-start<maxf(20,limit*4) and not g.menu_open:
 		var diff := point-Vector2(g.player.position.x,g.player.position.z)
 		remaining = diff.length()
 		if remaining<0.13:break
 		g.player.rotation.y = atan2(-diff.x,-diff.y)
 		await get_tree().physics_frame
+		physics_elapsed+=g.get_physics_process_delta_time()
+	if remaining>=.20:
+		for i in g.player.get_slide_collision_count():
+			var contact: KinematicCollision3D=g.player.get_slide_collision(i)
+			print("TRAVEL_CONTACT ",label_," collider=",contact.get_collider().get_path()," point=",contact.get_position()," normal=",contact.get_normal())
+		print("TRAVEL_DOOR basement_open=",g.doors.basement.opened," angle=",g.doors.basement.pivot.rotation.y," held=",g.physical.held.global_transform if g.physical.held else "none")
 	Input.action_release("forward");Input.action_release("sprint");Input.action_release("crouch")
 	await wait(0.25)
-	check(label_,remaining<0.20,"position="+str(g.player.position)+" remaining="+str(remaining)+" pad="+str(g.controller.move)+" velocity="+str(g.player.velocity))
+	check(label_,remaining<0.20,"position="+str(g.player.position)+" remaining="+str(remaining)+" simulated="+str(physics_elapsed)+" wall="+str(seconds()-start)+" pad="+str(g.controller.move)+" velocity="+str(g.player.velocity))
 	return remaining<0.20
 func use(id: String,close := true) -> bool:
 	phase = "interact "+id
@@ -143,6 +158,11 @@ func run(game: Node) -> void:
 	recorder = AudioEffectRecord.new();recorder.format = AudioStreamWAV.FORMAT_16_BITS
 	AudioServer.add_bus_effect(0,recorder);recorder.set_recording_active(true)
 	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--exit-tool-source="):
+			g.new_game();g.apply_save(JSON.parse_string(FileAccess.get_file_as_string(arg.trim_prefix("--exit-tool-source="))));await wait(.4)
+			check("tool recovery uses earned open-exit case",g.events.get("exit_open",false) and g.events.get("exit_blackout_done",false))
+			var tool_test=load("res://scripts/service_exit_route_qa.gd").new();add_child(tool_test);tool_test.g=g;tool_test.output=output;tool_test.started_at=started_at;tool_test.exact_target=exact_target
+			await tool_test.return_tool();checks.append_array(tool_test.checks);tool_test.queue_free();await finish_run(false);return
 		if arg.begins_with("--earned-final-recovery="):
 			await recover_final_act(arg.trim_prefix("--earned-final-recovery="));return
 		if arg.begins_with("--earned-chapter-recovery="):
@@ -440,6 +460,10 @@ func physical_final_exit() -> void:
 func finish_run(via_menu:=true) -> void:
 	recorder.set_recording_active(false);recorder.get_recording().save_to_wav(output.path_join("game_bus.wav"))
 	recording = false;await wait(0.2)
+	if capture_manifest:capture_manifest.close();capture_manifest=null
+	process_gaps.sort()
+	var timing:=FileAccess.open(output.path_join("native_frame_timing.json"),FileAccess.WRITE)
+	if not process_gaps.is_empty():timing.store_string(JSON.stringify({"scope":"Native QA process-frame gaps on this desktop; readback capture and other PC activity can affect these. Not a minimum-spec or uncaptured gameplay benchmark.","image_readback":not "--route-no-images" in OS.get_cmdline_user_args(),"count":process_gaps.size(),"median_seconds":process_gaps[process_gaps.size()/2],"p95_seconds":process_gaps[int(process_gaps.size()*.95)],"max_seconds":process_gaps.back()}));timing.close()
 	var failed := 0
 	for item in checks:if not item.passed:failed += 1
 	for spec in [["input_trace.json",trace],["frames.json",frames],["repair_report.json",{"passed":checks.size()-failed,"failed":failed,"checks":checks,"started_unix_seconds":started_unix_seconds,"duration_seconds":seconds(),"capture":"Native wall-clock, sampled images; actions driven by automated input, no human playtest."}]]:
