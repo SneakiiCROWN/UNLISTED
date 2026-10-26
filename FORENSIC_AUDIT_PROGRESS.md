@@ -55,10 +55,14 @@ separately. Old results have not been overwritten or counted as fresh passes.
 
 ## Still required
 
-Complete the manual code/lifecycle and regression interpretation, historical
-export/crash identity matrix, remaining resource/dependency classifications,
-ordinary exported menu runs with external memory/handle trends, and relevant
-save/ending recovery checks. Crash A (driver invalid read) and Crash C (owner
+See `FORENSIC_AUDIT_REPORT.md` for the completed targeted lifecycle/history
+interpretation, seven-executable identity matrix, raw-library integrity scope,
+first 16m40s ordinary idle and extracted save/ending/pursuit/recorder checks.
+The five graphics-production documents and private 36-image native baseline
+are prepared; no experimental effects were promoted. Second ordinary idle is
+in progress. Complete manual semantic coverage of dormant conditional paths
+and an actual reproducible owner failure boundary remain open. Crash A
+(driver invalid read) and Crash C (owner
 main-thread execution at0) remain unresolved. No valid bisect good/bad boundary
 has been established; the v0.10.6 success is not immunity.
 

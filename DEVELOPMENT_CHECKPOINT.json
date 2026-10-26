@@ -1,6 +1,6 @@
 {
   "version": "0.10.9-dev",
-  "milestone": "The Player Experience",
+  "milestone": "Forensic repair and native baseline recovery",
   "private_source_commit": "e8d52600708ff8b78fc089c83d4f3332bc577acb",
   "github_source_commit": "e8e3349f652cdc949ad8526204aeff17db34b1f9",
   "latest_source_is_verified": false,
@@ -109,5 +109,8 @@
     "fix_verified": false,
     "controlled_six_minute_repeat": "passed; does not clear actual owner failure"
   },
-  "owner_playtest_ready": false
+  "owner_playtest_ready": false,
+  "private_complete_source_checkpoint": "15dd9874fbd7215529adf21340cfa9cbc7b97b94",
+  "owner_idle_crash": "Unresolved; passing observations do not establish a fix",
+  "public_release": "Unchanged; no playable release authorised"
 }
