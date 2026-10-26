@@ -106,7 +106,7 @@ func _ready() -> void:
 		DirAccess.make_dir_recursive_absolute("user://development")
 		checkpoint_path = "user://development/checkpoint.json"
 	qa_mode = "--door-repair-qa" in OS.get_cmdline_user_args() or "--recording-repair-qa" in OS.get_cmdline_user_args() or "--qa" in OS.get_cmdline_user_args() or "--presentation-qa" in OS.get_cmdline_user_args() or "--milestone-qa" in OS.get_cmdline_user_args() or "--threat-qa" in OS.get_cmdline_user_args() or "--systems-qa" in OS.get_cmdline_user_args() or "--polish-qa" in OS.get_cmdline_user_args() or "--visual-probe" in OS.get_cmdline_user_args()
-	qa_mode = qa_mode or "--production-views" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--production-views" in OS.get_cmdline_user_args() or "--graphics-study-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--stability-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--witness-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--field-qa" in OS.get_cmdline_user_args()
@@ -1398,6 +1398,10 @@ func prepare_automated_qa() -> void:
 	get_tree().root.add_child(qa_input_guard);qa_input_guard.attach(self)
 
 func run_qa() -> void:
+	if "--graphics-study-qa" in OS.get_cmdline_user_args():
+		prepare_automated_qa()
+		var study=load("res://scripts/graphics_study.gd").new();study.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(study)
+		await study.run(self);return
 	if "--stability-qa" in OS.get_cmdline_user_args():
 		var probe=load("res://scripts/stability_qa.gd").new();probe.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(probe)
 		await probe.run(self);return
