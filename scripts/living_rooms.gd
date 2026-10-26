@@ -21,8 +21,8 @@ func build(g: Node3D) -> void:
 	for y in [.09,.92]:
 		b.piece("South timber rail",Vector3(4.5,y,-2.881),Vector3(5.77,.055,.024),"trim")
 		b.piece("East timber rail",Vector3(7.377,y,.5),Vector3(.024,.055,6.77),"trim")
-	b.tube("Curtain pole",Vector3(7.20,2.55,.98),Vector3(7.20,2.55,3.02),.018,"metal")
-	for z in [1.05,2.95]:b.tube("Wall bracket",Vector3(7.39,2.55,z),Vector3(7.20,2.55,z),.012,"metal")
+	b.tube("Curtain pole",Vector3(7.12,2.55,.98),Vector3(7.12,2.55,3.02),.018,"metal")
+	for z in [1.05,2.95]:b.tube("Wall bracket",Vector3(7.39,2.55,z),Vector3(7.12,2.55,z),.012,"metal")
 	b.finish()
 	cloth=ShaderMaterial.new();cloth.shader=load("res://shaders/curtain_canvas.gdshader")
 	cloth.set_shader_parameter("canvas",load("res://assets/original/work_canvas.png"))
@@ -57,7 +57,11 @@ func curtain(parent: Node3D,z: float) -> void:
 	for row in 9:
 		for col in 13:
 			var u:=col/12.0;var v:=row/8.0
-			vertices.append(Vector3(7.18+.024*cos(u*PI*8),2.48-v*2.02,z+u*.28))
+			var y:=2.48-v*2.02
+			# Window mullions reach x=7.18 and its deep sill reaches x=6.995.
+			# Cloth hangs inside the frame and folds over the sill, not through it.
+			var drape: float=(1.0-smoothstep(.95,1.22,y))*.18
+			vertices.append(Vector3(7.10+.024*cos(u*PI*8)-drape,y,z+u*.28))
 	for row in 8:
 		for col in 12:
 			var i:=row*13+col

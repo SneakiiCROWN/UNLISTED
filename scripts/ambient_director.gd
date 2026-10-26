@@ -57,7 +57,8 @@ func curtain_visible() -> bool:
 	# Both existing and destination cloth volume, including exterior glazing.
 	for y in [.46,1.40,2.48]:
 		for z in [1.04,1.50,2.0,2.50,2.98]:
-			if game.impossible_room.visible_point(Vector3(7.18,y,z)):return true
+			var drape: float=(1.0-smoothstep(.95,1.22,y))*.18
+			if game.impossible_room.visible_point(Vector3(7.10-drape,y,z)):return true
 	return false
 func request(id: String) -> bool:
 	# F1/native QA uses the same safety and spatial eligibility as normal scheduling.

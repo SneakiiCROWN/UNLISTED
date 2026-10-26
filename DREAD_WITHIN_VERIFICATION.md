@@ -17,6 +17,10 @@ and revisited it. They are optional aftermath, never required progression.
    attention back. Doorway and exterior-glazing sightlines protect the change.
    The completed dressing remains on revisits and visible save/load. It is not
    a figure spawning behind the glass, an automatic chase or an animated reveal.
+   Native review also exposed the old frame and sill intersecting the widened
+   cloth. The final construction hangs inside the mullions and drapes over the
+   sill; normal shadow casting remains enabled. The unsuccessful no-shadow
+   experiment and earlier intersecting captures are preserved separately.
 2. **Footsteps above a normal room.** After the same witnessed restoration, one
    measured passage crosses above the lounge ceiling, followed by a pause and
    quiet wood contact. This echoes the existing 1998 account of overhead walking
@@ -76,7 +80,9 @@ retained. This is not whole-game, uncapped, minimum-spec or physical-monitor pro
 
 - Revisit the lounge after its impossible-room sequence. Judge whether closed
   curtains and overhead walking are perceptible, restrained and unsettling.
-  Optional events remain rare; F1 can request them only when eligible.
+  Optional events remain rare; the supplied native fixture footage shows both
+  without waiting for the scheduler. F1's generic event button is not a selector
+  for these individual aftermaths.
 - Walk the cellar, read the relay plates, move through its west aisle and retreat
   up the ramp. Judge structure, damp materials, fixture scale and visual clarity.
 - Listen for the Surveyor's floor contacts in wood rooms and the cellar. Judge
