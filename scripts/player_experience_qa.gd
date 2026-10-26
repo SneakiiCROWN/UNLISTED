@@ -22,6 +22,7 @@ func run(current: Node) -> void:
 	started_unix_seconds=Time.get_unix_time_from_system();capture_interval=.10
 	recorder=AudioEffectRecord.new();recorder.format=AudioStreamWAV.FORMAT_16_BITS;AudioServer.add_bus_effect(0,recorder);recorder.set_recording_active(true);recording=true
 	setup();await views()
+	g.player.position=Vector3(3.3,.04,-7.6);g.presentation.show_exclusion();await wait(.3);await shot("P09_comparison_controls");await action("ui_cancel")
 	if not "--experience-before" in OS.get_cmdline_user_args():await changed_systems()
 	await finish_run()
 func changed_systems() -> void:

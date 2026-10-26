@@ -6,7 +6,21 @@ Eli Ward takes a night call at 17 Briar Lane, the address on his father Simon's 
 
 **0.10.0 / The Last Call - Windows alpha.** A connected plan investigation, real cellar bay, disconnected monitor experiment and sound-based escape deepen Simon's last investigation. The larger game and 30-60 minute human first-play target remain unfinished.
 
-## Current private development / 0.10.8-dev
+## Current private development / 0.10.9-dev
+
+The Player Experience gives the retained Surveyor a bounded, physical search
+around its last heard/seen point, with listening pauses and purposeful door use.
+The recorder's keys, reels and meter make recorded playback visibly distinct
+from the extra step in the room. Natural PLAY/REPLAY labels, warm office task
+lighting and an aimed cellar manifold light improve existing investigation spaces.
+See [changes and verification scope](PLAYER_EXPERIENCE_VERIFICATION.md) and the
+[spoiler-light owner guide](OWNER_PLAYTEST_v0.10.9.md).
+
+This remains a private QA candidate: intermittent native crashes are unresolved.
+The public Windows release is unchanged. Human comprehension, fear and art
+approval await the owner's playtest; no 30-60-minute runtime claim is made.
+
+### Preserved 0.10.8 candidate
 
 Stability & Terror preserves the existing game and investigates the intermittent
 native crash. Recovered dump/driver evidence confirms Vulkan; controlled fixed,

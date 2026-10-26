@@ -281,7 +281,7 @@ func audition_channel(channel: String) -> void:
 	audition_tail = false
 	game.recorder_memory.transport_channel(channel)
 	var motor=game.sound("latch",Vector3(3.3,1,-8.52),-29)
-	game.sound_caption("The tape recorder starts.",2,"RECORDER "+channel,motor)
+	game.sound_caption("The tape recorder starts.",2,"TAPE RECORDER",motor)
 
 func process_audition(delta: float) -> void:
 	if audition=="" or audition=="FIELD":return
@@ -296,7 +296,7 @@ func process_audition(delta: float) -> void:
 		audition_players.append(player_)
 		game.recorder_memory.transport_pulse(.85)
 		audition_index += 1
-		if audition_index==1:game.sound_caption("Footsteps on the tape.",3,"RECORDER "+audition,player_,true)
+		if audition_index==1:game.sound_caption("Footsteps on the tape.",3,"TAPE RECORDER",player_,true)
 		audition_clock = -0.6 if audition_index>=echo_trace.size() else -clampf(float(echo_trace[audition_index][3])-float(p[3]),0.28,1.4)
 	elif audition=="B" and not audition_tail:
 		audition_tail = true

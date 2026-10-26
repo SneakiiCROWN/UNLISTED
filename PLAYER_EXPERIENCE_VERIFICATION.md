@@ -18,7 +18,15 @@ The prior complete 719.17-second native investigation recording was reviewed thr
 
 ## Acceptance status
 
-Development checkpoint: focused native verification pending. Final delivery receipt records the actual final executable hash, passed/failed reports, before/after pictures, capture sampling and independently extracted-package launch. Do not infer completion from this source note.
+05 native Windows acceptance passed: threat58/0, recorder/anomaly recovery33/0, arrival11/0, earned Story Mode ending B35/0 and vent crossing10/0. The new experience fixture passed38/0, including recorder key/meter/reel response, Start pause, controller historical-reel loading, save/load, real movement through hiding/room routes and bounded search. All owner-integrity receipts remained unchanged.
+
+The final06 export differs from05 production code only in three UI/caption string lines across presentation.gd and horror_director.gd. The sealer asserts this exact text delta and identical fingerprints for every other runtime/resource. Final06 repeats the38/0 experience fixture and native1080p/1440p/3440x1440 room/comparison-interface capture. UI screenshots were inspected. Unchanged05 mechanics regressions are reused explicitly, not relabelled as tests of a different executable. Both executable hashes and their reports are recorded in DELIVERY.json. Independent final-ZIP ending A is recorded there after extraction, not preclaimed here.
+
+The new baseline dump was inspected once read-only: exception context reads from null RCX+0x160 inside UNLISTED.exe. This differs from the prior NVIDIA exception. Private engine symbols are unavailable; nearest-export NoHotPatch stack labels do not identify internal functions. The omitted fixture recorder is corrected, and subsequent initialized captures exit normally; a proven general engine/driver crash fix is NOT claimed. Original01 and failed02/03 evidence remain separate and preserved.
+
+Native captures use timestamped viewport sampling and simultaneous game-bus audio. Final06 fixture recording is non-silent (mean -49.7dBFS, peak -21.7dBFS across64.96 seconds); this establishes signal presence, not subjective mix/listening quality. Footstep captions remain optional. No new vocals or voice replacement.
+
+Performance was not rebenchmarked or claimed improved. The desk adds one bounded unshadowed spot; the manifold replaces its earlier shadowed omni with a shadowed spot. Existing renderer, quality settings, main ceiling shadows and safer separate-process profiling remain. Capture frame timings include readback and are not a gameplay-performance benchmark.
 
 The historical 412/412 fresh investigation baseline is preserved and is NOT rerun or represented as a new result. Changed AI warrants its existing threat/death/retry regression; recorder changes warrant anomaly recovery checks. Both departures use legitimately earned historical states and are segmented checks, not another fresh full investigation.
 

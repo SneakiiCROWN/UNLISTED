@@ -1,3 +1,19 @@
+# PRIVATE v0.10.9-dev / The Player Experience
+
+Surveyor searches now check bounded clear approaches to the last heard/seen
+location, with listening pauses. Walking past a nearby closed room does not open
+its door unless the route crosses it. Animation speed eases to actual movement;
+the model, voice slots, perception and attack rules are retained.
+
+Recorder keys and meter respond to recorded sound, and the transport visibly
+stops before the impossible doorway step. PLAY/REPLAY labels and consistent
+writing separate tonight's recording from Simon's1998 reel. A reused licensed
+desk lamp and focused work pools improve office and cellar readability.
+
+Private QA candidate; known intermittent native failures are not claimed fixed.
+Source checkpoints, private evidence and a spoiler-light owner guide accompany
+delivery. Public Windows release unchanged. Human experience remains unverified.
+
 # PRIVATE v0.10.1-dev / The Final Account
 
 ## 0.10.2-dev / Property Continuation (private)
