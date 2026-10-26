@@ -13,8 +13,17 @@ var gaps: Array=[]
 var draws: Array=[]
 var previous:=0
 var excluded:=0
+var watching_title:=false
+var previous_creak_clock:=0.0
+var previous_shadow:=false
 func _process(delta: float) -> void:
 	super._process(delta)
+	if watching_title:
+		var stage: Node3D=g.presentation.stage
+		if g.presentation.atmosphere_time<previous_creak_clock:checkpoint("27-second creak cycle; playing="+str(g.presentation.creak.playing))
+		previous_creak_clock=g.presentation.atmosphere_time
+		if stage.shadow.visible!=previous_shadow:
+			previous_shadow=stage.shadow.visible;checkpoint("47-second silhouette cycle; visible="+str(previous_shadow))
 	var now:=Time.get_ticks_usec()
 	if measuring and previous>0:
 		if window.has_focus():gaps.append((now-previous)/1000.0);draws.append(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME))
@@ -57,18 +66,30 @@ func run(current: Node) -> void:
 		# Owner failure reproduction: normal root title, no SubViewport, no
 		# New Game, no live resolution loop. Only input/data isolation differs.
 		assert(kind=="root")
-		window.set_flag(Window.FLAG_NO_FOCUS,true);window.set_flag(Window.FLAG_MOUSE_PASSTHROUGH,true)
+		if not "--foreground-profile" in OS.get_cmdline_user_args():window.set_flag(Window.FLAG_NO_FOCUS,true);window.set_flag(Window.FLAG_MOUSE_PASSTHROUGH,true)
 		g.presentation.apply_display()
 		Engine.max_fps=0 # Normal project default; q.run's60fps cap must not mask idle load.
 		report.scope="Bounded normal-root main-menu idle, copied owner preferences, physical input blocked, private writes only. No gameplay or repeated resize. Not an uninstrumented owner launch or a crash fix."
 		report.max_fps=Engine.max_fps
+		report.components={"audio":not g.presentation.diagnostic_silent_menu,"mist":is_instance_valid(g.presentation.stage.mist),"silhouette":not "--title-no-silhouette" in OS.get_cmdline_user_args(),"animation":not g.presentation.stage.diagnostic_stationary}
+		if "--title-ui-only" in OS.get_cmdline_user_args():
+			g.visible=false
+			for node in g.find_children("*","GPUParticles3D",true,false):node.emitting=false
+			var env:=Environment.new();env.background_mode=Environment.BG_COLOR;env.background_color=Color("111a18")
+			g.presentation.stage.camera.environment=env
+			report.components["3d_background"]=false
+		var seconds_: int=360
+		for arg in OS.get_cmdline_user_args():
+			if arg.begins_with("--idle-seconds="):seconds_=clampi(int(arg.trim_prefix("--idle-seconds=")),120,900)
+		watching_title=true
 		await shot("idle_title_start")
-		var stop: int=Time.get_ticks_usec()+360000000
+		var stop: int=Time.get_ticks_usec()+seconds_*1000000
 		while Time.get_ticks_usec()<stop:
 			await wait(15)
 			report.samples.append({"ticks":Time.get_ticks_usec(),"menu_clock":g.presentation.stage.clock,"section":g.presentation.section,"nodes":Performance.get_monitor(Performance.OBJECT_NODE_COUNT),"objects":Performance.get_monitor(Performance.OBJECT_COUNT),"static_memory":Performance.get_monitor(Performance.MEMORY_STATIC),"fps":Engine.get_frames_per_second()})
 			checkpoint("idle heartbeat")
 		check("title stays idle without starting a case",not g.started and g.presentation.section=="title")
+		watching_title=false
 		await shot("idle_title_end")
 		report.completed=true;checkpoint("idle completed")
 		await g.qa_exit(0);return

@@ -12,9 +12,13 @@ var porch: OmniLight3D
 var facade_fill: OmniLight3D
 var mist: GPUParticles3D
 var ending_outcome:=""
+var diagnostic_stationary:=false
+var diagnostic_trace:=false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	diagnostic_stationary=game.qa_mode and "--title-no-animation" in OS.get_cmdline_user_args()
+	diagnostic_trace=game.qa_mode and "--title-trace" in OS.get_cmdline_user_args()
 	camera = Camera3D.new()
 	camera.name = "TitleCamera"
 	camera.fov = 49
@@ -29,13 +33,15 @@ func _ready() -> void:
 		for edge in [-0.82,0,0.82]:game.box(self,Vector3(x+edge,1.70,4.17),Vector3(0.065,1.5,0.13),Color(0.16,0.18,0.17))
 		for y in [1.0,1.7,2.4]:game.box(self,Vector3(x,y,4.17),Vector3(1.7,0.065,0.13),Color(0.16,0.18,0.17))
 		game.box(self,Vector3(x,0.99,4.22),Vector3(1.85,0.10,0.3),Color(0.20,0.21,0.19))
-	shadow = game.model("res://assets/original/surveyor_v03.glb",self,Vector3(-4.75,1.07,3.72),Vector3(0.36,1.26,0.03),PI)
+	if game.qa_mode and "--title-no-silhouette" in OS.get_cmdline_user_args():
+		shadow=Node3D.new();add_child(shadow)
+	else:shadow = game.model("res://assets/original/surveyor_v03.glb",self,Vector3(-4.75,1.07,3.72),Vector3(0.36,1.26,0.03),PI)
 	for mesh in game.all_meshes(shadow):mesh.material_override = game.mat(Color(0.008,0.014,0.016))
 	shadow.visible = false
 	porch = game.lamp(Vector3(0,2.4,5.8),Color(0.76,0.59,0.38),0.9,4.6)
 	facade_fill = game.lamp(Vector3(-4,3.8,8),Color(0.32,0.45,0.55),0.38,13)
 	trees = get_tree().get_nodes_in_group("bare_trees")
-	create_mist()
+	if not (game.qa_mode and "--title-no-particles" in OS.get_cmdline_user_args()):create_mist()
 
 func create_mist() -> void:
 	mist = GPUParticles3D.new()
@@ -83,20 +89,25 @@ func set_active(value: bool) -> void:
 	ending_outcome=""
 	porch.visible = value
 	facade_fill.visible = value
-	mist.visible = value
+	if is_instance_valid(mist):mist.visible = value
 	camera.current = value
 	if not value:shadow.visible = false
 
 func _process(delta: float) -> void:
 	if not active: return
 	clock += delta
-	shadow.visible = ending_outcome=="" and fmod(clock,47.0) > 31.0 and fmod(clock,47.0) < 34.0
+	var wanted: bool=ending_outcome=="" and fmod(clock,47.0) > 31.0 and fmod(clock,47.0) < 34.0
+	var tracing: bool=diagnostic_trace and wanted!=shadow.visible
+	if tracing:print("TITLE_OPERATION silhouette before ",clock," ",wanted)
+	shadow.visible = wanted
+	if tracing:print("TITLE_OPERATION silhouette after ",clock," ",wanted)
 	if ending_outcome!="":
 		# The unresolved file keeps its light. The acknowledged call goes quiet.
 		# No title-screen watcher or flicker can intrude on either earned ending.
 		porch.light_energy=.78 if ending_outcome=="on_record" else lerpf(.9,.12,smoothstep(2,8,clock))
-	else:porch.light_energy = 0.9 if reduce_flash else 0.9-0.18*pow(maxf(sin(clock*0.37),0),18)
-	if not reduce_motion:
+	else:porch.light_energy = 0.9 if reduce_flash or diagnostic_stationary else 0.9-0.18*pow(maxf(sin(clock*0.37),0),18)
+	if not reduce_motion and not diagnostic_stationary:
 		camera.position.x = -10.5+sin(clock*0.055)*0.14
 		camera.look_at(Vector3(-0.1,1.8,3.6))
-	for i in range(trees.size()):trees[i].rotation.z = sin(clock*0.3+float(i))*0.002
+	if not diagnostic_stationary:
+		for i in range(trees.size()):trees[i].rotation.z = sin(clock*0.3+float(i))*0.002

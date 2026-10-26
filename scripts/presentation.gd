@@ -46,6 +46,8 @@ var ambience: AudioStreamPlayer
 var creak: AudioStreamPlayer
 var menu_drone: AudioStreamPlayer
 var atmosphere_time := 0.0
+var diagnostic_silent_menu:=false
+var diagnostic_title_trace:=false
 var location_card: VBoxContainer
 var fade: ColorRect
 var transition: Tween
@@ -230,20 +232,24 @@ func build_screen() -> void:
 	intro_text.visible = false
 
 func setup_sound() -> void:
+	diagnostic_silent_menu=game.qa_mode and "--title-no-audio" in OS.get_cmdline_user_args()
+	diagnostic_title_trace=game.qa_mode and "--title-trace" in OS.get_cmdline_user_args()
 	ambience = AudioStreamPlayer.new()
 	ambience.stream = load("res://assets/audio/wind.wav")
 	ambience.bus = "Ambience"
 	ambience.volume_db = -17
 	add_child(ambience)
-	ambience.finished.connect(ambience.play)
-	ambience.play()
+	if diagnostic_title_trace:ambience.finished.connect(func():print("TITLE_OPERATION wind restart before");ambience.play();print("TITLE_OPERATION wind restart after"))
+	else:ambience.finished.connect(ambience.play)
+	if not diagnostic_silent_menu:ambience.play()
 	menu_drone = AudioStreamPlayer.new()
 	menu_drone.stream = load("res://assets/audio/hollow.wav")
 	menu_drone.bus = "Music"
 	menu_drone.volume_db = -33
 	add_child(menu_drone)
-	menu_drone.finished.connect(menu_drone.play)
-	menu_drone.play()
+	if diagnostic_title_trace:menu_drone.finished.connect(func():print("TITLE_OPERATION drone restart before");menu_drone.play();print("TITLE_OPERATION drone restart after"))
+	else:menu_drone.finished.connect(menu_drone.play)
+	if not diagnostic_silent_menu:menu_drone.play()
 	creak = AudioStreamPlayer.new()
 	creak.stream = load("res://assets/audio/foley/drop_wood_2.wav")
 	creak.bus = "SFX"
@@ -880,7 +886,9 @@ func _process(delta: float) -> void:
 		atmosphere_time += delta
 		if atmosphere_time > 27:
 			atmosphere_time = 0
-			creak.play()
+			if diagnostic_title_trace:print("TITLE_OPERATION creak before ",stage.clock)
+			if not diagnostic_silent_menu:creak.play()
+			if diagnostic_title_trace:print("TITLE_OPERATION creak after ",stage.clock)
 		ambience.volume_db = move_toward(ambience.volume_db,-17,delta*8)
 		menu_drone.volume_db = move_toward(menu_drone.volume_db,-33,delta*12)
 	else:
