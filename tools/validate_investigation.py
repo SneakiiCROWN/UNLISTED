@@ -5,7 +5,7 @@ import hashlib, json, os, subprocess, sys, re, shutil
 G = Path(__file__).resolve().parents[1]
 B = G.parent / 'Builds/UNLISTED_Investigation_08'
 
-def run(name, flag, *extra, engine_args=(), cwd=None, timeout_seconds=900):
+def run(name, flag, *extra, engine_args=(), cwd=None, timeout_seconds=900, env_overrides=None):
     # Never let a typo silently start ordinary gameplay with the owner's save.
     known=set(re.findall(r'"(--[a-z0-9-]+)"',(G/'scripts/world.gd').read_text(encoding='utf8')))
     assert flag in known, 'Unknown QA flag: '+flag
@@ -20,9 +20,12 @@ def run(name, flag, *extra, engine_args=(), cwd=None, timeout_seconds=900):
     evidence = B / 'QA' / name
     args = [str(B/'UNLISTED.exe'), *engine_args, '--max-fps', '60', '--', flag,
             '--evidence='+str(evidence), *extra]
+    child_env=os.environ.copy()
+    if env_overrides:child_env.update(env_overrides)
+    (B/(name+'_launch.json')).write_text(json.dumps({'executable_sha256':hashlib.sha256((B/'UNLISTED.exe').read_bytes()).hexdigest(),'args':args,'explicit_child_environment':env_overrides or {}},indent=2),encoding='utf8')
     try:
         with (B/(name+'.log')).open('w', encoding='utf8') as log:
-            p = subprocess.run(args, cwd=Path(cwd) if cwd is not None else G, stdout=log, stderr=subprocess.STDOUT, timeout=timeout_seconds)
+            p = subprocess.run(args, cwd=Path(cwd) if cwd is not None else G, stdout=log, stderr=subprocess.STDOUT, timeout=timeout_seconds,env=child_env)
     finally:
         after=hashes()
         (B/(name+'_owner_integrity.json')).write_text(json.dumps({'before':before,'after':after,'unchanged':before==after},indent=2),encoding='utf8')

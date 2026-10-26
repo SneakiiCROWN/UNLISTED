@@ -6,7 +6,17 @@ Eli Ward takes a night call at 17 Briar Lane, the address on his father Simon's 
 
 **0.10.0 / The Last Call - Windows alpha.** A connected plan investigation, real cellar bay, disconnected monitor experiment and sound-based escape deepen Simon's last investigation. The larger game and 30-60 minute human first-play target remain unfinished.
 
-## Current private development / 0.10.7-dev
+## Current private development / 0.10.8-dev
+
+Stability & Terror preserves the existing game and investigates the intermittent
+native crash. Recovered dump/driver evidence confirms Vulkan; controlled fixed,
+live-resize and normal-window comparisons pass without establishing a root cause.
+Routine cellar profiling now uses one title-sized resolution per process and
+retains completed samples. Normal graphics and gameplay remain unchanged.
+This is a private QA candidate, not a fully cleared release. See the
+[investigation, limitations and actual checks](STABILITY_TERROR_VERIFICATION.md).
+
+### Preserved 0.10.7 candidate
 
 The Dread Within gives the witnessed, restored lounge two rare consequences:
 curtains that close only while unobserved and a passage of footsteps overhead.
