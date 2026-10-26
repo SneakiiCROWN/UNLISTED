@@ -1,43 +1,29 @@
-# Priority zero / active crash investigation / 26 October2026
+# Priority zero recovery / 26 October 2026
 
-Recovered clean f9e6082. Original owner dump5300, older driver failure, separate
-fixture failure and all old candidates are preserved. No new content or version.
+CRASH REMAINS UNRESOLVED. No production fix or public release.
 
-Confirmed private paths: complete world/subsystems build before menu; always-on
-Presentation audio9s/90s loops and27s creak; always-on MenuStage mist, lighting,
-tree/camera motion and47s silhouette cycle. No source evidence yet identifies
-an invalid callback or freed receiver; these are hypotheses, not crash causes.
+Read PRIORITY_ZERO_VERIFICATION.md for the complete current evidence.
+Original owner dump5300 and prior failed evidence remain untouched/private.
+Ordinary original0.10.9:625.28s; ordinary0.10.6:715.31s; original0.10.9 under
+armed first-chance observer:855.25s, noAV. All actual menu Quit, exit0.
+Six export04 component cases each completed~150s. No failure boundary.
+Deferred export04 failed only because release scene-path overrides are disabled;
+that evidence remains under export04/QA/deferred. Supported early diagnostic
+entry in export05 passed152.11s including original arrival/pause/save/load/title.
+Final extracted export05 ordinary title passed655.28s then actual menu Quit.
+Owner saves/settings unchanged in all completed cases; old archives/dump hashes
+rechecked. No Windows, driver, registry, BIOS, overlay or unrelated-app changes.
 
-First ordinary extracted0.10.9:625.28seconds, observed main-menu Quit, exit0.
-Ordinary0.10.6:715.31seconds, observed main-menu Quit, exit0. No QA or renderer
-arguments in either; owner saves/settings unchanged. CUA captures inspect actual
-foreground menus. These successful comparisons do not clear intermittence.
+Normal startup retains all title/gameplay features. No rejected art/content work.
+Known upstream audio-lifetime report124217 is only a lead; its audio-thread
+failure does not identify the owner main-thread RIP0 failure. Presentation
+redundant volume assignments remain a concrete next isolation target, not a
+proven cause or promoted workaround. No broad historical QA reruns.
 
-The owner dump has RIP0 on main thread and no trustworthy native caller. Nearest
-exports are not a diagnosis. PE and official-release metadata are being recorded
-privately; no matching published Windows symbols found in that release's assets.
-
-First debugger observation01 stopped early after265seconds: its initial commands
-were not armed, so it is NOT a successful first-chance capture. Corrected02 uses
-an initial command file and its sx table explicitly verifies AV break/not-handled
-with first/second-chance callbacks. Full dumps stay private. The quoted command
-parser strips backslashes from02 dump names; if a dump occurs, also inspect its
-private extracted working directory. Future helper uses forward slashes. Do not
-discard failed setup logs or pretend a handled first-chance event is a crash.
-
-Explicit diagnostic switches now isolate menu sound, mist, silhouette, animation
-and a2D-only view of the fully built world. A separate nondefault diagnostic entry
-defers the entire original world until New Game, then loads the original arrival
-and private save/recovery flow. Neither is promoted as a production fix. Ordinary
-launch defaults retain the existing game and title. Native comparison results
-remain pending; inspect component_results.json and deferred_report.json.
-
-Owner confirmed PC free for foreground tests. Another3D application was observed
-open, left untouched. Current read-only aggregate GPU context was2.76GiB/16.38GiB;
-this does not establish pressure at the owner's failure. WHEA query found no
-matching events; that does not rule out a system issue. No Windows, driver,
-BIOS, registry or system-wide overlay modifications.
-
-Evidence root: Builds/UNLISTED_Priority_Zero_Evidence. Raw dumps, owner snapshots
-and full debugger/module logs remain private. Safe source only goes to GitHub.
-Do not claim root cause, fix, three repaired-build passes or stable release yet.
+New private candidate and complete source backup are sealed under
+Checkpoints/20261026_priority_zero_diagnostic/DELIVERY.json.
+Evidence: that folder/Evidence/INDEX.html; raw data also in
+Builds/UNLISTED_Priority_Zero_Evidence and Diagnostic_04/05.
+The retained ZIP is UNLISTED-Windows-Menu-Investigation-v0.10.9-dev-PRIVATE.zip.
+Use delivery receipt for exact final private/public commits and tag.
+Do not mistake any passing repeat or new archive for reliable-crash clearance.

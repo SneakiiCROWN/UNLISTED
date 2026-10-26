@@ -142,3 +142,41 @@ or a repaired-build acceptance run. No deferral was enabled for normal startup.
 The new private Windows package will be extracted and launched ordinarily for
 an additional bounded idle check. Its final result is recorded separately in
 the delivery receipt; a new package alone does not establish a crash repair.
+
+## Additional upstream lead, not an identified cause
+
+[Godot issue124217](https://github.com/godotengine/godot/issues/124217) reports
+a playback-bus lifetime race in4.7.2, demonstrated on the audio mix thread under
+headless CPU pressure. Its report does not match this owner dump's main-thread
+execute-at-zero context. It is an unconfirmed lead, not an attribution.
+
+The exact4.7.2 [AudioStreamPlayer setter](https://github.com/godotengine/godot/blob/4.7.2-stable/scene/audio/audio_stream_player.cpp#L66) forwards even unchanged volume assignments to
+playback-bus updates; [AudioServer](https://github.com/godotengine/godot/blob/4.7.2-stable/servers/audio/audio_server.cpp#L1248) replaces bus details. Presentation currently assigns its two settled
+menu volumes every frame. This is a concrete operation worth isolating next
+with unchanged audio playback, but neither its redundant activity nor the
+upstream report connects it to the owner crash. No workaround, sound removal,
+engine patch or source change to normal volume behavior was promoted here.
+The unrelated older scene-switch report79318 was also reviewed; it does not
+prove an idle-title cause. No heavy CPU-starvation experiment or system change
+was performed on the owner's PC.
+
+## Final independent extracted-package observation
+
+The new private ZIP passed CRC and extraction; its extracted executable SHA-256
+matched export05. Ordinary launch used only the engine log-file argument. It
+remained on the original3D title for655.28seconds (10m55s), then the actual
+main-menu Quit button was clicked, exit0. Beginning/end native screenshots
+were archived. Owner checkpoint/settings hashes remained identical. No QA,
+subsystem, renderer or frame-limit arguments were used in this final case.
+
+This does not constitute three post-fix runs: no crash correction was established.
+There were two ordinary0.10.9 observations across the original and diagnostic
+executables, one ordinary0.10.6 comparison and one instrumented original0.10.9
+observation. No failure was reproduced in them. Source changes are diagnostics
+only. Root cause and reliable-playthrough clearance remain unresolved.
+
+Existing Surveyor, recorder and ending gameplay evidence was preserved, not
+rerun or relabelled after these diagnostic-only changes. No unrelated full-route
+acceptance or fresh human playtest is claimed. The precise blocker remains a
+missing reliable native caller/reproduction; the first-chance capture helper is
+ready for a future recurrence. Content development remains paused for this issue.
