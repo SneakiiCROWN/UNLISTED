@@ -92,3 +92,48 @@ retained. This is not whole-game, uncapped, minimum-spec or physical-monitor pro
 Human fear, story comprehension, sound/artistic approval and physical-controller
 review remain pending. The active character's visual identity remains a major
 unresolved blocker. No finished-game or 30-60-minute human-duration claim.
+
+## Native crash preserved; not declared fixed
+
+Final candidate 08's first foreground moving profile exited with Windows access
+violation 0xC0000005 while walking after a live render-resolution change. It did
+not finish or write a performance report and is not a passing run. The Windows
+Application record names NVIDIA nvoglv64.dll, driver 32.0.16.2101, fault offset
+0xFAAA9F. This identifies where the failure surfaced, not its root cause and not
+proof that the game is blameless. Owner saves/settings remained unchanged.
+
+Earlier candidate 06 completed the same profile. Candidate 08's gameplay,
+room-memory, event, vent, recorder and ending fixtures completed independently.
+The exact same 08 executable is repeated once in isolation, with original logs
+and Windows crash record preserved. DELIVERY.json records that result. Even if
+the repeat passes, this intermittent native failure remains unresolved and must
+not be described as repaired. No public release.
+
+## Actual results recorded for delivery
+
+- Final 08 aftermath: 25/0 at each native render size. Covers actual hidden-room
+  return, cloth state, five overhead sources, once-only/partial recovery,
+  controller Start/B, interruption, reduced motion, real scheduler dispatch and
+  Surveyor movement/floor contacts. These are eligible-event fixtures.
+- Final shared ambient regression: 47/0. Final room-memory suite after the cloth
+  fitting repair: 52/0. Final vent crossing: 10/0. Recorder recovery/layout: 24/0.
+- Earlier 04 Surveyor mechanics: 58/0; 05 actual cellar interaction, west aisle,
+  pursuit, death/retry and vocal suppression: 11/0. Their relevant source and
+  geometry hashes match final 08; the delivery records those component matches.
+- Ending B: 35/0 from a preserved genuinely earned investigation state, story
+  mode/reduced motion and simulated controller buttons. Independent extracted
+  normal-mode ending A result is recorded separately after packaging. Neither
+  is another fresh full investigation or physical-controller test.
+- Matching 1080p room before/after; final native room captures at 1080p, 1440p
+  and ultrawide. Rejected 06/07 curtain intersections remain inspectable.
+- The successful 08 profile repeat: 16.60 seconds / 995 focused frames per
+  resolution, no focus exclusions. 1080p/1440p/ultrawide median frame times
+  16.668/16.666/16.668ms; p95 16.931/16.960/16.934ms. Median draw calls
+  3,367/3,367/5,103 and rendered primitives about 8.0/8.0/11.0 million across
+  reported passes. Capped results do not establish an FPS improvement. The first
+  08 run crashed; its failure is retained alongside, not averaged away.
+
+Owner saves/settings remained unchanged around all these runs, including the
+crash. No failed gameplay assertions in the selected reports; the native crash
+is a separate unresolved failure. Human experience and sustained stability remain
+open. The previous verified v0.10.6 delivery is retained as the rollback build.

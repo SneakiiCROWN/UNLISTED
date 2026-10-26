@@ -14,6 +14,8 @@ It adds a supported cellar service envelope and improves the active Surveyor's
 floor-contact footsteps. No new required puzzle, character identity or ending.
 See [actual changes, verification and owner review](DREAD_WITHIN_VERIFICATION.md).
 Public Windows release remains unchanged; human horror/art approval is pending.
+The private QA candidate has one unresolved native profiling crash; the same
+executable passed its isolated repeat. This is documented, not claimed fixed.
 
 ### Preserved 0.10.6 milestone
 
