@@ -340,7 +340,7 @@ func show_menu(main: bool) -> void:
 func has_checkpoint() -> bool:
 	if not FileAccess.file_exists(game.checkpoint_path):return false
 	var data = JSON.parse_string(FileAccess.get_file_as_string(game.checkpoint_path))
-	return data is Dictionary and data.get("schema",0) == 1 and data.get("pos",[]).size() == 3
+	return game.checkpoint_usable(data)
 
 func entrance_animation(control: Control) -> void:
 	if transition and transition.is_valid():transition.kill()
@@ -889,11 +889,11 @@ func _process(delta: float) -> void:
 			if diagnostic_title_trace:print("TITLE_OPERATION creak before ",stage.clock)
 			if not diagnostic_silent_menu:creak.play()
 			if diagnostic_title_trace:print("TITLE_OPERATION creak after ",stage.clock)
-		ambience.volume_db = move_toward(ambience.volume_db,-17,delta*8)
-		menu_drone.volume_db = move_toward(menu_drone.volume_db,-33,delta*12)
+		if ambience.volume_db!=-17:ambience.volume_db = move_toward(ambience.volume_db,-17,delta*8)
+		if menu_drone.volume_db!=-33:menu_drone.volume_db = move_toward(menu_drone.volume_db,-33,delta*12)
 	else:
-		ambience.volume_db = move_toward(ambience.volume_db,-80,delta*35)
-		menu_drone.volume_db = move_toward(menu_drone.volume_db,-80,delta*35)
+		if ambience.volume_db!=-80:ambience.volume_db = move_toward(ambience.volume_db,-80,delta*35)
+		if menu_drone.volume_db!=-80:menu_drone.volume_db = move_toward(menu_drone.volume_db,-80,delta*35)
 	if section == "game":
 		stamina_alpha=move_toward(stamina_alpha,1.0 if game.player.sprinting or game.player.stamina<.999 else 0.0,delta*2.5)
 		stamina_root.visible=stamina_alpha>.001;stamina_root.modulate.a=stamina_alpha;stamina_bar.value=game.player.stamina*100.0

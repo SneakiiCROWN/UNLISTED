@@ -458,6 +458,14 @@ func physical_final_exit() -> void:
 		while not g.ended and seconds()<until:await get_tree().physics_frame
 		Input.action_release("forward")
 func finish_run(via_menu:=true) -> void:
+	# A subclass once skipped capture initialization. A typed null recorder can
+	# reach the native release setter and crash; fail the fixture explicitly.
+	if not is_instance_valid(recorder):
+		recording=false
+		check("QA recorder initialized before finalization",false,"Refusing native call on a missing recorder; this is a fixture failure.")
+		var failure:=FileAccess.open(output.path_join("capture_setup_failure.json"),FileAccess.WRITE)
+		failure.store_string(JSON.stringify({"status":"failed_capture_setup","checks":checks,"exit_code":92}));failure.close()
+		await g.qa_exit(92);return
 	recorder.set_recording_active(false);recorder.get_recording().save_to_wav(output.path_join("game_bus.wav"))
 	recording = false;await wait(0.2)
 	if capture_manifest:capture_manifest.close();capture_manifest=null

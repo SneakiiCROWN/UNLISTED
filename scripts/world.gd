@@ -1351,9 +1351,30 @@ func save_game(quiet := false) -> void:
 	if error != OK: message("Checkpoint could not be replaced.")
 	elif not quiet and is_instance_valid(presentation) and presentation.section == "game": presentation.notify("CHECKPOINT RECORDED")
 
+func checkpoint_usable(data: Variant) -> bool:
+	# Reject invalid core data before either menu availability or apply_save can
+	# call typed methods/mutate live state. Missing legacy optional fields stay valid.
+	if not data is Dictionary or data.get("schema",0)!=1:return false
+	var position_: Variant=data.get("pos",null)
+	if not position_ is Array or position_.size()!=3:return false
+	for value in position_:
+		if not (value is int or value is float) or not is_finite(float(value)):return false
+	for key in ["events","doors","door_swing"]:
+		if data.has(key) and not data[key] is Dictionary:return false
+	for key in ["fuse","key","report","shed","isolated","ended","crouched","sprint_exhausted"]:
+		if data.has(key) and not data[key] is bool:return false
+	for key in ["stage","yaw","pitch","stamina","stamina_delay"]:
+		if data.has(key) and (not (data[key] is int or data[key] is float) or not is_finite(float(data[key]))):return false
+	if data.has("valves"):
+		if not data.valves is Array:return false
+		for value in data.valves:
+			if not (value is int or value is float) or not is_finite(float(value)) or value<0 or value>2 or float(value)!=int(value):return false
+	if data.has("events") and data.events.has("notes") and not data.events.notes is Dictionary:return false
+	return true
+
 func load_game() -> void:
 	var data = JSON.parse_string(FileAccess.get_file_as_string(checkpoint_path))
-	if not data is Dictionary or data.get("schema",0) != 1:
+	if not checkpoint_usable(data):
 		message("The checkpoint could not be read. Your file has been left unchanged.")
 		return
 	apply_save(data)

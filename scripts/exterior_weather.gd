@@ -111,7 +111,12 @@ func _process(delta: float) -> void:
 	var cellar:=p.y< -0.5 or (absf(p.x)<1.9 and p.z< -10 and p.z> -16)
 	if is_instance_valid(game.service_exit) and game.service_exit.in_passage(p):cellar=true
 	mix_level=move_toward(mix_level,1.0 if inside or shed or roof or cellar else 0.0,delta*1.1)
-	outside.volume_db=lerpf(-24,-65,mix_level)
-	sheltered.volume_db=lerpf(-65,-40 if inside else (-37 if not cellar else -48),mix_level)
+	# The native setter replaces playback-bus data even when the value is equal.
+	# Preserve every real crossfade; avoid settled-value churn at idle/pause.
+	var outside_db: float=lerpf(-24,-65,mix_level)
+	var sheltered_db: float=lerpf(-65,-40 if inside else (-37 if not cellar else -48),mix_level)
+	if outside.volume_db!=outside_db:outside.volume_db=outside_db
+	if sheltered.volume_db!=sheltered_db:sheltered.volume_db=sheltered_db
 	for pane in window_rain:
-		pane.volume_db=move_toward(pane.volume_db,-31 if inside and not cellar else -65,delta*15)
+		var target_db: float=-31 if inside and not cellar else -65
+		if pane.volume_db!=target_db:pane.volume_db=move_toward(pane.volume_db,target_db,delta*15)

@@ -20,8 +20,8 @@ for p in owner:
     if p.exists():shutil.copy2(p,snap/p.name)
 # Capture at most two first-chance full dumps. gn preserves the application's
 # own exception handling. A handled first-chance event alone is NOT a crash.
-first='.if (@$t0 < 2) {r @$t0 = @$t0 + 1; .echo FIRST_CHANCE_AV; .ecxr; kv; .dump /ma /u '+(O/'first_av.dmp').as_posix()+'}; gn'
-second='.echo SECOND_CHANCE_UNHANDLED_AV; .ecxr; kv; .dump /ma /u '+(O/'unhandled_av.dmp').as_posix()+'; q'
+first='.if (@$t0 < 2) {r @$t0 = @$t0 + 1; .echo FIRST_CHANCE_AV; .ecxr; kv; .dump /mA /u '+(O/'first_av.dmp').as_posix()+'}; gn'
+second='.echo SECOND_CHANCE_UNHANDLED_AV; .ecxr; kv; .dump /mA /u '+(O/'unhandled_av.dmp').as_posix()+'; q'
 command='r @$t0=0\nsxe -c "'+first+'" -c2 "'+second+'" av\n.echo PRIORITY_ZERO_FILTERS_ARMED\nsx\ng\n'
 (O/'debugger_commands.txt').write_text(command,encoding='utf8')
 args=[str(CDB),'-G','-y',str(O),'-cf',str(O/'debugger_commands.txt'),str(E),'--log-file',str(O/'game.log')]
