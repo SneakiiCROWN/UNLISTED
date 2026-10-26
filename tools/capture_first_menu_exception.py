@@ -1,9 +1,15 @@
 """Ordinary released executable under first-chance native observation; no registry changes."""
 from pathlib import Path
-import datetime,hashlib,json,os,shutil,subprocess,time,re
+import argparse,datetime,hashlib,json,os,shutil,subprocess,time,re
 G=Path(__file__).resolve().parents[1]
-E=G.parent/'Checkpoints/20261026_player_experience_candidate/IndependentExtract/UNLISTED.exe'
-O=G.parent/'Builds/UNLISTED_Priority_Zero_Evidence/first_chance_0109_02'
+parser=argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--exe',type=Path,default=G.parent/'Checkpoints/20261026_player_experience_candidate/IndependentExtract/UNLISTED.exe')
+parser.add_argument('--output',type=Path,default=G.parent/('Builds/UNLISTED_Priority_Zero_Evidence/first_chance_'+datetime.datetime.now().strftime('%Y%m%d_%H%M%S')))
+args_=parser.parse_args()
+E=args_.exe.resolve();O=args_.output.resolve()
+# Dump contents can include private process memory. This helper never writes to
+# a public checkout or replaces a prior evidence directory.
+assert O.is_relative_to(G.parent.resolve()) and ' ' not in O.as_posix()
 CDB=Path(r'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\cdb.exe')
 assert E.exists() and CDB.exists() and not O.exists();O.mkdir(parents=True)
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
