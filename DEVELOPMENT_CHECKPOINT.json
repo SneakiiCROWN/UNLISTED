@@ -1,12 +1,12 @@
 {
-  "version": "0.10.7-dev",
-  "milestone": "The Dread Within",
-  "private_source_commit": "3acb94053bf03c8ccfd17167301ce5dcd322a69f",
-  "github_source_commit": "22c8f167d0655715de89ad92126ca6b5ce236c4d",
+  "version": "0.10.8-dev",
+  "milestone": "Stability & Terror",
+  "private_source_commit": "d845e11f93af61081d840e85407f25cf369ba9f1",
+  "github_source_commit": "b54b405e25f2af616cb0d0a862936194d41bb24a",
   "latest_source_is_verified": false,
   "source_commit_scope": "These hashes identify the verified runtime/source change. Subsequent checkpoint commits update metadata only. Complete source is pinned by the development tag.",
-  "development_tag": "dev-v0.10.7-dread-within-20261026",
-  "verification": "DREAD_WITHIN_VERIFICATION.md",
+  "development_tag": "dev-v0.10.8-stability-terror-20261026",
+  "verification": "STABILITY_TERROR_VERIFICATION.md",
   "previous_verified_milestone": {
     "version": "0.10.6-dev",
     "private_source": "cfd79af13a2226ca4021f41c7c7ec5bc51e4ab6a",
@@ -21,15 +21,11 @@
   },
   "targeted_checks": {
     "aftermath": 25,
-    "aftermath1440": 25,
-    "aftermathwide": 25,
-    "ambient": 47,
     "impossible": 52,
     "ending_b": 35,
-    "vent": 10,
-    "recorder": 24
+    "normal_root": 10
   },
-  "surveyor_art": "Active model retained; 0.10.6 concepts preserved and unapproved. This pass changes floor-contact audio only.",
+  "surveyor_art": "Unchanged active model and all art; crash investigation took priority over new construction.",
   "owner_saves_settings_unchanged": true,
   "public_playable": "unchanged v0.10.0",
   "human_playtested_this_milestone": false,
@@ -38,49 +34,52 @@
     "scope": "Actual isolated movement around cellar relay/service aisles, native render sizes in 1280x720 desktop window. 60fps cap, warmed shaders, no readback during samples, focused frames only, threats disabled. Not a whole-game, uncapped, cold-start or minimum-spec benchmark; no before/after FPS gain asserted.",
     "results": [
       {
-        "duration_seconds": 16.599397,
+        "duration_seconds": 16.598896,
         "excluded_unfocused": 0,
         "focused_frames": 995,
-        "max_ms": 17.824,
+        "max_ms": 27.082,
         "median_draw_calls": 3367.0,
-        "median_ms": 16.668,
+        "median_ms": 16.667,
         "median_rendered_primitives": 7983317.0,
-        "p95_ms": 16.931,
+        "p95_ms": 16.951,
         "render_size": "(1920, 1080)"
       },
       {
-        "duration_seconds": 16.599671,
+        "duration_seconds": 16.585419,
         "excluded_unfocused": 0,
-        "focused_frames": 995,
-        "max_ms": 17.472,
-        "median_draw_calls": 3367.0,
+        "focused_frames": 994,
+        "max_ms": 35.887,
+        "median_draw_calls": 3368.0,
         "median_ms": 16.666,
         "median_rendered_primitives": 7987669.0,
-        "p95_ms": 16.96,
+        "p95_ms": 16.921,
         "render_size": "(2560, 1440)"
       },
       {
-        "duration_seconds": 16.599536,
+        "duration_seconds": 16.599292,
         "excluded_unfocused": 0,
         "focused_frames": 995,
-        "max_ms": 17.278,
-        "median_draw_calls": 5103.0,
-        "median_ms": 16.668,
-        "median_rendered_primitives": 11005689.0,
-        "p95_ms": 16.934,
+        "max_ms": 17.408,
+        "median_draw_calls": 5104.0,
+        "median_ms": 16.664,
+        "median_rendered_primitives": 11005855.0,
+        "p95_ms": 16.933,
         "render_size": "(3440, 1440)"
       }
     ],
-    "first_final_profile": "native crash; preserved separately",
-    "repeat": "completed, no claim of root-cause repair",
+    "first_final_profile": "Prior 0.10.7 crash preserved; 0.10.8 uses separate processes per resolution.",
+    "repeat": "Three final fixed-resolution processes completed; no before/after speed or crash-fix claim.",
     "sustained_whole_game_benchmark": false
   },
   "package_verification": "Independent ZIP launch, hashes and exact private delivery paths are recorded in the private milestone DELIVERY.json; no new public Windows release.",
   "targeted_native_checks_passed": true,
-  "verification_limit": "One 0xC0000005 native profile crash recorded in nvoglv64.dll. Exact executable passed isolated repeat; cause unresolved, not fixed. Private QA candidate, public Windows unchanged.",
+  "verification_limit": "Original native Vulkan-driver access violation and external-entry failure preserved. All bounded controls and final candidate checks pass; intermittent root cause unresolved. Private QA candidate only.",
   "reused_components": {
     "04_threat": 58,
     "05_cellar": 11,
-    "scope": "Matching relevant source hashes, validated by private sealing helper"
-  }
+    "scope": "Retained previous baselines, not rerun this milestone; all art/resources byte-identical to 0.10.7."
+  },
+  "controlled_comparisons": "Seven embedded cases: three fixed sizes, pre-start resize, live resize, normal root, child-only layer-filtered live resize. All completed. Preserved 0.10.7 route also completed.",
+  "renderer_evidence": "Vulkan / Forward+ runtime queries; installed nv-vk64.json maps Vulkan ICD to nvoglv64.dll; original stack crosses vulkan-1.dll.",
+  "system_modifications": "None; one comparison used explicit child-only overlay filtering."
 }

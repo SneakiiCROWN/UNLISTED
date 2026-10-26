@@ -103,3 +103,15 @@ rollback while intermittent native stability remains open.
   direct evidence for the active driver/library, not a web filename guess.
 - [Khronos loader layer filtering](https://github.com/KhronosGroup/Vulkan-Loader/blob/main/docs/LoaderLayerInterface.md): child loader filtering and diagnostic interpretation.
 - [Godot RenderingServer](https://docs.godotengine.org/en/stable/classes/class_renderingserver.html): actual driver/method queries. A force_sync API exists but has a cost and was not inserted speculatively.
+
+## Final candidate 03 completed evidence
+
+Native exported checks: aftermath 25/0, impossible 52/0, ending_b 35/0, normal_root 10/0. Owner save/settings integrity remained unchanged. Ending B uses an earned historical snapshot; this is segmented verification, not a fresh full investigation. Independent extracted-package ending A is recorded separately in DELIVERY.json.
+
+| Render size | Median ms | p95 ms | Maximum ms |
+|---|---:|---:|---:|
+| (1920, 1080) | 16.667 | 16.951 | 27.082 |
+| (2560, 1440) | 16.666 | 16.921 | 35.887 |
+| (3440, 1440) | 16.664 | 16.933 | 17.408 |
+
+These are warmed ~16.6-second, 60fps-capped, isolated walking samples on i9-14900K / RTX 4080 SUPER. Native render sizes are presented in a desktop window. Not uncapped speed, whole-game stability, minimum-spec approval or proof of a crash fix. All successful controls leave intermittence unresolved. No literal manual Alt-Tab, physical-controller or human comprehension approval is claimed.
