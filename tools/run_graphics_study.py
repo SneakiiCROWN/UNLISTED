@@ -5,7 +5,7 @@ p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--exe',required=True,type=Path);p.add_argument('--output',required=True,type=Path)
 p.add_argument('--profile',required=True,choices=['original','wet','lights','probe','glass','ao','ssil','ssr','balanced','enhanced'])
 p.add_argument('--size',default='1920x1080',choices=['1920x1080','2560x1440','3440x1440'])
-p.add_argument('--performance',action='store_true');p.add_argument('--uncapped',action='store_true')
+p.add_argument('--no-fog',action='store_true');p.add_argument('--window-record',action='store_true');p.add_argument('--phase2',action='store_true');p.add_argument('--no-room-reflection',action='store_true');p.add_argument('--performance',action='store_true');p.add_argument('--uncapped',action='store_true')
 p.add_argument('--foreground',action='store_true');p.add_argument('--walk',action='store_true');p.add_argument('--record',action='store_true')
 a=p.parse_args();E=a.exe.resolve();O=a.output.resolve()
 assert E.is_file() and not O.exists();O.mkdir(parents=True)
@@ -16,9 +16,15 @@ before=hashes()
 args=[str(E),'--max-fps','0' if a.uncapped else '60']
 if a.uncapped:args.append('--disable-vsync')
 args+=['--','--graphics-study-qa','--graphics-profile='+a.profile,'--capture-size='+a.size,'--evidence='+str(O)]
+if a.phase2:args.append('--graphics-phase2')
+if a.no_fog:args.append('--phase2-no-fog')
+if a.no_room_reflection:args.append('--phase2-no-reflection')
 if a.performance:args.append('--graphics-performance')
 if a.foreground:args.append('--foreground-profile')
 if a.walk:args.append('--graphics-walk')
+if a.window_record:
+ assert not a.performance
+ args.append('--graphics-window-record')
 if a.record:
  assert a.walk and not a.performance,'Recording is separate from uncaptured measurements'
  args.append('--graphics-record')
