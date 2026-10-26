@@ -2,6 +2,7 @@ extends "res://scripts/recording_repair_qa.gd"
 var cover_profiling:=false
 var cover_gaps: Array=[]
 var cover_draws: Array=[]
+var cover_primitives: Array=[]
 var cover_excluded:=0
 var cover_previous:=0
 
@@ -13,6 +14,7 @@ func _process(delta: float) -> void:
 		if cover_previous>0:
 			cover_gaps.append((now-cover_previous)/1000.0)
 			cover_draws.append(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME))
+			cover_primitives.append(Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME))
 	else:cover_excluded+=1
 	cover_previous=now
 func run(current: Node) -> void:
@@ -144,11 +146,12 @@ func profile_cover_route() -> void:
 			if n.get_meta("ground_cover_shadow",false):n.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_ON if spec[1] else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		g.player.position=Vector3(0,.04,16);g.player.velocity=Vector3.ZERO;g.player.rotation=Vector3.ZERO;g.player.camera.rotation=Vector3.ZERO
 		await wait(2.0)
-		cover_gaps=[];cover_draws=[];cover_excluded=0;cover_previous=0
+		cover_gaps=[];cover_draws=[];cover_primitives=[];cover_excluded=0;cover_previous=0
 		var start:=Time.get_ticks_usec();cover_profiling=true
 		for p in [Vector2(0,8),Vector2(-8.8,7.2),Vector2(-8.8,-8.8),Vector2(-8.8,-12.4),Vector2(-13,-14),Vector2(-8.8,-12.4),Vector2(-4.5,-11.7)]:
 			await travel(p,"continuous property profile route")
-		cover_profiling=false;cover_gaps.sort();cover_draws.sort()
+		cover_profiling=false;cover_gaps.sort();cover_draws.sort();cover_primitives.sort()
 		results.append({"render_size":str(spec[0]),"small_foliage_shadows":spec[1],"duration_seconds":(Time.get_ticks_usec()-start)/1000000.0,"focused_frames":cover_gaps.size(),"excluded_unfocused":cover_excluded,"median_ms":cover_gaps[cover_gaps.size()/2] if not cover_gaps.is_empty() else null,"p95_ms":cover_gaps[int(cover_gaps.size()*.95)] if not cover_gaps.is_empty() else null,"max_ms":cover_gaps.back() if not cover_gaps.is_empty() else null,"median_draw_calls":cover_draws[cover_draws.size()/2] if not cover_draws.is_empty() else null})
+		results.back()["median_rendered_primitives"]=cover_primitives[cover_primitives.size()/2] if not cover_primitives.is_empty() else null
 	var file=FileAccess.open(output.path_join("property_route_profile.json"),FileAccess.WRITE)
 	file.store_string(JSON.stringify({"scope":"Actual isolated input drives the connected gate/front/west/rear/shed route. Same new environment in all runs; 1440p A/B changes only small random foliage shadow casting. Trees/architecture/actor shadows retained. Foreground focus counted, 60fps cap, no image readback during samples, native render sizes displayed in 1280x720 desktop window. Warmed shaders; scripted threats disabled. Not whole-game, cold-start or minimum-spec evidence.","results":results,"checks":checks},"\t"));file.close()

@@ -1,5 +1,13 @@
 # UNLISTED asset provenance
 
+Surveyor Identity / 0.10.6: leafy-crown branch/leaf geometry and leaf-spray shader
+are original code-generated UNLISTED geometry, not extracted third-party meshes.
+Existing dead-tree bark shader and approved positional footsteps/latch recordings
+are reused. Three-direction character board and follow-up face sheet were made
+with the built-in image-generation tool, kept privately as labelled concept art.
+They are not gameplay assets or engine evidence. No new downloaded resources,
+replacement active character, projected concept textures or raw-media publication.
+
 Missing Minute: bedSingle, cabinetBedDrawer, bookcaseClosedDoors, books,
 lampRoundTable and radio reuse the existing Kenney Furniture Kit 2.0 archive,
 CC0 (assets/interiors/Kenney_CC0.txt). Private provenance records hashes in

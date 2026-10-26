@@ -6,7 +6,18 @@ Eli Ward takes a night call at 17 Briar Lane, the address on his father Simon's 
 
 **0.10.0 / The Last Call - Windows alpha.** A connected plan investigation, real cellar bay, disconnected monitor experiment and sound-based escape deepen Simon's last investigation. The larger game and 30-60 minute human first-play target remain unfinished.
 
-## Current private development / 0.10.5-dev
+## Current private development / 0.10.6-dev
+
+The Surveyor Identity adds a physical utility-door response to the existing
+across-hall footsteps: an approach, a pause and two restrained handle attempts.
+The player can interrupt it by opening the door; it never creates an enemy or
+locks the route. Leafy woodland crowns now use connected branches and individual
+leaf sprays instead of large solid shapes. Three private painted character
+directions remain design proposals; the active Surveyor is retained.
+See [implementation, verification and limits](SURVEYOR_IDENTITY_VERIFICATION.md)
+and [character review](SURVEYOR_IDENTITY_DESIGN.md). No public Windows release.
+
+### Preserved 0.10.5 milestone
 
 Horror & Character Production adds finer winter-tree crowns and woodland-edge
 growth, damp garden transitions and selective small-foliage shadow savings. The

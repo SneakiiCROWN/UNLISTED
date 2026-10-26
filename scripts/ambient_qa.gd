@@ -1,6 +1,9 @@
 extends "res://scripts/director_qa.gd"
 # Spatial/input/audio fixtures plus fast deterministic policy simulations.
 func run(current: Node) -> void:
+	if "--identity-latch" in OS.get_cmdline_user_args():
+		var focus=load("res://scripts/identity_latch_qa.gd").new();focus.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(focus)
+		await focus.run(current);return
 	g=current;started_at=Time.get_ticks_usec()
 	output=OS.get_executable_path().get_base_dir().path_join("QA/ambient")
 	for arg in OS.get_cmdline_user_args():

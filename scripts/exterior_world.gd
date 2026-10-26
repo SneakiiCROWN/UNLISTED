@@ -143,6 +143,9 @@ func prototype(id: String) -> Array:
 	if "_Dead_" in id:
 		prototypes[id]=load("res://scripts/natural_crown.gd").new().build(id)
 		return prototypes[id]
+	if id in ["CommonTree_1","BirchTree_3","Willow_1"]:
+		prototypes[id]=load("res://scripts/leafy_crown.gd").new().build(id)
+		return prototypes[id]
 	var scene: Node3D=load(ROOT+id+".glb").instantiate()
 	var result: Array=[];parts(scene,Transform3D.IDENTITY,result);scene.free()
 	for item in result:

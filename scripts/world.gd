@@ -428,7 +428,11 @@ func door(id: String, pos: Vector3, angle := 0.0, locked := false) -> Node3D:
 	node.pivot = pivot
 	var leaf := model("res://assets/architecture/door_leaf.glb", pivot, Vector3(0.615,0.025,0), Vector3(1.23,2.43,0.09))
 	for mesh in all_meshes(leaf):mesh.material_override = texture_mat("res://assets/original/door_paint.png",Color(0.80,0.82,0.76))
-	for z in [-0.08,0.08]:box(pivot,Vector3(1.06,1.12,z),Vector3(0.17,0.035,0.065),Color(0.42,0.35,0.18))
+	for z in [-0.08,0.08]:
+		# A real spindle pivot; same lever footprint, leaf collision and target.
+		var spindle:=Node3D.new();spindle.name="HandleFront" if z>0 else "HandleBack"
+		pivot.add_child(spindle);spindle.position=Vector3(.985,1.12,z)
+		box(spindle,Vector3(.075,0,0),Vector3(.17,.035,.065),Color(.42,.35,.18))
 	collision(pivot, Vector3(0.615,1.24,0), Vector3(1.23,2.43,0.09), id)
 	# Frame collision is kept out of the clear opening.
 	collision(node, Vector3(-0.71,1.3,0), Vector3(0.12,2.6,0.24))
