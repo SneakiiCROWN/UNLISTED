@@ -59,8 +59,9 @@ See `FORENSIC_AUDIT_REPORT.md` for the completed targeted lifecycle/history
 interpretation, seven-executable identity matrix, raw-library integrity scope,
 first 16m40s ordinary idle and extracted save/ending/pursuit/recorder checks.
 The five graphics-production documents and private 36-image native baseline
-are prepared; no experimental effects were promoted. Second ordinary idle is
-in progress. Complete manual semantic coverage of dormant conditional paths
+are prepared; no experimental effects were promoted. Second ordinary idle
+completed after16m15s via actual Quit/exit0, owner files unchanged. Complete
+manual semantic coverage of dormant conditional paths
 and an actual reproducible owner failure boundary remain open. Crash A
 (driver invalid read) and Crash C (owner
 main-thread execution at0) remain unresolved. No valid bisect good/bad boundary
@@ -74,3 +75,10 @@ SSAO/SSR/fog/material changes into normal gameplay while stability remains open.
 No Windows, BIOS, driver, registry, overlay or unrelated-application change.
 No public playable release. Safe source only goes to the existing repository;
 raw dumps, owner snapshots, licensed media and complete archives remain private.
+
+Recovery sealing: `tools/seal_forensic_recovery.py` requires both completed idle
+results, extracted regressions, remote main/tag verification and an unchanged
+runtime tree. It creates a new complete private Game/art-source ZIP, verifies
+its CRC, and preserves private Git history in a separate verified bundle. Read
+the final `PrivateCandidate/DELIVERY.json` for exact hashes/commits. Raw asset
+inbox, original dumps and earlier builds remain separately intact; no overwrite.

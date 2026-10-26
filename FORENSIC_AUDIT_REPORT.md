@@ -94,8 +94,11 @@ Independent ZIP extraction: `../Checkpoints/20261026_full_forensic_audit/Private
 - Three spatial visual baselines: twelve room/property PNGs per render size,
   all native exits 0/no logged errors. These are placement fixtures, not route
   acceptance or performance benchmarks. See `VISUAL_BASELINE_RESULTS.md`.
-- Second ordinary idle observation remains in progress; its result belongs in
-  the delivery receipt only after completion.
+- Second independent ordinary idle: 975.281 seconds (16m15s), observed title,
+  actual Quit, exit 0; owner hashes unchanged. No QA/subsystem flags or renderer
+  overrides. External desktop activity was not globally monitored. Both runs'
+  raw five-second samples and separate counter summaries are preserved. These
+  passing observations do not establish permanent stability.
 
 All earlier component/deferred/historical tests are retained, not rerun or
 relabeled. They did not reproduce the owner's crash and cannot exonerate a

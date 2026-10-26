@@ -18,7 +18,9 @@ Ordinary idle run 01: 16m40s, native exit 0 via actual Quit, owner data unchange
 After 120s warmup, external process working set ranged 1,151,340,544–1,158,770,688
 bytes; private commit 1,904,177,152–1,926,402,048 bytes; handles 999–1,023.
 These counters are process memory/handles, **not VRAM, GPU time or leak proof**.
-A second observation is pending until its result is sealed in DELIVERY.json.
+A second ordinary observation completed after 975.281 seconds (16m15s), actual
+Quit/exit 0, owner files unchanged. Raw counters and summaries for both runs are
+preserved under the audit root; final hashes/paths are sealed in DELIVERY.json.
 
 Future measurements: median/p95 native frame times and stutters, focused-frame
 count/exclusions, render calls/primitives, resource memory and available GPU
