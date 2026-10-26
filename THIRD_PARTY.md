@@ -1,5 +1,12 @@
 # UNLISTED asset provenance
 
+Dread Within / 0.10.7: original code-generated concrete ribs, cable tray,
+suspensions, light guards and cellar material treatment reuse existing approved
+Concrete019 and steel textures. Curtain geometry/canvas and positional ring,
+wood/stone footsteps and timber contact reuse existing integrated assets. No
+new third-party download, generated character art, voice recording or raw-media
+publication. New finish geometry stays separate from existing collision.
+
 Surveyor Identity / 0.10.6: leafy-crown branch/leaf geometry and leaf-spray shader
 are original code-generated UNLISTED geometry, not extracted third-party meshes.
 Existing dead-tree bark shader and approved positional footsteps/latch recordings

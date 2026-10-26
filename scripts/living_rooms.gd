@@ -64,14 +64,21 @@ func curtain(parent: Node3D,z: float) -> void:
 			for index in [i,i+1,i+13,i+1,i+14,i+13]:
 				surface.set_uv(Vector2((index%13)/12.0,(index/13)/8.0));surface.add_vertex(vertices[index])
 	surface.generate_normals()
-	var mesh:=MeshInstance3D.new();mesh.name="FittedWindowCurtainLeft" if z<2 else "FittedWindowCurtainRight";mesh.mesh=surface.commit();mesh.material_override=cloth;parent.add_child(mesh)
+	var mesh:=MeshInstance3D.new();mesh.name="FittedWindowCurtainLeft" if z<2 else "FittedWindowCurtainRight";mesh.mesh=surface.commit();mesh.material_override=cloth;mesh.extra_cull_margin=.95;parent.add_child(mesh)
 
 func respond_window() -> void:
 	if not game.presentation.prefs.data.reduced_motion:response=2.4
 
 func reset_response() -> void:
 	response=0
-	if cloth:cloth.set_shader_parameter("response",0.0)
+	if cloth:
+		cloth.set_shader_parameter("response",0.0)
+		cloth.set_shader_parameter("drawn",1.0 if int(game.events.get("atmosphere",{}).get("used",{}).get("curtains_drawn",0))>0 else 0.0)
+
+func draw_curtains() -> void:
+	# A persistent off-screen dressing change, not an animation exemption.
+	# Reduced motion sees the same completed state; nothing slides on camera.
+	cloth.set_shader_parameter("drawn",1.0)
 
 func _process(delta: float) -> void:
 	if not is_instance_valid(game):return

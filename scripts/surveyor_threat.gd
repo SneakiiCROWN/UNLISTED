@@ -13,6 +13,7 @@ var last_known := Vector3.ZERO
 var route := PackedVector3Array()
 var graph := AStar3D.new()
 var step_distance := 0.0
+var footstep_index:=0
 var stuck := 0.0
 var missed_attacks := 0
 var deaths := 0
@@ -246,10 +247,14 @@ func move_route(delta: float,speed: float,staged:=false) -> void:
 	body.move_and_slide()
 	var distance := Vector2(body.position.x-before.x,body.position.z-before.z).length()
 	game.surveyor_actor.locomotion(distance/maxf(delta,0.001),speed>2)
-	step_distance += distance
-	if step_distance > 0.72:
-		step_distance = 0
-		game.sound("step",body.position,-24).pitch_scale = 0.79
+	if body.is_on_floor():step_distance += distance
+	if step_distance > 0.72 and body.is_on_floor():
+		# Retain distance overshoot, so low frame rates do not stretch the stride.
+		# Contact is at the real body/floor, not a repetitive centred vocal loop.
+		step_distance -= .72
+		var cue: AudioStreamPlayer3D=game.sound("step",body.position,-24 if footstep_index%2==0 else -25)
+		cue.pitch_scale=.78 if footstep_index%2==0 else .82
+		cue.max_distance=13;cue.unit_size=1.3;footstep_index+=1
 	stuck = stuck+delta if distance < delta*0.08 else 0
 	if stuck > 2.0:
 		# A moved chair/closed door is cover. Never warp through it to reach the player.

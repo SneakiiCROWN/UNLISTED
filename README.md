@@ -6,7 +6,16 @@ Eli Ward takes a night call at 17 Briar Lane, the address on his father Simon's 
 
 **0.10.0 / The Last Call - Windows alpha.** A connected plan investigation, real cellar bay, disconnected monitor experiment and sound-based escape deepen Simon's last investigation. The larger game and 30-60 minute human first-play target remain unfinished.
 
-## Current private development / 0.10.6-dev
+## Current private development / 0.10.7-dev
+
+The Dread Within gives the witnessed, restored lounge two rare consequences:
+curtains that close only while unobserved and a passage of footsteps overhead.
+It adds a supported cellar service envelope and improves the active Surveyor's
+floor-contact footsteps. No new required puzzle, character identity or ending.
+See [actual changes, verification and owner review](DREAD_WITHIN_VERIFICATION.md).
+Public Windows release remains unchanged; human horror/art approval is pending.
+
+### Preserved 0.10.6 milestone
 
 The Surveyor Identity adds a physical utility-door response to the existing
 across-hall footsteps: an approach, a pause and two restrained handle attempts.

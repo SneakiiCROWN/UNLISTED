@@ -46,7 +46,19 @@ func eligible() -> Array[String]:
 	if p.x>1.6 and p.z< -3 and p.distance_to(STEPS)<11 and not noticed(STEPS+Vector3.UP):result.append("empty_room_steps")
 	var tin: RigidBody3D=game.physical.props.can0
 	if p.x< -1.6 and p.z> -3 and game.physical.held!=tin and tin.position.distance_to(game.physical.homes.can0.origin)<.12 and tin.linear_velocity.length()<.08 and p.distance_to(tin.position)>2.2 and not noticed(tin.position):result.append("kitchen_tin")
+	# The house's aftermath belongs to a witnessed, restored room, never a
+	# prediction of a room the player has not seen or the copied bedroom.
+	if game.events.get("impossible_room_resolved",false) and game.events.get("impossible_room_revisited",false):
+		if not game.impossible_room.inside(p) and not curtain_visible():result.append("curtains_drawn")
+		if game.impossible_room.inside(p):result.append("ceiling_return")
 	return result
+
+func curtain_visible() -> bool:
+	# Both existing and destination cloth volume, including exterior glazing.
+	for y in [.46,1.40,2.48]:
+		for z in [1.04,1.50,2.0,2.50,2.98]:
+			if game.impossible_room.visible_point(Vector3(7.18,y,z)):return true
+	return false
 func request(id: String) -> bool:
 	# F1/native QA uses the same safety and spatial eligibility as normal scheduling.
 	if blocked() or not queue.is_empty() or not id in eligible():return false
@@ -66,6 +78,13 @@ func request(id: String) -> bool:
 		for i in 4:
 			queue.append({"at":i*.82,"where":STEPS.lerp(Vector3(-1.95,.03,-7),i/3.0),"sound":"step","db":-33.0+i*.65,"pitch":.86+i*.015,"caption":"Footsteps approach the utility door." if i==0 and closed else ("Footsteps across the hall." if i==0 else ""),"source":"UTILITY ROOM"})
 		if closed:latch_clock=0.0
+	elif id=="curtains_drawn":
+		game.get_node("LivingRoomFinishes").draw_curtains()
+		queue=[{"at":0.0,"where":Vector3(7.20,2.55,2.0),"sound":"latch","db":-36.0,"pitch":.68,"caption":"Curtain rings click in the lounge.","source":"LOUNGE WINDOW"}]
+	elif id=="ceiling_return":
+		for i in 4:
+			queue.append({"at":i*.88,"where":Vector3(3.1+i*.9,2.88,-1.7+i*1.1),"sound":"step","db":-32.0-i*.7,"pitch":.81+i*.018,"caption":"Footsteps cross above the lounge." if i==0 else "","source":"OVERHEAD"})
+		queue.append({"at":4.6,"where":Vector3(6.3,2.75,2.3),"sound":"foley/drop_wood_2","db":-37.0,"pitch":.65})
 	else:
 		var tin: RigidBody3D=game.physical.props.can0
 		tin.sleeping=false;tin.apply_central_impulse(Vector3(.015,.015,-.4))
@@ -97,7 +116,10 @@ func _physics_process(delta: float) -> void:
 		return
 	# Discard freed players to keep the long-session bookkeeping bounded.
 	sources=sources.filter(func(source):return is_instance_valid(source))
-	var next: String=policy.tick(delta,eligible() if not held_off else [],held_off)
+	# Visibility queries are needed only when a scheduling draw is due. Explicit
+	# requests still recheck eligibility immediately before changing the world.
+	var available: Array[String]=eligible() if not held_off and float(policy.data.remaining)<=delta else []
+	var next: String=policy.tick(delta,available,held_off)
 	game.events.atmosphere=policy.data
 	if next!="":request(next)
 

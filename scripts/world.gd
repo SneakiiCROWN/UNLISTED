@@ -190,6 +190,7 @@ func _ready() -> void:
 	load("res://scripts/interior_finish.gd").new().build(self)
 	var living_rooms=load("res://scripts/living_rooms.gd").new()
 	add_child(living_rooms);living_rooms.build(self)
+	load("res://scripts/cellar_envelope.gd").new().build(self)
 	property_memory=load("res://scripts/property_memory_study.gd").new();property_memory.game=self;add_child(property_memory)
 	recorder_memory=load("res://scripts/recorder_memory_study.gd").new();recorder_memory.game=self;recorder_memory.runtime=true;add_child(recorder_memory)
 	final_account=load("res://scripts/final_account.gd").new();final_account.game=self;add_child(final_account)

@@ -1,6 +1,9 @@
 extends "res://scripts/director_qa.gd"
 # Spatial/input/audio fixtures plus fast deterministic policy simulations.
 func run(current: Node) -> void:
+	if "--dread-focus" in OS.get_cmdline_user_args():
+		var focus=load("res://scripts/dread_within_qa.gd").new();focus.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(focus)
+		await focus.run(current);return
 	if "--identity-latch" in OS.get_cmdline_user_args():
 		var focus=load("res://scripts/identity_latch_qa.gd").new();focus.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(focus)
 		await focus.run(current);return

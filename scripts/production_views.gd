@@ -29,7 +29,8 @@ func run(current: Node) -> void:
 	for light in g.lamps:light.light_energy=.6
 	for door in g.doors.values():door.locked=false;door.set_open(true,.01)
 	if "--foreground-profile" in OS.get_cmdline_user_args():
-		if "--ground-cover-profile" in OS.get_cmdline_user_args():await profile_cover_route()
+		if "--dread-profile" in OS.get_cmdline_user_args():await profile_cellar_route()
+		elif "--ground-cover-profile" in OS.get_cmdline_user_args():await profile_cover_route()
 		elif "--unseen-profile" in OS.get_cmdline_user_args():await profile_unseen()
 		else:await profile_rooms()
 		await g.qa_exit(0);return
@@ -136,6 +137,20 @@ func moving_sample(label: String,resolution: Vector2i,action_: String,strength: 
 		previous=now
 	Input.action_release(action_);samples.sort();draws.sort()
 	return {"fixture":label,"render_size":str(resolution),"focused_frames":samples.size(),"excluded_unfocused":excluded,"median_ms":samples[samples.size()/2] if samples.size()>0 else null,"p95_ms":samples[int(samples.size()*.95)] if samples.size()>0 else null,"max_ms":samples.back() if samples.size()>0 else null,"median_draw_calls":draws[draws.size()/2] if draws.size()>0 else null,"actual_displacement_m":start.distance_to(g.player.position),"enemy_states":states.keys()}
+
+func profile_cellar_route() -> void:
+	var results: Array=[]
+	g.horror.set_process(false);g.horror.set_physics_process(false);g.ambient_director.enabled=false
+	for resolution in [Vector2i(1920,1080),Vector2i(2560,1440),Vector2i(3440,1440)]:
+		g.get_viewport().size=resolution;g.player.position=Vector3(0,-2.999,-17.2);g.player.velocity=Vector3.ZERO
+		await wait(2.0);cover_gaps=[];cover_draws=[];cover_primitives=[];cover_excluded=0;cover_previous=0
+		var start:=Time.get_ticks_usec();cover_profiling=true
+		for repeat in 2:
+			for point in [Vector2(0,-21),Vector2(-3.5,-21),Vector2(-3.5,-19),Vector2(0,-19),Vector2(0,-17.2)]:await travel(point,"cellar moving frame-time fixture")
+		cover_profiling=false;cover_gaps.sort();cover_draws.sort();cover_primitives.sort()
+		results.append({"render_size":str(resolution),"duration_seconds":(Time.get_ticks_usec()-start)/1000000.0,"focused_frames":cover_gaps.size(),"excluded_unfocused":cover_excluded,"median_ms":cover_gaps[cover_gaps.size()/2] if not cover_gaps.is_empty() else null,"p95_ms":cover_gaps[int(cover_gaps.size()*.95)] if not cover_gaps.is_empty() else null,"max_ms":cover_gaps.back() if not cover_gaps.is_empty() else null,"median_draw_calls":cover_draws[cover_draws.size()/2] if not cover_draws.is_empty() else null,"median_rendered_primitives":cover_primitives[cover_primitives.size()/2] if not cover_primitives.is_empty() else null})
+	var file=FileAccess.open(output.path_join("cellar_route_profile.json"),FileAccess.WRITE)
+	file.store_string(JSON.stringify({"scope":"Actual isolated movement around cellar relay/service aisles, native render sizes in 1280x720 desktop window. 60fps cap, warmed shaders, no readback during samples, focused frames only, threats disabled. Not a whole-game, uncapped, cold-start or minimum-spec benchmark; no before/after FPS gain asserted.","results":results,"checks":checks},"\t"));file.close()
 
 func profile_cover_route() -> void:
 	var results: Array=[]

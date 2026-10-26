@@ -4,7 +4,9 @@ extends RefCounted
 const EVENTS := [
 	{"id":"window_taps","weight":1.0,"limit":2},
 	{"id":"empty_room_steps","weight":.8,"limit":1},
-	{"id":"kitchen_tin","weight":.6,"limit":1}
+	{"id":"kitchen_tin","weight":.6,"limit":1},
+	{"id":"curtains_drawn","weight":1.0,"limit":1},
+	{"id":"ceiling_return","weight":1.2,"limit":1}
 ]
 var data: Dictionary={}
 var rng:=RandomNumberGenerator.new()
