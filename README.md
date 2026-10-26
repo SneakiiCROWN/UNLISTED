@@ -17,6 +17,8 @@ See [changes and verification scope](PLAYER_EXPERIENCE_VERIFICATION.md) and the
 [spoiler-light owner guide](OWNER_PLAYTEST_v0.10.9.md).
 
 This remains a private QA candidate: intermittent native crashes are unresolved.
+The owner has now confirmed an ordinary main-menu idle crash. It is not cleared
+for a reliable playthrough; see [preserved failure and diagnosis](OWNER_MENU_IDLE_FAILURE.md).
 The public Windows release is unchanged. Human comprehension, fear and art
 approval await the owner's playtest; no 30-60-minute runtime claim is made.
 

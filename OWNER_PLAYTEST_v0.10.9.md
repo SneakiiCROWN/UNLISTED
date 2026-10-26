@@ -1,5 +1,9 @@
 # UNLISTED / owner playtest / spoiler-light
 
+**Owner update,26October:** an idle main-menu crash is confirmed. This candidate
+is not stability-approved. The failure is being investigated; the control guide
+below remains useful, but a short automated pass did not clear ordinary idle use.
+
 Extract the PRIVATE Windows ZIP into a new folder and run UNLISTED.exe. Keep your older builds. This is a development candidate: an intermittent native crash remains unresolved. No driver or Windows changes are needed to try it.
 
 Choose New Game for the rainy arrival and a fresh investigation. Continue resumes your existing checkpoint; events already discovered may not repeat. The game uses checkpoints, not separate manual save slots. The new package does not bundle or replace your saves or settings.

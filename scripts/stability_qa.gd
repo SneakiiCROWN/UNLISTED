@@ -53,6 +53,25 @@ func run(current: Node) -> void:
 	else:g.prepare_automated_qa()
 	report.kind=kind;report.backend=RenderingServer.get_current_rendering_driver_name();report.method=RenderingServer.get_current_rendering_method();report.adapter=RenderingServer.get_video_adapter_name()
 	checkpoint("title ready")
+	if "--menu-idle-only" in OS.get_cmdline_user_args():
+		# Owner failure reproduction: normal root title, no SubViewport, no
+		# New Game, no live resolution loop. Only input/data isolation differs.
+		assert(kind=="root")
+		window.set_flag(Window.FLAG_NO_FOCUS,true);window.set_flag(Window.FLAG_MOUSE_PASSTHROUGH,true)
+		g.presentation.apply_display()
+		Engine.max_fps=0 # Normal project default; q.run's60fps cap must not mask idle load.
+		report.scope="Bounded normal-root main-menu idle, copied owner preferences, physical input blocked, private writes only. No gameplay or repeated resize. Not an uninstrumented owner launch or a crash fix."
+		report.max_fps=Engine.max_fps
+		await shot("idle_title_start")
+		var stop: int=Time.get_ticks_usec()+360000000
+		while Time.get_ticks_usec()<stop:
+			await wait(15)
+			report.samples.append({"ticks":Time.get_ticks_usec(),"menu_clock":g.presentation.stage.clock,"section":g.presentation.section,"nodes":Performance.get_monitor(Performance.OBJECT_NODE_COUNT),"objects":Performance.get_monitor(Performance.OBJECT_COUNT),"static_memory":Performance.get_monitor(Performance.MEMORY_STATIC),"fps":Engine.get_frames_per_second()})
+			checkpoint("idle heartbeat")
+		check("title stays idle without starting a case",not g.started and g.presentation.section=="title")
+		await shot("idle_title_end")
+		report.completed=true;checkpoint("idle completed")
+		await g.qa_exit(0);return
 	if kind=="prestart":
 		for size_ in [Vector2i(1920,1080),Vector2i(2560,1440),Vector2i(3440,1440)]:await resize_to(size_)
 	elif kind!="root":await resize_to(wanted)

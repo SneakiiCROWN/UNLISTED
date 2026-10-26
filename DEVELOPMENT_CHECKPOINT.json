@@ -98,5 +98,16 @@
   },
   "owner_guide": "OWNER_PLAYTEST_v0.10.9.md",
   "native_executable_sha256": "7ece55e6076aef4c3fbaf748d24ce69811fc71ecdc0bbee6a9b3a83b7e29c51c",
-  "segmented_scope": "Final06 repeats recorder/input/save and three-resolution room/UI views. Unchanged05 threat/anomaly/arrival/vent/earned ending B reports retained; only three verified UI/caption string lines differ in production code. Extracted06 earned ending A recorded independently in private DELIVERY.json."
+  "segmented_scope": "Final06 repeats recorder/input/save and three-resolution room/UI views. Unchanged05 threat/anomaly/arrival/vent/earned ending B reports retained; only three verified UI/caption string lines differ in production code. Extracted06 earned ending A recorded independently in private DELIVERY.json.",
+  "owner_menu_idle_failure": {
+    "date": "2026-10-26",
+    "wer_report": "a79a54c3-4093-4670-a8b1-5f969f415a8e",
+    "pid": 5300,
+    "exception": "0xC0000005 execution at address zero",
+    "ordinary_launch": true,
+    "root_cause": "unresolved",
+    "fix_verified": false,
+    "controlled_six_minute_repeat": "passed; does not clear actual owner failure"
+  },
+  "owner_playtest_ready": false
 }
