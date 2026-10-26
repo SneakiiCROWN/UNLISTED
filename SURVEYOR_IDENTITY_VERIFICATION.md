@@ -72,3 +72,35 @@ session baseline, not a controlled simultaneous before/after benchmark.
 
 Human listening/artistic approval, physical-controller review and first-play
 duration remain pending. No 30-60-minute or finished-game claim.
+
+## Completed candidate 04 results
+
+- Physical door response: 23/0 at each of 1080p, 1440p and 3440x1440. Includes
+  the four actual sources, real lever pose, quiet interval, pause, once-only
+  recovery, interrupted partial load, player door opening, pending encounters,
+  reduced motion and input-driven investigation of the empty room.
+- Shared ambient scheduler/physics/gaze regression: 47/0. Exterior gate, yard,
+  shed, service threshold and save compatibility: 59/0. Recorder recovery and
+  1440p presentation: 24/0. Vent fast-reversal regression: 8/0.
+- Ending B from the preserved genuinely earned 0.10.2 investigation snapshot:
+  35/0 at 1440p, story/reduced-motion with simulated controller buttons. A segmented
+  ending/recovery check, not another fresh investigation or physical-controller
+  review. Independent extracted Windows normal-mode ending A is recorded in
+  DELIVERY.json after packaging; do not infer its result from this source note.
+- 17 native exterior views per resolution. 1080p geometry inspection in 03;
+  final 04 uses identical foliage source and supplies 1440p/ultrawide. The close
+  rear-fence fixture is physically right against its existing 1.8 m palings;
+  it is not a useful unobstructed horizon view. The world was not moved for it.
+- Four foreground moving passes, 25.17 seconds and 1,509 focused frames each,
+  no focus exclusions. 1440p small-shadow A/B medians: 9,331 versus 8,594 draw
+  calls (7.9% fewer), 16.663 versus 16.662ms. Optimised 1080p / ultrawide medians
+  16.662 / 16.664ms, p95 16.928 / 16.951ms. Rendered primitive medians are
+  approximately 15.4 million at 1080p/1440p and 16.2 million ultrawide, including
+  reported render passes. This remains significant geometry work for weaker
+  hardware; no minimum-spec or uncapped performance guarantee is made.
+
+All listed native logs have zero reported runtime errors. Owner checkpoint and
+settings hashes remained unchanged. Failure receipts remain separately preserved.
+The delivery contains the original native footage and a short first-event clip;
+audio setup is aligned to the first recording physics tick, within about 16.7ms.
+No simulated speedup, generated gameplay frames or subjective listening claim.
