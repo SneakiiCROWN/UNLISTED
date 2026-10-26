@@ -93,6 +93,14 @@ var warm := Color(1.0, 0.57, 0.27)
 var cold := Color(0.30, 0.66, 0.76)
 
 func _ready() -> void:
+	# Official release templates can reject command-line scene overrides. This
+	# explicit private diagnostic selects its entry before constructing the world.
+	# The root marker lets its later original New Game instantiate this scene once.
+	if "--visual-probe" in OS.get_cmdline_user_args() and "--deferred-title-diagnostic" in OS.get_cmdline_user_args() and not get_tree().root.has_meta("unlisted_deferred_title_boot"):
+		get_tree().root.set_meta("unlisted_deferred_title_boot",true)
+		set_process(false);set_physics_process(false);set_process_input(false)
+		call_deferred("enter_deferred_title_diagnostic")
+		return
 	dev_mode = OS.has_feature("unlisted_dev") or (OS.has_feature("editor") and "--unlisted-dev" in OS.get_cmdline_user_args())
 	if dev_mode:
 		DirAccess.make_dir_recursive_absolute("user://development")
@@ -207,6 +215,12 @@ func _ready() -> void:
 		print("DEV_RELEASE_PROTECTED: development flag cannot enable tools or redirect saves")
 		call_deferred("qa_exit",0)
 	if qa_mode and not "--visual-probe" in OS.get_cmdline_user_args(): call_deferred("run_qa")
+
+func enter_deferred_title_diagnostic() -> void:
+	var diagnostic: Node=load("res://scenes/deferred_title_diagnostic.tscn").instantiate()
+	get_tree().root.add_child(diagnostic)
+	get_tree().current_scene=diagnostic
+	queue_free()
 
 func configure_input() -> void:
 	var keys := {"forward":KEY_W, "back":KEY_S, "left":KEY_A, "right":KEY_D, "sprint":KEY_SHIFT, "crouch":KEY_CTRL, "interact":KEY_E, "flashlight":KEY_F,"journal":KEY_J,"hint":KEY_H,"battery_status":KEY_B,"battery_replace":KEY_T,"torch_tap":KEY_V,"throw_prop":KEY_NONE,"pause":KEY_NONE,"crouch_toggle":KEY_NONE}

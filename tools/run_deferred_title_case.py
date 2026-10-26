@@ -2,7 +2,7 @@
 from pathlib import Path
 import hashlib,json,os,shutil,subprocess,time
 G=Path(__file__).resolve().parents[1]
-B=G.parent/'Builds/UNLISTED_Priority_Zero_Diagnostic_04'
+B=G.parent/'Builds/UNLISTED_Priority_Zero_Diagnostic_05'
 O=B/'QA/deferred'
 assert not O.exists()
 O.mkdir(parents=True)
@@ -12,7 +12,8 @@ hashes=lambda:{p.name:sha(p) for p in owner if p.exists()}
 before=hashes()
 for p in owner:
     if p.exists():shutil.copy2(p,O/('owner_before_'+p.name))
-args=[str(B/'UNLISTED.exe'),'res://scenes/deferred_title_diagnostic.tscn','--','--visual-probe','--case-output='+str(O)]
+shutil.copy2(Path(os.environ['APPDATA'])/'UNLISTED/settings.cfg',B/'QA/presentation_settings.cfg')
+args=[str(B/'UNLISTED.exe'),'--','--visual-probe','--deferred-title-diagnostic','--case-output='+str(O)]
 (O/'launch.json').write_text(json.dumps({'args':args,'executable_sha256':sha(B/'UNLISTED.exe'),'scope':'Native alternate-entry diagnostic, initial 2D-only title then original main scene/arrival. Own save path. Not ordinary launch or crash fix.'},indent=2))
 start=time.monotonic()
 with (O/'native.log').open('w',encoding='utf8') as log:
