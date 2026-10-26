@@ -21,6 +21,10 @@ var door_wait := 0.0
 var enabled := true
 var search_leg := 0
 var search_heading := 0.0
+var search_anchor := Vector3.ZERO
+var search_focus := Vector3.ZERO
+var search_pause := 0.0
+var search_visited: Array[int]=[]
 var collision_active := false
 var stalk_used := false
 var memory_routes: Array[int]=[]
@@ -64,6 +68,7 @@ func reset() -> void:
 	grace = 5
 	suspicion = 0
 	lost = 0
+	search_pause=0;search_leg=0;search_visited.clear()
 	route.clear()
 	set_collision(false)
 	game.presence.velocity = Vector3.ZERO
@@ -172,7 +177,26 @@ func change(next: String) -> void:
 		var breathing=voice("attack",-23)
 		if breathing:game.sound_caption("A sharp intake of breath.",1,"NEARBY",breathing)
 	if state in ["search","observe","recovery"]:game.surveyor_actor.set_mode("watch")
-	if state=="search":search_heading=game.presence.rotation.y
+	if state=="search":
+		search_heading=game.presence.rotation.y;search_anchor=last_known
+		search_focus=last_known;search_pause=0;search_leg=0;search_visited.clear()
+
+func next_search_point() -> bool:
+	# Search the place actually heard/seen, then an adjacent clear approach.
+	# Never choose a destination from Eli's hidden position or through a wall.
+	var best:=-1;var best_score:=-INF
+	for id in graph.get_point_ids():
+		if id in search_visited or graph.is_point_disabled(id):continue
+		var point: Vector3=graph.get_point_position(id)
+		var from_body: Vector3=point-game.presence.position
+		if absf(point.y-game.presence.position.y)>.35 or point.distance_to(search_anchor)>3.1:continue
+		if from_body.length()<.85 or from_body.length()>3.4 or not route_clear(game.presence.position,point):continue
+		var score: float=-game.presence.global_basis.z.dot(from_body.normalized())-.12*from_body.length()
+		if score>best_score:best=id;best_score=score
+	if best<0:return false
+	search_visited.append(best);search_leg+=1;search_pause=0
+	search_focus=graph.get_point_position(best);plan(search_focus)
+	return not route.is_empty()
 
 func closest(point: Vector3) -> int:
 	var best := -1
@@ -229,6 +253,14 @@ func move_route(delta: float,speed: float,staged:=false) -> void:
 	door_wait = maxf(0,door_wait-delta)
 	for d in game.doors.values():
 		if body.position.distance_to(d.position) < 1.25 and not d.opened:
+			# Passing a closed room is not an instruction to open it. Only the
+			# segment actually crossing this doorway may operate its leaf.
+			var here: Vector3=d.to_local(body.global_position)
+			var there: Vector3=d.to_local(target)
+			if here.z*there.z>0 and absf(there.z)>.22:continue
+			var t: float=clampf(here.z/(here.z-there.z),0,1) if absf(here.z-there.z)>.001 else 1.0
+			var crossing: Vector3=here.lerp(there,t)
+			if absf(crossing.x)>d.clear_half_width+.15 or absf(crossing.y)>.7:continue
 			if d.locked:route.clear();return
 			d.open_away_from(body.global_position)
 			d.set_open(true,0.85)
@@ -363,8 +395,15 @@ func _physics_process(delta: float) -> void:
 	elif state == "search":
 		move_route(delta,0.85)
 		if route.is_empty():
-			game.presence.rotation.y=lerp_angle(game.presence.rotation.y,search_heading+sin(clock*.72)*.55,1-exp(-delta*1.5))
-		if lost > 8.0 and clock > 4:change("retreat");plan(Vector3(0,0,2.7))
+			search_pause+=delta
+			game.presence.rotation.y=lerp_angle(game.presence.rotation.y,search_heading+sin(search_pause*.72)*.55,1-exp(-delta*1.5))
+			# A held listen before each short approach gives the player readable
+			# escape windows. Two probes at most; no endless room patrol or new chase.
+			if search_pause>1.6 and search_leg<2:
+				if not next_search_point():search_leg=2
+				else:search_heading=atan2(-(search_focus.x-game.presence.position.x),-(search_focus.z-game.presence.position.z))
+		if (lost>8 and clock>4 and search_leg>0 and route.is_empty()) or clock>14:
+			change("retreat");plan(Vector3(0,0,2.7))
 	elif state == "observe":
 		if clock > 3.5:last_known = Vector3(0,0,-6.5);change("investigate");plan(last_known)
 	elif state == "retreat":

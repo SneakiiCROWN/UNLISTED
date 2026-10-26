@@ -655,7 +655,7 @@ func show_exclusion() -> void:
 	label(card_body,"FIELD TEST / HALL MICROPHONE",15,"Meta")
 	label(card_body,"THE LAST FOOTSTEP",32,"Title")
 	var heard_both: bool=game.events.get("audition_A",false) and game.events.get("audition_B",false)
-	var explanation: Label=label(card_body,"A / TONIGHT'S RECORDING     B / REPLAY + ROOM\n\n"+("I stood still after playback stopped. There was one more step.\nDid it come from the recording, or the room?" if heard_both else "A plays my footsteps from the hall microphone.\nB plays the same tape again. Stand still and listen after it stops.\nThe 1998 service reel is a separate recording."),20)
+	var explanation: Label=label(card_body,"HALL MICROPHONE / TONIGHT\n\n"+("I stood still after playback stopped. There was one more step.\nDid it come from the recording, or the room?" if heard_both else "These are my footsteps, recorded in the hall tonight.\nI can play them again and listen from here.\nDad's 1998 service reel loads separately."),20)
 	explanation.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	var state_a := "heard" if game.events.get("audition_A",false) else "not heard"
 	var state_b := "heard" if game.events.get("audition_B",false) else "not heard"
@@ -663,7 +663,8 @@ func show_exclusion() -> void:
 	label(card_body,"A: "+state_a+"     /     B: "+state_b+"\n"+("Playing "+game.horror.audition if game.horror.audition!="" else (("Mark where the extra step came from." if heard_both else "Listen to both before comparing.") if available else "Playback unavailable: "+("no power" if game.stage<3 else "movement nearby"))),18)
 	var row := HBoxContainer.new();card_body.add_child(row)
 	for channel in ["A","B"]:
-		add_button("Listen "+channel,func():resume_game();game.horror.audition_channel(channel),available,row)
+		var play_button:=add_button("Listen "+channel,func():resume_game();game.horror.audition_channel(channel),available,row)
+		play_button.text="Play recording" if channel=="A" else "Replay and listen"
 	var ready_: bool = game.events.get("audition_A",false) and game.events.get("audition_B",false)
 	var exclude_a:=add_button("Exclude channel A",func():game.horror.exclude_channel("A"),ready_,card_body);exclude_a.text="From the recording"
 	var exclude_b:=add_button("Exclude channel B",func():game.horror.exclude_channel("B"),ready_,card_body);exclude_b.text="From the room"

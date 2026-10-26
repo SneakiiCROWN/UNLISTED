@@ -60,11 +60,10 @@ func locomotion(distance_per_second: float, running := false) -> void:
 	var jog: bool=running and speed>(1.65 if mode=="run" else 1.9)
 	set_mode("run" if jog else "walk")
 	motion_target=clampf(speed/(2.581*1.05 if jog else 1.018*1.05),0.18,2.3)
-	if not reborn_presence:animator.speed_scale=motion_target
 
 func _process(delta: float) -> void:
 	if mode in ["listen","watch"]:animator.speed_scale = .62 if reborn_presence else .72
-	elif reborn_presence and mode in ["walk","run"]:
+	elif mode in ["walk","run"]:
 		# Visual rate follows measured body travel, easing between rates without
 		# changing AI acceleration, pursuit speed or attack timing.
 		motion_rate=lerpf(motion_rate,motion_target,1-exp(-delta*10))

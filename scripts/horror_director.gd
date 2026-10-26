@@ -259,6 +259,7 @@ func memory_process(delta: float) -> void:
 
 func stop_audition() -> void:
 	audition = ""
+	if is_instance_valid(game.recorder_memory):game.recorder_memory.transport_channel("")
 	for player_ in audition_players:
 		if is_instance_valid(player_):player_.stop();player_.queue_free()
 	audition_players.clear()
@@ -278,12 +279,14 @@ func audition_channel(channel: String) -> void:
 	audition_clock = -0.4
 	audition_index = 0
 	audition_tail = false
+	game.recorder_memory.transport_channel(channel)
 	var motor=game.sound("latch",Vector3(3.3,1,-8.52),-29)
 	game.sound_caption("The tape recorder starts.",2,"RECORDER "+channel,motor)
 
 func process_audition(delta: float) -> void:
 	if audition=="" or audition=="FIELD":return
-	for reel in get_tree().get_nodes_in_group("archive_reels"):reel.rotation.y += delta*1.8
+	if not audition_tail:
+		for reel in get_tree().get_nodes_in_group("archive_reels"):reel.rotation.y += delta*1.8
 	audition_clock += delta
 	if audition_clock<0:return
 	if audition_index<echo_trace.size():
@@ -291,13 +294,18 @@ func process_audition(delta: float) -> void:
 		var player_ = game.sound(str(p[4]) if p.size()>4 else "step",Vector3(3.3,1,-8.52),-23)
 		player_.pitch_scale = float(p[5]) if p.size()>5 else 1.0
 		audition_players.append(player_)
+		game.recorder_memory.transport_pulse(.85)
 		audition_index += 1
 		if audition_index==1:game.sound_caption("Footsteps on the tape.",3,"RECORDER "+audition,player_,true)
 		audition_clock = -0.6 if audition_index>=echo_trace.size() else -clampf(float(echo_trace[audition_index][3])-float(p[3]),0.28,1.4)
 	elif audition=="B" and not audition_tail:
 		audition_tail = true
 		audition_clock = -1.7
-		# The cessation is audible in the gap itself; no phantom sound caption.
+		game.recorder_memory.transport_channel("")
+		var stop_click=game.sound("transport_click",Vector3(3.3,.95,-8.52),-27)
+		game.sound_caption("The recorder stops.",1.4,"TAPE RECORDER",stop_click)
+		# Reels and meter now stop before the step at the actual doorway. That
+		# distinction is physical; the impossible step never drives the deck meter.
 	elif audition=="B" and audition_tail:
 		var answer=game.sound("step",Vector3(1.7,0,-7),-23)
 		answer.pitch_scale = 0.79
@@ -308,6 +316,7 @@ func process_audition(delta: float) -> void:
 		# Playback has ended. Let the silence carry the comparison.
 		game.events.audition_A = true
 		audition = ""
+		game.recorder_memory.transport_channel("")
 
 func exclude_channel(channel: String) -> void:
 	if not game.events.get("audition_A",false) or not game.events.get("audition_B",false):return

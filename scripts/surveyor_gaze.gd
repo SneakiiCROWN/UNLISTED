@@ -9,6 +9,7 @@ func attention_point() -> Vector3:
 	var attention: Vector3=body.global_position-body.global_basis.z*3+Vector3.UP*1.45
 	if threat.active():
 		attention=threat.last_known+Vector3.UP*1.45
+		if threat.state=="search" and not threat.route.is_empty():attention=threat.search_focus+Vector3.UP*1.45
 		if threat.visual_line_of_sight and threat.state not in ["search","investigate"]:attention=actor.game.player.camera.global_position
 	if actor.capture_amount>0:attention=actor.game.player.camera.global_position
 	if actor.attention_override is Vector3:attention=actor.attention_override

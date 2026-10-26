@@ -80,6 +80,32 @@ var quiet:=0.0
 var bases: Array=[]
 var history: Array=[]
 var click_count:=0
+var meter_level:=0.0
+var transport:=""
+
+func transport_channel(channel: String) -> void:
+	transport=channel
+	if channel=="":meter_level=0
+	var deck: Node3D=game.get_node("ArchiveTransport")
+	for i in 3:
+		var key: Node3D=deck.get_node_or_null("TransportKey"+str(i))
+		if key:key.position.y=float(key.get_meta("rest_y",.07))-(.012 if (i==0 and channel in ["A","FIELD"]) or (i==1 and channel=="B") else 0.0)
+
+func transport_pulse(amount: float) -> void:
+	if not running and transport!="":meter_level=maxf(meter_level,amount)
+
+func feedback(delta: float) -> void:
+	# Only real recorder audio drives the physical VU. A room footstep cannot
+	# light it. The saved backward-reel anomaly retains exclusive meter ownership.
+	meter_level=move_toward(meter_level,0,delta*2.4)
+	if not running and is_instance_valid(needle):
+		var target: float=-.55+meter_level*.92
+		needle.rotation.y=target if game.presentation.prefs.data.reduced_motion else lerpf(needle.rotation.y,target,1-exp(-delta*19))
+	var powered: bool=game.stage>=3
+	var light: SpotLight3D=game.get_node_or_null("TransportWorkPool")
+	if light:light.light_energy=1.35 if powered else 0
+	var task: OmniLight3D=game.get_node_or_null("OfficePaperTaskLight")
+	if task:task.light_energy=.48 if powered else 0
 
 func equipment_still() -> bool:
 	return not game.field_tape.playing and game.horror.audition=="" and game.horror.echo_index<0 and game.dead_line.sequence.is_empty() and game.events.get("line_feed_off",false)
@@ -94,6 +120,7 @@ func cleanup_runtime() -> void:
 
 func restore() -> void:
 	cleanup_runtime()
+	transport_channel("")
 	var state: Dictionary=game.events.get("recorder_answer",{})
 	needle=game.get_node("ArchiveTransport").get_node_or_null("ReturnMeterNeedle")
 	if is_instance_valid(needle):needle.rotation.y=float(state.get("needle_angle",-.55))
@@ -161,6 +188,7 @@ func finish_runtime(reason: String) -> void:
 
 func _physics_process(delta: float) -> void:
 	if not runtime or not game.started or game.menu_open or game.ended:return
+	feedback(delta)
 	if running:
 		if game.presentation.prefs.data.reduced_motion and not game.events.recorder_answer.get("reduced",false):
 			# A setting changed while paused takes effect without rewinding the

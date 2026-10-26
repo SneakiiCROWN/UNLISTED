@@ -54,6 +54,7 @@ func build() -> void:
 	var tag: Label3D=game.label3(deck,"REEL / 1998",Vector3(-.48,-.054,.075),0,11,Color("c3bba1"));tag.rotation.x=-PI/2;tag.pixel_size=.001
 func stop() -> void:
 	playing=false;remote=false;clock=0;next=0
+	if is_instance_valid(game.recorder_memory):game.recorder_memory.transport_channel("")
 	for source in sources:
 		if is_instance_valid(source):source.stop();source.queue_free()
 	sources.clear();motor=null
@@ -71,7 +72,7 @@ func use(id: String) -> void:
 	game.presentation.pause_world();game.presentation.clear_card();game.presentation.section="document"
 	game.presentation.label(game.presentation.card_body,"OFFICE / TAPE DECK",15,"Meta")
 	game.presentation.label(game.presentation.card_body,"TAPE RECORDER",30,"Title")
-	var body: String=LABEL if game.events.get("test_reel_found",false) else "The recorder is connected to the hall microphone. A card beside it says: 'S. Ward / 1998 test reel: records store below the cellar.'\n\nA plays the hall microphone recording. B plays it again so I can listen from the room. Dad's old reel loads separately."
+	var body: String=LABEL if game.events.get("test_reel_found",false) else "The cable runs to the hall microphone. This deck records my footsteps when I cross the hall. PLAY and REPLAY use that recording.\n\nA card beside it says Dad's 1998 test reel is in the records store below the cellar. That reel loads separately."
 	if game.events.get("test_reel_heard",false):body=RESULT
 	var explanation: Label=game.presentation.label(game.presentation.card_body,body,19)
 	explanation.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;explanation.size_flags_horizontal=Control.SIZE_EXPAND_FILL
@@ -90,6 +91,7 @@ func play(from_remote:=false) -> void:
 	game.horror.stop_audition();stop();game.horror.audition="FIELD"
 	game.events.test_reel_loaded=true;stored_reel.visible=true;game.save_game(true)
 	playing=true;remote=from_remote;clock=0;next=0
+	game.recorder_memory.transport_channel("FIELD")
 	motor=game.sound("hum",DECK,-26 if remote else -32,true);motor.unit_size=2.5 if remote else 1;motor.max_distance=24 if remote else 7;sources.append(motor)
 	game.sound_caption("Motor running on the recording.",2.5,"1998 TEST REEL",motor,true)
 func notify_audible_source(audio: AudioStreamPlayer3D) -> void:
@@ -97,6 +99,7 @@ func notify_audible_source(audio: AudioStreamPlayer3D) -> void:
 	# A sighted pursuit keeps its target; warning grace and state rules still apply.
 	if remote and audio.playing and game.threat.active() and not game.threat.can_see_player():game.threat.hear(audio.global_position,28.0)
 func cue(index: int) -> void:
+	game.recorder_memory.transport_pulse(.55 if index==6 else .9)
 	if remote:game.last_call.reel_cue(index)
 	if index==6:
 		if is_instance_valid(motor):motor.stop()

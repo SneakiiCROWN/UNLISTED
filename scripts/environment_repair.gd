@@ -299,7 +299,11 @@ func relay_room() -> void:
 	plaque(Vector3(-1.5,-0.34,-23.88),"OCCUPANCY RELAY / FEED ISOLATION",3.6)
 	g.box(g,Vector3(-1.5,-0.37,-22.8),Vector3(2.8,0.07,0.16),Color(0.48,0.58,0.46),false,true)
 	for x in [-2.6,-.4]:tube(Vector3(x,-.34,-22.8),Vector3(x,-.19,-22.8),.018)
-	g.lamp(Vector3(-1.5,-0.57,-22.4),Color(0.63,0.74,0.62),1.3,4.2)
+	# The existing strip lights the working manifold, not a green sphere across
+	# the entire floor. Real ceiling pools and their shadows remain unchanged.
+	var work:=SpotLight3D.new();work.name="RelayManifoldWorkLight";g.add_child(work)
+	work.position=Vector3(-1.5,-.47,-22.8);work.look_at(Vector3(-1.5,-1.8,-23.65),Vector3.UP)
+	work.light_color=Color(.83,.85,.72);work.light_energy=2.1;work.spot_range=3.6;work.spot_angle=64;work.spot_attenuation=1.1;work.shadow_enabled=true
 	var control := Node3D.new()
 	g.add_child(control)
 	control.position = Vector3(2,-1.9,-23.78)

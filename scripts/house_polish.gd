@@ -49,10 +49,11 @@ func build(game: Node3D) -> void:
 		var reel := MeshInstance3D.new();var mesh := TorusMesh.new();mesh.inner_radius = 0.06;mesh.outer_radius = 0.095;mesh.rings = 16;mesh.ring_segments = 8;reel.mesh = mesh;reel.material_override = g.mat(Color("696851"));transport.add_child(reel);reel.position = Vector3(x,0.065,-0.04);reel.add_to_group("archive_reels")
 	for i in 3:
 		var x := -0.22+0.22*i
-		g.box(transport,Vector3(x,0.07,0.13),Vector3(0.12,0.035,0.09),Color("56594b"))
+		var key: MeshInstance3D=g.box(transport,Vector3(x,0.07,0.13),Vector3(0.12,0.035,0.09),Color("56594b"))
+		key.name="TransportKey"+str(i);key.set_meta("rest_y",.07)
 		var id: String = ["audition_source","audition_return","exclude_return"][i]
 		g.collision(g,transport.position+Vector3(x,0.1,0.13),Vector3(0.17,0.12,0.13),id)
-		var tag: Label3D = g.label3(transport,["A","B","COMPARE"][i],Vector3(x,0.092,0.14),0,15,Color("b0ab91"));tag.rotation.x = -PI/2;tag.pixel_size = 0.001
+		var tag: Label3D = g.label3(transport,["PLAY","REPLAY","COMPARE"][i],Vector3(x,0.092,0.14),0,15,Color("b0ab91"));tag.rotation.x = -PI/2;tag.pixel_size = 0.001
 	# An ordinary engraved input plate grounds the recorder's role in the room.
 	var input_plate: Label3D=g.label3(transport,"HALL MIC",Vector3(0,.054,-.165),0,11,Color("b0ab91"));input_plate.rotation.x=-PI/2;input_plate.pixel_size=.0008
 	build_hall_microphone()
@@ -67,6 +68,22 @@ func build(game: Node3D) -> void:
 	repair.tube(Vector3(6.4,0.815,-8.96),Vector3(6.4,1.33,-8.96),0.016)
 	g.box(g,Vector3(6.4,1.32,-8.87),Vector3(0.22,0.055,0.24),Color("37423a"))
 	var task: OmniLight3D = g.lamp(Vector3(6.4,1.22,-8.84),Color(0.91,0.70,0.43),0.48,2.0);task.shadow_enabled = true
+	task.name="OfficePaperTaskLight"
+	# Reuse the licensed table lamp: a bounded warm work pool makes the actual
+	# recorder discoverable from the doorway, without a glowing objective marker.
+	var desk_lamp: Node3D=g.model("res://assets/interiors/lampRoundTable.glb",g,Vector3(3.76,.801,-8.86),Vector3(.22,.39,.22))
+	desk_lamp.name="TransportDeskLamp"
+	for mesh in g.all_meshes(desk_lamp):
+		for i in mesh.mesh.get_surface_count():
+			var source: Material=mesh.get_active_material(i)
+			mesh.set_surface_override_material(i,g.texture_mat("res://assets/original/work_canvas.png",Color("a99b79")) if source!=null and source.resource_name=="lamp" else g.texture_mat("res://assets/dusk/psx_house_steel_01.png",Color("41453b")))
+	var pool:=SpotLight3D.new();pool.name="TransportWorkPool";g.add_child(pool)
+	pool.position=Vector3(3.76,1.10,-8.86);pool.look_at(Vector3(3.25,.81,-8.45),Vector3.UP)
+	pool.light_color=Color("e4bd83");pool.light_energy=1.35;pool.spot_range=2.1;pool.spot_angle=57;pool.spot_attenuation=1.3
+	pool.shadow_enabled=false # Bounded desk light; retain all existing room shadows.
+	# Continuous cable meets a socket behind the bench, never across the aisle.
+	for pair in [[Vector3(3.76,.81,-8.96),Vector3(3.76,.10,-9.05)],[Vector3(3.76,.10,-9.05),Vector3(3.91,.10,-9.85)],[Vector3(3.91,.10,-9.85),Vector3(3.91,.25,-9.86)]]:repair.tube(pair[0],pair[1],.004,Color("282e27"))
+	surface(Vector3(3.91,.25,-9.88),Vector3(.10,.13,.025),Color("686c5b"),"res://assets/dusk/psx_house_steel_01.png")
 	# Kitchen: used place setting, worn runner and a second tucked-in chair.
 	g.model("res://assets/dusk/psx_prop_kitchen_chair_01.glb",g,Vector3(-6.4,0,-1.4),Vector3(0.5,0.9,0.52),0,true)
 	g.model("res://assets/dusk/psx_prop_newspapers_01.glb",g,Vector3(-6.05,0.815,-0.78),Vector3(0.36,0.025,0.26))
