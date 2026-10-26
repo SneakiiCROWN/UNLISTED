@@ -4,7 +4,7 @@ import hashlib,html,json,shutil,subprocess,zipfile
 G=Path(__file__).resolve().parents[1];B=G.parent/'Builds/UNLISTED_Stability_Terror_03'
 C=G.parent/'Checkpoints/20261026_stability_terror_candidate'
 X=B.parent/'UNLISTED_Stability_Terror_01/CrashEvidence'
-read=lambda p:json.loads(p.read_text(encoding='utf8-sig'))
+read=lambda p:json.loads(p.read_text(encoding='utf-8-sig'))
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
 TAG='dev-v0.10.8-stability-terror-20261026'
 def main():
