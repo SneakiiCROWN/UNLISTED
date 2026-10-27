@@ -53,6 +53,11 @@ Sampled-frame videos preserve wall-clock timing and are not native-FPS claims.
 
 Earlier Phase 4 null-particle evidence is retained. Initializing rain materials
 before adding emitters is a precaution, not a proven fix for that intermittent
-renderer error or the separate ordinary-menu crash. Passing bounded observations
+renderer error or the separate ordinary-menu crash. **The error recurred in
+Candidate04 during ultrawide ending save/load.** All 35 gameplay checks completed,
+but that rendering case failed acceptance. It is not relabelled as passing and
+was not repeated until clean. The private candidate is a diagnostic/playable QA
+delivery with a known rendering defect, not a stability-approved build.
+Passing bounded observations
 does not establish permanent stability. Human fear, comprehension, artistic
 approval and first-playthrough duration remain pending.

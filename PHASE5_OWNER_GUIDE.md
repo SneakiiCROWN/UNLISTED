@@ -6,7 +6,9 @@ Extract the entire Windows ZIP into a new folder. Launch UNLISTED.exe normally.
 Do not run it from inside the ZIP. Previous builds and releases remain available.
 This is the full investigation, not the automated graphics tour.
 
-The original intermittent idle-menu crash has not been conclusively fixed. Save
+The original intermittent idle-menu crash has not been conclusively fixed.
+A nonfatal null-particle rendering error also recurred during ultrawide ending
+checkpoint recovery. This candidate has not passed full rendering acceptance. Save
 regularly. If it closes unexpectedly, retain the log and note the time and what
 was happening; no personal playtest is required to continue development.
 

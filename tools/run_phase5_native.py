@@ -1,6 +1,6 @@
 """Run existing real-game QA with production atmosphere selection, isolated owner data."""
 from pathlib import Path
-import argparse,hashlib,json,os,subprocess,time
+import argparse,hashlib,json,os,shutil,subprocess,time
 p=argparse.ArgumentParser();p.add_argument('--exe',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--profile',type=int,choices=[0,1,2],default=1);p.add_argument('--mode',default='atmosphere-integration');p.add_argument('--size',default='1920x1080');p.add_argument('--timeout',type=int,default=900);p.add_argument('--keep-settings',action='store_true');p.add_argument('extra',nargs='*');a=p.parse_args()
 E=a.exe.resolve();O=a.output.resolve();assert E.is_file() and not O.exists();O.mkdir(parents=True)
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
@@ -22,6 +22,10 @@ try:
    proc.kill();code=proc.wait();(O/'TIMEOUT.txt').write_text('Automation deadline; forced shutdown. Not an ordinary-menu crash.',encoding='utf8')
 finally:
  after=hashes();text=(O/'native.log').read_text(encoding='utf8',errors='replace');reports=[]
+ if a.mode=='input-isolation':
+  fixed=E.parent/'QA/input_isolation/report.json'
+  assert fixed.exists() and fixed.stat().st_mtime>=time.time()-(time.monotonic()-start)-2,'Missing current fixed-path input report'
+  shutil.copy2(fixed,O/'input_report.json')
  for report in O.glob('*report.json'):
   try:
    data=json.loads(report.read_text(encoding='utf8'));reports.append({'file':report.name,'failed':data.get('failed'),'checks':len(data.get('checks',[]))})
