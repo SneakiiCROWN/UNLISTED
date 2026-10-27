@@ -29,12 +29,18 @@ func run(current: Node) -> void:
   ["W01_window",Vector3(5.9,.04,2.6),Vector3(7.5,1.6,2.0)],
   ["V07_cellar",Vector3(0,-2.99,-17.2),Vector3(-1.5,-1.5,-23)]
  ]
+ if "--graphics-phase3" in OS.get_cmdline_user_args():
+  views.append_array(load("res://scripts/graphics_phase3_property.gd").new().views())
+  if not "--property-baseline" in OS.get_cmdline_user_args():
+   config.property=load("res://scripts/graphics_phase3_property.gd").new().apply(g)
  var performance_only: bool="--graphics-performance" in OS.get_cmdline_user_args()
+ var measured_views: Array=["V08_lane","E02_porch_outward","E06_yard_shed"] if "--graphics-phase3" in OS.get_cmdline_user_args() else ["V08_lane","V02_lounge","V07_cellar"]
  for view in views:
+  if performance_only and not view[0] in measured_views:continue
   g.player.position=view[1];g.player.velocity=Vector3.ZERO;g.player.camera.look_at(view[2]);g.caption_until=0;g.subtitle.text=""
   await wait(1.5)
   if performance_only:
-   if view[0] in ["V08_lane","V02_lounge","V07_cellar"]:await measure(view[0])
+   if view[0] in measured_views:await measure(view[0])
   else:await shot(view[0])
  if "--graphics-phase2" in OS.get_cmdline_user_args() and not performance_only:
   await window_visibility()
@@ -50,7 +56,8 @@ func run(current: Node) -> void:
  elif "--graphics-walk" in OS.get_cmdline_user_args():
   g.player.camera.rotation.x=-.15
   await travel(Vector2(0,7.2),"Unchanged front path physics");await shot("P03_walked_to_porch")
- var report={"scope":"Isolated actual exported game study, fixed render size per process. Powered camera-placement fixture plus labelled movement when requested. Existing world/story retained; not normal owner gameplay or artistic approval.","profile":profile,"render_size":str(g.get_viewport().size),"configuration":config,"preferences":g.presentation.prefs.data,"measurements":measurements,"checks":checks,"engine":Engine.get_version_info(),"physics_unchanged":true}
+ if "--property-route" in OS.get_cmdline_user_args():await load("res://scripts/graphics_phase3_route.gd").new().run(self,g)
+ var report={"scope":"Isolated actual exported game study, fixed render size per process. Powered camera-placement fixture plus labelled movement when requested. Existing world/story retained; not normal owner gameplay or artistic approval.","profile":profile,"render_size":str(g.get_viewport().size),"configuration":config,"preferences":g.presentation.prefs.data,"measurements":measurements,"checks":checks,"engine":Engine.get_version_info(),"physics_unchanged":not ("--graphics-phase3" in OS.get_cmdline_user_args() and not "--property-baseline" in OS.get_cmdline_user_args()),"property_baseline":"--property-baseline" in OS.get_cmdline_user_args()}
  var f:=FileAccess.open(output.path_join("graphics_report.json"),FileAccess.WRITE);f.store_string(JSON.stringify(report,"\t"));f.close()
  print("GRAPHICS_STUDY_COMPLETE ",profile)
  # Release experimental probe captures before normal QA shutdown.

@@ -5,6 +5,7 @@ p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--exe',required=True,type=Path);p.add_argument('--output',required=True,type=Path)
 p.add_argument('--profile',required=True,choices=['original','wet','lights','probe','glass','ao','ssil','ssr','balanced','enhanced'])
 p.add_argument('--size',default='1920x1080',choices=['1920x1080','2560x1440','3440x1440'])
+p.add_argument('--phase3',action='store_true');p.add_argument('--property-baseline',action='store_true');p.add_argument('--property-route',action='store_true')
 p.add_argument('--no-fog',action='store_true');p.add_argument('--window-record',action='store_true');p.add_argument('--phase2',action='store_true');p.add_argument('--no-room-reflection',action='store_true');p.add_argument('--performance',action='store_true');p.add_argument('--uncapped',action='store_true')
 p.add_argument('--foreground',action='store_true');p.add_argument('--walk',action='store_true');p.add_argument('--record',action='store_true')
 a=p.parse_args();E=a.exe.resolve();O=a.output.resolve()
@@ -16,6 +17,9 @@ before=hashes()
 args=[str(E),'--max-fps','0' if a.uncapped else '60']
 if a.uncapped:args.append('--disable-vsync')
 args+=['--','--graphics-study-qa','--graphics-profile='+a.profile,'--capture-size='+a.size,'--evidence='+str(O)]
+if a.phase3:args.append("--graphics-phase3")
+if a.property_baseline:args.append("--property-baseline")
+if a.property_route:args.append("--property-route")
 if a.phase2:args.append('--graphics-phase2')
 if a.no_fog:args.append('--phase2-no-fog')
 if a.no_room_reflection:args.append('--phase2-no-reflection')
@@ -31,7 +35,7 @@ if a.record:
 (O/'launch.json').write_text(json.dumps({'args':args,'executable_sha256':sha(E),'fps_cap':0 if a.uncapped else 60,'vsync_disabled_requested':a.uncapped,'scope':'Private fixed-resolution spatial study. Foreground preview may be smaller than render; physical input rejected.'},indent=2),encoding='utf8')
 start=time.monotonic()
 try:
- with (O/'native.log').open('w',encoding='utf8') as log:r=subprocess.run(args,cwd=E.parent,stdout=log,stderr=subprocess.STDOUT,timeout=180)
+ with (O/'native.log').open('w',encoding='utf8') as log:r=subprocess.run(args,cwd=E.parent,stdout=log,stderr=subprocess.STDOUT,timeout=420 if a.property_route else 180)
 finally:
  after=hashes();(O/'owner_integrity.json').write_text(json.dumps({'before':before,'after':after,'unchanged':before==after},indent=2),encoding='utf8')
  assert before==after,'Owner data changed; preserve both versions, no automatic restore'
