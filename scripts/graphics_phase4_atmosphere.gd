@@ -7,8 +7,8 @@ func conifers() -> void:
  # Keep every established tree location/scale. Replace solid tiered crowns with
  # the existing connected branch/leaf meshes; do not scatter another forest.
  for node in site.get_children():
-  if node is MultiMeshInstance3D and (String(node.name).begins_with("Woodland_PineTree_")):node.visible=false
-  if node is StaticBody3D and String(node.name).begins_with("Grounded_PineTree_"):
+  if node is MultiMeshInstance3D and (String(node.get_meta("woodland_id","")).begins_with("PineTree_") or String(node.get_meta("woodland_id","")).begins_with("Bush_")):node.visible=false
+  if node is StaticBody3D and String(node.get_meta("woodland_id","")).begins_with("PineTree_"):
    node.collision_layer=0;node.queue_free()
  for key in site.batches:
   var data: Dictionary=site.batches[key]
@@ -35,7 +35,7 @@ func rock_surfaces() -> int:
  material.uv1_triplanar=true;material.uv1_world_triplanar=true;material.uv1_scale=Vector3.ONE*1.8
  material.roughness=.91;material.metallic_specular=.14
  for node in site.find_children("*","MultiMeshInstance3D",true,false):
-  if "Rock_" in String(node.name):node.material_override=material;count+=1
+  if String(node.get_meta("woodland_id","")).begins_with("Rock_") or "Rock_" in String(node.name):node.material_override=material;count+=1
  return count
 
 func apply(game: Node3D,id: String) -> Dictionary:

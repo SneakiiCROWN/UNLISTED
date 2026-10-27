@@ -35,6 +35,13 @@ func run(current: Node) -> void:
    config.property=load("res://scripts/graphics_phase3_property.gd").new().apply(g)
  if "--graphics-phase4" in OS.get_cmdline_user_args() and not "--atmosphere-baseline" in OS.get_cmdline_user_args():
   config.atmosphere=load("res://scripts/graphics_phase4_atmosphere.gd").new().apply(g,profile)
+  var source_batches:=0;var visible_old_crowns:=0
+  for node in g.get_node("BriarLaneExterior").get_children():
+   var asset_id: String=str(node.get_meta("woodland_id",""))
+   if node is MultiMeshInstance3D and (asset_id.begins_with("PineTree_") or asset_id.begins_with("Bush_")):
+    source_batches+=1
+    if node.visible:visible_old_crowns+=1
+  check("All source coarse crown batches suppressed by asset identity",source_batches>0 and visible_old_crowns==0,"source_batches="+str(source_batches)+" visible_old="+str(visible_old_crowns))
  var performance_only: bool="--graphics-performance" in OS.get_cmdline_user_args()
  var measured_views: Array=["V08_lane","E02_porch_outward","E06_yard_shed"] if "--graphics-phase3" in OS.get_cmdline_user_args() else ["V08_lane","V02_lounge","V07_cellar"]
  for view in views:

@@ -20,6 +20,11 @@ Three selected corrections, based on native Phase1/2/3 images and recording fram
    sheltered masks, terrain, collision and rain remain established systems.
 
 Implementation:
+- exterior_world.gd attaches stable asset identity metadata to its render batches
+  and matching colliders. Godot auto-renames duplicate node names; source asset
+  identity now selects every intended conifer, bush and stone batch reliably.
+  Baseline geometry/layout remain unchanged. Candidate01/02 visual evidence and
+  the deliberately stopped incomplete comparison batch remain preserved.
 - scripts/graphics_phase4_atmosphere.gd reuses property_finish batching and existing
   tree/stone/material resources. Changes are applied after the existing Phase3
   landscape only with --graphics-phase4. --atmosphere-baseline keeps Phase3.

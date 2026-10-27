@@ -227,6 +227,7 @@ func build_woodland() -> void:
 			var ground_cover: bool=batch.id in ["Grass_Short","Bush_1","Bush_2","Plant_1"]
 			visible_batch.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF if ground_cover else GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 			visible_batch.set_meta("ground_cover_shadow",ground_cover)
+			visible_batch.set_meta("woodland_id",batch.id)
 			add_child(visible_batch)
 	set_meta("forest_batches",batches.size())
 
@@ -310,6 +311,7 @@ func grounded_model_collision(id: String,xf: Transform3D) -> void:
 		collision_prototypes[id]=shape
 	var body:=StaticBody3D.new();body.name="Grounded_"+id
 	var collision:=CollisionShape3D.new();collision.shape=collision_prototypes[id]
+	body.set_meta("woodland_id",id)
 	body.add_child(collision);add_child(body);body.transform=xf
 
 func approach_fence(a: Vector2,b: Vector2) -> void:
