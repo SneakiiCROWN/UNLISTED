@@ -32,6 +32,11 @@ func _ready() -> void:
 	rain.process_material=motion
 	var streak:=QuadMesh.new();streak.size=Vector2(0.013,0.24)
 	var water:=ShaderMaterial.new();water.shader=load("res://shaders/rain_streak.gdshader")
+	# Phase4 uses the same Phase2 rain appearance, assigned before the emitter
+	# enters the tree. Avoid replacing a live GPU particle draw mesh in QA.
+	if game.qa_mode and "--graphics-phase4" in OS.get_cmdline_user_args():
+		for arg in OS.get_cmdline_user_args():
+			if arg in ["--graphics-profile=balanced","--graphics-profile=enhanced"]:water.shader=load("res://shaders/phase2_rain.gdshader")
 	water.set_shader_parameter("opacity",.40)
 	streak.material=water;rain.draw_pass_1=streak;add_child(rain)
 	# The property-wide field supplies depth, but spreads its drops over almost

@@ -49,3 +49,12 @@ input and saves are untouched. The office has no exterior window at the E04 fixt
 E08 is an obstructed fence control. Captions preserve those coverage limits.
 Actual native results, performance, integration ranking and delivery hashes are
 recorded separately. Human artistic approval and full integration remain pending.
+
+A selected Candidate03 1440p run logged one renderer null-particle resource error;
+it completed but was rejected. Evidence03/final_balanced2560 is preserved. No
+crash or owner-file change occurred. The exact root cause is not established.
+Phase4 now chooses the same Phase2 rain material before emitters enter the tree,
+and the profile avoids a redundant live draw-mesh swap. This removes avoidable
+resource churn; it is a hypothesis-driven application change, not a proven engine
+fix or a claim about the owner's menu crash. Bounded native rechecks and final
+matrix results remain the acceptance gates. No engine/driver change.

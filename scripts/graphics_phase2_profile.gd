@@ -30,6 +30,7 @@ func apply(g: Node3D,id: String) -> Dictionary:
   var weather: Node=g.get_node("BriarLaneExterior/BriarLaneWeather")
   for rain in weather.find_children("*","GPUParticles3D",true,false):
    if rain.name not in ["WindDrivenDrizzle","ForegroundRain"]:continue
+   if rain.draw_pass_1.material.shader.resource_path=="res://shaders/phase2_rain.gdshader":continue
    var quad: QuadMesh=rain.draw_pass_1.duplicate();var mat: ShaderMaterial=quad.material.duplicate()
    mat.shader=load("res://shaders/phase2_rain.gdshader");quad.material=mat;rain.draw_pass_1=quad
   changes.append("Existing roof-colliding rain receives actual scene lights; soft tapered sides")
