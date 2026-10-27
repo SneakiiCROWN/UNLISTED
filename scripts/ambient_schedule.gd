@@ -11,11 +11,12 @@ const EVENTS := [
 var data: Dictionary={}
 var rng:=RandomNumberGenerator.new()
 func restore(saved: Dictionary,seed_: int) -> void:
-	data={"seed":seed_,"draw":0,"used":{},"last":"","remaining":60.0,"since":{}}
+	data={"seed":seed_,"draw":0,"used":{},"last":"","remaining":60.0,"since":{},"quiet":0.0}
 	data.merge(saved.duplicate(true),true)
 	if saved.is_empty():data.remaining=random_between(55,115)
 	data.remaining=maxf(30,float(data.get("remaining",60)))
 	data.used=data.get("used",{});data.since=data.get("since",{})
+	data.quiet=clampf(float(data.get("quiet",0)),0,12)
 func random_between(a: float,b: float) -> float:
 	rng.seed=int(data.seed)+int(data.get("draw",0))*104729
 	data.draw=int(data.get("draw",0))+1

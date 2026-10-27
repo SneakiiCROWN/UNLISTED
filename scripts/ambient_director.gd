@@ -29,6 +29,7 @@ func set_seed(value: int) -> void:
 	policy.restore({},value);game.events.atmosphere=policy.data;restore()
 func response_blocked() -> bool:
 	# Shared reservation rules for subtle authored responses, including outdoors.
+	if float(policy.data.get("quiet",0))>0:return true
 	return latch_clock>=0 or (is_instance_valid(game.final_account) and game.final_account.pending()) or not game.started or game.menu_open or game.ended or game.threat.active() or game.events.get("threat_pending",false) or game.presence.visible or game.horror.beat!="" or game.horror.audition!="" or game.horror.echo_index>=0 or game.recount.active or game.chapter.active or game.chapter.watch_clock>=0 or game.chapter.return_clock>=0 or game.impossible_room.active or not game.dead_line.sequence.is_empty() or game.dead_line.quiet>0 or game.maintenance.surprise_armed or game.spare_place.hunt_running or game.last_call.busy() or game.events.get("exit_blackout_running",false) or game.events.get("exit_blackout_pending",false) or game.events.get("inspection_search_pending",false) or game.events.get("witness_echo_pending",false) or game.events.get("departure_pending","")!="" or not queue.is_empty() or sources.any(func(a):return is_instance_valid(a) and a.playing)
 
 func blocked() -> bool:
@@ -62,7 +63,7 @@ func curtain_visible() -> bool:
 	return false
 func request(id: String) -> bool:
 	# F1/native QA uses the same safety and spatial eligibility as normal scheduling.
-	if blocked() or not queue.is_empty() or not id in eligible():return false
+	if blocked() or not queue.is_empty() or float(policy.data.get("quiet",0))>0 or not id in eligible():return false
 	for event in policy.EVENTS:
 		if event.id==id and int(policy.data.used.get(id,0))>=event.limit:return false
 	policy.consume(id);game.events.atmosphere=policy.data
@@ -90,12 +91,16 @@ func request(id: String) -> bool:
 		var tin: RigidBody3D=game.physical.props.can0
 		tin.sleeping=false;tin.apply_central_impulse(Vector3(.015,.015,-.4))
 	# Record optional events before playback; loading never repeats a spent scare.
+	var end:=0.0
+	for cue in queue:end=maxf(end,float(cue.at))
+	policy.data.quiet=end+5.0
 	history.append({"id":id,"time":game.time_in_game,"player":game.player.position})
 	if is_instance_valid(game.dev_tools):game.dev_tools.log_event("ambient_event",{"id":id,"seed":policy.data.seed,"draw":policy.data.draw})
 	game.save_game(true)
 	return true
 func _physics_process(delta: float) -> void:
 	if not game.started or game.menu_open or game.ended:return
+	policy.data.quiet=maxf(0,float(policy.data.get("quiet",0))-delta)
 	var held_off:=blocked()
 	if held_off:
 		reset_latch()
@@ -120,7 +125,7 @@ func _physics_process(delta: float) -> void:
 	# Visibility queries are needed only when a scheduling draw is due. Explicit
 	# requests still recheck eligibility immediately before changing the world.
 	var available: Array[String]=eligible() if not held_off and float(policy.data.remaining)<=delta else []
-	var next: String=policy.tick(delta,available,held_off)
+	var next: String=policy.tick(delta,available,held_off or float(policy.data.get("quiet",0))>0)
 	game.events.atmosphere=policy.data
 	if next!="":request(next)
 

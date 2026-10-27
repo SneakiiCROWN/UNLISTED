@@ -111,6 +111,7 @@ func _ready() -> void:
 	qa_mode = qa_mode or "--production-views" in OS.get_cmdline_user_args() or "--graphics-study-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--stability-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--atmosphere-integration-qa" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--nightmare-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--atmosphere-performance-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--witness-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--field-qa" in OS.get_cmdline_user_args()
@@ -1349,6 +1350,7 @@ func apply_save(data: Dictionary) -> void:
 	if is_instance_valid(equipment):equipment.restore()
 	if is_instance_valid(storage_hide):storage_hide.restore()
 	horror.restore_vent()
+	physical.restore_grip()
 
 func save_game(quiet := false) -> void:
 	if is_instance_valid(capture_director) and capture_director.active:return
@@ -1371,6 +1373,14 @@ func checkpoint_usable(data: Variant) -> bool:
 		if not (value is int or value is float) or not is_finite(float(value)):return false
 	for key in ["events","doors","door_swing"]:
 		if data.has(key) and not data[key] is Dictionary:return false
+	var saved_events: Dictionary=data.get("events",{})
+	if saved_events.has("carried_prop") and not saved_events.carried_prop is String:return false
+	if saved_events.has("props"):
+		if not saved_events.props is Dictionary:return false
+		for value in saved_events.props.values():
+			if not value is Array or value.size()!=6:return false
+			for scalar in value:
+				if not (scalar is int or scalar is float) or not is_finite(float(scalar)):return false
 	for key in ["fuse","key","report","shed","isolated","ended","crouched","sprint_exhausted"]:
 		if data.has(key) and not data[key] is bool:return false
 	for key in ["stage","yaw","pitch","stamina","stamina_delay"]:
@@ -1408,6 +1418,10 @@ func prepare_automated_qa() -> void:
 	get_tree().root.add_child(qa_input_guard);qa_input_guard.attach(self)
 
 func run_qa() -> void:
+	if "--nightmare-qa" in OS.get_cmdline_user_args():
+		prepare_automated_qa()
+		var nightmare=load("res://scripts/next_nightmare_qa.gd").new();nightmare.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(nightmare)
+		await nightmare.run(self);return
 	if "--atmosphere-performance-qa" in OS.get_cmdline_user_args():
 		prepare_automated_qa()
 		var moving=load("res://scripts/atmosphere_performance_qa.gd").new();moving.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(moving)

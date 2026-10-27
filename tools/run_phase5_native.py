@@ -22,7 +22,7 @@ try:
    proc.kill();code=proc.wait();(O/'TIMEOUT.txt').write_text('Automation deadline; forced shutdown. Not an ordinary-menu crash.',encoding='utf8')
 finally:
  after=hashes();text=(O/'native.log').read_text(encoding='utf8',errors='replace');reports=[]
- if a.mode=='input-isolation':
+ if a.mode=='input-isolation' and not (O/'report.json').exists():
   fixed=E.parent/'QA/input_isolation/report.json'
   assert fixed.exists() and fixed.stat().st_mtime>=time.time()-(time.monotonic()-start)-2,'Missing current fixed-path input report'
   shutil.copy2(fixed,O/'input_report.json')

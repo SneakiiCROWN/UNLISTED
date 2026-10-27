@@ -382,6 +382,9 @@ func _process(delta: float) -> void:
 	var score_target := -42.0 if game.events.has("house_responds") and not game.report_read else -35.0
 	if beat != "" or audition!="" or game.threat.active() or game.impossible_room.active:score_target = -48.0
 	if is_instance_valid(game.recorder_memory) and game.recorder_memory.running:score_target=-48.0
+	# Let the actual window/door/overhead sound and its silence occupy the room.
+	# Only the existing score bed changes; rain, cues and user bus gains remain.
+	if is_instance_valid(game.ambient_director) and float(game.ambient_director.policy.data.get("quiet",0))>0:score_target=minf(score_target,-55.0)
 	if is_instance_valid(game.recount) and game.recount.active:score_target=-65.0
 	if is_instance_valid(game.dead_line) and not game.dead_line.sequence.is_empty():score_target=-65.0
 	game.ambience.volume_db = move_toward(game.ambience.volume_db,score_target,delta*4)

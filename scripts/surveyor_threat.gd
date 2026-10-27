@@ -32,6 +32,9 @@ var service_edges: Array=[]
 var last_voice:=-100.0
 var last_attack_voice:=-100.0
 var voice_player: AudioStreamPlayer3D
+var heard_at:=-1000.0
+var heard_strength:=0.0
+var hearing_pause:=0.0
 
 func _ready() -> void:
 	# Points sit inside door clearances, clear of the furnished room edges.
@@ -59,6 +62,7 @@ func _ready() -> void:
 	for pair in service_edges:graph.connect_points(pair[0],pair[1])
 
 func reset() -> void:
+	heard_at=-1000;heard_strength=0;hearing_pause=0
 	visual_line_of_sight=false
 	stop_voice();last_voice=-100;last_attack_voice=-100
 	for id in memory_routes:graph.set_point_disabled(id,true)
@@ -97,6 +101,7 @@ func begin(basement := false,position_override: Variant=null) -> void:
 		position_override=game.presence.position
 		game.horror.release_vent(false)
 	game.horror.stop_audition()
+	heard_at=-1000;heard_strength=0;hearing_pause=0
 	stalk_used = false
 	game.horror.beat = ""
 	game.presence.position = Vector3(0,0.04,2.6)
@@ -163,6 +168,12 @@ func hear(point: Vector3,loudness: float) -> void:
 	if state not in ["observe","investigate","search"] or grace > 0:return
 	var range_ := loudness*(1.0 if clear_line(game.presence.position+Vector3.UP,point+Vector3.UP) else 0.45)
 	if game.presence.position.distance_to(point) > range_:return
+	var strength: float=range_/(1.0+game.presence.position.distance_to(point))
+	var recent: bool=game.time_in_game-heard_at<1.5
+	# A quiet rattle cannot instantly cancel a stronger sound already being
+	# investigated. Nearby repeated contacts do not restart the listening pose.
+	if recent and (strength<heard_strength*.85 or point.distance_to(last_known)<.65):return
+	heard_at=game.time_in_game;heard_strength=strength;hearing_pause=.65
 	last_known = point
 	change("investigate")
 	plan(last_known)
@@ -390,8 +401,15 @@ func _physics_process(delta: float) -> void:
 		elif clock > 0.5:clock = 0;plan(last_known)
 		move_route(delta,2.65)
 	elif state == "investigate":
-		move_route(delta,1.05)
-		if route.is_empty():change("search")
+		if hearing_pause>0:
+			hearing_pause=maxf(0,hearing_pause-delta)
+			game.presence.velocity.x=0;game.presence.velocity.z=0
+			game.surveyor_actor.set_mode("listen")
+			var toward: Vector3=last_known-game.presence.position
+			if Vector2(toward.x,toward.z).length()>.05:game.presence.rotation.y=lerp_angle(game.presence.rotation.y,atan2(-toward.x,-toward.z),1-exp(-delta*2.5))
+		else:
+			move_route(delta,1.05)
+			if route.is_empty():change("search")
 	elif state == "search":
 		move_route(delta,0.85)
 		if route.is_empty():

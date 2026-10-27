@@ -8,6 +8,8 @@ func synthetic_key(code: Key) -> void:
 func run(game: Node) -> void:
 	g=game;await exact_resolution()
 	output=OS.get_executable_path().get_base_dir().path_join("QA/input_isolation") if not OS.has_feature("editor") else ProjectSettings.globalize_path("res://qa/input_isolation")
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--evidence="):output=arg.trim_prefix("--evidence=")
 	DirAccess.make_dir_recursive_absolute(output);g.checkpoint_path=output.path_join("checkpoint.json")
 	g.new_game();g.events.chair=true;g.threat.enabled=false
 	g.horror.set_process(false);g.horror.set_physics_process(false)

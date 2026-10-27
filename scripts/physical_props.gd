@@ -180,9 +180,10 @@ func rotate_held(relative: Vector2) -> void:
 
 func snapshot() -> Dictionary:
 	var result := {}
+	game.events.carried_prop = str(held.get_meta("loose_prop","")) if is_instance_valid(held) else ""
 	for id in props:
 		var body: RigidBody3D = props[id]
-		var transform_: Transform3D = homes[id] if body==held else body.transform
+		var transform_: Transform3D = body.transform
 		var v := transform_.origin
 		var r := transform_.basis.get_euler()
 		result[id] = [v.x,v.y,v.z,r.x,r.y,r.z]
@@ -190,12 +191,13 @@ func snapshot() -> Dictionary:
 
 func restore(values := {}) -> void:
 	if held:release(false)
+	if not values is Dictionary:values={}
 	for id in props:
 		var b: RigidBody3D = props[id]
 		b.freeze = true
 		b.transform = homes[id]
-		var p: Array = values.get(id,[])
-		if p.size()==6:
+		var p: Variant = values.get(id,[])
+		if p is Array and p.size()==6 and p.all(func(v):return (v is int or v is float) and is_finite(float(v))):
 			var point:=Vector3(p[0],p[1],p[2]);var rotation_:=Vector3(p[3],p[4],p[5])
 			# Keep valid placements on the newer raised lane/terrain, while still
 			# rejecting out-of-world positions and invalid saved rotations.
@@ -203,6 +205,27 @@ func restore(values := {}) -> void:
 				b.position=point;b.rotation=rotation_
 		b.linear_velocity = Vector3.ZERO;b.angular_velocity = Vector3.ZERO
 		b.call("relocate",b.transform)
+
+func restore_grip() -> bool:
+	# Called after the player's pose and all room/encounter state are restored.
+	# Older cases have no carried_prop field and keep their previous behaviour.
+	var id: Variant=game.events.get("carried_prop","")
+	if not id is String or not props.has(id) or game.ended:return false
+	var body: RigidBody3D=props[id]
+	if body.global_position.distance_to(game.player.camera.global_position)>1.35:return false
+	var ray:=PhysicsRayQueryParameters3D.create(game.player.camera.global_position,body.global_position,1|16|32)
+	ray.exclude=[body.get_rid(),game.player.get_rid()]
+	if not game.get_world_3d().direct_space_state.intersect_ray(ray).is_empty():return false
+	var query:=PhysicsShapeQueryParameters3D.new()
+	query.shape=body.get_node("PropShape").shape;query.transform=body.global_transform
+	query.collision_mask=1|16|32;query.exclude=ray.exclude
+	if not game.get_world_3d().direct_space_state.intersect_shape(query).is_empty():return false
+	held=body;body.freeze_mode=RigidBody3D.FREEZE_MODE_KINEMATIC;body.freeze=true
+	# The restored transform is already submitted while frozen. An older pending
+	# relocation must not overwrite subsequent swept movement on release.
+	body.reset_pending=false;body.linear_velocity=Vector3.ZERO;body.angular_velocity=Vector3.ZERO
+	body.add_collision_exception_with(game.player)
+	return true
 
 func _physics_process(delta: float) -> void:
 	if not game.started:return
