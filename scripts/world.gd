@@ -143,11 +143,12 @@ func _ready() -> void:
 	qa_mode = qa_mode or "--interior-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--investigation-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--missing-minute-qa" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--surveyor-assets-qa" in OS.get_cmdline_user_args()
 	# Refuse mistyped automation before creating the world or reading/writing a
 	# normal case. A harness typo must never fall through to desktop gameplay.
 	var automation_requested:=false
 	for arg in OS.get_cmdline_user_args():
-		if arg.ends_with("-qa") or arg.begins_with("--evidence=") or arg in ["--surveyor-reborn","--surveyor-study","--reborn-views","--reborn-components"]:automation_requested=true
+		if arg.ends_with("-qa") or arg.begins_with("--evidence=") or arg in ["--surveyor-assets","--surveyor-reborn","--surveyor-study","--reborn-views","--reborn-components"]:automation_requested=true
 	if automation_requested and not qa_mode and not "--dev-tools-qa" in OS.get_cmdline_user_args():
 		push_error("UNKNOWN_QA_MODE: refusing normal startup for unrecognised automation")
 		get_tree().quit(93);return
@@ -760,6 +761,8 @@ func build_basement() -> void:
 func surveyor_model_path() -> String:
 	# An art study must pass visual review before becoming the ordinary actor.
 	# This switch is available only inside the isolated automated QA environment.
+	if qa_mode and "--surveyor-assets" in OS.get_cmdline_user_args():
+		return "res://assets/studies/surveyor_asset/candidate.glb"
 	if qa_mode and "--surveyor-reborn" in OS.get_cmdline_user_args():
 		return "res://assets/original/surveyor_reborn_study.glb"
 	if qa_mode and "--surveyor-study" in OS.get_cmdline_user_args():
@@ -794,6 +797,7 @@ func build_presence() -> void:
 
 func sound(name_: String, pos: Vector3, db := -20.0, looping := false) -> AudioStreamPlayer3D:
 	var path := "res://assets/audio/"+name_+".wav"
+	if name_ in ["asset_cloth_1","asset_cloth_2"]:path="res://assets/studies/surveyor_asset/cloth_"+name_.right(1)+".wav"
 	# Optional owner recordings replace individual cues without changing timing.
 	var slot:=name_
 	if name_ in ["surveyor_warning","surveyor_pursuit","surveyor_attack"]:path="res://assets/audio/foley/surveyor_inhale.ogg"
@@ -1458,6 +1462,9 @@ func run_qa() -> void:
 		await test.run(self);return
 	if "--presence-views" in OS.get_cmdline_user_args():
 		var test = load("res://scripts/surveyor_presence_views.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
+		await test.run(self);return
+	if "--surveyor-assets-qa" in OS.get_cmdline_user_args():
+		var test=load("res://scripts/surveyor_asset_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
 		await test.run(self);return
 	if "--hands-qa" in OS.get_cmdline_user_args():
 		var test = load("res://scripts/hands_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)

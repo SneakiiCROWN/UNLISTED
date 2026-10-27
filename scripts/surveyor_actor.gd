@@ -16,9 +16,13 @@ var reborn_presence:=false
 var motion_rate:=1.0
 var motion_target:=1.0
 var attention_override: Variant=null
+var asset_candidate:=false
+var fabric_cooldown:=0.0
+var fabric_index:=0
 
 func _ready() -> void:
 	for mesh in figure.find_children("*","MeshInstance3D",true,false):
+		if mesh.name.begins_with("Asset study"):asset_candidate=true
 		if mesh.name.begins_with("Reborn"):reborn_presence=true
 		if mesh.name.begins_with("Continuous tailored"):tailored_presence=true
 		for i in mesh.mesh.get_surface_count():
@@ -48,6 +52,10 @@ func _ready() -> void:
 func set_mode(value: String) -> void:
 	if not clips.has(value):return
 	if mode == value and animator.is_playing():return
+	if asset_candidate and fabric_cooldown<=0 and value in ["run","listen","capture"]:
+		fabric_index=fabric_index%2+1;fabric_cooldown=4.0
+		var cloth: AudioStreamPlayer3D=game.sound("asset_cloth_"+str(fabric_index),game.presence.position+Vector3.UP*1.2,-29)
+		cloth.unit_size=.8;cloth.max_distance=7
 	mode = value
 	animator.speed_scale = 1.0
 	animator.play(clips[mode],0.36 if mode in ["listen","watch","walk"] else 0.2)
@@ -62,6 +70,7 @@ func locomotion(distance_per_second: float, running := false) -> void:
 	motion_target=clampf(speed/(2.581*1.05 if jog else 1.018*1.05),0.18,2.3)
 
 func _process(delta: float) -> void:
+	fabric_cooldown=maxf(0,fabric_cooldown-delta)
 	if mode in ["listen","watch"]:animator.speed_scale = .62 if reborn_presence else .72
 	elif mode in ["walk","run"]:
 		# Visual rate follows measured body travel, easing between rates without
