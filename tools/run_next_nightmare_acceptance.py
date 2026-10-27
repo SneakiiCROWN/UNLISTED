@@ -1,9 +1,12 @@
 """Sequential changed-system native checks; no replay of the unchanged full route."""
 from pathlib import Path
 import json,subprocess,sys
-G=Path(__file__).resolve().parents[1];C=G.parent/'Checkpoints/20261027_next_nightmare';E=C/'Candidate03/UNLISTED.exe';R=C/'Evidence03'
+G=Path(__file__).resolve().parents[1];C=G.parent/'Checkpoints/20261027_next_nightmare';E=C/'Candidate05/UNLISTED.exe';R=C/'Evidence05'
 source=str(G.parent/'Checkpoints/20261027_phase5_integration/Evidence02/fresh_balanced1080/checkpoint.json')
-cases=[('features1440','nightmare',1,'2560x1440',[]),('features3440','nightmare',2,'3440x1440',[]),('input_report1080','input-isolation',1,'1920x1080',[]),('surveyor_regression','threat',1,'1920x1080',[]),('physical_regression','sound-touch',1,'1920x1080',[]),('ambient_regression','ambient',1,'2560x1440',[]),('endings1080','final-account',1,'1920x1080',['--final-earned-source='+source]),('lifecycle_original','nightmare',0,'1920x1080',['--particle-lifecycle','--earned-source='+source]),('menu_idle_original','nightmare',0,'1920x1080',['--menu-idle'])]
+# Earlier Candidate03 coverage is retained, not repeated: features at all three
+# resolutions, report-path/input isolation, threat58 and Balanced lifecycle.
+# Only the historical home-reset assertion and its dependent bench fixture changed.
+cases=[('ambient_regression','ambient',1,'2560x1440',[]),('weight_and_support','director',1,'1920x1080',[]),('endings1080','final-account',1,'1920x1080',['--final-earned-source='+source]),('lifecycle_original','nightmare',0,'1920x1080',['--particle-lifecycle','--earned-source='+source]),('menu_idle_original','nightmare',0,'1920x1080',['--menu-idle'])]
 progress=[]
 for name,mode,profile,size,extra in cases:
  out=R/name

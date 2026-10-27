@@ -98,11 +98,14 @@ func run(current: Node) -> void:
 		actor.attention_override=null;g.threat.reset()
 	# Across-hall steps are interrupted by the existing physical encounter.
 	g.player.position=Vector3(3,.04,-7);g.player.camera.look_at(Vector3(5.6,1,-8.7))
+	check("quiet aftermath prevents back-to-back ambient events",not g.ambient_director.request("empty_room_steps"))
+	await wait(float(g.ambient_director.policy.data.get("quiet",0))+.2)
 	check("empty utility footsteps eligible from office",g.ambient_director.request("empty_room_steps"))
 	await wait(.2);g.threat.begin(false,Vector3(0,.04,-4));await wait(.2)
 	check("authored threat cancels queued ambient cues",g.ambient_director.queue.is_empty())
 	check("no ambient event replaces a live actor",not g.ambient_director.request("window_taps") and g.threat.state=="warning")
 	g.threat.reset();g.presence.visible=false
+	await wait(float(g.ambient_director.policy.data.get("quiet",0))+.2)
 	# A genuine rigid-body fall, never a teleported object or automatic enemy spawn.
 	g.player.position=Vector3(-3,.04,0);g.player.camera.look_at(Vector3(0,1,-4))
 	var tin: RigidBody3D=g.physical.props.can0

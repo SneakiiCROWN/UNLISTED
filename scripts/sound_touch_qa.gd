@@ -60,9 +60,12 @@ func run(current: Node) -> void:
 			await action("interact");check("release keeps ordinary collision "+id,g.physical.held==null and not body.freeze and not g.physical.forearm.visible)
 		await wait(.2)
 	var tool: RigidBody3D=await pickup_fixture("work_wrench")
+	var carried_pose: Vector3=tool.position
 	g.save_game(true);g.load_game();await wait(.3);quiet()
-	check("carried save restores safe home without held hand",g.physical.held==null and not g.physical.tool_hand.visible and tool.position.distance_to(g.physical.homes.work_wrench.origin)<.2)
+	check("carried save preserves supported tool in hand",g.physical.held==tool and g.physical.tool_hand.visible and tool.position.distance_to(carried_pose)<.3)
 	# Actual bench keeps the prop beyond reach: no visual fix may bypass its sweep.
+	# This is a separate bench fixture now that loading no longer returns it home.
+	g.physical.release(false);tool.call("relocate",g.physical.homes.work_wrench);await wait(.2)
 	g.player.position=Vector3(-18.24,.03,-14.9);g.player.camera.look_at(tool.global_position);await wait(.2);await action("interact");await wait(.5)
 	check("bench pickup preserves contact clearance",g.physical.held==tool and tool.position.y>.79)
 	check("blocked arm is concealed",not g.physical.tool_hand.visible or tool.global_position.distance_to(g.player.camera.global_position)<=1.05)

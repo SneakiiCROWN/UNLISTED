@@ -1,4 +1,18 @@
-# Current private integration / Phase 5, v0.10.9-dev
+# Current private production / The Next Nightmare, v0.10.9-dev
+
+Read `NEXT_NIGHTMARE.md` first. Complete local source is on
+`production/next-nightmare`; recovery is pinned by `dev-next-nightmare-20261027`.
+Selected runtime is Candidate05 / `66fd021`; subsequent changes are delivery
+tools and documentation. Private files/hashes are recorded in
+`../Checkpoints/20261027_next_nightmare/DELIVERY.json` after packaging.
+Carried-object recovery, nested prop validation, deliberate sound investigation,
+quiet event aftermath and the QA report path are implemented. Existing art,
+story, profiles and both endings remain. Failed historical fixtures are preserved
+and explained. **PRIVATE QA — STABILITY NOT CLEARED**: both intermittent faults
+remain unresolved; off-screen lifecycle/menu observations do not replace ordinary
+foreground coverage or human artistic approval. No public Windows release.
+
+# Preserved private integration / Phase 5, v0.10.9-dev
 
 Complete local source is on `integration/balanced-playable-qa`. Read
 `PHASE5_CHECKPOINT.json`, `PHASE5_INTEGRATION.md` and `PHASE5_RESULTS.md` first.
