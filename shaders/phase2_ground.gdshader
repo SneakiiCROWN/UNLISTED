@@ -7,6 +7,7 @@ uniform sampler2D soil_roughness : filter_linear_mipmap,repeat_enable;
 uniform sampler2D concrete_roughness : filter_linear_mipmap,repeat_enable;
 uniform bool hardstanding = false;
 uniform bool property_detail = false;
+uniform float surface_restraint = 0.0;
 varying vec3 world_position;
 float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 float noise2(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);}
@@ -73,7 +74,7 @@ void fragment(){
   // Broad leaf-soil transition follows garden beds and the woodland clearing;
   // it is not a rectangular overlay or a competing ground material.
   float woodland=smoothstep(12.0,27.0,max(abs(p.x),abs(p.y+3.0)));
-  float beds=exp(-pow((abs(p.x)-5.6)/2.0,4.0)-pow((p.y-11.6)/4.4,4.0));
+  float beds=exp(-pow(abs((abs(p.x)-5.6)/2.0),4.0)-pow(abs((p.y-11.6)/4.4),4.0));
   float leafmask=max(woodland,beds*.75)*(1.0-traffic)*smoothstep(.24,.73,noise2(p*1.1+vec2(73,21)));
   base=mix(base,texture(soil_color,p/1.35).rgb*vec3(.42,.35,.27),leafmask*.60);
  }
@@ -91,7 +92,7 @@ void fragment(){
  NORMAL_MAP_DEPTH=mix(mix(.24,.10,max(original_puddle,traffic*.55)),.045,puddle);
  float rough=mix(texture(soil_roughness,p/2.8).r,texture(concrete_roughness,p/2.1).r,pad);
  float original_rough=mix(clamp(.56+rough*.22,.62,.82),.43,original_puddle);
- ROUGHNESS=mix(original_rough,.20,puddle);SPECULAR=mix(.25,.38,puddle);
+ ROUGHNESS=mix(original_rough,mix(.20,.32,surface_restraint),puddle);SPECULAR=mix(.25,mix(.38,.28,surface_restraint),puddle);
 	// Brief rain rings affect only shallow wet patches, without bright particles
 	// or displaced collision. Each cell has its own phase; no travelling wave.
 	vec2 cell=floor(p*2.2);

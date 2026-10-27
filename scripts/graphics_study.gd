@@ -33,6 +33,8 @@ func run(current: Node) -> void:
   views.append_array(load("res://scripts/graphics_phase3_property.gd").new().views())
   if not "--property-baseline" in OS.get_cmdline_user_args():
    config.property=load("res://scripts/graphics_phase3_property.gd").new().apply(g)
+ if "--graphics-phase4" in OS.get_cmdline_user_args() and not "--atmosphere-baseline" in OS.get_cmdline_user_args():
+  config.atmosphere=load("res://scripts/graphics_phase4_atmosphere.gd").new().apply(g,profile)
  var performance_only: bool="--graphics-performance" in OS.get_cmdline_user_args()
  var measured_views: Array=["V08_lane","E02_porch_outward","E06_yard_shed"] if "--graphics-phase3" in OS.get_cmdline_user_args() else ["V08_lane","V02_lounge","V07_cellar"]
  for view in views:
@@ -52,12 +54,15 @@ func run(current: Node) -> void:
   recorder=AudioEffectRecord.new();recorder.format=AudioStreamWAV.FORMAT_16_BITS
   AudioServer.add_bus_effect(0,recorder);recorder.set_recording_active(true);recording=true
  if window_motion:
-  await window_camera_motion()
+  if "--window-actor-motion" in OS.get_cmdline_user_args():await window_actor_motion()
+  else:await window_camera_motion()
  elif "--graphics-walk" in OS.get_cmdline_user_args():
   g.player.camera.rotation.x=-.15
   await travel(Vector2(0,7.2),"Unchanged front path physics");await shot("P03_walked_to_porch")
- if "--property-route" in OS.get_cmdline_user_args():await load("res://scripts/graphics_phase3_route.gd").new().run(self,g)
- var report={"scope":"Isolated actual exported game study, fixed render size per process. Powered camera-placement fixture plus labelled movement when requested. Existing world/story retained; not normal owner gameplay or artistic approval.","profile":profile,"render_size":str(g.get_viewport().size),"configuration":config,"preferences":g.presentation.prefs.data,"measurements":measurements,"checks":checks,"engine":Engine.get_version_info(),"physics_unchanged":not ("--graphics-phase3" in OS.get_cmdline_user_args() and not "--property-baseline" in OS.get_cmdline_user_args()),"property_baseline":"--property-baseline" in OS.get_cmdline_user_args()}
+ if "--property-route" in OS.get_cmdline_user_args():
+  await load("res://scripts/graphics_phase3_route.gd").new().run(self,g)
+  if "--graphics-phase4" in OS.get_cmdline_user_args():await load("res://scripts/graphics_phase4_route.gd").new().run(self,g)
+ var report={"scope":"Isolated actual exported game study, fixed render size per process. Powered camera-placement fixture plus labelled movement when requested. Existing world/story retained; not normal owner gameplay or artistic approval.","profile":profile,"render_size":str(g.get_viewport().size),"configuration":config,"preferences":g.presentation.prefs.data,"measurements":measurements,"checks":checks,"engine":Engine.get_version_info(),"physics_unchanged":not ("--graphics-phase3" in OS.get_cmdline_user_args() and not "--property-baseline" in OS.get_cmdline_user_args()),"property_baseline":"--property-baseline" in OS.get_cmdline_user_args(),"atmosphere_baseline":"--atmosphere-baseline" in OS.get_cmdline_user_args()}
  var f:=FileAccess.open(output.path_join("graphics_report.json"),FileAccess.WRITE);f.store_string(JSON.stringify(report,"\t"));f.close()
  print("GRAPHICS_STUDY_COMPLETE ",profile)
  # Release experimental probe captures before normal QA shutdown.
@@ -128,3 +133,32 @@ func window_camera_motion() -> void:
   g.player.camera.look_at(Vector3(7.5,1.55,2.0))
   await get_tree().process_frame
  g.player.active=active_before
+
+func window_actor_motion() -> void:
+ # Actual actor and production collision/locomotion method, camera under the
+ # same controlled strafe as before. This is a moving-window fixture, not a
+ # newly authored story encounter or proof of natural chase timing.
+ var body: CharacterBody3D=g.presence
+ recording=false
+ g.horror.set_process(false);g.horror.set_physics_process(false);g.threat.enabled=false
+ var outside_camera: bool="--window-camera-outside" in OS.get_cmdline_user_args()
+ var actor_x:=5.2 if outside_camera else 8.7;var camera_x:=9.3 if outside_camera else 5.9
+ var end_z:=1.0 if outside_camera else .55
+ g.player.active=false;body.position=Vector3(actor_x,.04,3.3);body.rotation.y=0;body.velocity=Vector3.ZERO
+ body.visible=true;g.surveyor_actor.figure.visible=true;g.threat.set_collision(true)
+ g.threat.route=PackedVector3Array([Vector3(actor_x,.04,end_z)])
+ g.player.position=Vector3(camera_x,.04,2.8);g.player.camera.look_at(body.position+Vector3.UP*1.5)
+ await RenderingServer.frame_post_draw;recording=true
+ var start:=Time.get_ticks_usec();var elapsed:=0.0;var distance:=0.0;var last: Vector3=body.position
+ while elapsed<4:
+  await get_tree().physics_frame
+  var delta: float=g.get_physics_process_delta_time();g.threat.move_route(delta,1.15,true)
+  distance+=body.position.distance_to(last);last=body.position
+  elapsed=(Time.get_ticks_usec()-start)/1000000.0
+  g.player.position=Vector3(camera_x,.04,lerpf(2.8,1.8,clampf(elapsed/4.0,0,1)))
+  g.player.camera.look_at(body.position+Vector3.UP*1.5)
+ check("Actual Surveyor walks past glass without teleport",distance>1.8 and distance<4.2 and body.position.z<end_z+.35,"distance="+str(distance)+" position="+str(body.position))
+ await shot("W06_moving_actor_through_glass")
+ # Retain the body in its reached position until this diagnostic exits; no
+ # visible teleport or disappearance at the tail of the recorded clip.
+ g.threat.route.clear();g.player.active=false
