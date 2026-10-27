@@ -1,0 +1,16 @@
+{
+  "version": "0.10.9-dev",
+  "milestone": "Phase 5 - Integrated Playable QA",
+  "runtime_source": "af2ba3f",
+  "private_branch": "integration/balanced-playable-qa",
+  "public_safe_source_branch": "integration/playable-qa",
+  "development_tag": "dev-phase5-integrated-qa-20261027",
+  "complete_source_commit": "Pinned by the development tag after delivery verification; see private DELIVERY.json",
+  "verification": "PHASE5_RESULTS.md",
+  "status": "PRIVATE QA - STABILITY NOT CLEARED",
+  "rendering_acceptance": "Not passed: null-particle renderer error recurred in ultrawide ending checkpoint recovery",
+  "ordinary_foreground_idle_and_normal_quit": "Pending; human PC use interrupted observation",
+  "owner_main_menu_crash": "Unresolved",
+  "human_artistic_approval": "Pending",
+  "public_windows_release": "Unchanged; no Phase 5 public release"
+}

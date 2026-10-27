@@ -11,6 +11,9 @@ A nonfatal null-particle rendering error also recurred during ultrawide ending
 checkpoint recovery. This candidate has not passed full rendering acceptance. Save
 regularly. If it closes unexpectedly, retain the log and note the time and what
 was happening; no personal playtest is required to continue development.
+Continuous foreground idle and normal Quit checks remain pending: foreground
+automation stopped when the PC was in human use. Isolated native checks are
+reported separately.
 
 ## Graphics
 

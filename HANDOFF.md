@@ -1,3 +1,33 @@
+# Current private integration / Phase 5, v0.10.9-dev
+
+Complete local source is on `integration/balanced-playable-qa`. Read
+`PHASE5_CHECKPOINT.json`, `PHASE5_INTEGRATION.md` and `PHASE5_RESULTS.md` first.
+Runtime export is Candidate04 / `af2ba3f`; subsequent changes are QA tooling,
+documentation and UID metadata. Private delivery is recorded under
+`../Checkpoints/20261027_phase5_integration/DELIVERY.json` after packaging.
+**PRIVATE QA — STABILITY NOT CLEARED:** the null-particle renderer error recurred
+in ultrawide ending recovery; ordinary foreground idle/normal Quit remain pending
+because human PC use interrupted observation. Preserve all failed evidence. Do
+not substitute a clean rerun or claim a permanent crash fix. Both earned ending
+branches, fresh investigation and selected profile/resolution checks are recorded
+separately. No new public Windows release; the public release below is unchanged.
+
+# Preserved public delivery / 0.10.0 The Last Call
+
+Complete runtime source checkpoint: 3410f90158514dd498f5290018d8ef41b43a77d9. Public release source/tag: 6506cdd853cc747d6c102ef095b4a7d5ee0b0b49. This is newer than all retained notes below.
+
+Windows candidate Builds/UNLISTED_LastCall_14/UNLISTED.exe. Release: https://github.com/SneakiiCROWN/UNLISTED/releases/tag/unlisted-v0.10.0-last-call-public-test-20261023 . Read LAST_CALL_PUBLICATION.json, LAST_CALL_VERIFICATION.md and NARRATIVE_CANON.md first. All seven public files were independently downloaded and hash-checked; both ZIPs pass CRC. Downloaded executable passes controller plan input and actual cold-search/pursuit/death/retry/story-mode tests. Owner data and previous public releases remain unchanged.
+
+Complete licensed source archive: Checkpoints/20261023_last_call_release/UNLISTED_Last_Call_Complete_Source.zip, relative to the UNLISTED project root. Fresh extracted import and all 84 scripts pass. Assets library, rejected studies, every previous build and all failures remain preserved. Public source deliberately lacks licensed raw media; never replace the complete local project with it.
+
+Implemented real manual/controller plan overlay, actual stairwell bay, captive bridge, separately wired deck remote, disconnected monitor response, dated later Simon page, warned real search and spatial distraction, persistent last-heard search target, both original porch departures and legacy-save recovery. New cases require this chapter; older cases retain earned progression.
+
+Route evidence is segmented and earned, not a claimed passing single fresh final-binary run: LastCall_06 earns the original investigation; LastCall_11 continues its real landing save through both endings (63/0); final LastCall_14 cold-risk is 8/0 and saved-search continuation through both endings is 48/0. Final UI/layout/controller/legacy reports from LastCall_12 pass; its cold-search failure is fixed in LastCall_14. Two earlier native layout access violations are preserved; stale card-button references were removed and repeated final layouts pass, but the exact native crash cause is not conclusively established.
+
+Human story comprehension, fear, art approval, subjective listening, real controller hardware and 30-60 minute first-play duration remain pending. Surveyor character art remains unchanged and unfinished. The larger meaningful second act and complete game remain production work. Final vocals remain replaceable.
+
+---
+
 # Secured milestone / Night Arrival 0.9.3 / 23 October 2026
 
 Publication is independently verified. Release: https://github.com/SneakiiCROWN/UNLISTED/releases/tag/unlisted-v0.9.3-night-arrival-public-test-20261023

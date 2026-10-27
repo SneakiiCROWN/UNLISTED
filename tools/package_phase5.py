@@ -30,7 +30,7 @@ def stage():
  assert not git('diff','af2ba3f','HEAD','--','scripts','shaders','assets','scenes','themes','project.godot','export_presets.cfg',':(exclude)*.uid'),'Runtime changed after Candidate04'
  S.mkdir();shutil.copy2(C/'Candidate04/UNLISTED.exe',S/'UNLISTED.exe')
  shutil.copytree(U/'Checkpoints/20261027_graphics_phase4/IndependentExtract/ThirdPartyNotices',S/'ThirdPartyNotices')
- for name in ['THIRD_PARTY.md','PHASE5_INTEGRATION.md','PHASE5_RESULTS.md','PHASE5_OWNER_GUIDE.md']:shutil.copy2(G/name,S/name)
+ for name in ['THIRD_PARTY.md','PHASE5_CHECKPOINT.json','PHASE5_INTEGRATION.md','PHASE5_RESULTS.md','PHASE5_OWNER_GUIDE.md']:shutil.copy2(G/name,S/name)
  (S/'START_HERE.txt').write_text('UNLISTED - PHASE 5: INTEGRATED PLAYABLE QA\nPRIVATE QA - STABILITY NOT CLEARED\n\nExtract the entire ZIP into a new folder. Run UNLISTED.exe normally. This is the complete investigation.\n\nOriginal PSX is the default. Settings > Display > Property atmosphere saves Original/Balanced/Enhanced. Fully quit and launch again to apply a different atmosphere; returning to Main Menu is not sufficient. Existing owner preferences and saves are retained.\n\nRead PHASE5_OWNER_GUIDE.md and PHASE5_RESULTS.md. The original idle-menu crash is unresolved. This build has no stability-clearance or human artistic approval. No public release.\n\nOpen COMPARISONS.html for actual integrated screenshots. Videos use native sampled frames with wall-clock timing; they are not full-frame-rate recordings or proof of human playtime.\n',encoding='utf8')
  body='<!doctype html><meta charset="utf-8"><title>UNLISTED Phase 5</title><style>body{background:#101518;color:#ddd;font:16px sans-serif;margin:25px}section{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}img{width:100%}figure{margin:0}a{color:#cad}</style><h1>Phase 5: the actual integrated game</h1><p>PRIVATE QA — STABILITY NOT CLEARED. Same eye-height placements across Original, Balanced and Enhanced. Weather timing varies. These placed views are visual inspection; the separate fresh investigation uses actual movement and interactions.</p>'
  for size in ['1920','2560','3440']:
@@ -58,10 +58,11 @@ def stage():
  (C/'STAGED_RECEIPT.json').write_text(json.dumps(receipt,indent=2),encoding='utf8');print(json.dumps({k:v for k,v in receipt.items() if k!='cases'},indent=2))
 def finalize():
  assert not git('status','--porcelain')
- extracted=valid(I/'Verification');assert read(I/'Verification/launch.json')['exe_sha256']==sha(I/'UNLISTED.exe')
- ordinary=[]
- for name in ['ordinary_menu_01','ordinary_menu_02']:
-  d=C/name;r=read(d/'result.json');assert r['exit_code']==0 and r['target_duration_reached'] and r['owner_unchanged'];assert (d/'observed_start.png').exists() and (d/'observed_end.png').exists();ordinary.append(r)
+ extracted=valid(I/'ExtractedLaunchCheck');assert read(I/'ExtractedLaunchCheck/launch.json')['exe_sha256']==sha(I/'UNLISTED.exe')
+ d=C/'ordinary_menu_01';r=read(d/'result.json')
+ assert r['target_duration_reached'] and r['owner_unchanged'] and (d/'INTENTIONAL_CLEANUP.txt').exists() and (d/'observed_start.png').exists()
+ r['scope']='INCONCLUSIVE: ordinary launch observed, later foreground switched and human input detected. Exact launched process intentionally stopped; not normal Quit or a game-crash observation.'
+ ordinary=[r,{'status':'Not run: foreground testing stopped to avoid interfering with human PC use'}]
  tag='dev-phase5-integrated-qa-20261027';private=git('rev-parse','HEAD');pub=C/'PublicSource';public=git('rev-parse','HEAD',cwd=pub)
  assert git('rev-parse',tag)==private and git('rev-parse',tag,cwd=pub)==public
  remote=git('ls-remote','origin','refs/heads/integration/playable-qa','refs/tags/'+tag,cwd=pub);assert len(remote.splitlines())==2 and all(x.startswith(public+'\t') for x in remote.splitlines())
@@ -73,7 +74,7 @@ def finalize():
   z.writestr('PRIVATE_SOURCE_SCOPE.txt','Complete tracked source/assets plus extracted art-source files; generated caches and historical QA captures excluded. The full original Assets inbox and all previous archives remain separately preserved. Private checkpoint '+private)
  with zipfile.ZipFile(source) as z:assert z.testzip() is None
  bundle=C/'UNLISTED_Phase5_Private_History.bundle';assert not bundle.exists();subprocess.run(['git','bundle','create',str(bundle),'--all'],cwd=G,check=True);subprocess.run(['git','bundle','verify',str(bundle)],cwd=G,check=True,capture_output=True)
- delivery=read(C/'STAGED_RECEIPT.json');delivery.update(private_source=private,public_source=public,tag=tag,complete_source_zip=str(source),source_sha256=sha(source),history_bundle=str(bundle),history_sha256=sha(bundle),extracted_verification=extracted,ordinary_menu_observations=ordinary,owner_menu_crash='Unresolved',human_artistic_approval='Pending',public_release='None')
+ delivery=read(C/'STAGED_RECEIPT.json');delivery.update(private_source=private,public_source=public,tag=tag,complete_source_zip=str(source),source_sha256=sha(source),history_bundle=str(bundle),history_sha256=sha(bundle),extracted_verification=extracted,ordinary_menu_observations=ordinary,foreground_idle_and_normal_quit='Pending: PC in active human use',owner_menu_crash='Unresolved',human_artistic_approval='Pending',public_release='None')
  (C/'DELIVERY.json').write_text(json.dumps(delivery,indent=2),encoding='utf8');print(json.dumps({k:v for k,v in delivery.items() if k not in ['cases','ordinary_menu_observations','extracted_verification']},indent=2))
 if __name__=='__main__':
  p=argparse.ArgumentParser();p.add_argument('action',choices=['stage','finalize']);{'stage':stage,'finalize':finalize}[p.parse_args().action]()

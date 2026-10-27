@@ -57,10 +57,10 @@ Earlier Phase4 stationary samples remain preserved; the longer moving workload d
 
 ## Ordinary launch observations
 
-- ordinary_menu_01: pending; no passing claim.
-- ordinary_menu_02: pending; no passing claim.
+- ordinary_menu_01: process remained alive for 365.28s, owner files unchanged True. Normal owner settings and no QA flag. **Foreground observation inconclusive:** another application became visible and computer-use detected human input. Foreground automation stopped. The exact launched test process was intentionally terminated (exit 4294967295); this is neither normal Quit nor a reproduced game crash. The incorrect end capture is retained privately as invalid evidence and is not shipped.
+- ordinary_menu_02: not run; foreground testing stopped to avoid interfering with human PC use. No passing claim.
 
-Two bounded clean idle observations cannot prove a permanent crash fix. They exercise the existing owner profile (Original), not every possible graphics/accessibility combination. Native automated profile checks use separate settings.
+Continuous foreground idle and normal Quit remain pending. No permanent crash-fix claim. Native automated profile checks use separate settings. PC coactivity was not controlled; a different 3D application was visible during the later idle observation, so performance numbers are bounded desktop observations rather than a controlled hardware benchmark.
 
 ## Delivery and limits
 
@@ -69,3 +69,9 @@ The private Windows ZIP, independently extracted executable verification, exact 
 Representative clips use real native sampled frames with wall-clock timing and game-bus audio; a 30fps encoding repeats roughly six captured frames per second. They are not full-frame-rate captures, subjective listening approval or evidence of human first-playthrough duration.
 
 Human artistic approval, story comprehension, fear, emotional payoff, hardware-controller playtesting and 30–60-minute duration remain pending. The current Surveyor model is retained. No new character or content expansion is claimed.
+
+## Independently extracted executable
+
+The executable extracted from the private Windows ZIP completed 19 focused native checks; exit 0, logged errors 0, warnings 0, owner files unchanged True. This used isolated inputs and Balanced startup settings, not an uninterrupted ordinary foreground observation.
+
+Executable SHA-256: `5f52261be8a8ee7ee0e37999d567744d287e81c821b39d0d0370ebf65ed64b09`. The final private delivery receipt records the Windows/source ZIP hashes and source tag.
