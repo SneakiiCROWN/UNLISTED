@@ -31,6 +31,8 @@ horizon captures exposed erroneous unbounded road/fence terrain-preservation
 strips; those candidates are retained, not selected. Candidate03 corrects that
 calculation. Test results and delivery hashes are recorded separately when ready.
 
+The E04 office fixture faces an existing solid wall, not an exterior window;
+gallery captions identify this coverage limitation. No new opening is invented.
 The E08 rear fixture looks through an existing close solid fence; it is retained
 as an obstructed camera placement, not used as proof of woodland quality. Other
 porch, windows, shed and lane cameras cover the actual visible exterior. No fence
