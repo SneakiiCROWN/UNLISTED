@@ -13,6 +13,8 @@ func setup(yaw: float) -> void:
 func run(game: Node) -> void:
 	g=game
 	output=ProjectSettings.globalize_path("res://qa/capture_native") if OS.has_feature("editor") else OS.get_executable_path().get_base_dir().path_join("QA/capture_native")
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--evidence="):output=arg.trim_prefix("--evidence=")
 	DirAccess.make_dir_recursive_absolute(output)
 	g.checkpoint_path=output.path_join("checkpoint.json")
 	await exact_resolution()

@@ -17,11 +17,13 @@ var motion_rate:=1.0
 var motion_target:=1.0
 var attention_override: Variant=null
 var asset_candidate:=false
+var art_revision:=false
 var fabric_cooldown:=0.0
 var fabric_index:=0
 
 func _ready() -> void:
 	for mesh in figure.find_children("*","MeshInstance3D",true,false):
+		if mesh.name.begins_with("Revision"):art_revision=true;asset_candidate=true
 		if mesh.name.begins_with("Asset study"):asset_candidate=true
 		if mesh.name.begins_with("Reborn"):reborn_presence=true
 		if mesh.name.begins_with("Continuous tailored"):tailored_presence=true

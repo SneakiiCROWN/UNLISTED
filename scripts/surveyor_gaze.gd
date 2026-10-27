@@ -21,6 +21,13 @@ func _process_modification_with_delta(delta: float) -> void:
 	# Search attention belongs to the last heard/seen point for every model.
 	# An authored gaze override has priority over ordinary search presentation.
 	var attention:=attention_point()
+	if actor.art_revision:
+		# Candidate-only posture: a small upper-back inclination. The existing
+		# gaze target, visibility rules and capture arm solver remain authoritative.
+		var upper:=s.find_bone("spine_03")
+		var held:=s.get_bone_global_pose(upper)
+		held.basis=Basis(Vector3.RIGHT,.045 if actor.mode in ["watch","listen"] else .025)*held.basis
+		s.set_bone_global_pose(upper,held)
 	if actor.reborn_presence:
 		var spine_id:=s.find_bone("spine_03")
 		if spine_id>=0:
