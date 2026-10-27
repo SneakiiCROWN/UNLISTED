@@ -1,9 +1,10 @@
 extends RefCounted
-# Isolated branch only. Nothing calls this from ordinary startup.
+# Runtime integration permits only the two reviewed profiles, at startup.
+var runtime := false
 var probes: Array[ReflectionProbe]=[]
 var changes: Array=[]
 func apply(g: Node3D,id: String) -> Dictionary:
- assert(g.qa_mode and "--graphics-study-qa" in OS.get_cmdline_user_args())
+ assert((runtime and id in ["balanced","enhanced"]) or (g.qa_mode and "--graphics-study-qa" in OS.get_cmdline_user_args()))
  var env: Environment
  for child in g.get_children():
   if child is WorldEnvironment:env=child.environment
@@ -26,7 +27,8 @@ func apply(g: Node3D,id: String) -> Dictionary:
     changes.append("Existing porch practical redistributed, contact bias reduced")
    elif child.position.y<0 and child.position.z< -17:
     child.shadow_bias=.03;child.shadow_normal_bias=.55;child.light_size=.075
-    child.light_energy=1.0 if child.position.z> -20 else 1.15
+    if not runtime:child.light_energy=1.0 if child.position.z> -20 else 1.15
+    # Powered gameplay lamps retain their narrative-controlled energy.
     changes.append("Existing cellar practical falloff/contact, no extra lamps")
  if reflection:
   for spec in [["PorchStudyProbe",Vector3(0,1.7,9),Vector3(21,7,24),false],["LoungeStudyProbe",Vector3(5,1.4,1),Vector3(6,3,6),true]]:

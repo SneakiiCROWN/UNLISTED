@@ -75,6 +75,7 @@ func _ready() -> void:
 		var dir := ProjectSettings.globalize_path("res://qa") if OS.has_feature("editor") else OS.get_executable_path().get_base_dir().path_join("QA")
 		DirAccess.make_dir_recursive_absolute(dir)
 		prefs.path = dir.path_join("presentation_settings.cfg")
+	prefs.path = load("res://scripts/atmosphere_profile.gd").preferences_path(game)
 	prefs.load_file()
 	prefs.ensure_buses()
 	stage = Node3D.new()
@@ -488,8 +489,14 @@ func show_settings(origin := "") -> void:
 	rule(card_body)
 	rows = VBoxContainer.new()
 	rows.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	rows.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	rows.add_theme_constant_override("separation",14)
-	card_body.add_child(rows)
+	var settings_scroll := ScrollContainer.new()
+	settings_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	settings_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	settings_scroll.follow_focus = true
+	card_body.add_child(settings_scroll)
+	settings_scroll.add_child(rows)
 	fill_settings(last_tab)
 	var back := HBoxContainer.new()
 	card_body.add_child(back)
@@ -599,6 +606,14 @@ func fill_settings(tab: String) -> void:
 			row.add_child(preset)
 			controls.visual_preset = preset
 			preset.item_selected.connect(func(idx):prefs.data.visual_preset = idx;prefs.data.retro = [0.0,0.32,0.65][idx];apply_preferences(false);persist())
+			row = setting_row("Property atmosphere")
+			var atmosphere := OptionButton.new()
+			for name_ in load("res://scripts/atmosphere_profile.gd").NAMES:atmosphere.add_item(name_)
+			atmosphere.selected = prefs.data.atmosphere_mode
+			atmosphere.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			row.add_child(atmosphere);controls.atmosphere_mode = atmosphere
+			var atmosphere_notice := label(rows,"Atmosphere changes apply next launch. Original remains the fallback.",15,"Meta")
+			atmosphere.item_selected.connect(func(idx):prefs.data.atmosphere_mode=idx;persist();atmosphere_notice.text="Saved. Restart UNLISTED to apply "+atmosphere.get_item_text(idx)+"." if idx!=game.atmosphere_at_boot else "This atmosphere is active. Changes apply next launch.")
 			slider("retro","Colour depth effect",0.0,1.0,0.01)
 			label(rows,"World pixels and colour depth change; interface text stays sharp.",15,"Meta")
 		"Captions":
@@ -803,6 +818,7 @@ func apply_preferences(display := false) -> void:
 	film.material.set_shader_parameter("visibility",prefs.data.visibility)
 	film.material.set_shader_parameter("retro",prefs.data.retro)
 	film.material.set_shader_parameter("raster_height",[0.0,540.0,360.0][prefs.data.visual_preset])
+	if game.atmosphere_profile != null:game.atmosphere_profile.refresh_accessibility(game)
 	if display:apply_display()
 
 func apply_display() -> void:

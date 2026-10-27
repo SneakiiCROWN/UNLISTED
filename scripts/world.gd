@@ -6,6 +6,8 @@ const PLAYER = preload("res://scripts/player.gd")
 const DOOR = preload("res://scripts/door.gd")
 const ART = preload("res://scripts/production_art.gd")
 const REPAIR = preload("res://scripts/environment_repair.gd")
+var atmosphere_profile: RefCounted
+var atmosphere_at_boot := 0
 var presentation: CanvasLayer
 var player: CharacterBody3D
 var hud: CanvasLayer
@@ -108,6 +110,8 @@ func _ready() -> void:
 	qa_mode = "--door-repair-qa" in OS.get_cmdline_user_args() or "--recording-repair-qa" in OS.get_cmdline_user_args() or "--qa" in OS.get_cmdline_user_args() or "--presentation-qa" in OS.get_cmdline_user_args() or "--milestone-qa" in OS.get_cmdline_user_args() or "--threat-qa" in OS.get_cmdline_user_args() or "--systems-qa" in OS.get_cmdline_user_args() or "--polish-qa" in OS.get_cmdline_user_args() or "--visual-probe" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--production-views" in OS.get_cmdline_user_args() or "--graphics-study-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--stability-qa" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--atmosphere-integration-qa" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--atmosphere-performance-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--witness-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--field-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--last-call-qa" in OS.get_cmdline_user_args()
@@ -153,6 +157,7 @@ func _ready() -> void:
 	configure_input()
 	load("res://scripts/preferences.gd").new().ensure_buses()
 	process_mode = Node.PROCESS_MODE_PAUSABLE
+	atmosphere_at_boot = load("res://scripts/atmosphere_profile.gd").selected(self)
 	build_world()
 	player = CharacterBody3D.new()
 	player.set_script(PLAYER)
@@ -203,6 +208,11 @@ func _ready() -> void:
 	property_memory=load("res://scripts/property_memory_study.gd").new();property_memory.game=self;add_child(property_memory)
 	recorder_memory=load("res://scripts/recorder_memory_study.gd").new();recorder_memory.game=self;recorder_memory.runtime=true;add_child(recorder_memory)
 	final_account=load("res://scripts/final_account.gd").new();final_account.game=self;add_child(final_account)
+	# The graphics study retains its own explicit fixture policies. Ordinary
+	# gameplay and all other QA paths use the same persisted production choice.
+	if not "--graphics-study-qa" in OS.get_cmdline_user_args():
+		atmosphere_profile = load("res://scripts/atmosphere_profile.gd").new()
+		atmosphere_profile.apply(self, atmosphere_at_boot)
 	set_volume(volume)
 	show_menu("UNLISTED", true)
 	if dev_mode:
@@ -1398,6 +1408,14 @@ func prepare_automated_qa() -> void:
 	get_tree().root.add_child(qa_input_guard);qa_input_guard.attach(self)
 
 func run_qa() -> void:
+	if "--atmosphere-performance-qa" in OS.get_cmdline_user_args():
+		prepare_automated_qa()
+		var moving=load("res://scripts/atmosphere_performance_qa.gd").new();moving.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(moving)
+		await moving.run(self);return
+	if "--atmosphere-integration-qa" in OS.get_cmdline_user_args():
+		prepare_automated_qa()
+		var integration=load("res://scripts/atmosphere_integration_qa.gd").new();integration.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(integration)
+		await integration.run(self);return
 	if "--graphics-study-qa" in OS.get_cmdline_user_args():
 		prepare_automated_qa()
 		var study=load("res://scripts/graphics_study.gd").new();study.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(study)

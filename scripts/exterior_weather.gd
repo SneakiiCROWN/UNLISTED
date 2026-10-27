@@ -32,6 +32,8 @@ func _ready() -> void:
 	rain.process_material=motion
 	var streak:=QuadMesh.new();streak.size=Vector2(0.013,0.24)
 	var water:=ShaderMaterial.new();water.shader=load("res://shaders/rain_streak.gdshader")
+	if game.atmosphere_at_boot > 0 and not "--graphics-study-qa" in OS.get_cmdline_user_args():
+		water.shader=load("res://shaders/phase2_rain.gdshader")
 	# Phase4 uses the same Phase2 rain appearance, assigned before the emitter
 	# enters the tree. Avoid replacing a live GPU particle draw mesh in QA.
 	if game.qa_mode and "--graphics-phase4" in OS.get_cmdline_user_args():

@@ -21,7 +21,7 @@ func apply(g: Node3D,id: String) -> Dictionary:
    if source is ShaderMaterial and source.shader.resource_path=="res://shaders/study_window.gdshader":
     var mat:=ShaderMaterial.new();mat.shader=load("res://shaders/phase2_window.gdshader")
     mat.set_shader_parameter("motion",0.0 if g.presentation.prefs.data.reduced_motion else 1.0)
-    if ResourceLoader.exists(cube_path):mat.set_shader_parameter("room_return",load(cube_path))
+    if not runtime and ResourceLoader.exists(cube_path):mat.set_shader_parameter("room_return",load(cube_path))
     else:mat.set_shader_parameter("reflection_strength",0.0)
     if "--phase2-no-reflection" in OS.get_cmdline_user_args():mat.set_shader_parameter("reflection_strength",0.0)
     mesh.material_override=mat
@@ -30,6 +30,7 @@ func apply(g: Node3D,id: String) -> Dictionary:
   var weather: Node=g.get_node("BriarLaneExterior/BriarLaneWeather")
   for rain in weather.find_children("*","GPUParticles3D",true,false):
    if rain.name not in ["WindDrivenDrizzle","ForegroundRain"]:continue
+   if runtime:continue # Configured before add_child in exterior_weather.
    if rain.draw_pass_1.material.shader.resource_path=="res://shaders/phase2_rain.gdshader":continue
    var quad: QuadMesh=rain.draw_pass_1.duplicate();var mat: ShaderMaterial=quad.material.duplicate()
    mat.shader=load("res://shaders/phase2_rain.gdshader");quad.material=mat;rain.draw_pass_1=quad

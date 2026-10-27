@@ -1,0 +1,20 @@
+"""One-time, assertion-guarded integration edits; preserved for review."""
+from pathlib import Path
+G=Path(__file__).resolve().parents[1]
+def change(name,old,new):
+ p=G/name;s=p.read_text(encoding='utf-8-sig');assert old in s,(name,old[:100]);p.write_text(s.replace(old,new,1),encoding='utf8')
+change('scripts/preferences.gd','"visual_preset":1,','"visual_preset":1,"atmosphere_mode":0,')
+change('scripts/preferences.gd','data.visual_preset = clampi(int(data.visual_preset),0,2)','data.visual_preset = clampi(int(data.visual_preset),0,2)\n\tdata.atmosphere_mode = clampi(int(data.atmosphere_mode),0,2)')
+change('scripts/world.gd','var presentation: CanvasLayer','var atmosphere_profile: RefCounted\nvar atmosphere_at_boot := 0\nvar presentation: CanvasLayer')
+change('scripts/world.gd','\tbuild_world()','\tatmosphere_at_boot = load("res://scripts/atmosphere_profile.gd").selected(self)\n\tbuild_world()')
+change('scripts/world.gd','\tset_volume(volume)\n\tshow_menu','\t# The graphics study retains its own explicit fixture policies. Ordinary\n\t# gameplay and all other QA paths use the same persisted production choice.\n\tif not "--graphics-study-qa" in OS.get_cmdline_user_args():\n\t\tatmosphere_profile = load("res://scripts/atmosphere_profile.gd").new()\n\t\tatmosphere_profile.apply(self, atmosphere_at_boot)\n\tset_volume(volume)\n\tshow_menu')
+change('scripts/presentation.gd','\tprefs.load_file()','\tprefs.path = load("res://scripts/atmosphere_profile.gd").preferences_path(game)\n\tprefs.load_file()')
+change('scripts/presentation.gd','\t\t\tslider("retro","Colour depth effect",0.0,1.0,0.01)','\t\t\trow = setting_row("Property atmosphere")\n\t\t\tvar atmosphere := OptionButton.new()\n\t\t\tfor name_ in load("res://scripts/atmosphere_profile.gd").NAMES:atmosphere.add_item(name_)\n\t\t\tatmosphere.selected = prefs.data.atmosphere_mode\n\t\t\tatmosphere.size_flags_horizontal = Control.SIZE_EXPAND_FILL\n\t\t\trow.add_child(atmosphere);controls.atmosphere_mode = atmosphere\n\t\t\tvar atmosphere_notice := label(rows,"Atmosphere changes apply next launch. Original remains the fallback.",15,"Meta")\n\t\t\tatmosphere.item_selected.connect(func(idx):prefs.data.atmosphere_mode=idx;persist();atmosphere_notice.text="Saved. Restart UNLISTED to apply "+atmosphere.get_item_text(idx)+"." if idx!=game.atmosphere_at_boot else "This atmosphere is active. Changes apply next launch.")\n\t\t\tslider("retro","Colour depth effect",0.0,1.0,0.01)')
+change('scripts/presentation.gd','\tif display:apply_display()','\tif game.atmosphere_profile != null:game.atmosphere_profile.refresh_accessibility(game)\n\tif display:apply_display()')
+change('scripts/graphics_profile_study.gd','# Isolated branch only. Nothing calls this from ordinary startup.','# Runtime integration permits only the two reviewed profiles, at startup.\nvar runtime := false')
+change('scripts/graphics_profile_study.gd',' assert(g.qa_mode and "--graphics-study-qa" in OS.get_cmdline_user_args())',' assert((runtime and id in ["balanced","enhanced"]) or (g.qa_mode and "--graphics-study-qa" in OS.get_cmdline_user_args()))')
+change('scripts/graphics_profile_study.gd','    child.light_energy=1.0 if child.position.z> -20 else 1.15','    if not runtime:child.light_energy=1.0 if child.position.z> -20 else 1.15\n    # Powered gameplay lamps retain their narrative-controlled energy.')
+change('scripts/graphics_phase2_profile.gd','    if ResourceLoader.exists(cube_path):','    if not runtime and ResourceLoader.exists(cube_path):')
+change('scripts/graphics_phase2_profile.gd','   if rain.draw_pass_1.material.shader.resource_path==','   if runtime:continue # Configured before add_child in exterior_weather.\n   if rain.draw_pass_1.material.shader.resource_path==')
+change('scripts/exterior_weather.gd','\t# Phase4 uses the same Phase2 rain appearance, assigned before the emitter','\tif game.atmosphere_at_boot > 0 and not "--graphics-study-qa" in OS.get_cmdline_user_args():\n\t\twater.shader=load("res://shaders/phase2_rain.gdshader")\n\t# Phase4 uses the same Phase2 rain appearance, assigned before the emitter')
+print('Phase5 integration source edits complete')
