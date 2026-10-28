@@ -96,6 +96,11 @@ var warm := Color(1.0, 0.57, 0.27)
 var cold := Color(0.30, 0.66, 0.76)
 
 func _ready() -> void:
+	# Explicit QA-only entry, before creating any world/render resources.
+	# Export templates forbid command-line scene overrides; ordinary startup
+	# keeps the established main scene and never takes this diagnostic branch.
+	if "--prebuilt-viewport" in OS.get_cmdline_user_args() and not get_meta("qa_constructed_in_viewport",false):
+		call_deferred("enter_private_qa_bootstrap");return
 	# Official release templates can reject command-line scene overrides. This
 	# explicit private diagnostic selects its entry before constructing the world.
 	# The root marker lets its later original New Game instantiate this scene once.
@@ -235,6 +240,11 @@ func enter_deferred_title_diagnostic() -> void:
 	var diagnostic: Node=load("res://scenes/deferred_title_diagnostic.tscn").instantiate()
 	get_tree().root.add_child(diagnostic)
 	get_tree().current_scene=diagnostic
+	queue_free()
+
+func enter_private_qa_bootstrap() -> void:
+	var diagnostic: Node=load("res://scenes/qa_viewport_bootstrap.tscn").instantiate()
+	get_tree().root.add_child(diagnostic);get_tree().current_scene=diagnostic
 	queue_free()
 
 func configure_input() -> void:

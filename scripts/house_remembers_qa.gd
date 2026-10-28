@@ -21,8 +21,11 @@ func run(current: Node) -> void:
 	await exact_resolution()
 	if "--idle-no-recorder" in OS.get_cmdline_user_args():
 		var before:=AudioServer.get_bus_effect_count(0)
-		await wait(330)
-		check("isolated title survives 330 seconds without a QA audio recorder",g.menu_open and g.presentation.section=="title" and recorder==null and AudioServer.get_bus_effect_count(0)==before)
+		var idle:=330.0
+		for arg in OS.get_cmdline_user_args():
+			if arg.begins_with("--idle-seconds="):idle=clampf(float(arg.trim_prefix("--idle-seconds=")),30,900)
+		await wait(idle)
+		check("isolated title survives "+str(idle)+" seconds without a QA audio recorder",g.menu_open and g.presentation.section=="title" and recorder==null and AudioServer.get_bus_effect_count(0)==before)
 		await shot("R00_no_recorder_idle")
 		var file:=FileAccess.open(output.path_join("report.json"),FileAccess.WRITE);file.store_string(JSON.stringify({"failed":0 if checks.all(func(c):return c.passed) else 1,"checks":checks,"scope":"Isolated native title; no AudioEffectRecord or continuous image readback. Not ordinary foreground-owner stability clearance."},"\t"));file.close()
 		await g.qa_exit(0 if checks.all(func(c):return c.passed) else 1,true);return

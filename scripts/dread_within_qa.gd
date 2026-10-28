@@ -38,27 +38,33 @@ func run(current: Node) -> void:
 	g.player.camera.look_at(Vector3(4.5,2.7,1));await wait(.2)
 	phase="Restored lounge / footsteps above the ceiling"
 	check("overhead response uses restored-room eligibility",director.request("ceiling_return"))
-	await wait(5.2);await shot("D03_empty_ceiling_after_steps")
-	var overhead: Array=director.emitted.filter(func(item):return item.where.y>2.6)
-	check("actual positional sources cross above the room",overhead.size()>=5)
+	await wait(.7)
+	check("still observer receives no canned footsteps",director.ceiling_active and director.ceiling_steps==0)
+	await travel(Vector2(5.4,1.7),"walking makes the restored room answer");await wait(.55)
+	g.player.camera.look_at(Vector3(4.5,2.7,1));await shot("D03_empty_ceiling_after_steps")
+	var overhead: Array=director.emitted.filter(func(item):return item.get("kind","")=="answering_step")
+	check("actual movement receives bounded overhead contacts",not overhead.is_empty() and overhead.size()<=4 and overhead.all(func(item):return item.where.y>2.6))
 	check("aftermath leaves gravity and player control intact",absf(g.player.position.y)<.08 and g.player.active and g.threat.state=="dormant" and not g.presence.visible)
 	g.save_game(true);g.load_game();await wait(.2)
 	check("spent overhead response cannot replay after load",not director.request("ceiling_return"))
 	# A second fixture isolates partial recovery, controller pause and interruption.
 	var used: Dictionary=director.policy.data.used;used.erase("ceiling_return")
 	g.events.atmosphere.used=used;director.restore()
+	check("saved quiet interval prevents premature fixture replay",float(director.policy.data.quiet)>0 and not director.request("ceiling_return"))
+	director.policy.data.quiet=0 # Independent partial-recovery fixture, not live pacing.
 	check("partial-response fixture eligible",director.request("ceiling_return"));await wait(.3)
-	await tap(JOY_BUTTON_START);var clock: float=director.elapsed;await wait(.35)
-	check("controller Start pauses aftermath timing",g.menu_open and is_equal_approx(clock,director.elapsed))
+	await tap(JOY_BUTTON_START);var clock: float=director.ceiling_elapsed;await wait(.35)
+	check("controller Start pauses aftermath timing",g.menu_open and is_equal_approx(clock,director.ceiling_elapsed))
 	await tap(JOY_BUTTON_B);check("controller B restores player control",not g.menu_open and g.player.active)
 	g.save_game(true);g.load_game();await wait(.2)
-	check("partial load consumes optional sound without replay",director.queue.is_empty() and not director.request("ceiling_return"))
+	check("partial load consumes optional sound without replay",not director.ceiling_active and director.ceiling_pending.is_empty() and not director.request("ceiling_return"))
 	used=director.policy.data.used;used.erase("ceiling_return");g.events.atmosphere.used=used;director.restore()
+	director.policy.data.quiet=0 # Independent interruption fixture.
 	check("interruption fixture eligible",director.request("ceiling_return"));g.events.threat_pending=true;await wait(.2)
-	check("authored encounter cancels queued aftermath",director.queue.is_empty())
+	check("authored encounter cancels queued aftermath",not director.ceiling_active and director.ceiling_pending.is_empty())
 	g.events.threat_pending=false
 	# Legacy/new case resets dressing; reduced motion keeps static outcome.
-	g.events.atmosphere={};director.restore()
+	g.events.atmosphere={};g.events.erase("curtains_manual");director.restore()
 	check("legacy state restores open curtains",float(room.cloth.get_shader_parameter("drawn"))==0.0)
 	g.player.position=Vector3(.5,.04,-4);g.player.camera.look_at(Vector3(0,1,-8));g.presentation.prefs.data.reduced_motion=true
 	check("reduced motion permits safe completed dressing",director.request("curtains_drawn") and float(room.cloth.get_shader_parameter("drawn"))==1.0)

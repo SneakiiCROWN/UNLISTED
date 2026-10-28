@@ -15,11 +15,16 @@ func attach(current: Node) -> void:
 	window.position=Vector2i(-16000,-16000)
 	for id in ["pause","crouch_toggle","forward","back","left","right","sprint","crouch","interact","flashlight","journal","hint","battery_status","battery_replace","torch_tap","throw_prop","inspect_left","inspect_right","inspect_up","inspect_down"]:
 		Input.action_release(id);InputMap.action_erase_events(id)
-	target=SubViewport.new();target.name="IsolatedAutomatedViewport"
-	target.audio_listener_enable_3d=true;target.size=Vector2i(1280,720)
-	target.size_2d_override=Vector2i(1280,720);target.size_2d_override_stretch=true
-	target.render_target_update_mode=SubViewport.UPDATE_ALWAYS
-	window.add_child(target);game.reparent(target)
+	if game.get_meta("qa_constructed_in_viewport",false):
+		target=game.get_viewport() as SubViewport
+		assert(target!=null and target.name=="IsolatedAutomatedViewport" and target.audio_listener_enable_3d)
+		print("QA_VIEWPORT_HANDOFF none; game constructed in its final viewport")
+	else:
+		target=SubViewport.new();target.name="IsolatedAutomatedViewport"
+		target.audio_listener_enable_3d=true;target.size=Vector2i(1280,720)
+		target.size_2d_override=Vector2i(1280,720);target.size_2d_override_stretch=true
+		target.render_target_update_mode=SubViewport.UPDATE_ALWAYS
+		window.add_child(target);game.reparent(target)
 	target.set_meta("automated_input_isolated",true)
 	Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
 	print("QA_INPUT_ISOLATED private viewport; off-screen non-interactive window; no desktop input hooks")
