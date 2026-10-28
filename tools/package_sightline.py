@@ -7,7 +7,7 @@ G=Path(__file__).resolve().parents[1]; U=G.parent
 C=U/'Checkpoints/20261028_sightline_continuation'
 P=C/'Package'; I=C/'IndependentExtract'
 Z=U/'Builds/UNLISTED-Windows-Sightline-Continuity-v0.10.9-dev-PRIVATE.zip'
-TAG='dev-sightline-continuity-20261028'
+TAG='dev-sightline-continuity-delivery-20261028'
 def read(p):return json.loads(p.read_text(encoding='utf-8-sig'))
 def git(*args):return subprocess.check_output(['git',*args],cwd=G,text=True,encoding='utf8').strip()
 def valid(path,allow_particle_observation=False):
@@ -67,7 +67,7 @@ def stage():
 def recover():
     assert not git('status','--porcelain')
     extracted=valid(C/'ExtractedCheck'); private=git('rev-parse','HEAD');public=read(C/'PUBLIC_CHECKPOINT.json')
-    assert git('rev-parse',TAG)==private
+    assert git('rev-parse',TAG+'^{}')==private
     source=C/'UNLISTED_Sightline_Continuity_Complete_Private_Source.zip'
     files={G/n:'UNLISTED_Game/'+n for n in git('ls-files','-z').split('\0') if n and (G/n).is_file()}
     for f in (G/'tools/asset_sources').rglob('*'):
@@ -82,7 +82,8 @@ def recover():
     bundle=C/'UNLISTED_Sightline_Continuity_Private_History.bundle';assert not bundle.exists()
     subprocess.run(['git','bundle','create',str(bundle),'--all'],cwd=G,check=True)
     subprocess.run(['git','bundle','verify',str(bundle)],cwd=G,check=True,capture_output=True)
-    data=read(C/'STAGED_DELIVERY.json');data.update(private_source=private,public_source=public,tag=TAG,complete_source=str(source),source_sha256=sha(source),history_bundle=str(bundle),history_sha256=sha(bundle),extracted_verification=extracted,public_release='None',owner_menu_crash='Unresolved',null_particle_error='Unresolved',human_playtest='Pending',character_art='Unchanged; no candidate promoted')
+    dump=C/'CrashAnalysis/UNLISTED.exe.7840.dmp'
+    data=read(C/'STAGED_DELIVERY.json');data.update(private_source=private,public_source=public,tag=TAG,complete_source=str(source),source_sha256=sha(source),history_bundle=str(bundle),history_sha256=sha(bundle),extracted_verification=extracted,native_crash_dump=str(dump),native_crash_dump_sha256=sha(dump),crash_analysis=str(C/'CrashAnalysis/CRASH_FINDINGS.md'),public_release='None',owner_menu_crash='Unresolved',null_particle_error='Unresolved',human_playtest='Pending',character_art='Unchanged; no candidate promoted')
     (C/'DELIVERY.json').write_text(json.dumps(data,indent=2),encoding='utf8')
     print(json.dumps({k:v for k,v in data.items() if k not in ['cases','extracted_verification']},indent=2))
 if __name__=='__main__':{'stage':stage,'recover':recover}[sys.argv[1]]()
