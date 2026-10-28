@@ -34,6 +34,8 @@ func pickup_fixture(id: String) -> RigidBody3D:
 	check("actual pickup "+id,g.physical.held==body)
 	return body
 func run(current: Node) -> void:
+	if "--continuation-focus" in OS.get_cmdline_user_args():
+		var probe=load("res://scripts/continuation_focus_qa.gd").new();probe.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(probe);await probe.run(current);return
 	g=current;started_at=Time.get_ticks_usec();started_unix_seconds=Time.get_unix_time_from_system()
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--evidence="):output=arg.trim_prefix("--evidence=")

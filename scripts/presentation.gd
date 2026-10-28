@@ -923,7 +923,7 @@ func _process(delta: float) -> void:
 		battery_root.modulate.a=1.0 if prefs.data.get("battery_persistent",false) else clampf(battery_status_time/.65,0,1)
 		battery_bar.value=charge;battery_caption.text="TORCH %d%%"%ceili(charge)
 		battery_caption.modulate=Color("d3a785") if charge<=20 else Color("b8c3b3")
-		battery_detail.text=["OFF","WHITE","UV"][clampi(int(game.equipment.data.get("mode",1)),0,2)]+" / %d spare"%int(game.equipment.data.get("spares",0))
+		battery_detail.text="WINDING / %d%%"%mini(100,roundi(game.equipment.winding/3.2*100)) if game.equipment.winding>0 else ["OFF","WHITE","UV"][clampi(int(game.equipment.data.get("mode",1)),0,2)]+" / %d spare"%int(game.equipment.data.get("spares",0))
 		# Fit the backing to the actual wrapped caption instead of reserving a
 		# large black panel when only two short lines are shown.
 		subtitle.offset_bottom=-104

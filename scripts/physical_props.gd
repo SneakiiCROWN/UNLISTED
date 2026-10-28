@@ -12,6 +12,9 @@ var forearm: Node3D
 var tool_hand: Node3D
 var grip_mode := "cradle"
 var last_set_down: Dictionary={}
+var placement_frame: int=-1
+var placement_signature: Array=[]
+var cached_placement: Dictionary={}
 
 func _ready() -> void:
 	make_prop("cup","mug","res://assets/dusk/psx_prop_mug_01.glb",Vector3(4.6,0.87,0),Vector3(0.12,0.14,0.12),0.24)
@@ -153,7 +156,7 @@ func use() -> bool:
 		game.events.remembered_cup = [body.position.x,body.position.y,body.position.z]
 	if not reminded and game.presentation.prefs.data.reminders:
 		reminded = true
-		game.presentation.notify("X PUT DOWN / RT THROW / HOLD LT + RIGHT STICK TO ROTATE" if game.controller.used else "E PUT DOWN / LEFT MOUSE THROW / HOLD R TO ROTATE")
+		game.presentation.notify("X PLACE OR RELEASE / RT THROW / HOLD LT + RIGHT STICK TO ROTATE" if game.controller.used else "E PLACE OR RELEASE / LEFT MOUSE THROW / HOLD R TO ROTATE")
 	return true
 
 func placement_ray() -> Dictionary:
@@ -165,27 +168,45 @@ func placement_ray() -> Dictionary:
 	if hit.is_empty() or hit.normal.y<.82 or hit.collider is CharacterBody3D:return {}
 	return hit
 
-func set_down() -> bool:
-	var hit:=placement_ray()
-	if hit.is_empty():return false
+func placement_plan(fresh:=false) -> Dictionary:
+	if not is_instance_valid(held):return {}
 	var body: RigidBody3D=held
+	var signature: Array=[body.get_instance_id(),body.global_transform,game.player.camera.global_transform]
+	var frame:=Engine.get_physics_frames()
+	if not fresh and frame==placement_frame and signature==placement_signature:return cached_placement
+	placement_frame=frame;placement_signature=signature;cached_placement={}
+	cached_placement=solve_placement(body)
+	return cached_placement
+
+func solve_placement(body: RigidBody3D) -> Dictionary:
+	var hit:=placement_ray()
+	if hit.is_empty():return {}
 	var size_: Vector3=body.get_meta("carry_size",Vector3(.14,.14,.14))
 	var upright:=Basis(Vector3.UP,body.global_basis.get_euler().y)
 	var destination:=Transform3D(upright,hit.position+Vector3.UP*(size_.y*.5+.005))
-	if destination.origin.distance_to(body.global_position)>.95:return false
+	if destination.origin.distance_to(body.global_position)>.95:return {}
 	var query:=PhysicsShapeQueryParameters3D.new()
 	query.shape=body.get_node("PropShape").shape;query.collision_mask=1|2|16|32
 	query.exclude=[body.get_rid()];query.margin=.001
 	# Both the upright start and endpoint must be free. A rotated object is not
 	# righted through a wall; the complete swept path must also be traversable.
 	query.transform=Transform3D(upright,body.global_position)
-	if not game.get_world_3d().direct_space_state.intersect_shape(query).is_empty():return false
-	if body.test_move(query.transform,destination.origin-body.global_position,null,.002,true):return false
+	if not game.get_world_3d().direct_space_state.intersect_shape(query).is_empty():return {}
+	if body.test_move(query.transform,destination.origin-body.global_position,null,.002,true):return {}
 	query.transform=destination
-	if not game.get_world_3d().direct_space_state.intersect_shape(query).is_empty():return false
+	if not game.get_world_3d().direct_space_state.intersect_shape(query).is_empty():return {}
+	return {"transform":destination,"surface":hit.position}
+
+func set_down() -> bool:
+	# UI may reuse a same-physics-frame plan. Actions always recheck live collision.
+	var plan:=placement_plan(true)
+	if plan.is_empty():return false
+	var body: RigidBody3D=held
+	var destination: Transform3D=plan.transform
 	held=null;body.remove_collision_exception_with(game.player)
 	body.call("relocate",destination)
-	last_set_down={"id":str(body.get_meta("loose_prop")),"position":destination.origin,"surface":hit.position}
+	last_set_down={"id":str(body.get_meta("loose_prop")),"position":destination.origin,"surface":plan.surface}
+	placement_frame=-1
 	game.sound("prop_soft",destination.origin,-32)
 	return true
 

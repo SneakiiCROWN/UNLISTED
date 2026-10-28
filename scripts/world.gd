@@ -173,12 +173,18 @@ func _ready() -> void:
 	automated_qa=(qa_mode and not "--visual-probe" in OS.get_cmdline_user_args()) or (dev_mode and "--dev-tools-qa" in OS.get_cmdline_user_args())
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--native-error-capture="):native_capture_directory=argument.trim_prefix("--native-error-capture=")
+	if "--native-capture-background" in OS.get_cmdline_user_args() and native_capture_directory.is_empty():
+		push_error("NATIVE_CAPTURE_SETUP_REFUSED: background requires isolated data");get_tree().quit(94);return
 	if not native_capture_directory.is_empty():
 		# Preserve the ordinary root/render path but never read/write owner data
 		# from this explicit diagnostic. The launcher supplies copied preferences.
 		if not native_capture_directory.is_absolute_path() or not FileAccess.file_exists(native_capture_directory.path_join("settings.cfg")):
 			push_error("NATIVE_CAPTURE_SETUP_REFUSED: isolated settings required");get_tree().quit(94);return
 		checkpoint_path=native_capture_directory.path_join("checkpoint.json")
+		if "--native-capture-background" in OS.get_cmdline_user_args():
+			get_tree().root.set_flag(Window.FLAG_NO_FOCUS,true)
+			get_tree().root.set_flag(Window.FLAG_MOUSE_PASSTHROUGH,true)
+			get_tree().root.position=Vector2i(-16000,-16000)
 	if (automated_qa and "--particle-error-hold" in OS.get_cmdline_user_args()) or not native_capture_directory.is_empty():
 		var evidence_directory:=native_capture_directory
 		for argument in OS.get_cmdline_user_args():
@@ -264,6 +270,11 @@ func _ready() -> void:
 	if not native_capture_directory.is_empty():
 		var observer=load("res://scripts/stability_resource_trace.gd").new()
 		observer.game=self;observer.output=native_capture_directory;observer.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(observer)
+		if "--native-capture-background" in OS.get_cmdline_user_args():
+			var capture=load("res://scripts/native_capture_session.gd").new();capture.game=self;capture.output=native_capture_directory
+			for argument in OS.get_cmdline_user_args():
+				if argument.begins_with("--native-capture-seconds="):capture.duration=clampf(float(argument.trim_prefix("--native-capture-seconds=")),30,600)
+			add_child(capture)
 	if qa_mode and not "--visual-probe" in OS.get_cmdline_user_args(): call_deferred("run_qa")
 
 func enter_deferred_title_diagnostic() -> void:
@@ -1031,7 +1042,7 @@ func _process(delta: float) -> void:
 	objective.text = current_objective()
 	var hit: Dictionary = player.target()
 	var next_prompt := ""
-	if physical.held:next_prompt = "Put down" if not physical.placement_ray().is_empty() else "Release"
+	if physical.held:next_prompt = "Put down" if not physical.placement_plan().is_empty() else "Release"
 	elif not hit.is_empty() and hit.collider.has_meta("loose_prop"):
 		if physical.can_carry(hit.collider):next_prompt = "Carry "+str(hit.collider.get_meta("prop_label"))
 	elif not hit.is_empty() and hit.collider.has_meta("interaction"):
@@ -1154,7 +1165,8 @@ func interact(id: String) -> void:
 		return
 	if doors.has(id):
 		if id == "basement" and not shed_read:
-			message("Locked. The brass key doesn't fit this one.")
+			message("That key doesn't fit this lock." if brass_key else "Locked. A small keyhole below the handle.")
+			sound("latch",doors.basement.global_position,-27)
 			return
 		doors[id].use()
 		return

@@ -73,6 +73,11 @@ func validate_health() -> void:
  var sample_root:=Node3D.new();add_child(sample_root)
  var sample_a: MeshInstance3D=g.box(sample_root,Vector3.ZERO,Vector3(.123,.456,.789),Color.WHITE)
  var sample_b: MeshInstance3D=g.box(sample_root,Vector3.ONE,Vector3(.123,.456,.789),Color.BLACK)
+ var valid_boxes:=is_instance_valid(sample_a) and is_instance_valid(sample_b)
+ check("box constructors return valid instances before dereference",valid_boxes)
+ if not valid_boxes:
+  push_error("HEALTH_BOX_CONTRACT_REFUSED: no null property reads or queue_free")
+  sample_root.queue_free();await g.qa_exit(1);return
  check("equal immutable box geometry shares one resource",sample_a.mesh==sample_b.mesh)
  check("shared geometry preserves separate materials and transforms",sample_a.material_override!=sample_b.material_override and sample_a.position!=sample_b.position and sample_a.mesh.size.is_equal_approx(Vector3(.123,.456,.789)))
  sample_root.queue_free()

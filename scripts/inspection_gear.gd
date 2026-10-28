@@ -70,14 +70,15 @@ func _physics_process(delta: float) -> void:
 	step_contact(delta)
 	step_power(delta)
 func step_power(delta: float,drain:=true) -> void:
+	# Winding needs a free hand; carrying must still drain a lit torch.
 	if winding>0:
-		if not Input.is_action_pressed("battery_replace"):winding=0;apply_light();return
+		if is_instance_valid(game.physical.held) or not Input.is_action_pressed("battery_replace"):winding=0;apply_light();game.presentation.show_battery_status(1.5);return
 		winding+=delta
 		if winding>=3.2:
-			data.charge=maxf(float(data.charge),25);winding=0;apply_light();game.save_game(true);game.presentation.notify("Backup charged / 25%")
+			data.charge=maxf(float(data.charge),25);winding=0;apply_light();game.save_game(true);game.presentation.show_battery_status(2.5);game.presentation.notify("Backup charged / 25%")
 		return
-	if Input.is_action_pressed("battery_replace") and int(data.spares)==0 and float(data.charge)<20:
-		winding=.001;apply_light();game.presentation.notify("Winding backup... keep holding");return
+	if not is_instance_valid(game.physical.held) and Input.is_action_pressed("battery_replace") and int(data.spares)==0 and float(data.charge)<20:
+		winding=.001;apply_light();game.presentation.show_battery_status(3.6);game.presentation.notify("Winding backup... keep holding");return
 	if drain and int(data.mode)!=0 and not data.get("contact_fault",false):
 		data.charge=maxf(0,float(data.charge)-delta*(UV_DRAIN if is_uv() else WHITE_DRAIN))
 		if float(data.charge)<=20 and not notified_low:
