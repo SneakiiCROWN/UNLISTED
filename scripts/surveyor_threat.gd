@@ -162,7 +162,20 @@ func can_see_player() -> bool:
 	var diff := target-from
 	if diff.length() > (12.0 if game.player.torch.visible else 8.0):return false
 	if diff.length() > 1.65 and -game.presence.global_basis.z.dot(diff.normalized()) < 0.30:return false
-	return clear_line(from,target) or clear_line(from,game.player.position+Vector3.UP*(.55 if game.player.crouched else 1.0))
+	return player_sight(from,target) or player_sight(from,game.player.position+Vector3.UP*(.55 if game.player.crouched else 1.0))
+
+func player_sight(from: Vector3,to: Vector3) -> bool:
+	if game.get_node("LivingRoomFinishes").blocks_sight(from,to):return false
+	# Closed transparent glazing stops bodies, not light. Never skip opaque
+	# walls/frames/doors, and retain the old solid test for hearing and attacks.
+	var ray:=PhysicsRayQueryParameters3D.create(from,to,1)
+	ray.exclude=[game.player.get_rid(),game.presence.get_rid()]
+	for i in 4:
+		var hit:=game.get_world_3d().direct_space_state.intersect_ray(ray)
+		if hit.is_empty():return true
+		if not hit.collider.get_meta("transparent_glass",false):return false
+		var skip: Array[RID]=ray.exclude;skip.append(hit.collider.get_rid());ray.exclude=skip
+	return false
 
 func hear(point: Vector3,loudness: float) -> void:
 	if state not in ["observe","investigate","search"] or grace > 0:return

@@ -4,6 +4,9 @@ extends Node3D
 var game: Node3D
 var cloth: ShaderMaterial
 var response := 0.0
+var curtain_tween: Tween
+var curtain_panels: Array=[]
+var curtain_control: StaticBody3D
 
 func build(g: Node3D) -> void:
 	game=g;name="LivingRoomFinishes"
@@ -27,6 +30,14 @@ func build(g: Node3D) -> void:
 	cloth=ShaderMaterial.new();cloth.shader=load("res://shaders/curtain_canvas.gdshader")
 	cloth.set_shader_parameter("canvas",load("res://assets/original/work_canvas.png"))
 	for z in [1.04,2.70]:curtain(g.lounge_contents,z)
+	# The cloth hangs from sewn tabs over the existing pole. A short real pull
+	# gives the player agency over the later off-screen change.
+	b.begin(g.lounge_contents,"CurtainPull")
+	b.tube("Pull cord",Vector3(7.12,2.55,1.00),Vector3(6.99,1.40,1.00),.003,"trim")
+	b.piece("Pull grip",Vector3(6.99,1.38,1.00),Vector3(.022,.07,.022),"trim")
+	b.finish()
+	curtain_control=g.collision(g.lounge_contents,Vector3(6.99,1.55,1.00),Vector3(.16,.40,.20),"lounge_curtains")
+	curtain_control.collision_layer=4
 	var sofa: Node3D=g.get_node("LoungeContents/LoungeSofa/CorrectedSofaVisual")
 	for mesh in g.all_meshes(sofa):
 		var fabric: StandardMaterial3D=g.texture_mat("res://assets/original/work_canvas.png",Color("666958")).duplicate()
@@ -68,24 +79,71 @@ func curtain(parent: Node3D,z: float) -> void:
 			for index in [i,i+1,i+13,i+1,i+14,i+13]:
 				surface.set_uv(Vector2((index%13)/12.0,(index/13)/8.0));surface.add_vertex(vertices[index])
 	surface.generate_normals()
+	# Tabs use the same UV displacement as the main panel, so they stay attached
+	# while it is drawn. The previous 7 cm unsupported gap is now bridged.
+	for col in [0,3,6,9,12]:
+		var u: float=col/12.0;var at: Vector3=vertices[col]
+		for point in [at+Vector3(0,0,-.008),at+Vector3(0,0,.008),at+Vector3(.02,.078,-.008),at+Vector3(0,0,.008),at+Vector3(.02,.078,.008),at+Vector3(.02,.078,-.008)]:
+			surface.set_uv(Vector2(u+(point.z-at.z)/.28,0));surface.add_vertex(point)
+	surface.generate_normals()
 	var mesh:=MeshInstance3D.new();mesh.name="FittedWindowCurtainLeft" if z<2 else "FittedWindowCurtainRight";mesh.mesh=surface.commit();mesh.material_override=cloth;mesh.extra_cull_margin=.95;parent.add_child(mesh)
+	curtain_panels.append({"node":mesh,"vertices":vertices,"left":z<2})
+
+func curtains_closed() -> bool:
+	return bool(game.events.get("curtains_manual",int(game.events.get("atmosphere",{}).get("used",{}).get("curtains_drawn",0))>0))
+
+func use_curtains() -> void:
+	if not game.lounge_contents.is_visible_in_tree():return
+	var close_:=not curtains_closed()
+	game.events.curtains_manual=close_
+	if is_instance_valid(curtain_tween):curtain_tween.kill()
+	if game.presentation.prefs.data.reduced_motion:cloth.set_shader_parameter("drawn",1.0 if close_ else 0.0)
+	else:
+		curtain_tween=create_tween().set_pause_mode(Tween.TWEEN_PAUSE_STOP).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		curtain_tween.tween_method(func(v:float):cloth.set_shader_parameter("drawn",v),float(cloth.get_shader_parameter("drawn")),1.0 if close_ else 0.0,.75)
+	var cue: AudioStreamPlayer3D=game.sound("cloth_handling",Vector3(7.1,2.45,2),-30)
+	game.sound_caption("Curtains rustle.",1.8,"LOUNGE WINDOW",cue)
+	game.save_game(true)
+
+func blocks_sight(from: Vector3,to: Vector3) -> bool:
+	# Intersect the actual shader-deformed panels, including the real centre gap.
+	# No invisible wall, player collision or change to the enemy's hearing/path.
+	if not game.lounge_contents.is_visible_in_tree():return false
+	if not AABB(Vector3(6.85,.44,1.02),Vector3(.30,2.06,1.99)).intersects_segment(from,to):return false
+	var amount: float=cloth.get_shader_parameter("drawn")
+	var ripple: float=cloth.get_shader_parameter("response")
+	for panel in curtain_panels:
+		var deformed:=PackedVector3Array()
+		for i in panel.vertices.size():
+			var p: Vector3=panel.vertices[i];var u: float=(i%13)/12.0;var v: float=(i/13)/8.0
+			p.z=lerpf(p.z,(1.04+u*.92) if panel.left else (2.04+u*.94),amount);p.x+=ripple*v*v
+			deformed.append(panel.node.to_global(p))
+		for row in 8:
+			for col in 12:
+				var i:=row*13+col
+				if Geometry3D.segment_intersects_triangle(from,to,deformed[i],deformed[i+1],deformed[i+13])!=null or Geometry3D.segment_intersects_triangle(from,to,deformed[i+1],deformed[i+14],deformed[i+13])!=null:return true
+	return false
 
 func respond_window() -> void:
 	if not game.presentation.prefs.data.reduced_motion:response=2.4
 
 func reset_response() -> void:
 	response=0
+	if is_instance_valid(curtain_tween):curtain_tween.kill()
 	if cloth:
 		cloth.set_shader_parameter("response",0.0)
-		cloth.set_shader_parameter("drawn",1.0 if int(game.events.get("atmosphere",{}).get("used",{}).get("curtains_drawn",0))>0 else 0.0)
+		cloth.set_shader_parameter("drawn",1.0 if curtains_closed() else 0.0)
 
 func draw_curtains() -> void:
 	# A persistent off-screen dressing change, not an animation exemption.
 	# Reduced motion sees the same completed state; nothing slides on camera.
+	if is_instance_valid(curtain_tween):curtain_tween.kill()
+	game.events.curtains_manual=true
 	cloth.set_shader_parameter("drawn",1.0)
 
 func _process(delta: float) -> void:
 	if not is_instance_valid(game):return
+	curtain_control.collision_layer=4 if game.started and game.lounge_contents.is_visible_in_tree() else 0
 	if not game.started or game.ended:reset_response();return
 	if game.menu_open:return
 	response=maxf(0,response-delta)

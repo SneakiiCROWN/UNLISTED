@@ -12,6 +12,12 @@ var history: Array=[]
 var emitted: Array=[]
 var skipped_late: Array=[]
 var latch_clock:=-1.0
+var ceiling_active:=false
+var ceiling_elapsed:=0.0
+var ceiling_distance:=0.0
+var ceiling_steps:=0
+var ceiling_previous:=Vector3.ZERO
+var ceiling_pending: Array=[]
 const WINDOW:=Vector3(7.47,1.6,2)
 const STEPS:=Vector3(-4.9,.03,-7.8)
 func _ready() -> void:
@@ -19,6 +25,7 @@ func _ready() -> void:
 	restore()
 func restore() -> void:
 	reset_latch()
+	reset_ceiling()
 	var room: Node=game.get_node_or_null("LivingRoomFinishes")
 	if room:room.reset_response()
 	for source in sources:
@@ -29,6 +36,7 @@ func restore() -> void:
 func set_seed(value: int) -> void:
 	policy.restore({},value);game.events.atmosphere=policy.data;restore()
 func response_blocked() -> bool:
+	if ceiling_active:return true
 	# Shared reservation rules for subtle authored responses, including outdoors.
 	if float(policy.data.get("quiet",0))>0:return true
 	return latch_clock>=0 or (is_instance_valid(game.final_account) and game.final_account.pending()) or not game.started or game.menu_open or game.ended or game.threat.active() or game.events.get("threat_pending",false) or game.presence.visible or game.horror.beat!="" or game.horror.audition!="" or game.horror.echo_index>=0 or game.recount.active or game.chapter.active or game.chapter.watch_clock>=0 or game.chapter.return_clock>=0 or game.impossible_room.active or not game.dead_line.sequence.is_empty() or game.dead_line.quiet>0 or game.maintenance.surprise_armed or game.spare_place.hunt_running or game.last_call.busy() or game.events.get("exit_blackout_running",false) or game.events.get("exit_blackout_pending",false) or game.events.get("inspection_search_pending",false) or game.events.get("witness_echo_pending",false) or game.events.get("departure_pending","")!="" or not queue.is_empty() or sources.any(func(a):return is_instance_valid(a) and a.playing)
@@ -51,7 +59,7 @@ func eligible() -> Array[String]:
 	# The house's aftermath belongs to a witnessed, restored room, never a
 	# prediction of a room the player has not seen or the copied bedroom.
 	if game.events.get("impossible_room_resolved",false) and game.events.get("impossible_room_revisited",false):
-		if not game.impossible_room.inside(p) and not curtain_visible():result.append("curtains_drawn")
+		if not game.impossible_room.inside(p) and not curtain_visible() and not game.get_node("LivingRoomFinishes").curtains_closed():result.append("curtains_drawn")
 		if game.impossible_room.inside(p):result.append("ceiling_return")
 	return result
 
@@ -64,7 +72,7 @@ func curtain_visible() -> bool:
 	return false
 func request(id: String) -> bool:
 	# F1/native QA uses the same safety and spatial eligibility as normal scheduling.
-	if blocked() or not queue.is_empty() or float(policy.data.get("quiet",0))>0 or not id in eligible():return false
+	if blocked() or ceiling_active or not queue.is_empty() or float(policy.data.get("quiet",0))>0 or not id in eligible():return false
 	for event in policy.EVENTS:
 		if event.id==id and int(policy.data.used.get(id,0))>=event.limit:return false
 	policy.consume(id);game.events.atmosphere=policy.data
@@ -85,9 +93,8 @@ func request(id: String) -> bool:
 		game.get_node("LivingRoomFinishes").draw_curtains()
 		queue=[{"at":0.0,"where":Vector3(7.20,2.55,2.0),"sound":"latch","db":-36.0,"pitch":.68,"caption":"Curtain rings click in the lounge.","source":"LOUNGE WINDOW"}]
 	elif id=="ceiling_return":
-		for i in 4:
-			queue.append({"at":i*.88,"where":Vector3(3.1+i*.9,2.88,-1.7+i*1.1),"sound":"step","db":-32.0-i*.7,"pitch":.81+i*.018,"caption":"Footsteps cross above the lounge." if i==0 else "","source":"OVERHEAD"})
-		queue.append({"at":4.6,"where":Vector3(6.3,2.75,2.3),"sound":"foley/drop_wood_2","db":-37.0,"pitch":.65})
+		# Answer actual player movement rather than running a fixed sound train.
+		reset_ceiling();ceiling_active=true;ceiling_previous=game.player.position
 	else:
 		var tin: RigidBody3D=game.physical.props.can0
 		tin.sleeping=false;tin.apply_central_impulse(Vector3(.015,.015,-.4))
@@ -95,6 +102,7 @@ func request(id: String) -> bool:
 	var end:=0.0
 	for cue in queue:end=maxf(end,float(cue.at))
 	policy.data.quiet=end+5.0
+	if ceiling_active:policy.data.quiet=12.0
 	history.append({"id":id,"time":game.time_in_game,"player":game.player.position})
 	if is_instance_valid(game.dev_tools):game.dev_tools.log_event("ambient_event",{"id":id,"seed":policy.data.seed,"draw":policy.data.draw})
 	game.save_game(true)
@@ -105,9 +113,13 @@ func _physics_process(delta: float) -> void:
 	var held_off:=blocked()
 	if held_off:
 		reset_latch()
+		reset_ceiling()
 		for source in sources:
 			if is_instance_valid(source):source.stop()
 		queue.clear()
+	if ceiling_active:
+		update_ceiling(delta)
+		return
 	if latch_clock>=0:update_latch(delta)
 	if not queue.is_empty():
 		elapsed+=delta
@@ -133,6 +145,33 @@ func _physics_process(delta: float) -> void:
 	var next: String=policy.tick(delta,available,held_off or float(policy.data.get("quiet",0))>0)
 	game.events.atmosphere=policy.data
 	if next!="":request(next)
+
+func reset_ceiling() -> void:
+	ceiling_active=false;ceiling_elapsed=0;ceiling_distance=0;ceiling_steps=0;ceiling_pending.clear()
+
+func update_ceiling(delta: float) -> void:
+	if not game.impossible_room.inside(game.player.position):reset_ceiling();return
+	ceiling_elapsed+=delta
+	var travelled: float=Vector2(game.player.position.x-ceiling_previous.x,game.player.position.z-ceiling_previous.z).length()
+	ceiling_previous=game.player.position
+	if travelled<.5:ceiling_distance+=travelled
+	# A single delayed contact can finish after Eli stops. Standing still never
+	# manufactures a whole walking sequence. No actor, forced camera or chase.
+	if ceiling_distance>=.62 and ceiling_steps<4 and ceiling_pending.is_empty():
+		ceiling_distance=0
+		ceiling_pending.append({"at":ceiling_elapsed+.38,"where":Vector3(clampf(game.player.position.x,2.0,7.0),2.88,clampf(game.player.position.z,-2.3,3.4))})
+	if not ceiling_pending.is_empty() and ceiling_elapsed>=float(ceiling_pending[0].at):
+		var item: Dictionary=ceiling_pending.pop_front()
+		if ceiling_elapsed-float(item.at)<=.65:
+			var cue: AudioStreamPlayer3D=game.sound("step",item.where,-31.5-ceiling_steps*.6)
+			cue.pitch_scale=.83+ceiling_steps*.025;sources.append(cue)
+			emitted.append({"where":item.where,"playing":cue.playing,"sample":cue.get_meta("sample"),"kind":"answering_step"})
+			if emitted.size()>8:emitted.pop_front()
+			if ceiling_steps==0:game.sound_caption("A footstep overhead.",2.2,"OVERHEAD",cue)
+		ceiling_steps+=1
+		if ceiling_steps==4:policy.data.quiet=5.0;ceiling_active=false
+	if ceiling_elapsed>13:
+		policy.data.quiet=maxf(float(policy.data.quiet),3.0);reset_ceiling()
 
 func reset_latch() -> void:
 	latch_clock=-1

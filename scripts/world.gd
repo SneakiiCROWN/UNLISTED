@@ -146,6 +146,7 @@ func _ready() -> void:
 	qa_mode = qa_mode or "--missing-minute-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--surveyor-assets-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--house-quality-qa" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--house-remembers-qa" in OS.get_cmdline_user_args()
 	# Refuse mistyped automation before creating the world or reading/writing a
 	# normal case. A harness typo must never fall through to desktop gameplay.
 	var automation_requested:=false
@@ -1003,6 +1004,7 @@ func open_casebook() -> void:
 	presentation.inspect_document("FIELD NOTES / RECORDS EXAMINED",text_)
 
 func interaction_name(id: String) -> String:
+	if id=="lounge_curtains":return "Draw curtains" if not get_node("LivingRoomFinishes").curtains_closed() else "Open curtains"
 	if id=="account_receipt":return "Take my receipt"
 	if id=="account_compare":return "Compare the stock label"
 	if id=="account_car":return "Stow the papers and leave" if final_account.phase()=="ready" else "Return to the receipt"
@@ -1058,6 +1060,7 @@ func try_interact() -> void:
 		interact(str(hit.collider.get_meta("interaction")))
 
 func interact(id: String) -> void:
+	if id=="lounge_curtains":get_node("LivingRoomFinishes").use_curtains();return
 	if id.begins_with("account_"):final_account.use(id);return
 	if id.begins_with("call_"):last_call.use(id);return
 	if id.begins_with("exit_"):service_exit.use(id);return
@@ -1389,6 +1392,7 @@ func checkpoint_usable(data: Variant) -> bool:
 	for key in ["events","doors","door_swing"]:
 		if data.has(key) and not data[key] is Dictionary:return false
 	var saved_events: Dictionary=data.get("events",{})
+	if saved_events.has("curtains_manual") and not saved_events.curtains_manual is bool:return false
 	if saved_events.has("carried_prop") and not saved_events.carried_prop is String:return false
 	if saved_events.has("remembered_cup"):
 		var remembered: Variant=saved_events.remembered_cup
@@ -1483,6 +1487,9 @@ func run_qa() -> void:
 		await test.run(self);return
 	if "--house-quality-qa" in OS.get_cmdline_user_args():
 		var test=load("res://scripts/house_quality_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
+		await test.run(self);return
+	if "--house-remembers-qa" in OS.get_cmdline_user_args():
+		var test=load("res://scripts/house_remembers_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
 		await test.run(self);return
 	if "--hands-qa" in OS.get_cmdline_user_args():
 		var test = load("res://scripts/hands_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
