@@ -27,3 +27,11 @@ No gameplay, character, graphics, shader, audio mix, hardware, driver or Windows
 The original menu null-execution crash, particle ownership failure and impossible-room Vulkan-path access violation are not proved to share a cause. A clean observation cannot clear any intermittent fault. Separate Python native failures without UNLISTED remain competing evidence, not a diagnosis of hardware or software outside the game. No rejected artwork is promoted and no public release is authorised.
 
 Evidence: Checkpoints/20261028_nightmare_stability beside the existing project. Full process-memory dumps stay private; representative screenshots and sanitised run results may accompany a private QA package.
+
+## Follow-up observations and current session
+
+OrdinaryCapture02 observed 420.424 seconds without the rejected owner or a spontaneous native crash. It then reached its explicitly forced watchdog deadline (exit1). It is NOT a clean Quit pass, stability clearance or proof the error is fixed. The full-memory attachment was not triggered. Original failed evidence is preserved separately; there is no repeated-run-until-pass replacement.
+
+After the owner resumed MW4, no further foreground actions were taken. Capture helpers now accept --mute to change only isolated/copied QA preferences. Owner settings, other applications and system volume are untouched. MutedRoom03 uses the actual Candidate01 Windows export, preconstructed private viewport and Original1080p:52 checks, zero failures/errors/warnings,74.843928 seconds, exit0 and owner hashes unchanged. It covers physical transformation, input-driven traversal, room save/load, Surveyor contact, death/retry and restoration. It is a MUTED background regression with another game running, not audio listening or performance acceptance. The existing simulated-time contact allowance remains unchanged.
+
+A hidden/muted title capture requests PRIVATE full memory only after the real particle error, preserving the root foreground/QA-viewport distinction. Audio mute and MW4 concurrency are explicit test conditions. No public release, character change or speculative workaround is introduced.

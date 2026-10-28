@@ -1,8 +1,8 @@
 """Ordinary root/render startup with copied data; attach only after a real error."""
 from pathlib import Path
-import argparse,hashlib,json,os,shutil,subprocess,time
+import argparse,hashlib,json,os,re,shutil,subprocess,time
 G=Path(__file__).resolve().parents[1]
-p=argparse.ArgumentParser(description=__doc__);p.add_argument('--exe',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--seconds',type=int,default=150);p.add_argument('--full-dump',action='store_true',help='Private process memory; never publish dumps');a=p.parse_args()
+p=argparse.ArgumentParser(description=__doc__);p.add_argument('--exe',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--seconds',type=int,default=150);p.add_argument('--full-dump',action='store_true',help='Private process memory; never publish dumps');p.add_argument('--mute',action='store_true',help='Mute only copied diagnostic settings; not an audio acceptance run');a=p.parse_args()
 E=a.exe.resolve();O=a.output.resolve();assert E.is_file() and not O.exists() and O.is_relative_to(G.parent/'Checkpoints') and 30<=a.seconds<=600
 running=subprocess.check_output(['tasklist','/fi','IMAGENAME eq UNLISTED.exe','/fo','csv','/nh'],text=True);assert '"UNLISTED.exe"' not in running,'No GPU-test overlap permitted'
 O.mkdir(parents=True);owner=Path(os.environ['APPDATA'])/'UNLISTED';files=[owner/n for n in ['settings.cfg','checkpoint.json']]
@@ -10,8 +10,10 @@ sha=lambda f:hashlib.sha256(f.read_bytes()).hexdigest();hashes=lambda:{str(f):sh
 assert files[0].is_file(),'A copied settings file is required for this matched control'
 for f in files:
  if f.is_file():shutil.copy2(f,O/f.name)
+if a.mute:
+ cfg=O/'settings.cfg';text=cfg.read_text(encoding='utf8');text=re.sub(r'(?m)^(master|volume)\s*=.*$',lambda m:m[1]+'=0.0',text);cfg.write_text(text,encoding='utf8')
 args=[str(E),'--log-file',str(O/'game.log'),'--','--native-error-capture='+str(O)]
-(O/'launch.json').write_text(json.dumps({'args':args,'exe_sha256':sha(E),'owner_before':before,'scope':'Normal main scene/root Window/render path and copied owner preferences/save. No QA viewport, startup debugger, rendering override or input injection. Explicit logger and resource observer; a matching real error deliberately holds its caller for late attach.'},indent=2),encoding='utf8')
+(O/'launch.json').write_text(json.dumps({'args':args,'exe_sha256':sha(E),'owner_before':before,'muted_copied_settings':a.mute,'scope':'Normal main scene/root Window/render path and copied owner preferences/save. No QA viewport, startup debugger, rendering override or input injection. Explicit logger and resource observer; a matching real error deliberately holds its caller for late attach.'},indent=2),encoding='utf8')
 start=time.monotonic();attached=False;forced=False;observed=[];seen=set()
 with (O/'stdout.log').open('w',encoding='utf8') as f:
  child=subprocess.Popen(args,cwd=E.parent,stdout=f,stderr=subprocess.STDOUT)
