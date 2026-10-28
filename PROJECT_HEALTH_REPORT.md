@@ -36,3 +36,22 @@ The original idle-menu null execution, particle-owner rejection and impossible-r
 Focused settings validation passes43 checks with owner hashes unchanged. Final profile, integration, room, pursuit/retry and earned-ending checks are recorded separately; no fresh uninterrupted full investigation or human artistic/story approval is claimed. All automated runs stay muted, off-screen and input-isolated while the owner uses the PC. New source remains a development candidate until the selected final Windows package is independently extracted and checked.
 
 Private detailed inventory, cleanup manifest, native results, screenshots, performance samples and original failures: Checkpoints/20261029_project_health. No process dump or licensed raw asset is pushed to public GitHub. Final checkpoint, package hashes and source-backup locations are recorded in that directory's DELIVERY.json.
+
+## Final selected candidate and verification
+
+Selected runtime6b9f3b6 / Candidate04, executable SHA25651a23882a8c8a85b55f3d7e9aaa4675ab4432029d150619798b6c07442eec173. Final executable123,052,672 bytes versus140,997,920 baseline:17,945,248 bytes smaller (about12.7%). Every one of346 source-asset hashes still matches the pre-edit inventory. Player-only art-flag negative control exits95 with ART_STUDY_NOT_PACKAGED before world construction, preserving owner files; this intentional refusal is not a game crash.
+
+| Controlled workload | Before | Final |
+|---|---:|---:|
+| Thirty settings refreshes, Balanced |54.473ms|1.278ms|
+| Original menu draw calls |15,582|12,363|
+| Original front approach draw calls |14,742|11,359|
+| Balanced menu draw calls |15,799|12,771|
+| Balanced front approach draw calls |14,591|11,474|
+| Enhanced front approach draw calls |14,590|11,473|
+
+Front-view primitive counts are unchanged in all three profiles. Tracked engine rendering allocation at menu falls by664,336 bytes; this is not a total-RAM/VRAM claim. Raw per-view averages, medians, p95/p99 frame intervals and process/physics monitors are in PERFORMANCE.csv and HEALTH_COMPARISON.json. Frame-time comparisons are variable under concurrent MW4 load, so no guaranteed aggregate FPS improvement is asserted. The remaining roughly12k menu draw calls warrant future measured work; this pass does not pretend rendering is fully optimised.
+
+Selected final native results:43 health checks; all three nine-view profiles pass;1440p integration19 checks;3440x1440 impossible-room transformation, physical contact, save/load, death/retry and recovery52 checks; both earned ending branches70 checks at1080p from an existing naturally earned investigation source. All selected results exit0 without logged errors/warnings and with owner hashes unchanged. Their coverage is segmented, not a fresh uninterrupted full investigation. Native captures reviewed include matched front/porch views and cellar; further screenshots remain inspectable in EVIDENCE.html. Original and all newly failed logs/builds remain separate. Independent extraction/launch results and final backup hashes are recorded in DELIVERY.json after packaging.
+
+No new foreground menu stability clearance, final vocal design, human listening review, broad narrative rewrite or Surveyor-art acceptance is claimed. Foreground matched full-memory crash reproduction remains deferred while the owner is using MW4; background tests cannot replace it. Immediate priorities: obtain the rejected native RID and owner history; analyse the preserved new null-class dump separately; run a controlled GPU/working-set profile when the PC is otherwise idle; extend semantic branch coverage and physical clue/readability checks without rewriting working systems.
