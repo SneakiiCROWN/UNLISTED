@@ -1,11 +1,11 @@
 {
   "version": "0.10.9-dev",
-  "milestone": "Forensic repair and native baseline recovery",
-  "private_source_commit": "9e090848bb26dbde4ab9d3f1d39fb25f136fa01f",
-  "github_source_commit": "c18dfb82432897c0d9e1cb0749f4a216f283fb15",
+  "milestone": "The Player Experience",
+  "private_source_commit": "e8d52600708ff8b78fc089c83d4f3332bc577acb",
+  "github_source_commit": "e8e3349f652cdc949ad8526204aeff17db34b1f9",
   "latest_source_is_verified": false,
   "source_commit_scope": "These hashes identify the verified runtime/source change. Subsequent checkpoint commits update metadata only. Complete source is pinned by the development tag.",
-  "development_tag": "dev-forensic-repair-20261026",
+  "development_tag": "dev-v0.10.9-player-experience-20261026",
   "verification": "PLAYER_EXPERIENCE_VERIFICATION.md",
   "previous_verified_milestone": {
     "version": "0.10.6-dev",
@@ -110,13 +110,13 @@
     "controlled_six_minute_repeat": "passed; does not clear actual owner failure"
   },
   "owner_playtest_ready": false,
-  "private_complete_source_checkpoint": "9e090848bb26dbde4ab9d3f1d39fb25f136fa01f",
-  "owner_idle_crash": "Unresolved; two passing long observations are not proof of a fix",
-  "public_release": "Unchanged; no playable release authorised",
-  "github_source_commit_scope": "Previous confirmed source checkpoint; current HEAD and dev-forensic-repair-20261026 carry this recovery update.",
-  "runtime_code_commit": "4d6e32c92ba14573cb6b119997cf3a02622ddbc6",
-  "ordinary_forensic_idle_seconds": [
-    1000.313,
-    975.281
-  ]
+  "latest_private_continuation": {
+    "milestone": "House Answers",
+    "runtime_source": "29db4fbf64c3b63b30937fdc0b88e8a3688f4c3a",
+    "development_tag": "dev-house-answers-20261028",
+    "report": "HOUSE_ANSWERS_INTEGRATION.md",
+    "status": "PRIVATE QA - STABILITY NOT CLEARED",
+    "active_character": "original Surveyor; both studies remain unapproved",
+    "public_release": "unchanged v0.10.0"
+  }
 }

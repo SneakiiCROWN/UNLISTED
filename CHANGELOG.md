@@ -1,3 +1,18 @@
+# PRIVATE v0.10.9-dev / House Answers — 28 October
+
+- Place carried household/workshop props upright on reachable clear surfaces;
+  unsupported interaction still drops them, with throwing and rotation retained.
+- Selected physical sounds soften through solid architecture without changing
+  Surveyor hearing, temporary vocal slots, weather, music or user volume settings.
+- The existing unseen mug return respects encounter/quiet reservations, saves
+  immediately, and leaves a brief quiet aftermath with actual positional contact.
+- Title, ending and arrival weather follows the rendering camera; ordinary
+  gameplay shelter logic remains intact. Late optional cues no longer burst in
+  reverse order after a long simulation gap.
+- Private Windows evidence and recovery scope: HOUSE_ANSWERS_INTEGRATION.md.
+  Prior owner crash and null-particle renderer failure remain unresolved.
+  No public release or replacement-character promotion.
+
 # PRIVATE v0.10.9-dev / The Player Experience
 
 Surveyor searches now check bounded clear approaches to the last heard/seen

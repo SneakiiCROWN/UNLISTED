@@ -8,6 +8,16 @@ Eli Ward takes a night call at 17 Briar Lane, the address on his father Simon's 
 
 ## Current private development / 0.10.9-dev
 
+**House Answers / 28 October:** careful carried-object set-down, physical sounds
+softened by solid walls, a save-safe quiet aftermath for the existing mug return,
+and title/ending rain tied to the active camera. See
+[actual changes, Windows evidence and limitations](HOUSE_ANSWERS_INTEGRATION.md).
+The original Surveyor stays active; both new art studies remain unapproved.
+This is private integration work, with the owner menu crash and intermittent
+null-particle renderer error still unresolved. Public v0.10.0 is preserved.
+
+### Preserved Player Experience milestone
+
 The Player Experience gives the retained Surveyor a bounded, physical search
 around its last heard/seen point, with listening pauses and purposeful door use.
 The recorder's keys, reels and meter make recorded playback visibly distinct
