@@ -13,6 +13,7 @@ func run(current: Node) -> void:
  check("cellar feedback does not assume an uncollected key",not "key doesn't fit" in g.message_info.text and "keyhole" in g.message_info.text)
  g.brass_key=true;g.interact("basement")
  check("cellar feedback acknowledges an unsuitable held key","doesn't fit" in g.message_info.text)
+ g.presentation.clear_transients();g.subtitle.text="";g.caption_until=g.time_in_game
  var body: RigidBody3D=await pickup_fixture("work_tape")
  g.player.position=Vector3(-18.10,.03,-14.9);g.player.velocity=Vector3.ZERO
  var plan: Dictionary={}

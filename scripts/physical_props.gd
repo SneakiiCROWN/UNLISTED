@@ -156,7 +156,7 @@ func use() -> bool:
 		game.events.remembered_cup = [body.position.x,body.position.y,body.position.z]
 	if not reminded and game.presentation.prefs.data.reminders:
 		reminded = true
-		game.presentation.notify("X PLACE OR RELEASE / RT THROW / HOLD LT + RIGHT STICK TO ROTATE" if game.controller.used else "E PLACE OR RELEASE / LEFT MOUSE THROW / HOLD R TO ROTATE")
+		game.presentation.notify("X PLACE / RELEASE   RT THROW\nLT + RIGHT STICK ROTATES" if game.controller.used else "E PLACE / RELEASE   CLICK THROW\nHOLD R + MOVE MOUSE TO ROTATE")
 	return true
 
 func placement_ray() -> Dictionary:

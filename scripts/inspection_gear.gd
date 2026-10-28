@@ -45,7 +45,7 @@ func status() -> void:
 	if data.get("contact_fault",false):game.presentation.notify("Loose contact. "+tap_instruction())
 func replace_pack() -> void:
 	if game.player.viewmodel.replacing_pack():return
-	if is_instance_valid(game.physical.held):game.presentation.notify("I need a free hand to change the battery.");return
+	if is_instance_valid(game.physical.held):game.presentation.notify("I need a free hand for the torch.");return
 	if int(data.spares)<=0:
 		game.presentation.notify("No spare batteries. Hold to wind the backup." if float(data.charge)<20 else "No spare batteries. The backup can be wound when charge is low.");return
 	if float(data.charge)>95:game.presentation.notify("Battery is still full.");return
