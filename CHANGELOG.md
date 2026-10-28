@@ -1,3 +1,12 @@
+# PRIVATE v0.10.9-dev / Sightline Continuity — 28 October
+
+- Unify optical cover across Surveyor, staged sightings and environmental observation; actual wooden window frames remain opaque without new physical barriers.
+- Keep watched figures present through transparent glass; close sealed panes use living watch animation rather than empty grabs.
+- Match B-toggle crouch detection to held crouch using actual posture.
+- Protect visible mug source/destination and partial screen-edge views before its saved once-only return.
+- Native 1080p/1440p/ultrawide feature fixtures pass after correcting the coarse ultrawide QA sweep. Existing threat, ambient/dread and earned ending branches pass separately.
+- **FAILED native acceptance:** impossible-room actor scenario hit a fresh 0xC0000005 Vulkan-path crash. Missing-particle error also reproduced without handoff. Both remain unresolved; private diagnostic candidate only. Prior verified build/release preserved.
+
 # PRIVATE v0.10.9-dev / The House Remembers — 28 October
 
 - Existing lounge curtains gain a supported physical pull, short animation,

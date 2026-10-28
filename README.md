@@ -8,6 +8,8 @@ Eli Ward takes a night call at 17 Briar Lane, the address on his father Simon's 
 
 ## Current private development / 0.10.9-dev
 
+**Sightline Continuity / 28 October:** shared glass/frame/curtain optics, watched-actor and mug protection, close-pane behaviour and controller crouch parity. **Native acceptance FAILED:** a fresh Vulkan-path access violation and no-handoff particle error remain unresolved. This is private diagnostic development, not a new verified release. See [actual checks and failures](SIGHTLINE_CONTINUATION.md).
+
 **The House Remembers / 28 October:** use the existing lounge curtains, retain
 your choice after the house draws them, and hear the restored room answer actual
 movement. Surveyor vision now distinguishes transparent glass from opaque cloth;

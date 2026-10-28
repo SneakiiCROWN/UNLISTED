@@ -77,12 +77,17 @@ func run(current: Node) -> void:
 	check("mug is optically observed through the actual window",g.physical.placement_visible(cup,cup.transform),"cup="+str(cup.position))
 	check("watched mug cannot relocate through glass",not g.physical.repeat_placement() and not g.events.get("cup_repeated",false))
 	await shot("S03_observed_mug")
-	var centre_was_outside:=false
 	var camera_rotation: Vector3=g.player.camera.rotation
-	for angle in range(0,100):
-		g.player.camera.rotation=camera_rotation+Vector3(0,deg_to_rad(angle),0)
-		if not g.get_viewport().get_visible_rect().has_point(g.player.camera.unproject_position(cup.global_position)) and g.physical.placement_visible(cup,cup.transform):
-			centre_was_outside=true;break
+	# A one-degree sweep can skip the entire tiny prop on an ultrawide view.
+	# Find the frustum boundary rather than weakening visibility or the assertion.
+	var low:=0.0;var high:=PI*.5
+	for i in 28:
+		var angle: float=(low+high)*.5
+		g.player.camera.rotation=camera_rotation+Vector3(0,angle,0)
+		if g.get_viewport().get_visible_rect().has_point(g.player.camera.unproject_position(cup.global_position)):low=angle
+		else:high=angle
+	g.player.camera.rotation=camera_rotation+Vector3(0,high+.00001,0)
+	var centre_was_outside: bool=not g.get_viewport().get_visible_rect().has_point(g.player.camera.unproject_position(cup.global_position)) and g.physical.placement_visible(cup,cup.transform)
 	check("partially visible mug remains protected at screen edge",centre_was_outside and not g.physical.repeat_placement())
 	g.player.position=Vector3(0,.03,-5);g.player.camera.look_at(Vector3(0,1.5,-8));await wait(.2);g.ambient_director.policy.data.quiet=0
 	check("unseen safe mug return remains possible",g.physical.repeat_placement(),"blocked="+str(g.ambient_director.response_blocked())+" cup="+str(cup.position))
