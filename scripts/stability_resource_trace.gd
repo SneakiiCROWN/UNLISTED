@@ -8,7 +8,7 @@ var samples: FileAccess
 var lifecycle: FileAccess
 var paths: Dictionary={}
 func _ready() -> void:
-	assert(game.automated_qa and output.is_absolute_path())
+	assert((game.automated_qa or not game.native_capture_directory.is_empty()) and output.is_absolute_path())
 	DirAccess.make_dir_recursive_absolute(output)
 	samples=FileAccess.open(output.path_join("resource_samples.jsonl"),FileAccess.WRITE)
 	lifecycle=FileAccess.open(output.path_join("resource_lifecycle.jsonl"),FileAccess.WRITE)

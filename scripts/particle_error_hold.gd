@@ -1,5 +1,5 @@
 extends Logger
-# Explicit isolated-QA instrument. Nothing is registered during ordinary play.
+# Explicit diagnostic instrument. Unflagged ordinary play never registers it.
 # No scene access from logger callbacks, which may run on any engine thread.
 var output: String
 var guard:=Mutex.new()

@@ -87,6 +87,7 @@ var foley_index: Dictionary = {}
 var spatial_sound_field: Node
 var optical_frames: Array[MeshInstance3D]=[]
 var particle_error_logger: Logger
+var native_capture_directory:=""
 var materials: Dictionary = {}
 var roomtone: AudioStreamPlayer3D
 var fuse_mesh: Node3D
@@ -164,10 +165,18 @@ func _ready() -> void:
 		push_error("UNKNOWN_QA_MODE: refusing normal startup for unrecognised automation")
 		get_tree().quit(93);return
 	automated_qa=(qa_mode and not "--visual-probe" in OS.get_cmdline_user_args()) or (dev_mode and "--dev-tools-qa" in OS.get_cmdline_user_args())
-	if automated_qa and "--particle-error-hold" in OS.get_cmdline_user_args():
-		var evidence_directory:=""
+	for argument in OS.get_cmdline_user_args():
+		if argument.begins_with("--native-error-capture="):native_capture_directory=argument.trim_prefix("--native-error-capture=")
+	if not native_capture_directory.is_empty():
+		# Preserve the ordinary root/render path but never read/write owner data
+		# from this explicit diagnostic. The launcher supplies copied preferences.
+		if not native_capture_directory.is_absolute_path() or not FileAccess.file_exists(native_capture_directory.path_join("settings.cfg")):
+			push_error("NATIVE_CAPTURE_SETUP_REFUSED: isolated settings required");get_tree().quit(94);return
+		checkpoint_path=native_capture_directory.path_join("checkpoint.json")
+	if (automated_qa and "--particle-error-hold" in OS.get_cmdline_user_args()) or not native_capture_directory.is_empty():
+		var evidence_directory:=native_capture_directory
 		for argument in OS.get_cmdline_user_args():
-			if argument.begins_with("--evidence="):evidence_directory=argument.trim_prefix("--evidence=")
+			if automated_qa and argument.begins_with("--evidence="):evidence_directory=argument.trim_prefix("--evidence=")
 		assert(evidence_directory.is_absolute_path())
 		if evidence_directory.is_absolute_path():
 			DirAccess.make_dir_recursive_absolute(evidence_directory)
@@ -246,6 +255,9 @@ func _ready() -> void:
 	elif "--dev-tools-qa" in OS.get_cmdline_user_args():
 		print("DEV_RELEASE_PROTECTED: development flag cannot enable tools or redirect saves")
 		call_deferred("qa_exit",0)
+	if not native_capture_directory.is_empty():
+		var observer=load("res://scripts/stability_resource_trace.gd").new()
+		observer.game=self;observer.output=native_capture_directory;observer.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(observer)
 	if qa_mode and not "--visual-probe" in OS.get_cmdline_user_args(): call_deferred("run_qa")
 
 func enter_deferred_title_diagnostic() -> void:

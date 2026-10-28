@@ -6,6 +6,7 @@ var active := 0
 var report: Dictionary = {}
 
 static func preferences_path(game: Node) -> String:
+	if not game.native_capture_directory.is_empty():return game.native_capture_directory.path_join("settings.cfg")
 	if game.qa_mode:
 		var dir := ProjectSettings.globalize_path("res://qa") if OS.has_feature("editor") else OS.get_executable_path().get_base_dir().path_join("QA")
 		return dir.path_join("presentation_settings.cfg")
