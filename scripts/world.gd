@@ -84,6 +84,7 @@ var message_history: Array = []
 var pulse_time := 0.0
 var resources: Dictionary = {}
 var foley_index: Dictionary = {}
+var spatial_sound_field: Node
 var materials: Dictionary = {}
 var roomtone: AudioStreamPlayer3D
 var fuse_mesh: Node3D
@@ -144,6 +145,7 @@ func _ready() -> void:
 	qa_mode = qa_mode or "--investigation-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--missing-minute-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--surveyor-assets-qa" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--house-quality-qa" in OS.get_cmdline_user_args()
 	# Refuse mistyped automation before creating the world or reading/writing a
 	# normal case. A harness typo must never fall through to desktop gameplay.
 	var automation_requested:=false
@@ -844,6 +846,10 @@ func sound(name_: String, pos: Vector3, db := -20.0, looping := false) -> AudioS
 	if nearfield.has(slot):audio.unit_size=1.2 if slot.begins_with("prop_") else .65;audio.max_distance=12 if slot.begins_with("prop_") else 6
 	add_child(audio)
 	audio.position = pos
+	if not looping:
+		if not is_instance_valid(spatial_sound_field):
+			spatial_sound_field=load("res://scripts/spatial_sound_field.gd").new();spatial_sound_field.game=self;add_child(spatial_sound_field)
+		spatial_sound_field.track(audio,slot)
 	if looping: audio.finished.connect(func(): audio.play())
 	else: audio.finished.connect(audio.queue_free)
 	audio.play()
@@ -958,7 +964,7 @@ func _process(delta: float) -> void:
 	objective.text = current_objective()
 	var hit: Dictionary = player.target()
 	prompt.text = ""
-	if physical.held:prompt.text = "Release"
+	if physical.held:prompt.text = "Put down" if not physical.placement_ray().is_empty() else "Release"
 	elif not hit.is_empty() and hit.collider.has_meta("loose_prop"):
 		if physical.can_carry(hit.collider):prompt.text = "Carry "+str(hit.collider.get_meta("prop_label"))
 	elif not hit.is_empty() and hit.collider.has_meta("interaction"):
@@ -1192,6 +1198,9 @@ func sound_caption(text: String, seconds: float, source: String, audio: Node, re
 	# A caption for sound must be tied to an actual playing stream, never an
 	# imagined or missing effect. Observation text has its own distinct identity.
 	if not is_instance_valid(audio) or not audio.playing:return
+	if audio is AudioStreamPlayer3D:
+		var listener: Camera3D=get_viewport().get_camera_3d()
+		if is_instance_valid(listener) and listener.global_position.distance_to(audio.global_position)>audio.max_distance:return
 	message(text,seconds,"recording" if recorded else "sound",source,audio)
 
 func chair_event() -> void:
@@ -1381,6 +1390,10 @@ func checkpoint_usable(data: Variant) -> bool:
 		if data.has(key) and not data[key] is Dictionary:return false
 	var saved_events: Dictionary=data.get("events",{})
 	if saved_events.has("carried_prop") and not saved_events.carried_prop is String:return false
+	if saved_events.has("remembered_cup"):
+		var remembered: Variant=saved_events.remembered_cup
+		if not remembered is Array or remembered.size()!=3:return false
+		if not remembered.all(func(v):return (v is int or v is float) and is_finite(float(v))):return false
 	if saved_events.has("props"):
 		if not saved_events.props is Dictionary:return false
 		for value in saved_events.props.values():
@@ -1467,6 +1480,9 @@ func run_qa() -> void:
 		await test.run(self);return
 	if "--surveyor-assets-qa" in OS.get_cmdline_user_args():
 		var test=load("res://scripts/surveyor_asset_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
+		await test.run(self);return
+	if "--house-quality-qa" in OS.get_cmdline_user_args():
+		var test=load("res://scripts/house_quality_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
 		await test.run(self);return
 	if "--hands-qa" in OS.get_cmdline_user_args():
 		var test = load("res://scripts/hands_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)

@@ -6,6 +6,7 @@ var sheltered: AudioStreamPlayer
 var mix_level:=0.0
 var near_rain: GPUParticles3D
 var window_rain: Array[AudioStreamPlayer3D]=[]
+var viewpoint:=Vector3.ZERO
 
 func _ready() -> void:
 	name="BriarLaneWeather"
@@ -106,12 +107,14 @@ func build_mist() -> void:
 func _process(delta: float) -> void:
 	if not is_instance_valid(game.player) or not is_instance_valid(outside):return
 	var p: Vector3=game.player.position
-	# The isolated title study has its own camera, not a relocated player.
-	# Keep its foreground rain and shelter mix at that actual viewpoint.
-	if is_instance_valid(game.presentation) and (game.presentation.section=="arrival_study" or is_instance_valid(game.presentation.arrival_sequence)):
-		var camera: Camera3D=get_viewport().get_camera_3d()
-		if is_instance_valid(camera):p=camera.global_position
-	near_rain.position=Vector3(p.x,p.y+12,p.z)
+	# Title, ending and arrival cameras can be far from the inactive player.
+	# Gameplay retains its foot-height shelter classification, while cinematic
+	# rain and shelter audio belong to the camera actually supplying the view.
+	var camera: Camera3D=get_viewport().get_camera_3d()
+	if is_instance_valid(camera) and camera!=game.player.camera:p=camera.global_position
+	viewpoint=p
+	var anchor:=Vector3(p.x,p.y+12,p.z)
+	if near_rain.position!=anchor:near_rain.position=anchor
 	var inside: bool=(absf(p.x)<7.6 and p.z>-10.1 and p.z<4.1) or (is_instance_valid(game.presentation.arrival_sequence) and game.presentation.arrival_sequence.interior_active)
 	var shed:=p.x>-20.1 and p.x< -13.9 and p.z>-17.1 and p.z< -10.9
 	var roof:=absf(p.x)<1.8 and p.z>4 and p.z<6.5

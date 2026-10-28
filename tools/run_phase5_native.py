@@ -17,15 +17,26 @@ start=time.monotonic();code=None
 try:
  with (O/'native.log').open('w',encoding='utf8') as log:
   proc=subprocess.Popen(args,cwd=E.parent,stdout=log,stderr=subprocess.STDOUT)
-  try:code=proc.wait(timeout=a.timeout)
+  try:
+   while proc.poll() is None:
+    if time.monotonic()-start>a.timeout:raise subprocess.TimeoutExpired(args,a.timeout)
+    current_log=(O/'native.log').read_text(encoding='utf8',errors='replace')
+    if 'SCRIPT ERROR:' in current_log or 'Failed to load script' in current_log:
+     proc.terminate();(O/'SCRIPT_ABORT.txt').write_text('Stopped this exact QA child after a script failure; not an ordinary owner crash.',encoding='utf8');break
+    time.sleep(.25)
+   code=proc.wait(timeout=5)
   except subprocess.TimeoutExpired:
    proc.kill();code=proc.wait();(O/'TIMEOUT.txt').write_text('Automation deadline; forced shutdown. Not an ordinary-menu crash.',encoding='utf8')
 finally:
  after=hashes();text=(O/'native.log').read_text(encoding='utf8',errors='replace');reports=[]
- if a.mode=='input-isolation' and not (O/'report.json').exists():
-  fixed=E.parent/'QA/input_isolation/report.json'
-  assert fixed.exists() and fixed.stat().st_mtime>=time.time()-(time.monotonic()-start)-2,'Missing current fixed-path input report'
-  shutil.copy2(fixed,O/'input_report.json')
+ fixed_reports={'input-isolation':('input_isolation','report.json','input_report.json'),'caption':('captions','caption_report.json','caption_report.json')}
+ if a.mode in fixed_reports:
+  folder,filename,destination=fixed_reports[a.mode]
+  fixed=E.parent/'QA'/folder/filename
+  assert fixed.exists() and fixed.stat().st_mtime>=time.time()-(time.monotonic()-start)-2,'Missing current fixed-path report'
+  shutil.copy2(fixed,O/destination)
+  for screenshot in fixed.parent.glob('*.png'):
+   if screenshot.stat().st_mtime>=time.time()-(time.monotonic()-start)-2:shutil.copy2(screenshot,O/screenshot.name)
  for report in O.glob('*report.json'):
   try:
    data=json.loads(report.read_text(encoding='utf8'));reports.append({'file':report.name,'failed':data.get('failed'),'checks':len(data.get('checks',[]))})

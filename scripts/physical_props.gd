@@ -11,6 +11,7 @@ var support: Node3D
 var forearm: Node3D
 var tool_hand: Node3D
 var grip_mode := "cradle"
+var last_set_down: Dictionary={}
 
 func _ready() -> void:
 	make_prop("cup","mug","res://assets/dusk/psx_prop_mug_01.glb",Vector3(4.6,0.87,0),Vector3(0.12,0.14,0.12),0.24)
@@ -132,7 +133,9 @@ func can_carry(body: RigidBody3D) -> bool:
 	return body.global_position.distance_to(game.player.camera.global_position)<=2.0
 
 func use() -> bool:
-	if held:release(false);return true
+	if held:
+		if not set_down():release(false)
+		return true
 	var hit: Dictionary = game.player.target()
 	if hit.is_empty() or not hit.collider.has_meta("loose_prop"):return false
 	var body: RigidBody3D = hit.collider
@@ -150,7 +153,40 @@ func use() -> bool:
 		game.events.remembered_cup = [body.position.x,body.position.y,body.position.z]
 	if not reminded and game.presentation.prefs.data.reminders:
 		reminded = true
-		game.presentation.notify("X RELEASE / RT THROW / HOLD LT + RIGHT STICK TO ROTATE" if game.controller.used else "E RELEASE / LEFT MOUSE THROW / HOLD R TO ROTATE")
+		game.presentation.notify("X PUT DOWN / RT THROW / HOLD LT + RIGHT STICK TO ROTATE" if game.controller.used else "E PUT DOWN / LEFT MOUSE THROW / HOLD R TO ROTATE")
+	return true
+
+func placement_ray() -> Dictionary:
+	if not is_instance_valid(held):return {}
+	var camera: Camera3D=game.player.camera
+	var ray:=PhysicsRayQueryParameters3D.create(camera.global_position,camera.to_global(Vector3(0,0,-1.65)),1|16|32)
+	ray.exclude=[held.get_rid(),game.player.get_rid()]
+	var hit:=game.get_world_3d().direct_space_state.intersect_ray(ray)
+	if hit.is_empty() or hit.normal.y<.82 or hit.collider is CharacterBody3D:return {}
+	return hit
+
+func set_down() -> bool:
+	var hit:=placement_ray()
+	if hit.is_empty():return false
+	var body: RigidBody3D=held
+	var size_: Vector3=body.get_meta("carry_size",Vector3(.14,.14,.14))
+	var upright:=Basis(Vector3.UP,body.global_basis.get_euler().y)
+	var destination:=Transform3D(upright,hit.position+Vector3.UP*(size_.y*.5+.005))
+	if destination.origin.distance_to(body.global_position)>.95:return false
+	var query:=PhysicsShapeQueryParameters3D.new()
+	query.shape=body.get_node("PropShape").shape;query.collision_mask=1|2|16|32
+	query.exclude=[body.get_rid()];query.margin=.001
+	# Both the upright start and endpoint must be free. A rotated object is not
+	# righted through a wall; the complete swept path must also be traversable.
+	query.transform=Transform3D(upright,body.global_position)
+	if not game.get_world_3d().direct_space_state.intersect_shape(query).is_empty():return false
+	if body.test_move(query.transform,destination.origin-body.global_position,null,.002,true):return false
+	query.transform=destination
+	if not game.get_world_3d().direct_space_state.intersect_shape(query).is_empty():return false
+	held=null;body.remove_collision_exception_with(game.player)
+	body.call("relocate",destination)
+	last_set_down={"id":str(body.get_meta("loose_prop")),"position":destination.origin,"surface":hit.position}
+	game.sound("prop_soft",destination.origin,-32)
 	return true
 
 func release(throw_: bool) -> void:
@@ -252,12 +288,17 @@ func _physics_process(delta: float) -> void:
 
 func repeat_placement() -> bool:
 	if not game.events.has("remembered_cup") or game.events.get("cup_repeated",false) or held==props.cup:return false
+	# This old optional contradiction must obey the same quiet/encounter
+	# reservations as other house responses, including the final departure.
+	if game.ambient_director.response_blocked():return false
 	var body: RigidBody3D = props.cup
+	if body.reset_pending or body.linear_velocity.length()>.25:return false
 	var camera: Camera3D = game.player.camera
 	if not camera.is_position_behind(body.position):
 		var screen := camera.unproject_position(body.position)
 		if game.get_viewport().get_visible_rect().has_point(screen) and game.threat.clear_line(camera.global_position,body.position):return false
-	var p: Array = game.events.remembered_cup
+	var p: Variant = game.events.remembered_cup
+	if not p is Array or p.size()!=3 or not p.all(func(v):return (v is int or v is float) and is_finite(float(v))):return false
 	var destination := Vector3(p[0],p[1]+0.015,p[2])
 	if body.position.distance_to(destination)<0.25:return false
 	if destination.distance_to(game.player.position)<1.2:return false
@@ -270,4 +311,9 @@ func repeat_placement() -> bool:
 	if not game.get_world_3d().direct_space_state.intersect_shape(query).is_empty():return false
 	body.call("relocate",Transform3D(body.basis,destination))
 	game.events.cup_repeated = true
+	game.ambient_director.policy.data.quiet=5.0
+	game.events.atmosphere=game.ambient_director.policy.data
+	var contact: AudioStreamPlayer3D=game.sound("prop_soft",destination,-34)
+	game.sound_caption("A soft tap.",2.0,"LOUNGE",contact)
+	game.save_game(true)
 	return true

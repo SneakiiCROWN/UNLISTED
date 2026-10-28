@@ -4,6 +4,10 @@ func particles(label_: String) -> Dictionary:
 	var found: Dictionary={}
 	for node in g.find_children("*","GPUParticles3D",true,false):
 		found[str(node.get_instance_id())]={"path":str(node.get_path()),"rid":str(node.get_base()),"mesh":node.draw_pass_1.get_instance_id() if node.draw_pass_1 else 0,"material":node.process_material.get_instance_id() if node.process_material else 0,"emitting":node.emitting,"visible":node.is_visible_in_tree(),"queued":node.is_queued_for_deletion()}
+	for node in g.find_children("*","CPUParticles3D",true,false):
+		found[str(node.get_instance_id())]={"path":str(node.get_path()),"type":"CPU particles","rid":str(node.get_base()),"mesh":node.mesh.get_instance_id() if node.mesh else 0,"emitting":node.emitting,"visible":node.is_visible_in_tree(),"queued":node.is_queued_for_deletion()}
+	for node in g.find_children("*","GPUParticlesCollisionHeightField3D",true,false):
+		found[str(node.get_instance_id())]={"path":str(node.get_path()),"type":"Heightfield collision","rid":str(node.get_base()),"size":str(node.size),"visible":node.is_visible_in_tree(),"queued":node.is_queued_for_deletion()}
 	lifecycle.append({"label":label_,"seconds":seconds(),"particles":found})
 	var file:=FileAccess.open(output.path_join("particle_lifecycle.json"),FileAccess.WRITE);file.store_string(JSON.stringify(lifecycle,"\t"));file.close()
 	return found
@@ -18,7 +22,10 @@ func run(current: Node) -> void:
 	recorder=AudioEffectRecord.new();recorder.format=AudioStreamWAV.FORMAT_16_BITS;AudioServer.add_bus_effect(0,recorder);recorder.set_recording_active(true);recording=true
 	var initial:=particles("ordinary world constructed")
 	if "--menu-idle" in OS.get_cmdline_user_args():
-		await wait(150);particles("150 seconds isolated menu")
+		var duration:=150.0
+		for arg in OS.get_cmdline_user_args():
+			if arg.begins_with("--menu-idle-seconds="):duration=clampf(float(arg.trim_prefix("--menu-idle-seconds=")),30,900)
+		await wait(duration);particles(str(duration)+" seconds isolated menu")
 		check("Normal title remains responsive in isolated native window",g.presentation.section=="title" and g.menu_open)
 		await shot("N00_idle_title");await finish_run();return
 	if "--particle-lifecycle" in OS.get_cmdline_user_args():

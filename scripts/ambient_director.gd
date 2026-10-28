@@ -10,6 +10,7 @@ var elapsed:=0.0
 var last_event:=""
 var history: Array=[]
 var emitted: Array=[]
+var skipped_late: Array=[]
 var latch_clock:=-1.0
 const WINDOW:=Vector3(7.47,1.6,2)
 const STEPS:=Vector3(-4.9,.03,-7.8)
@@ -110,10 +111,14 @@ func _physics_process(delta: float) -> void:
 	if latch_clock>=0:update_latch(delta)
 	if not queue.is_empty():
 		elapsed+=delta
-		for i in range(queue.size()-1,-1,-1):
-			var item: Dictionary=queue[i]
-			if elapsed<float(item.at):continue
-			queue.remove_at(i)
+		# Authored paths are chronological. Do not reverse simultaneous due cues
+		# or dump an obsolete cluster of footsteps after a long simulation hitch.
+		while not queue.is_empty() and elapsed>=float(queue[0].at):
+			var item: Dictionary=queue.pop_front()
+			if elapsed-float(item.at)>.65:
+				skipped_late.append({"at":item.at,"elapsed":elapsed,"sound":item.sound})
+				if skipped_late.size()>8:skipped_late.pop_front()
+				continue
 			var cue: AudioStreamPlayer3D=game.sound(item.sound,item.where,float(item.db)-linear_to_db(1.0/maxf(intensity,.1)))
 			cue.pitch_scale=item.pitch;sources.append(cue)
 			emitted.append({"where":item.where,"playing":cue.playing,"sample":cue.get_meta("sample")})
