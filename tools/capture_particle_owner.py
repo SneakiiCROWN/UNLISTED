@@ -1,4 +1,4 @@
-"""Bounded, input-isolated native owner-lookup capture; never patches game files."""
+"""Bounded native owner-lookup capture; ordinary menu mode is observed separately."""
 from pathlib import Path
 import argparse, hashlib, json, os, re, subprocess, time
 
@@ -26,7 +26,7 @@ before=hashes()
 prefix=O.as_posix()
 commands='''r @$t0=poi(@$peb+0x10)
 .printf "ENGINE_BASE=%p\\n", @$t0
-.if (dwo(@$t0+0x2832a2c)==0x282444c7) { bp /1 @$t0+0x2832a2c ".echo REJECTED_PARTICLE_OWNER; r; kv; ub poi(@rsp+0x48) L18; dq @rsp L20; .dump /mi /u PREFIX/rejected_owner.dmp; gc"; .echo VERIFIED_ERROR_BRANCH_ARMED } .else { .echo WRONG_NATIVE_BYTES; qd }
+.if (dwo(@$t0+0x2832a2c)==0x282444c7) { bp /1 @$t0+0x2832a2c ".echo REJECTED_PARTICLE_OWNER; r; kv; ub poi(@rsp+0x48) L18; dq @rsp L20; .dump /mi /u PREFIX/rejected_owner.dmp; gc"; .echo VERIFIED_ERROR_BRANCH_ARMED } .else { .echo WRONG_NATIVE_BYTES; q }
 bl
 sxe -c "gn" -c2 ".echo UNHANDLED_NATIVE_AV; .ecxr; .exr -1; kv; .dump /mi /u PREFIX/unhandled_av.dmp; q" av
 g
@@ -58,7 +58,7 @@ for f in (O/'Native').glob('*report.json'):
     d=json.loads(f.read_text(encoding='utf8'));reports.append({'file':f.name,'failed':d.get('failed'),'checks':len(d.get('checks',[]))})
 result={'debugger_exit':code,'seconds':time.monotonic()-start,'breakpoint_armed':exact('VERIFIED_ERROR_BRANCH_ARMED'),
         'rejected_owner_captured':exact('REJECTED_PARTICLE_OWNER'),'unhandled_native_av':exact('UNHANDLED_NATIVE_AV'),
-        'forced_timeout':timed_out,'engine_errors':[s for s in log.splitlines() if s.startswith('ERROR:')],
+        'forced_timeout':timed_out,'setup_refused':exact('WRONG_NATIVE_BYTES'),'engine_errors':[s for s in log.splitlines() if s.startswith('ERROR:')],
         'reports':reports,'owner_before':before,'owner_after':hashes(),'dumps':[f.name for f in O.glob('*.dmp')]}
 result['owner_unchanged']=result['owner_before']==result['owner_after']
 (O/'result.json').write_text(json.dumps(result,indent=2),encoding='utf8');print(json.dumps(result),flush=True)

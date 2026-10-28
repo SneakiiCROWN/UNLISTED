@@ -1,3 +1,46 @@
+# Current Operation Stability / 28 October 2026
+
+Read OPERATION_STABILITY_REPORT.md and Checkpoints/20261028_operation_stability/DELIVERY.json. Runtime b530e0f; entry90be6a3 preserved. No native crash fix demonstrated. OrdinaryMenu01 reproduced the particle error without QA flags; do not exonerate it using clean debugger runs. GetterImpossible04 had a wall-time fixture failure; corrected GetterImpossible06 passes52 with the same209 pursuit ticks as the native case. Logger real-error hold/late-attach remains unexercised; no weather/AI/graphics workaround. Independent Python3.12/3.14 native faults are preserved, not a proven hardware cause. All existing art/saves/builds and public releases intact. New private ZIP and complete source locations are in DELIVERY.json. No public release; PRIVATE QA — STABILITY NOT CLEARED.
+
+# Current private House Remembers continuation / 28 October 2026
+
+Read HOUSE_REMEMBERS_CONTINUATION.md and DEVELOPMENT_CHECKPOINT.json first.
+Runtime dbaaa02, production gameplay fadfe75; tag dev-house-remembers-20261028.
+Private ZIP: Builds/UNLISTED-Windows-House-Remembers-v0.10.9-dev-PRIVATE.zip.
+Usable saved curtains, glass/cloth perception, movement-led ceiling aftermath.
+Fresh legacy-QA particle failures are preserved. Both stability faults remain unresolved.
+The hood study failed static review and is not integrated; active Surveyor unchanged.
+Previous builds, licensed assets, saves and source remain preserved. No public release.
+
+# Current private Surveyor custom art revision / 28 October 2026
+
+Read `SURVEYOR_ART_REVISION.md`. New aged MPFB head, natural non-emissive eyes
+and custom joined field-coat geometry are isolated behind `--surveyor-revision`
+inside a recognised QA mode. Normal gameplay retains the original Surveyor;
+`--surveyor-assets` still selects the older rejected tunic study in QA.
+Branch: `production/surveyor-art-revision`. Pre-change recovery:
+`recovery/pre-surveyor-art-revision-20261028` -> `84606f1`.
+Private root: `../Checkpoints/20261028_surveyor_revision/`.
+Construction04 contains packed editable Blender + rigged GLB. Native three-way
+comparisons and 37-case actual capture tests pass, but FINAL ART STANDARD NOT MET:
+coat wear/creases, footwear and the ordinary uniform silhouette need more art.
+Do not promote this model without visual approval. No public release. Original
+menu/renderer faults remain unresolved. Exact deliveries are in DELIVERY.json.
+
+# Current isolated Surveyor asset study / 28 October 2026
+
+Read `SURVEYOR_ASSET_STUDY.md`. This is a rigged asset-first private study,
+not a promoted replacement. Active ordinary gameplay retains the prior Surveyor.
+Source branch: `production/surveyor-asset-study`; pre-change recovery:
+`recovery/pre-surveyor-assets-20261028`. Private construction/compatibility/native
+evidence is under `../Checkpoints/20261028_surveyor_assets/`.
+The selected fantasy-derived outfit and youthful face do not meet the art target.
+Do not keep adding pieces to this tunic or treat passing mechanics as approval.
+Keep the proven skin-binding pipeline, packed Blender projects and fallback.
+Prior ordinary-menu and intermittent renderer faults remain unresolved.
+No public release. Exact safe/public and private delivery hashes are in that
+folder's `DELIVERY.json` when sealed. Next Nightmare delivery below stays intact.
+
 # Current private production / The Next Nightmare, v0.10.9-dev
 
 Read `NEXT_NIGHTMARE.md` first. Complete local source is on

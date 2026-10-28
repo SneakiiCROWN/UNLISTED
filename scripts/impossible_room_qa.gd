@@ -86,9 +86,14 @@ func run(current: Node) -> void:
 	phase="separate restored scenario / Surveyor in active room"
 	g.apply_save(active_save);g.player.position=Vector3(4.2,.04,-1.6);g.player.camera.look_at(Vector3(1.5,1.5,1))
 	g.threat.enabled=true;await wait(.2);g.threat.arm()
-	var limit:=seconds()+18.0
-	while seconds()<limit and not g.capture_director.active:await wait(.05)
-	check("real Surveyor reaches warned contact in inverted room",g.capture_director.active,"state="+g.threat.state+" actor="+str(g.presence.position))
+	# Readback/debugger stalls can consume wall time without simulating movement.
+	# Preserve the original 18-second simulation allowance; keep a bounded wall
+	# deadline so an actual hang is never silently tolerated.
+	var contact_simulated:=0.0
+	var limit:=seconds()+60.0
+	while contact_simulated<18.0 and seconds()<limit and not g.capture_director.active:
+		await get_tree().physics_frame;contact_simulated+=g.get_physics_process_delta_time()
+	check("real Surveyor reaches warned contact in inverted room",g.capture_director.active,"state="+g.threat.state+" actor="+str(g.presence.position)+" physics_seconds="+str(contact_simulated))
 	if g.capture_director.active:
 		await wait(1.0);await shot("I05_room_contact")
 		limit=seconds()+5

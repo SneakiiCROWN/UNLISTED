@@ -86,6 +86,7 @@ var resources: Dictionary = {}
 var foley_index: Dictionary = {}
 var spatial_sound_field: Node
 var optical_frames: Array[MeshInstance3D]=[]
+var particle_error_logger: Logger
 var materials: Dictionary = {}
 var roomtone: AudioStreamPlayer3D
 var fuse_mesh: Node3D
@@ -163,6 +164,15 @@ func _ready() -> void:
 		push_error("UNKNOWN_QA_MODE: refusing normal startup for unrecognised automation")
 		get_tree().quit(93);return
 	automated_qa=(qa_mode and not "--visual-probe" in OS.get_cmdline_user_args()) or (dev_mode and "--dev-tools-qa" in OS.get_cmdline_user_args())
+	if automated_qa and "--particle-error-hold" in OS.get_cmdline_user_args():
+		var evidence_directory:=""
+		for argument in OS.get_cmdline_user_args():
+			if argument.begins_with("--evidence="):evidence_directory=argument.trim_prefix("--evidence=")
+		assert(evidence_directory.is_absolute_path())
+		if evidence_directory.is_absolute_path():
+			DirAccess.make_dir_recursive_absolute(evidence_directory)
+			particle_error_logger=load("res://scripts/particle_error_hold.gd").new()
+			particle_error_logger.output=evidence_directory;OS.add_logger(particle_error_logger)
 	if automated_qa:
 		get_tree().root.set_flag(Window.FLAG_NO_FOCUS,true)
 		get_tree().root.position=Vector2i(-16000,-16000)
@@ -248,6 +258,10 @@ func enter_private_qa_bootstrap() -> void:
 	var diagnostic: Node=load("res://scenes/qa_viewport_bootstrap.tscn").instantiate()
 	get_tree().root.add_child(diagnostic);get_tree().current_scene=diagnostic
 	queue_free()
+
+func _exit_tree() -> void:
+	if is_instance_valid(particle_error_logger):
+		OS.remove_logger(particle_error_logger);particle_error_logger=null
 
 func configure_input() -> void:
 	var keys := {"forward":KEY_W, "back":KEY_S, "left":KEY_A, "right":KEY_D, "sprint":KEY_SHIFT, "crouch":KEY_CTRL, "interact":KEY_E, "flashlight":KEY_F,"journal":KEY_J,"hint":KEY_H,"battery_status":KEY_B,"battery_replace":KEY_T,"torch_tap":KEY_V,"throw_prop":KEY_NONE,"pause":KEY_NONE,"crouch_toggle":KEY_NONE}

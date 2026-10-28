@@ -1,3 +1,11 @@
+# PRIVATE v0.10.9-dev / Operation Stability — 28 October
+
+- Reproduced the particle-storage error in the actual ordinary foreground menu. The game survived380 seconds and quit normally; this is not renderer acceptance or a crash fix.
+- Add opt-in resource-ID/lifecycle snapshots, crash-durable assertion journals and byte-verified native fault capture.
+- Fix the impossible-room test's wall-clock contact deadline using physics time; corrected native/debugger capture and retry pass without altering AI or geometry.
+- Preserve separate interpreter native faults and injected diagnostic controls; no hardware/driver/OS cause is asserted.
+- Three display/profile cases, room recovery, both earned departures and12 lifecycle recoveries complete. Original native crashes remain unresolved. Private diagnostic delivery only.
+
 # PRIVATE v0.10.9-dev / Sightline Continuity — 28 October
 
 - Unify optical cover across Surveyor, staged sightings and environmental observation; actual wooden window frames remain opaque without new physical barriers.
