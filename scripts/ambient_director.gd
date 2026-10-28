@@ -91,7 +91,7 @@ func request(id: String) -> bool:
 		if closed:latch_clock=0.0
 	elif id=="curtains_drawn":
 		game.get_node("LivingRoomFinishes").draw_curtains()
-		queue=[{"at":0.0,"where":Vector3(7.20,2.55,2.0),"sound":"latch","db":-36.0,"pitch":.68,"caption":"Curtain rings click in the lounge.","source":"LOUNGE WINDOW"}]
+		queue=[{"at":0.0,"where":Vector3(7.20,2.55,2.0),"sound":"latch","db":-36.0,"pitch":.68,"caption":"A light click.","source":"LOUNGE WINDOW"}]
 	elif id=="ceiling_return":
 		# Answer actual player movement rather than running a fixed sound train.
 		reset_ceiling();ceiling_active=true;ceiling_previous=game.player.position

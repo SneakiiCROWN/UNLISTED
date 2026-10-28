@@ -1,3 +1,21 @@
+# PRIVATE v0.10.9-dev / The House Remembers — 28 October
+
+- Existing lounge curtains gain a supported physical pull, short animation,
+  keyboard/controller interaction, pause/reduced-motion handling and saved choice.
+  The house's off-screen closure remains once-only and can be undone by the player.
+- Surveyor vision uses the existing transparent-glass metadata and actual
+  deformed cloth. Glass remains a physical and attack barrier; frames/walls and
+  the curtain's real centre gap retain their respective visibility.
+- Restored-room overhead contacts now follow actual movement with a short delay,
+  bounded count and quiet aftermath. No canned footsteps while standing still.
+- Sewn curtain tabs bridge the support gap; pull placement avoids the lamp.
+- Fresh missing-particle warning reproduced without a QA recorder. Added an
+  explicit final-viewport diagnostic entry and polling-time error evidence.
+  Ordinary startup and public release unchanged; stability remains uncleared.
+- A rigged hood revision failed static art review and was not integrated.
+  Actual Windows results, preserved failures and limits:
+  HOUSE_REMEMBERS_CONTINUATION.md.
+
 # PRIVATE v0.10.9-dev / House Answers — 28 October
 
 - Place carried household/workshop props upright on reachable clear surfaces;

@@ -8,6 +8,16 @@ Eli Ward takes a night call at 17 Briar Lane, the address on his father Simon's 
 
 ## Current private development / 0.10.9-dev
 
+**The House Remembers / 28 October:** use the existing lounge curtains, retain
+your choice after the house draws them, and hear the restored room answer actual
+movement. Surveyor vision now distinguishes transparent glass from opaque cloth;
+physical panes, navigation and attack barriers remain intact. See
+[native evidence and unresolved failures](HOUSE_REMEMBERS_CONTINUATION.md).
+The new hood study failed static review and stays private/out of gameplay.
+Fresh legacy-QA particle warnings were preserved; stability is not cleared.
+
+### Preserved House Answers milestone
+
 **House Answers / 28 October:** careful carried-object set-down, physical sounds
 softened by solid walls, a save-safe quiet aftermath for the existing mug return,
 and title/ending rain tied to the active camera. See

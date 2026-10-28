@@ -109,7 +109,11 @@ func blocks_sight(from: Vector3,to: Vector3) -> bool:
 	# Intersect the actual shader-deformed panels, including the real centre gap.
 	# No invisible wall, player collision or change to the enemy's hearing/path.
 	if not game.lounge_contents.is_visible_in_tree():return false
-	if not AABB(Vector3(6.85,.44,1.02),Vector3(.30,2.06,1.99)).intersects_segment(from,to):return false
+	# The impossible room turns the actual parent. Query in that parent's
+	# coordinates so cover cannot remain at an empty old world position.
+	var local_from: Vector3=game.lounge_contents.to_local(from)
+	var local_to: Vector3=game.lounge_contents.to_local(to)
+	if not AABB(Vector3(6.85,.44,1.02),Vector3(.30,2.06,1.99)).intersects_segment(local_from,local_to):return false
 	var amount: float=cloth.get_shader_parameter("drawn")
 	var ripple: float=cloth.get_shader_parameter("response")
 	for panel in curtain_panels:
@@ -117,11 +121,11 @@ func blocks_sight(from: Vector3,to: Vector3) -> bool:
 		for i in panel.vertices.size():
 			var p: Vector3=panel.vertices[i];var u: float=(i%13)/12.0;var v: float=(i/13)/8.0
 			p.z=lerpf(p.z,(1.04+u*.92) if panel.left else (2.04+u*.94),amount);p.x+=ripple*v*v
-			deformed.append(panel.node.to_global(p))
+			deformed.append(panel.node.transform*p)
 		for row in 8:
 			for col in 12:
 				var i:=row*13+col
-				if Geometry3D.segment_intersects_triangle(from,to,deformed[i],deformed[i+1],deformed[i+13])!=null or Geometry3D.segment_intersects_triangle(from,to,deformed[i+1],deformed[i+14],deformed[i+13])!=null:return true
+				if Geometry3D.segment_intersects_triangle(local_from,local_to,deformed[i],deformed[i+1],deformed[i+13])!=null or Geometry3D.segment_intersects_triangle(local_from,local_to,deformed[i+1],deformed[i+14],deformed[i+13])!=null:return true
 	return false
 
 func respond_window() -> void:

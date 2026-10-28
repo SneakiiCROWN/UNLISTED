@@ -111,12 +111,14 @@
   },
   "owner_playtest_ready": false,
   "latest_private_continuation": {
-    "milestone": "House Answers",
-    "runtime_source": "29db4fbf64c3b63b30937fdc0b88e8a3688f4c3a",
-    "development_tag": "dev-house-answers-20261028",
-    "report": "HOUSE_ANSWERS_INTEGRATION.md",
+    "milestone": "The House Remembers",
+    "runtime_source": "dbaaa024d04f4882118642242592cd74a2a46211",
+    "production_gameplay_source": "fadfe7589fbcaaeec91d3d6198f05dbdbcbb0cb1",
+    "development_tag": "dev-house-remembers-20261028",
+    "report": "HOUSE_REMEMBERS_CONTINUATION.md",
     "status": "PRIVATE QA - STABILITY NOT CLEARED",
-    "active_character": "original Surveyor; both studies remain unapproved",
+    "known_failures": "Fresh legacy-viewport particle warning; original owner crash unresolved",
+    "active_character": "Original; hood study failed static gate and is not integrated",
     "public_release": "unchanged v0.10.0"
   }
 }

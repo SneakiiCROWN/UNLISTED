@@ -58,6 +58,11 @@ func run(current: Node) -> void:
 	check("reopened choice is not overwritten by history",not room.curtains_closed() and float(room.cloth.get_shader_parameter("drawn"))<.01)
 	g.presentation.prefs.data.reduced_motion=true;room.use_curtains()
 	check("reduced motion applies completed cloth state",float(room.cloth.get_shader_parameter("drawn"))==1.0)
+	var original_room: Transform3D=g.lounge_contents.transform
+	g.lounge_contents.transform=g.impossible_room.TURN
+	check("cloth cover follows the actual impossible-room transform",room.blocks_sight(g.lounge_contents.to_global(Vector3(8.5,1.6,1.5)),g.lounge_contents.to_global(Vector3(6,1.6,1.5))))
+	check("turned cloth leaves no ghost cover in its former place",not room.blocks_sight(Vector3(8.5,1.6,1.5),Vector3(6,1.6,1.5)))
+	g.lounge_contents.transform=original_room
 	g.lounge_contents.visible=false;await wait(.1)
 	check("copied-bedroom visibility disables old pull and old cover",g.targets.lounge_curtains.collision_layer==0 and not room.blocks_sight(Vector3(8.5,1.6,1.5),Vector3(6,1.6,1.5)))
 	g.lounge_contents.visible=true;g.presentation.prefs.data.reduced_motion=false
