@@ -9,6 +9,8 @@ func _process(_delta: float) -> void:
 		samples.append({"seconds":seconds(),"frame_ms":(tick-last_tick)/1000.0,"draws":Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),"render_bytes":Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED),"static_bytes":Performance.get_monitor(Performance.MEMORY_STATIC),"position":str(g.player.position),"phase":phase})
 	last_tick=tick
 func run(current: Node) -> void:
+	if "--health-sample" in OS.get_cmdline_user_args():
+		var probe=load("res://scripts/health_profile_qa.gd").new();probe.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(probe);await probe.run(current);return
 	g=current;started_at=Time.get_ticks_usec()
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--evidence="):output=arg.trim_prefix("--evidence=")

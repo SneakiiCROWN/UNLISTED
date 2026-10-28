@@ -89,6 +89,7 @@ var optical_frames: Array[MeshInstance3D]=[]
 var particle_error_logger: Logger
 var native_capture_directory:=""
 var materials: Dictionary = {}
+var box_meshes: Dictionary = {}
 var roomtone: AudioStreamPlayer3D
 var fuse_mesh: Node3D
 var checkpoint_path := "user://checkpoint.json"
@@ -99,6 +100,11 @@ var warm := Color(1.0, 0.57, 0.27)
 var cold := Color(0.30, 0.66, 0.76)
 
 func _ready() -> void:
+	# Player-only exports retain all gameplay QA but not rejected art archives.
+	if OS.has_feature("unlisted_player"):
+		for argument in OS.get_cmdline_user_args():
+			if argument in ["--surveyor-study","--surveyor-reborn","--surveyor-assets","--surveyor-revision","--reborn-views","--reborn-components"]:
+				push_error("ART_STUDY_NOT_PACKAGED: use the preserved dedicated study build");get_tree().quit(95);return
 	# Explicit QA-only entry, before creating any world/render resources.
 	# Export templates forbid command-line scene overrides; ordinary startup
 	# keeps the established main scene and never takes this diagnostic branch.
@@ -314,9 +320,12 @@ func texture_mat(path: String, tint := Color.WHITE) -> StandardMaterial3D:
 
 func box(parent: Node3D, pos: Vector3, size: Vector3, color: Color, solid := false, glow := false) -> MeshInstance3D:
 	var node := MeshInstance3D.new()
-	var mesh := BoxMesh.new()
-	mesh.size = size
-	node.mesh = mesh
+	# Primitive geometry is immutable after construction. Material overrides,
+	# nodes and physical shapes remain individual; equal boxes share vertices.
+	# A caller needing to edit a mesh must duplicate it first.
+	if not box_meshes.has(size):
+		var mesh:=BoxMesh.new();mesh.size=size;box_meshes[size]=mesh
+	node.mesh = box_meshes[size]
 	node.material_override = mat(color, glow)
 	parent.add_child(node)
 	node.position = pos
@@ -1021,13 +1030,14 @@ func _process(delta: float) -> void:
 	for key in get_tree().get_nodes_in_group("record_keys"):key.visible = not get(key.get_meta("record_flag"))
 	objective.text = current_objective()
 	var hit: Dictionary = player.target()
-	prompt.text = ""
-	if physical.held:prompt.text = "Put down" if not physical.placement_ray().is_empty() else "Release"
+	var next_prompt := ""
+	if physical.held:next_prompt = "Put down" if not physical.placement_ray().is_empty() else "Release"
 	elif not hit.is_empty() and hit.collider.has_meta("loose_prop"):
-		if physical.can_carry(hit.collider):prompt.text = "Carry "+str(hit.collider.get_meta("prop_label"))
+		if physical.can_carry(hit.collider):next_prompt = "Carry "+str(hit.collider.get_meta("prop_label"))
 	elif not hit.is_empty() and hit.collider.has_meta("interaction"):
 		var id: String = hit.collider.get_meta("interaction")
-		prompt.text = interaction_name(id)
+		next_prompt = interaction_name(id)
+	if prompt.text!=next_prompt:prompt.text=next_prompt
 	if time_in_game > caption_until: subtitle.text = ""
 	if stage >= 3 and not events.has("chair") and player.position.x < 1.1 and player.position.z < 1:
 		chair_event()
@@ -1448,6 +1458,10 @@ func checkpoint_usable(data: Variant) -> bool:
 		if not (value is int or value is float) or not is_finite(float(value)):return false
 	for key in ["events","doors","door_swing"]:
 		if data.has(key) and not data[key] is Dictionary:return false
+	for value in data.get("doors",{}).values():
+		if not value is bool:return false
+	for value in data.get("door_swing",{}).values():
+		if not (value is int or value is float) or not is_finite(float(value)):return false
 	var saved_events: Dictionary=data.get("events",{})
 	if saved_events.has("curtains_manual") and not saved_events.curtains_manual is bool:return false
 	if saved_events.has("carried_prop") and not saved_events.carried_prop is String:return false

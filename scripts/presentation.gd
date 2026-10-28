@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+const INTERACTION_KEY = preload("res://assets/ui/input/keyboard_e.png")
+const INTERACTION_PAD = preload("res://assets/ui/input/xbox_x.png")
 const PREFS = preload("res://scripts/preferences.gd")
 const STAGE = preload("res://scripts/menu_stage.gd")
 const MENU_BUTTON = preload("res://scenes/ui/menu_button.tscn")
@@ -11,6 +13,7 @@ var stage: Node3D
 var screen: Control
 var film: ColorRect
 var cover_amount:=0.0
+var applied_cover: float=-1.0
 var shade: TextureRect
 var body: VBoxContainer
 var normal_panel: StyleBox
@@ -896,7 +899,8 @@ func _process(delta: float) -> void:
 	if is_instance_valid(menu_navigation):menu_navigation.text="A SELECT / D-PAD NAVIGATE / B BACK" if is_instance_valid(game.controller) and game.controller.used else "ENTER SELECT / UP-DOWN NAVIGATE / ESC BACK"
 	var covered: bool=section=="game" and game.player.crouched and game.player.near_cover() and (not game.threat.active() or not game.threat.can_see_player())
 	cover_amount=move_toward(cover_amount,1.0 if covered else 0.0,delta*3)
-	film.material.set_shader_parameter("cover",cover_amount)
+	if applied_cover!=cover_amount:
+		film.material.set_shader_parameter("cover",cover_amount);applied_cover=cover_amount
 	if resume_requested:resume_now()
 	if stage.active:
 		atmosphere_time += delta
@@ -925,7 +929,9 @@ func _process(delta: float) -> void:
 		subtitle.offset_bottom=-104
 		subtitle.offset_top=-104-maxf(36,subtitle.get_minimum_size().y)
 		reticle.visible = prompt.text != ""
-		prompt_icon.visible=prompt.text!="";prompt_icon.texture=load("res://assets/ui/input/xbox_x.png" if game.controller.used else "res://assets/ui/input/keyboard_e.png")
+		prompt_icon.visible=prompt.text!=""
+		var icon: Texture2D=INTERACTION_PAD if game.controller.used else INTERACTION_KEY
+		if prompt_icon.texture!=icon:prompt_icon.texture=icon
 		objective.visible = location_card.modulate.a < 0.05 and subtitle.text == ""
 		var category: String=game.message_info.get("category","observation")
 		subtitle.visible = subtitle.text!="" and (prefs.data.sound_captions if category in ["sound","recording"] else (prefs.data.subtitles if category=="dialogue" else prefs.data.observations))

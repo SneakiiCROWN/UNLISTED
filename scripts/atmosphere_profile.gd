@@ -4,6 +4,7 @@ extends RefCounted
 const NAMES := ["Original PSX", "Balanced Atmosphere", "Enhanced Atmosphere"]
 var active := 0
 var report: Dictionary = {}
+var accessibility_motion: int = -1
 
 static func preferences_path(game: Node) -> String:
 	if not game.native_capture_directory.is_empty():return game.native_capture_directory.path_join("settings.cfg")
@@ -20,6 +21,7 @@ static func selected(game: Node) -> int:
 
 func apply(game: Node3D, selection: int) -> void:
 	active = clampi(selection, 0, 2)
+	accessibility_motion = -1
 	if active == 0:
 		report = {"profile":"original", "terrain":"original", "runtime":true}
 		return
@@ -34,6 +36,11 @@ func apply(game: Node3D, selection: int) -> void:
 
 func refresh_accessibility(game: Node) -> void:
 	if active == 0 or not is_instance_valid(game.presentation):return
+	var motion:=0 if game.presentation.prefs.data.reduced_motion else 1
+	# Audio/sensitivity sliders also call apply_preferences. Window materials
+	# exist before apply() and only need this scan when accessibility changes.
+	if accessibility_motion==motion:return
+	accessibility_motion=motion
 	for mesh in game.find_children("*", "MeshInstance3D", true, false):
 		var material: Material = mesh.material_override
 		if material is ShaderMaterial and material.shader.resource_path == "res://shaders/phase2_window.gdshader":

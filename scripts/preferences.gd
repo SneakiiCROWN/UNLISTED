@@ -13,6 +13,18 @@ func load_file() -> void:
 		data.master = cfg.get_value("audio","volume",0.7)
 		data.sensitivity = cfg.get_value("input","sensitivity",0.0022)
 		data.reduced_flash = cfg.get_value("accessibility","reduced_flash",true)
+	# ConfigFile is editable and may contain partial/corrupted types. Validate
+	# before numeric casts or typed UI assignments; never rewrite the owner file.
+	for key in defaults:
+		var value: Variant=data[key];var fallback: Variant=defaults[key]
+		if fallback is bool:
+			if not value is bool:data[key]=fallback
+		elif fallback is float or fallback is int:
+			if not (value is float or value is int) or not is_finite(float(value)):
+				data[key]=fallback
+			elif fallback is int and float(value)!=floorf(float(value)):data[key]=fallback
+		elif fallback is Vector2i:
+			if not value is Vector2i or value.x<640 or value.y<360 or value.x>7680 or value.y>4320:data[key]=fallback
 	for key in ["master","music","sfx","ambience","retro"]: data[key] = clampf(float(data[key]),0,1)
 	data.sensitivity = clampf(float(data.sensitivity),0.0005,0.006)
 	data.pad_sensitivity=clampf(float(data.pad_sensitivity),.5,3.5)
