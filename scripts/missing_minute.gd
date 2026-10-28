@@ -168,9 +168,7 @@ func take_page() -> void:
 func point_visible(point: Vector3) -> bool:
 	if game.player.camera.is_position_behind(point):return false
 	if not game.get_viewport().get_visible_rect().has_point(game.player.camera.unproject_position(point)):return false
-	var q:=PhysicsRayQueryParameters3D.create(game.player.camera.global_position,point,1)
-	q.exclude=game.impossible_room.sight_exclusions.duplicate();q.exclude.append(game.presence.get_rid())
-	return get_world_3d().direct_space_state.intersect_ray(q).is_empty()
+	return game.sight_line(game.player.camera.global_position,point)
 func watcher_process(delta: float) -> void:
 	if game.threat.active() or game.horror.beat!="":return
 	if game.events.get("memory_watch_pending",false) and watch_clock<0 and not game.events.get("memory_watch_done",false):

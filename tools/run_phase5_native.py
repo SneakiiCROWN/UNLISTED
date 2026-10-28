@@ -1,7 +1,8 @@
 """Run existing real-game QA with production atmosphere selection, isolated owner data."""
 from pathlib import Path
 import argparse,hashlib,json,os,shutil,subprocess,time
-p=argparse.ArgumentParser();p.add_argument('--exe',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--profile',type=int,choices=[0,1,2],default=1);p.add_argument('--mode',default='atmosphere-integration');p.add_argument('--size',default='1920x1080');p.add_argument('--timeout',type=int,default=900);p.add_argument('--keep-settings',action='store_true');p.add_argument('--prebuilt-viewport',action='store_true');p.add_argument('extra',nargs='*');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--exe',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--profile',type=int,choices=[0,1,2],default=1);p.add_argument('--mode',default='atmosphere-integration');p.add_argument('--size',default='1920x1080');p.add_argument('--timeout',type=int,default=900);p.add_argument('--keep-settings',action='store_true');p.add_argument('--prebuilt-viewport',action='store_true');p.add_argument('--fps',type=int,default=60);p.add_argument('extra',nargs='*');a=p.parse_args()
+assert 0<=a.fps<=240
 E=a.exe.resolve();O=a.output.resolve();assert E.is_file() and not O.exists();O.mkdir(parents=True)
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
 owner=[Path(os.environ['APPDATA'])/'UNLISTED'/n for n in ['checkpoint.json','settings.cfg']]
@@ -9,7 +10,7 @@ hashes=lambda:{str(x):sha(x) for x in owner if x.is_file()}
 before=hashes();settings=E.parent/'QA/presentation_settings.cfg';settings.parent.mkdir(exist_ok=True)
 if settings.exists():(O/'previous_qa_settings.cfg').write_bytes(settings.read_bytes())
 if not a.keep_settings:settings.write_text('[presentation]\natmosphere_mode = '+str(a.profile)+'\nresolution = Vector2i('+a.size.replace('x',', ')+')\n',encoding='utf8')
-args=[str(E),'--max-fps','0' if a.mode=='atmosphere-performance' else '60']
+args=[str(E),'--max-fps','0' if a.mode=='atmosphere-performance' else str(a.fps)]
 if a.mode=='atmosphere-performance':args.append('--disable-vsync')
 args+=['--','--'+a.mode+'-qa','--capture-size='+a.size,'--evidence='+str(O),'--route-light-capture',*a.extra]
 if a.prebuilt_viewport:args.append('--prebuilt-viewport')

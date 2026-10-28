@@ -85,6 +85,7 @@ var pulse_time := 0.0
 var resources: Dictionary = {}
 var foley_index: Dictionary = {}
 var spatial_sound_field: Node
+var optical_frames: Array[MeshInstance3D]=[]
 var materials: Dictionary = {}
 var roomtone: AudioStreamPlayer3D
 var fuse_mesh: Node3D
@@ -152,6 +153,7 @@ func _ready() -> void:
 	qa_mode = qa_mode or "--surveyor-assets-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--house-quality-qa" in OS.get_cmdline_user_args()
 	qa_mode = qa_mode or "--house-remembers-qa" in OS.get_cmdline_user_args()
+	qa_mode = qa_mode or "--sightline-qa" in OS.get_cmdline_user_args()
 	# Refuse mistyped automation before creating the world or reading/writing a
 	# normal case. A harness typo must never fall through to desktop gameplay.
 	var automation_requested:=false
@@ -314,6 +316,25 @@ func all_meshes(root: Node) -> Array[MeshInstance3D]:
 	if root is MeshInstance3D: result.append(root)
 	for child in root.get_children(): result.append_array(all_meshes(child))
 	return result
+
+func sight_line(from: Vector3,to: Vector3) -> bool:
+	# Shared optical visibility, distinct from physical reach and sound cover.
+	# Never turn transparent glass into a walking/attack exemption.
+	var room: Node=get_node_or_null("LivingRoomFinishes")
+	if is_instance_valid(room) and room.blocks_sight(from,to):return false
+	for frame in optical_frames:
+		if is_instance_valid(frame) and frame.is_visible_in_tree() and frame.get_aabb().intersects_segment(frame.to_local(from),frame.to_local(to))!=null:return false
+	var ray:=PhysicsRayQueryParameters3D.create(from,to,1)
+	var skip: Array[RID]=[]
+	if is_instance_valid(player):skip.append(player.get_rid())
+	if is_instance_valid(presence):skip.append(presence.get_rid())
+	ray.exclude=skip
+	for i in 4:
+		var hit:=get_world_3d().direct_space_state.intersect_ray(ray)
+		if hit.is_empty():return true
+		if not hit.collider.get_meta("transparent_glass",false):return false
+		skip.append(hit.collider.get_rid());ray.exclude=skip
+	return false
 
 func model(path: String, parent: Node3D, pos: Vector3, size: Vector3, angle := 0.0, solid := false) -> Node3D:
 	if not resources.has(path): resources[path] = load(path)
@@ -709,9 +730,9 @@ func window_at(pos: Vector3, angle: float) -> void:
 	node.rotation.y = angle
 	var glass:=box(node,Vector3(0,1.7,0.08),Vector3(1.25,1.25,0.02),Color.WHITE)
 	glass.material_override=window_glass_material()
-	for x in [-0.68,0.0,0.68]: box(node,Vector3(x,1.7,0.13),Vector3(0.075,1.45,0.12),Color(0.16,0.15,0.12))
-	for y in [1.0,1.7,2.4]: box(node,Vector3(0,y,0.13),Vector3(1.45,0.075,0.12),Color(0.16,0.15,0.12))
-	box(node,Vector3(0,0.97,0.2),Vector3(1.6,0.08,0.35),Color(0.19,0.17,0.14))
+	for x in [-0.68,0.0,0.68]:optical_frames.append(box(node,Vector3(x,1.7,0.13),Vector3(0.075,1.45,0.12),Color(0.16,0.15,0.12)))
+	for y in [1.0,1.7,2.4]:optical_frames.append(box(node,Vector3(0,y,0.13),Vector3(1.45,0.075,0.12),Color(0.16,0.15,0.12)))
+	optical_frames.append(box(node,Vector3(0,0.97,0.2),Vector3(1.6,0.08,0.35),Color(0.19,0.17,0.14)))
 	lamp(pos + Vector3(0,1.8,0),cold,0.8,4)
 
 func build_service_route() -> void:
@@ -1500,6 +1521,9 @@ func run_qa() -> void:
 		await test.run(self);return
 	if "--house-remembers-qa" in OS.get_cmdline_user_args():
 		var test=load("res://scripts/house_remembers_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
+		await test.run(self);return
+	if "--sightline-qa" in OS.get_cmdline_user_args():
+		var test=load("res://scripts/sightline_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)
 		await test.run(self);return
 	if "--hands-qa" in OS.get_cmdline_user_args():
 		var test = load("res://scripts/hands_qa.gd").new();test.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(test)

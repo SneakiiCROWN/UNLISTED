@@ -165,17 +165,21 @@ func can_see_player() -> bool:
 	return player_sight(from,target) or player_sight(from,game.player.position+Vector3.UP*(.55 if game.player.crouched else 1.0))
 
 func player_sight(from: Vector3,to: Vector3) -> bool:
-	if game.get_node("LivingRoomFinishes").blocks_sight(from,to):return false
-	# Closed transparent glazing stops bodies, not light. Never skip opaque
-	# walls/frames/doors, and retain the old solid test for hearing and attacks.
-	var ray:=PhysicsRayQueryParameters3D.create(from,to,1)
+	return game.sight_line(from,to)
+
+func watch_blocking_glass(delta: float) -> bool:
+	var ray:=PhysicsRayQueryParameters3D.create(game.presence.position+Vector3.UP*1.3,game.player.camera.global_position,1)
 	ray.exclude=[game.player.get_rid(),game.presence.get_rid()]
-	for i in 4:
-		var hit:=game.get_world_3d().direct_space_state.intersect_ray(ray)
-		if hit.is_empty():return true
-		if not hit.collider.get_meta("transparent_glass",false):return false
-		var skip: Array[RID]=ray.exclude;skip.append(hit.collider.get_rid());ray.exclude=skip
-	return false
+	var hit:=get_world_3d().direct_space_state.intersect_ray(ray)
+	if hit.is_empty() or not hit.collider.get_meta("transparent_glass",false):return false
+	# A recognisable presence behind a sealed pane, not repeated empty grabs.
+	var body: CharacterBody3D=game.presence
+	var direction: Vector3=game.player.position-body.position
+	body.rotation.y=lerp_angle(body.rotation.y,atan2(-direction.x,-direction.z),1-exp(-delta*2.0))
+	body.velocity.x=0;body.velocity.z=0
+	body.velocity.y=-.2 if body.is_on_floor() else body.velocity.y-20*delta
+	body.move_and_slide();game.surveyor_actor.set_mode("watch")
+	return true
 
 func hear(point: Vector3,loudness: float) -> void:
 	if state not in ["observe","investigate","search"] or grace > 0:return
@@ -390,7 +394,7 @@ func _physics_process(delta: float) -> void:
 	if seen and state != "retreat":
 		lost = 0
 		last_known = game.player.position
-		suspicion += delta*(0.6 if Input.is_action_pressed("crouch") else 1.0)
+		suspicion += delta*(0.6 if game.player.crouched else 1.0)
 		if suspicion >= 1.0 and state not in ["pursue","stalk"]:
 			if not stalk_used and distance>4.5:
 				stalk_used = true
@@ -409,6 +413,7 @@ func _physics_process(delta: float) -> void:
 		else:move_route(delta,0.55)
 		if clock>1.8 or distance<3.5:change("pursue");plan(last_known)
 	elif state == "pursue":
+		if seen and distance<1.6 and watch_blocking_glass(delta):return
 		if distance < 1.05 and seen and grace <= 0:change("attack");return
 		if lost > 2.2:change("search");plan(last_known)
 		elif clock > 0.5:clock = 0;plan(last_known)

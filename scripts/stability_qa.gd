@@ -16,6 +16,7 @@ var excluded:=0
 var watching_title:=false
 var previous_creak_clock:=0.0
 var previous_shadow:=false
+var particle_tracker: Node
 func _process(delta: float) -> void:
 	super._process(delta)
 	if watching_title:
@@ -32,6 +33,7 @@ func _process(delta: float) -> void:
 func checkpoint(event: String) -> void:
 	report.transitions.append({"event":event,"ticks":Time.get_ticks_usec(),"render_size":str(g.get_viewport().size),"window_size":str(window.size),"mode":window.mode,"started":g.started})
 	report.checks=checks
+	report.failed=checks.filter(func(c):return not c.passed).size()
 	var file:=FileAccess.open(output.path_join("probe_report.json"),FileAccess.WRITE);file.store_string(JSON.stringify(report,"\t"));file.close()
 	print("STABILITY_PHASE ",event)
 func resize_to(size_: Vector2i) -> void:
@@ -57,12 +59,17 @@ func run(current: Node) -> void:
 	DirAccess.make_dir_recursive_absolute(output);g.checkpoint_path=output.path_join("checkpoint.json");g.presentation.prefs.path=output.path_join("settings.cfg")
 	if kind=="root":
 		for action_ in InputMap.get_actions():InputMap.action_erase_events(action_)
-		window.add_child(RootGuard.new());window.set_flag(Window.FLAG_NO_FOCUS,false);window.set_flag(Window.FLAG_MOUSE_PASSTHROUGH,false);window.position=Vector2i(60,60);window.size=Vector2i(1280,720)
+		window.add_child(RootGuard.new())
+		var offscreen: bool="--root-offscreen" in OS.get_cmdline_user_args()
+		window.set_flag(Window.FLAG_NO_FOCUS,offscreen);window.set_flag(Window.FLAG_MOUSE_PASSTHROUGH,offscreen)
+		window.position=Vector2i(-16000,-16000) if offscreen else Vector2i(60,60);window.size=Vector2i(1280,720)
 		print("QA_INPUT_ISOLATED normal root Window; physical bindings removed, no SubViewport or profiling display")
 	else:g.prepare_automated_qa()
 	report.kind=kind;report.backend=RenderingServer.get_current_rendering_driver_name();report.method=RenderingServer.get_current_rendering_method();report.adapter=RenderingServer.get_video_adapter_name()
 	checkpoint("title ready")
 	if "--menu-idle-only" in OS.get_cmdline_user_args():
+		particle_tracker=load("res://scripts/next_nightmare_qa.gd").new();particle_tracker.g=g;particle_tracker.output=output;particle_tracker.started_at=started_at;add_child(particle_tracker)
+		particle_tracker.particles("normal root before idle; no viewport handoff")
 		# Owner failure reproduction: normal root title, no SubViewport, no
 		# New Game, no live resolution loop. Only input/data isolation differs.
 		assert(kind=="root")
@@ -71,6 +78,7 @@ func run(current: Node) -> void:
 		Engine.max_fps=0 # Normal project default; q.run's60fps cap must not mask idle load.
 		report.scope="Bounded normal-root main-menu idle, copied owner preferences, physical input blocked, private writes only. No gameplay or repeated resize. Not an uninstrumented owner launch or a crash fix."
 		report.max_fps=Engine.max_fps
+		report.audio_record_effects=AudioServer.get_bus_effect_count(0)
 		report.components={"audio":not g.presentation.diagnostic_silent_menu,"mist":is_instance_valid(g.presentation.stage.mist),"silhouette":not "--title-no-silhouette" in OS.get_cmdline_user_args(),"animation":not g.presentation.stage.diagnostic_stationary}
 		if "--title-ui-only" in OS.get_cmdline_user_args():
 			g.visible=false
@@ -92,7 +100,8 @@ func run(current: Node) -> void:
 		watching_title=false
 		await shot("idle_title_end")
 		report.completed=true;checkpoint("idle completed")
-		await g.qa_exit(0);return
+		particle_tracker.particles("normal root after idle")
+		await g.qa_exit(0,true);return
 	if kind=="prestart":
 		for size_ in [Vector2i(1920,1080),Vector2i(2560,1440),Vector2i(3440,1440)]:await resize_to(size_)
 	elif kind!="root":await resize_to(wanted)

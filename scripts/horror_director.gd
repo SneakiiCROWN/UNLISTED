@@ -89,14 +89,14 @@ func begin(id: String) -> void:
 
 func visible_to_player() -> bool:
 	# A visible head over the fence still counts as direct sight.
-	for offset in [Vector3(0,1.95,0),Vector3(-0.19,1.62,0),Vector3(0.19,1.62,0),Vector3(0,1.15,0)]:
-		var point: Vector3 = game.presence.global_position+offset
+	# Include partial shoulders/legs; an obstructed face alone is not permission
+	# to remove a recognisable body. The camera remains under player control.
+	for offset in [Vector3(0,2.03,0),Vector3(-.25,1.85,0),Vector3(.25,1.85,0),Vector3(-.4,1.45,0),Vector3(0,1.45,0),Vector3(.4,1.45,0),Vector3(-.48,1.05,0),Vector3(0,1.05,0),Vector3(.48,1.05,0),Vector3(-.22,.55,0),Vector3(.22,.55,0),Vector3(0,.15,0)]:
+		var point: Vector3 = game.presence.global_transform*offset
 		if game.player.camera.is_position_behind(point):continue
 		var screen_pos: Vector2 = game.player.camera.unproject_position(point)
 		if not game.get_viewport().get_visible_rect().has_point(screen_pos):continue
-		var query := PhysicsRayQueryParameters3D.create(game.player.camera.global_position,point,1)
-		query.exclude = [game.player.get_rid(),game.presence.get_rid()]
-		if game.get_world_3d().direct_space_state.intersect_ray(query).is_empty():return true
+		if game.sight_line(game.player.camera.global_position,point):return true
 	return false
 
 func vent_protected() -> bool:

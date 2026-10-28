@@ -286,6 +286,20 @@ func _physics_process(delta: float) -> void:
 	# Frozen kinematic bodies are swept, never teleported through walls or furniture.
 	held.move_and_collide(motion.limit_length(delta*5.0))
 
+func placement_visible(body: RigidBody3D,pose: Transform3D) -> bool:
+	var camera: Camera3D=game.player.camera
+	var half: Vector3=body.get_meta("carry_size",Vector3(.14,.14,.14))*.5
+	var offsets: Array[Vector3]=[Vector3.ZERO]
+	for x in [-1,1]:
+		for y in [-1,1]:
+			for z in [-1,1]:offsets.append(Vector3(x*half.x,y*half.y,z*half.z))
+	var world_pose: Transform3D=body.get_parent().global_transform*pose
+	for offset in offsets:
+		var point: Vector3=world_pose*offset
+		if camera.is_position_behind(point):continue
+		if game.get_viewport().get_visible_rect().has_point(camera.unproject_position(point)) and game.sight_line(camera.global_position,point):return true
+	return false
+
 func repeat_placement() -> bool:
 	if not game.events.has("remembered_cup") or game.events.get("cup_repeated",false) or held==props.cup:return false
 	# This old optional contradiction must obey the same quiet/encounter
@@ -293,16 +307,13 @@ func repeat_placement() -> bool:
 	if game.ambient_director.response_blocked():return false
 	var body: RigidBody3D = props.cup
 	if body.reset_pending or body.linear_velocity.length()>.25:return false
-	var camera: Camera3D = game.player.camera
-	if not camera.is_position_behind(body.position):
-		var screen := camera.unproject_position(body.position)
-		if game.get_viewport().get_visible_rect().has_point(screen) and game.threat.clear_line(camera.global_position,body.position):return false
+	if placement_visible(body,body.transform):return false
 	var p: Variant = game.events.remembered_cup
 	if not p is Array or p.size()!=3 or not p.all(func(v):return (v is int or v is float) and is_finite(float(v))):return false
 	var destination := Vector3(p[0],p[1]+0.015,p[2])
 	if body.position.distance_to(destination)<0.25:return false
 	if destination.distance_to(game.player.position)<1.2:return false
-	if not camera.is_position_behind(destination) and game.get_viewport().get_visible_rect().has_point(camera.unproject_position(destination)) and game.threat.clear_line(camera.global_position,destination):return false
+	if placement_visible(body,Transform3D(body.basis,destination)):return false
 	var query := PhysicsShapeQueryParameters3D.new()
 	query.shape = body.get_node("PropShape").shape
 	query.transform = Transform3D(body.basis,destination)
