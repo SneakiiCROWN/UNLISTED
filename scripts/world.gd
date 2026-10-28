@@ -1472,6 +1472,13 @@ func prepare_automated_qa() -> void:
 	get_tree().root.add_child(qa_input_guard);qa_input_guard.attach(self)
 
 func run_qa() -> void:
+	if "--resource-trace" in OS.get_cmdline_user_args():
+		var directory:=""
+		for argument in OS.get_cmdline_user_args():
+			if argument.begins_with("--evidence="):directory=argument.trim_prefix("--evidence=")
+		assert(directory.is_absolute_path())
+		var observer=load("res://scripts/stability_resource_trace.gd").new()
+		observer.game=self;observer.output=directory;observer.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(observer)
 	if "--nightmare-qa" in OS.get_cmdline_user_args():
 		prepare_automated_qa()
 		var nightmare=load("res://scripts/next_nightmare_qa.gd").new();nightmare.process_mode=Node.PROCESS_MODE_ALWAYS;add_child(nightmare)

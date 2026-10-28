@@ -18,6 +18,7 @@ var capture_manifest: FileAccess
 var capture_interval: float=1.0/6.0 if "--route-light-capture" in OS.get_cmdline_user_args() else 1.0/30.0
 var process_gaps: Array[float]=[]
 var previous_process_tick:=0
+var live_checks: FileAccess
 func exact_resolution() -> void:
 	# The shared guard owns input delivery; resizing must not add a second bridge.
 	g.prepare_automated_qa()
@@ -35,6 +36,10 @@ func exact_resolution() -> void:
 func seconds() -> float:return (Time.get_ticks_usec()-started_at)/1000000.0
 func check(id: String,okay: bool,detail := "") -> void:
 	checks.append({"name":id,"passed":okay,"detail":detail,"seconds":seconds()})
+	# Preserve completed assertions even when a native fault prevents finish_run.
+	if not output.is_empty() and DirAccess.dir_exists_absolute(output):
+		if live_checks==null:live_checks=FileAccess.open(output.path_join("checks_live.jsonl"),FileAccess.WRITE)
+		if live_checks:live_checks.store_line(JSON.stringify(checks.back()));live_checks.flush()
 	print("REPAIR_QA ","PASS " if okay else "FAIL ",id," ",detail)
 func wait(s: float) -> void:await get_tree().create_timer(s,true).timeout
 func _process(delta: float) -> void:
